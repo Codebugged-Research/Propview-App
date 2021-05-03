@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:propview/services/baseService.dart';
+import 'package:propview/views/landingPage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -7,6 +12,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  TextField(),
+                  TextField(
+                    controller: _emailController,
+                  ),
                   SizedBox(
                     height: 32,
                   ),
@@ -71,6 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextField(
                     obscureText: true,
+                    controller: _passwordController,
                   )
                 ],
               ),
@@ -78,8 +97,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 minWidth: 360,
                 height: 55,
                 color: Color(0xff314B8C),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                onPressed: () {},
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                onPressed: () async {
+                  var response = await BaseService.makeUnauthenticatedRequest(
+                      BaseService.BASE_URI + "api/signin",
+                      body: jsonEncode({
+                        "email": _emailController.text,
+                        "password": _passwordController.text
+                      }));
+                  if(response.statusCode == 200){
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LandingPage()));
+                  }else{
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login Failed !!!")));
+                  }
+                  print(response.statusCode);
+                  print(jsonDecode(response.body)["token"].toString());
+                },
                 child: Text(
                   "Login",
                   style: GoogleFonts.nunito(
