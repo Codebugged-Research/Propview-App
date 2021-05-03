@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/views/landingPage.dart';
 
+import 'loginSceen.dart';
+
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -17,25 +19,24 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = new Duration(seconds: 9000);
+    var duration = new Duration(milliseconds: 1500);
     return new Timer(duration, navigate);
   }
 
   void navigate() async {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LandingPage()));
     // var auth = await AuthService.getSavedAuth();
-    // if (auth != null) {
-    //   Navigator.of(context)
-    //       .pushReplacement(MaterialPageRoute(builder: (context) {
-    //     return LandingScreen(selectedIndex: 0);
-    //   }));
-    // } else {
-    //   Navigator.of(context)
-    //       .pushReplacement(MaterialPageRoute(builder: (context) {
-    //     return LogInScreen();
-    //   }));
-    // }
+    var auth;
+    if (auth != null) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return LandingPage();
+      }));
+    } else {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return LoginScreen();
+      }));
+    }
   }
 
   @override
