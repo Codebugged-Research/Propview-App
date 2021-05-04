@@ -65,10 +65,10 @@ class AuthService extends BaseService {
     return auth;
   }
 
-  static Future<bool> authenticate(String displayName, String email,
-      String password, String photoUrl) async {
+  static Future<bool> authenticate(String email,
+      String password) async {
     var payload = json
-        .encode({'name': displayName, 'email': email, 'password': password, 'photoUrl': photoUrl});
+        .encode({'email': email, 'password': password,});
     print('$payload');
     http.Response response = await BaseService.makeUnauthenticatedRequest(
         BaseService.BASE_URI + 'api/signin',
@@ -77,7 +77,7 @@ class AuthService extends BaseService {
     Map<String, dynamic> responseMap = json.decode(response.body);
 
     String token = responseMap['token'];
-    String id = responseMap['User']['user_id'].toString();
+    String id = responseMap['user']['user_id'].toString();
     bool success = token != null;
     if (success) _saveToken(token, email, id);
     return success;

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/services/authService.dart';
 import 'package:propview/views/landingPage.dart';
 
 import 'loginSceen.dart';
@@ -24,12 +25,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigate() async {
-    // var auth = await AuthService.getSavedAuth();
-    var auth;
+    var auth = await AuthService.getSavedAuth();
     if (auth != null) {
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) {
-        return LandingPage();
+        return LandingScreen();
       }));
     } else {
       Navigator.of(context)

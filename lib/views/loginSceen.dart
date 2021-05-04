@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:propview/services/authService.dart';
 import 'package:propview/services/baseService.dart';
 import 'package:propview/views/landingPage.dart';
 
@@ -100,19 +101,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
                 onPressed: () async {
-                  var response = await BaseService.makeUnauthenticatedRequest(
-                      BaseService.BASE_URI + "api/signin",
-                      body: jsonEncode({
-                        "email": _emailController.text,
-                        "password": _passwordController.text
-                      }));
-                  if(response.statusCode == 200){
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LandingPage()));
-                  }else{
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login Failed !!!")));
+                  var response = await AuthService.authenticate(_emailController.text,_passwordController.text);
+                  if (response) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Login Successful !!!")));
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => LandingScreen()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Login Failed !!!")));
                   }
-                  print(response.statusCode);
-                  print(jsonDecode(response.body)["token"].toString());
                 },
                 child: Text(
                   "Login",
