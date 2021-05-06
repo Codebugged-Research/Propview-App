@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -13,18 +12,18 @@ class AuthService extends BaseService {
   // ignore: missing_return
   static Future<http.Response> makeAuthenticatedRequest(String url,
       {String method = 'POST',
-        body,
-        mergeDefaultHeader = true,
-        Map<String, String> extraHeaders}) async {
+      body,
+      mergeDefaultHeader = true,
+      Map<String, String> extraHeaders}) async {
     try {
       Map<String, dynamic> auth = await getSavedAuth();
       extraHeaders ??= {};
       var sentHeaders = mergeDefaultHeader
           ? {
-        ...BaseService.headers,
-        ...extraHeaders,
-        "Authorization": "Bearer ${auth['token']}"
-      }
+              ...BaseService.headers,
+              ...extraHeaders,
+              "Authorization": "Bearer ${auth['token']}"
+            }
           : extraHeaders;
 
       switch (method) {
@@ -65,22 +64,25 @@ class AuthService extends BaseService {
     return auth;
   }
 
-  static Future<bool> authenticate(String email,
-      String password) async {
-    var payload = json
-        .encode({'email': email, 'password': password,});
-    print('$payload');
+  static Future<bool> authenticate(String email, String password) async {
+    var payload = json.encode({
+      'email': email,
+      'password': password,
+    });
     http.Response response = await BaseService.makeUnauthenticatedRequest(
         BaseService.BASE_URI + 'api/signin',
         body: payload);
 
-    Map<String, dynamic> responseMap = json.decode(response.body);
-
-    String token = responseMap['token'];
-    String id = responseMap['user']['user_id'].toString();
-    bool success = token != null;
-    if (success) _saveToken(token, email, id);
-    return success;
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = json.decode(response.body);
+      String token = responseMap['token'];
+      String id = responseMap['user']['user_id'].toString();
+      bool success = token != null;
+      if (success) _saveToken(token, email, id);
+      return success;
+    } else {
+      return false;
+    }
   }
 
   static _saveToken(String token, String email, String id) async {

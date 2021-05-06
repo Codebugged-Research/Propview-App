@@ -6,6 +6,8 @@ import 'package:propview/services/userService.dart';
 import '../loginSceen.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final user;
+  ProfileScreen({this.user});
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -69,9 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                        height: 56),
+                        height: 75),
                     CircleAvatar(
-                      backgroundImage: NetworkImage("http://ircmhealth.com/new/wp-content/uploads/2015/08/person-dummy.jpg"),
+                      backgroundImage:AssetImage("assets/dummy.png"),
                       backgroundColor: Colors.white,
                       radius: 80,
                     ),
@@ -86,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Padding(
                       padding: EdgeInsets.only(
                           top: 10,
-                          bottom:20),
+                          bottom:50),
                       child: InkWell(
                         onTap: () {
                           // Navigator.of(context).push(MaterialPageRoute(

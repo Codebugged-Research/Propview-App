@@ -5,9 +5,9 @@ import 'package:propview/models/User.dart';
 
 import 'authService.dart';
 
-class UserService extends AuthService {
+class TaskService extends AuthService {
   // ignore: missing_return
-  static Future<User> getUser() async {
+  static Future<User> getTask() async {
     var auth = await AuthService.getSavedAuth();
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/user/${auth['id']}',
@@ -21,7 +21,7 @@ class UserService extends AuthService {
   }
 
   // ignore: missing_return
-  static Future<List<User>> getAllUser() async {
+  static Future<List<User>> getAllTask() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/users',
         method: 'GET');
@@ -35,7 +35,7 @@ class UserService extends AuthService {
     }
   }
 
-  static Future<bool> updateUser(var payload) async {
+  static Future<bool> updateTask(var payload) async {
     var auth = await AuthService.getSavedAuth();
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'user/update/${auth['id']}',
