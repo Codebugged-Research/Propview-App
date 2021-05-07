@@ -18,7 +18,7 @@ class _LandingScreenState extends State<LandingScreen> {
     super.initState();
   }
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[

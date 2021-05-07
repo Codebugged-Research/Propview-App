@@ -1,51 +1,36 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:propview/models/User.dart';
+import 'package:propview/models/Task.dart';
 
 import 'authService.dart';
 
 class TaskService extends AuthService {
   // ignore: missing_return
-  static Future<User> getTask() async {
-    var auth = await AuthService.getSavedAuth();
+  static Future<TaskElement> getTask(String task_id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/user/${auth['id']}',
+        AuthService.BASE_URI + 'api/task/$task_id',
         method: 'GET');
     if (response.statusCode == 200) {
-      User user = User.fromJson(json.decode(response.body));
-      return user;
+      var responseMap = json.decode(response.body);
+      TaskElement task = TaskElement.fromJson(responseMap);
+      return task;
     } else {
       print("DEBUG");
     }
   }
 
   // ignore: missing_return
-  static Future<List<User>> getAllTask() async {
+  static Future<Task> getAllTask() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/users',
+        AuthService.BASE_URI + 'api/tasks',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      List<User> users =
-      responseMap.map<User>((usersMap) => User.fromJson(usersMap)).toList();
-      return users;
+      Task taskList = Task.fromJson(responseMap) ;
+      return taskList;
     } else {
       print("DEBUG");
-    }
-  }
-
-  static Future<bool> updateTask(var payload) async {
-    var auth = await AuthService.getSavedAuth();
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'user/update/${auth['id']}',
-        method: 'PUT',
-        body: payload);
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      print("Debug update user");
-      return false;
     }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/views/Notification/notificationScreen.dart';
 
@@ -19,11 +21,14 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
   User user;
   bool loading = false;
 
+  Task taskData;
+
   getData() async {
     setState(() {
       loading = true;
     });
     user = await UserService.getUser();
+    taskData = await TaskService.getAllTask();
     setState(() {
       loading = false;
     });
@@ -99,18 +104,86 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
                     ),
                     Expanded(
                       child: Container(
-                        color: Colors.red,
+                        child: Text("Total Task Count: ${taskData.count}"),
                       ),
                       flex: 2,
                     ),
                     Expanded(
-                      child: Container(color: Colors.orange),
+                      child: Container(
+                        child: ListView.builder(
+                          itemCount: taskData.count,
+                          itemBuilder: (context, index) {
+                            return taskCard(taskData.data.task[index]);
+                          },
+                        ),
+                      ),
                       flex: 9,
                     ),
                   ],
                 ),
               ),
             ),
+    );
+  }
+
+  taskCard(TaskElement taskElement) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.grey[200],
+            offset: const Offset(
+              0.0,
+              0.0,
+            ),
+            blurRadius: 2.0,
+            spreadRadius: 0.0,
+          ), //BoxShadow
+          BoxShadow(
+            color: Colors.grey,
+            offset: const Offset(0.0, 0.0),
+            blurRadius: 2.5,
+            spreadRadius: 0.0,
+          ),
+        ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
+        height: 140,
+        child: Row(
+          children: [
+            Image.asset("assets/task.png"),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Task Type: "+taskElement.category),
+                SizedBox(
+                  height: 6,
+                ),
+                Text("AssignedTo: " + taskElement.tblUsers.name + "\n(${taskElement.tblUsers.designation})"),
+                SizedBox(
+                  height: 6,
+                ),
+                Text("Property Owner's Name: \n"+taskElement.propertyOwner.ownerName),
+                SizedBox(
+                  height: 6,
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Row(
+                  children: [
+                    Text(taskElement.startDate),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(taskElement.endDate),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }
