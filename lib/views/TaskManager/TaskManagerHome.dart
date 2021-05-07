@@ -155,15 +155,18 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Task Type: "+taskElement.category),
+                Text("Task Type: " + taskElement.category),
                 SizedBox(
                   height: 6,
                 ),
-                Text("AssignedTo: " + taskElement.tblUsers.name + "\n(${taskElement.tblUsers.designation})"),
+                Text("AssignedTo: " +
+                    taskElement.tblUsers.name +
+                    "\n(${taskElement.tblUsers.designation})"),
                 SizedBox(
                   height: 6,
                 ),
-                Text("Property Owner's Name: \n"+taskElement.propertyOwner.ownerName),
+                Text("Property Owner's Name: \n" +
+                    taskElement.propertyOwner.ownerName),
                 SizedBox(
                   height: 6,
                 ),
@@ -172,11 +175,27 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
                 ),
                 Row(
                   children: [
-                    Text(taskElement.startDate),
+                    Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xff314B8C),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(taskElement.startDate),
+                        )),
                     SizedBox(
                       width: 10,
                     ),
-                    Text(taskElement.endDate),
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xff314B8C),
+                            borderRadius: BorderRadius.circular(30)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(taskElement.endDate),
+                        )),
                   ],
                 ),
               ],
