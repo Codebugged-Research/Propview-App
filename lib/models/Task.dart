@@ -339,7 +339,7 @@ class TblUsers {
     userId: json["user_id"] == null ? null : json["user_id"],
     parentId: json["parent_id"] == null ? null : json["parent_id"],
     name: json["name"] == null ? null : json["name"],
-    designation: json["designation"] == null ? null : json["designation"],
+    designation: json["designation"] == null ? "NA" : json["designation"],
     officialEmail: json["official_email"] == null ? null : json["official_email"],
     personalEmail: json["personal_email"] == null ? null : json["personal_email"],
     officialNumber: json["official_number"] == null ? null : json["official_number"],

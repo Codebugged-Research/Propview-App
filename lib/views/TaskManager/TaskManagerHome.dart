@@ -5,22 +5,24 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/views/Notification/notificationScreen.dart';
+import 'package:propview/views/TaskManager/CreateTaskScreen.dart';
 
 class TaskMangerHome extends StatefulWidget {
   @override
   _TaskMangerHomeState createState() => _TaskMangerHomeState();
 }
 
-class _TaskMangerHomeState extends State<TaskMangerHome> {
+class _TaskMangerHomeState extends State<TaskMangerHome>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     getData();
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
   }
 
   User user;
   bool loading = false;
-
   Task taskData;
 
   getData() async {
@@ -34,9 +36,19 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
     });
   }
 
+  TabController _tabController;
+  int _index = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => CreateTasKScreen()));
+        },
+      ),
       body: loading
           ? Center(
               child: CircularProgressIndicator(),
@@ -104,17 +116,68 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
                     ),
                     Expanded(
                       child: Container(
-                        child: Text("Total Task Count: ${taskData.count}"),
+                        child: Column(
+                          children: [
+                            // Text("Total Task Count: ${taskData.count}"),
+                            // Text("Total Task Count: ${taskData.count}"),
+                            TabBar(
+                              isScrollable: true,
+                              controller: _tabController,
+                              indicator: UnderlineTabIndicator(
+                                borderSide: BorderSide(
+                                    color: Color(0xff314B8C), width: 4.0),
+                              ),
+                              labelStyle: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff314B8C),
+                              ),
+                              unselectedLabelStyle: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              unselectedLabelColor:
+                                  Colors.black.withOpacity(0.4),
+                              labelColor: Color(0xff314B8C),
+                              tabs: [
+                                Tab(
+                                  text: "Pending",
+                                ),
+                                Tab(
+                                  text: "Completed",
+                                ),
+                              ],
+                              onTap: (value) {
+                                setState(() {
+                                  _index = value;
+                                });
+                                _tabController.animateTo(value,
+                                    curve: Curves.easeIn,
+                                    duration: Duration(milliseconds: 600));
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      flex: 2,
+                      flex: 1,
                     ),
                     Expanded(
                       child: Container(
-                        child: ListView.builder(
-                          itemCount: taskData.count,
-                          itemBuilder: (context, index) {
-                            return taskCard(taskData.data.task[index]);
-                          },
+                        child: TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          controller: _tabController,
+                          children: <Widget>[
+                            ListView.builder(
+                              itemCount: taskData.count,
+                              itemBuilder: (context, index) {
+                                return taskCard(taskData.data.task[index]);
+                              },
+                            ),
+                            ListView.builder(
+                              itemCount: taskData.count,
+                              itemBuilder: (context, index) {
+                                return taskCard(taskData.data.task[index]);
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       flex: 9,
@@ -127,6 +190,29 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
   }
 
   taskCard(TaskElement taskElement) {
+    customText(label, data) {
+      return RichText(
+        text: TextSpan(
+          text: label,
+          style: GoogleFonts.nunito(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          children: <TextSpan>[
+            TextSpan(
+              text: data,
+              style: GoogleFonts.nunito(
+                color: Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -147,58 +233,56 @@ class _TaskMangerHomeState extends State<TaskMangerHome> {
             spreadRadius: 0.0,
           ),
         ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        height: 140,
+        height: 160,
         child: Row(
           children: [
             Image.asset("assets/task.png"),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Task Type: " + taskElement.category),
-                SizedBox(
-                  height: 6,
-                ),
-                Text("AssignedTo: " +
-                    taskElement.tblUsers.name +
-                    "\n(${taskElement.tblUsers.designation})"),
-                SizedBox(
-                  height: 6,
-                ),
-                Text("Property Owner's Name: \n" +
-                    taskElement.propertyOwner.ownerName),
-                SizedBox(
-                  height: 6,
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Row(
-                  children: [
-                    Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xff314B8C),
-                          borderRadius: BorderRadius.circular(30)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(taskElement.startDate),
-                        )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                            color: Color(0xff314B8C),
-                            borderRadius: BorderRadius.circular(30)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(taskElement.endDate),
-                        )),
-                  ],
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  customText("Task Type: ", taskElement.category),
+                  customText(
+                      "AssignedTo: ",
+                      taskElement.tblUsers.name +
+                          "\n(${taskElement.tblUsers.designation})"),
+                  customText("Property Owner's Name: \n",
+                      taskElement.propertyOwner.ownerName),
+                  Row(
+                    children: [
+                      Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xff314B8C),
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4.0, horizontal: 10),
+                            child: Text(
+                              taskElement.startDate,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xff314B8C),
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4.0, horizontal: 10),
+                            child: Text(
+                              taskElement.endDate,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )),
+                    ],
+                  ),
+                ],
+              ),
             )
           ],
         ),
