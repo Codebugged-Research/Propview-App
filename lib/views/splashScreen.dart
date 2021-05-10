@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:propview/services/authService.dart';
-import 'package:propview/views/landingPage.dart';
 
-import 'loginSceen.dart';
+import 'package:propview/services/authService.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/landingPage.dart';
+import 'package:propview/views/loginSceen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -27,15 +28,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void navigate() async {
     var auth = await AuthService.getSavedAuth();
     if (auth != null) {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) {
-        return LandingScreen();
-      }));
+      Routing.makeRouting(context,
+          routeMethod: 'pushReplacement',
+          newWidget: LandingScreen(selectedIndex: 0));
     } else {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) {
-        return LoginScreen();
-      }));
+      Routing.makeRouting(context,
+          routeMethod: 'pushReplacement', newWidget: LoginScreen());
     }
   }
 

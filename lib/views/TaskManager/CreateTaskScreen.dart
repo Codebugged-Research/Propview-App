@@ -16,14 +16,16 @@ import '../landingPage.dart';
 
 // Approved/NotApproved/Completed/transferred
 
-class CreateTasKScreen extends StatefulWidget {
-  const CreateTasKScreen({Key key}) : super(key: key);
+import '../../utils/progressBar.dart';
+
+class CreateTaskScreen extends StatefulWidget {
+  const CreateTaskScreen({Key key}) : super(key: key);
 
   @override
-  _CreateTasKScreenState createState() => _CreateTasKScreenState();
+  _CreateTaskScreenState createState() => _CreateTaskScreenState();
 }
 
-class _CreateTasKScreenState extends State<CreateTasKScreen> {
+class _CreateTaskScreenState extends State<CreateTaskScreen> {
   List<DropdownMenuItem> _taskCategoryDropdownList = [];
   var _selectedTaskCategory;
   List<DropdownMenuItem> _propertyDropdownList = [];
@@ -113,257 +115,207 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 24.0, right: 24.0, bottom: 24.0, top: 16),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset(
-                            "assets/task.png",
-                            height: 75,
+          ? circularProgressWidget()
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 24.0, right: 24.0, bottom: 24.0, top: 36),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/task.png",
+                          height: 75,
+                        ),
+                        Text(
+                          "Create\nNew Task",
+                          style: GoogleFonts.nunito(
+                            color: Colors.black,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            "Create\nNew Task",
-                            style: GoogleFonts.nunito(
-                              color: Colors.black,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 8.0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "Select Category of Task: ",
+                              style: GoogleFonts.nunito(
+                                  color: Color(0xff314B8C),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color(0xff314B8C).withOpacity(0.12),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                    value: _selectedTaskCategory,
+                                    isExpanded: true,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black),
+                                    icon: Icon(
+                                      Icons.list_alt,
+                                      color: Colors.black,
+                                    ),
+                                    items: _taskCategoryDropdownList,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedTaskCategory = value;
+                                      });
+                                    }),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 24,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 8.0,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 8.0,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Select Category of Task: ",
-                                style: GoogleFonts.nunito(
-                                    color: Color(0xff314B8C),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "Select Property: ",
+                              style: GoogleFonts.nunito(
+                                  color: Color(0xff314B8C),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color(0xff314B8C).withOpacity(0.12),
                               ),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Color(0xff314B8C).withOpacity(0.12),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 16.0),
-                                    child: DropdownButton(
-                                        value: _selectedTaskCategory,
-                                        isExpanded: true,
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.black),
-                                        icon: Icon(
-                                          Icons.list_alt,
-                                          color: Colors.black,
-                                        ),
-                                        items: _taskCategoryDropdownList,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _selectedTaskCategory = value;
-                                          });
-                                        }),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 8.0,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Select Property: ",
-                                style: GoogleFonts.nunito(
-                                    color: Color(0xff314B8C),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Color(0xff314B8C).withOpacity(0.12),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                      value: _selectedProperty,
-                                      isExpanded: true,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black),
-                                      icon: Icon(
-                                        Icons.list_alt,
-                                        color: Colors.black,
-                                      ),
-                                      items: _propertyDropdownList,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedProperty = value;
-                                        });
-                                      }),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      inputField("Enter Task Name", _taskName, 1),
-                      inputField("Enter Task Description", _taskDescription, 5),
-                      inputDateTime(
-                          "Enter Start Date and Time", _taskStartDateTime),
-                      inputDateTime(
-                          "Enter End Date and Time", _taskEndDateTime),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 8.0,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Select Employee: ",
-                                style: GoogleFonts.nunito(
-                                    color: Color(0xff314B8C),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Container(
-                                height: 75,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Color(0xff314B8C).withOpacity(0.12),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 16.0),
-                                    child: DropdownButton(
-                                        value: _selectedUser,
-                                        isExpanded: true,
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.black),
-                                        icon: Icon(
-                                          Icons.list_alt,
-                                          color: Colors.black,
-                                        ),
-                                        items: _userDropdownList,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _selectedUser = value;
-                                          });
-                                        }),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      load
-                          ? Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          : MaterialButton(
-                              minWidth: 250,
-                              color: Color(0xff314B8C),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Create Task",
-                                  style: GoogleFonts.nunito(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              onPressed: () async {
-                                setState(() {
-                                  load = true;
-                                });
-                                var payload = jsonEncode({
-                                  "category": _selectedTaskCategory,
-                                  "task_name": _taskName.text,
-                                  "task_desc": _taskDescription.text,
-                                  "task_status": "Approved",
-                                  "start_dateTime": _taskStartDateTime.text,
-                                  "end_dateTime": _taskEndDateTime.text,
-                                  "assigned_to": _selectedUser.toString(),
-                                  "property_ref": _selectedProperty.toString(),
-                                  "created_at": DateTime.now().toString(),
-                                  "updated_at": DateTime.now().toString(),
-                                });
-                                bool response =
-                                    await TaskService.createTask(payload);
-                                setState(() {
-                                  load = false;
-                                });
-                                if (response) {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => LandingScreen()));
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Task Creation Failed"),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                    value: _selectedProperty,
+                                    isExpanded: true,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black),
+                                    icon: Icon(
+                                      Icons.list_alt,
+                                      color: Colors.black,
                                     ),
-                                  );
-                                }
-                              },
+                                    items: _propertyDropdownList,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedProperty = value;
+                                      });
+                                    }),
+                              ),
                             ),
-                    ],
-                  ),
-                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    inputField("Enter Task Name", _taskName, 1),
+                    inputField("Enter Task Description", _taskDescription, 5),
+                    inputDateTime(
+                        "Enter Start Date and Time", _taskStartDateTime),
+                    inputDateTime("Enter End Date and Time", _taskEndDateTime),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 8.0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "Select Employee: ",
+                              style: GoogleFonts.nunito(
+                                  color: Color(0xff314B8C),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color(0xff314B8C).withOpacity(0.12),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                    value: _selectedTaskCategory,
+                                    isExpanded: true,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black),
+                                    icon: Icon(
+                                      Icons.list_alt,
+                                      color: Colors.black,
+                                    ),
+                                    items: _taskCategoryDropdownList,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedTaskCategory = value;
+                                      });
+                                    }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    MaterialButton(
+                      minWidth: 250,
+                      color: Color(0xff314B8C),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Create Task",
+                            style:
+                                Theme.of(context).primaryTextTheme.subtitle1),
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+   ),
               ),
             ),
     );

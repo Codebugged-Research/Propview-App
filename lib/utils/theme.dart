@@ -45,12 +45,13 @@ class ThemeClass {
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.normal),
               subtitle1: GoogleFonts.nunitoSans(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.normal),
               subtitle2: GoogleFonts.nunitoSans(
                 color: Colors.black,
-                fontWeight: FontWeight.normal,
+                fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.normal,
               ),
               caption: GoogleFonts.nunitoSans(
@@ -70,7 +71,7 @@ class ThemeClass {
                   letterSpacing: 1.25)),
       buttonTheme: ButtonThemeData(
         buttonColor: Color(0xff314B8C),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
     return themeData;

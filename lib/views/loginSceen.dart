@@ -1,11 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:propview/services/authService.dart';
-import 'package:propview/services/baseService.dart';
 import 'package:propview/views/landingPage.dart';
+
+import 'package:propview/constants/uiContants.dart';
+
+import '../utils/progressBar.dart';
+import '../utils/routing.dart';
+import '../utils/snackBar.dart';
+import '../utils/snackBar.dart';
+import 'landingPage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,117 +17,194 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
+  String email;
+  String password;
+
+  final formkey = new GlobalKey<FormState>();
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(() {
+      setState(() {
+        email = emailController.text;
+      });
+    });
+
+    passwordController.addListener(() {
+      setState(() {
+        password = passwordController.text;
+      });
+    });
+  }
+
+  checkFields() {
+    final form = formkey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    setState(() {
+      isLoading = false;
+    });
+    return false;
+  }
+
+  login() async {
+    setState(() {
+      isLoading = true;
+    });
+    if (checkFields()) {
+      try {
+        bool isAuthenticated = await AuthService.authenticate(email, password);
+        if (isAuthenticated) {
+          Routing.makeRouting(context,
+              routeMethod: 'pushReplacement', newWidget: LandingScreen(selectedIndex: 0));
+        } else {
+          showInSnackBar(context, 'Authentication Denied!', 2500);
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        showInSnackBar(context, 'Something went wrong!', 2500);
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showInSnackBar(context, 'Fill all the fields!', 2500);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    // TODO: implement dispose
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Container(
+        height: UIConstants.fitToHeight(640, context),
+        width: UIConstants.fitToWidth(360, context),
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "PropView",
-                      style: GoogleFonts.nunito(
-                          color: Colors.black,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Login to continue",
-                      style: GoogleFonts.nunito(
-                          color: Color(0xffA09898),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-              Image.asset("assets/login.png"),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Email / Username",
-                      style: GoogleFonts.nunito(
-                          color: Color(0xffA09898),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  TextField(
-                    controller: _emailController,
-                  ),
-                  SizedBox(
-                    height: 32,
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Password",
-                      style: GoogleFonts.nunito(
-                          color: Color(0xffA09898),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  TextField(
-                    obscureText: true,
-                    controller: _passwordController,
-                  )
-                ],
-              ),
-              MaterialButton(
-                minWidth: 360,
-                height: 55,
-                color: Color(0xff314B8C),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                onPressed: () async {
-                  var response = await AuthService.authenticate(_emailController.text,_passwordController.text);
-                  if (response) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Login Successful !!!")));
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LandingScreen()));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Login Failed !!!")));
-                  }
-                },
-                child: Text(
-                  "Login",
-                  style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+          padding: const EdgeInsets.only(
+              top: 48.0, left: 32.0, right: 32.0, bottom: 32.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+                headingWidget(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                logoWidget(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                formWidget(context),
+                SizedBox(height: UIConstants.fitToHeight(16, context)),
+                (!isLoading) ? buttonWidget(context) : circularProgressWidget(),
+                SizedBox(height: UIConstants.fitToHeight(24, context)),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget headingWidget(BuildContext context) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("PropView",
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .headline5
+                  .copyWith(fontSize: 28)),
+          Text("Login to continue",
+              textAlign: TextAlign.left,
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .headline5
+                  .copyWith(fontSize: 18, color: Color(0xffA09898))),
+        ]);
+  }
+
+  Widget logoWidget(BuildContext context) {
+    return Align(
+        alignment: Alignment.center, child: Image.asset(UIConstants.logo));
+  }
+
+  Widget buttonWidget(BuildContext context) {
+    return MaterialButton(
+      minWidth: 360,
+      height: 55,
+      color: Color(0xff314B8C),
+      onPressed: () async {
+        await login();
+      },
+      child: Text(
+        "Login",
+        style: Theme.of(context)
+            .primaryTextTheme
+            .subtitle1
+      ),
+    );
+  }
+
+  Widget formWidget(BuildContext context) {
+    return Container(
+      child: Form(
+          key: formkey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              formheaderWidget(context, 'Email/Username'),
+              inputWidget(emailController, "Please Enter your Email", false,
+                  (value) {
+                email = value;
+              }),
+              SizedBox(
+                height: UIConstants.fitToHeight(18, context),
+              ),
+              formheaderWidget(context, 'Password'),
+              inputWidget(
+                  passwordController, "Please Enter your Password", true,
+                  (value) {
+                password = value;
+              }),
+            ],
+          )),
+    );
+  }
+
+  Widget formheaderWidget(BuildContext context, String text) {
+    return Text(
+      text,
+      style: GoogleFonts.nunito(
+          color: Color(0xffA09898), fontSize: 16, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget inputWidget(TextEditingController textEditingController,
+      String validation, bool, save) {
+    return TextFormField(
+      controller: textEditingController,
+      obscureText: bool,
+      validator: (value) => value.isEmpty ? validation : null,
+      onSaved: save,
     );
   }
 }
