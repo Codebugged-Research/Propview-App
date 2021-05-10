@@ -1,10 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/PropertyOwner.dart';
+import 'package:propview/models/Task.dart';
 import 'package:propview/models/TaskCategory.dart';
+import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
+import 'package:propview/services/taskServices.dart';
+import 'package:propview/services/userService.dart';
+
+import '../landingPage.dart';
+
+// Approved/NotApproved/Completed/transferred
 
 import '../../utils/progressBar.dart';
 
@@ -20,6 +30,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   var _selectedTaskCategory;
   List<DropdownMenuItem> _propertyDropdownList = [];
   var _selectedProperty;
+  List<DropdownMenuItem> _userDropdownList = [];
+  var _selectedUser;
 
   TextEditingController _taskDescription = new TextEditingController();
   TextEditingController _taskName = new TextEditingController();
@@ -29,6 +41,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       new TextEditingController(text: DateTime.now().toString());
 
   List<TaskCategory> taskCategories = [];
+  List<User> users = [];
   PropertyOwner propertyOwner;
   bool loading = false;
   void initState() {
@@ -45,7 +58,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       _taskCategoryDropdownList.add(
         DropdownMenuItem(
           child: Text(taskCategories[i].category),
-          value: taskCategories[i].taskCategoryId,
+          value: taskCategories[i].category,
         ),
       );
     }
@@ -63,12 +76,40 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
       );
     }
+    users = await UserService.getAllUser();
+    for (int i = 0; i < users.length; i++) {
+      _userDropdownList.add(
+        DropdownMenuItem(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                users[i].name,
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+              Text(
+                users[i].designation,
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          value: users[i].userId,
+        ),
+      );
+    }
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       _selectedProperty = _propertyDropdownList[0].value;
+      _selectedUser = _userDropdownList[0].value;
       loading = false;
     });
   }
+
+  bool load = false;
 
   @override
   Widget build(BuildContext context) {
@@ -223,6 +264,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold),
                             ),
+
                           ),
                           SizedBox(
                             height: 8,
@@ -273,7 +315,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       onPressed: () {},
                     ),
                   ],
-                ),
+   ),
               ),
             ),
     );
