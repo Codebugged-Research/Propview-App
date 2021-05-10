@@ -1,34 +1,35 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/Task.dart';
 
 import 'authService.dart';
 
 class PropertyService extends AuthService {
   // ignore: missing_return
-  static Future<TaskElement> getProperty(String task_id) async {
+  static Future<PropertyOwnerElement> getProperty(String task_id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/task/$task_id',
+        AuthService.BASE_URI + 'api/propertyOwner/$task_id',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      TaskElement task = TaskElement.fromJson(responseMap);
-      return task;
+      PropertyOwnerElement  propertyOwner = PropertyOwnerElement.fromJson(responseMap);
+      return propertyOwner;
     } else {
       print("DEBUG");
     }
   }
 
   // ignore: missing_return
-  static Future<Task> getAllProperties() async {
+  static Future<PropertyOwner> getAllProperties() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/tasks',
+        AuthService.BASE_URI + 'api/propertyOwner',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      Task taskList = Task.fromJson(responseMap) ;
-      return taskList;
+      PropertyOwner propertyOwner = PropertyOwner.fromJson(responseMap);
+      return propertyOwner;
     } else {
       print("DEBUG");
     }
