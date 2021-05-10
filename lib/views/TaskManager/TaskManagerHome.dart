@@ -6,6 +6,7 @@ import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/views/Notification/notificationScreen.dart';
 import 'package:propview/views/TaskManager/CreateTaskScreen.dart';
+import 'package:propview/views/TaskManager/TaskDetailScreen.dart';
 
 class TaskMangerHome extends StatefulWidget {
   @override
@@ -213,78 +214,89 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Colors.grey[200],
-            offset: const Offset(
-              0.0,
-              0.0,
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => TaskDetailScreen(
+              taskElement: taskElement,
             ),
-            blurRadius: 2.0,
-            spreadRadius: 0.0,
-          ), //BoxShadow
-          BoxShadow(
-            color: Colors.grey,
-            offset: const Offset(0.0, 0.0),
-            blurRadius: 2.5,
-            spreadRadius: 0.0,
           ),
-        ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        height: 160,
-        child: Row(
-          children: [
-            Image.asset("assets/task.png"),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  customText("Task Type: ", taskElement.category),
-                  customText(
-                      "AssignedTo: ",
-                      taskElement.tblUsers.name +
-                          "\n(${taskElement.tblUsers.designation})"),
-                  customText("Property Owner's Name: \n",
-                      taskElement.propertyOwner.ownerName),
-                  // Row(
-                  //   children: [
-                  //     Container(
-                  //         decoration: BoxDecoration(
-                  //             color: Color(0xff314B8C),
-                  //             borderRadius: BorderRadius.circular(30)),
-                  //         child: Padding(
-                  //           padding: const EdgeInsets.symmetric(
-                  //               vertical: 4.0, horizontal: 10),
-                  //           child: Text(
-                  //             taskElement.startDateTime,
-                  //             style: TextStyle(color: Colors.white),
-                  //           ),
-                  //         )),
-                  //     SizedBox(
-                  //       width: 10,
-                  //     ),
-                  //     Container(
-                  //         decoration: BoxDecoration(
-                  //             color: Color(0xff314B8C),
-                  //             borderRadius: BorderRadius.circular(30)),
-                  //         child: Padding(
-                  //           padding: const EdgeInsets.symmetric(
-                  //               vertical: 4.0, horizontal: 10),
-                  //           child: Text(
-                  //             taskElement.endDateTime,
-                  //             style: TextStyle(color: Colors.white),
-                  //           ),
-                  //         )),
-                  //   ],
-                  // ),
-                ],
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: Colors.grey[200],
+              offset: const Offset(
+                0.0,
+                0.0,
               ),
-            )
-          ],
+              blurRadius: 2.0,
+              spreadRadius: 0.0,
+            ), //BoxShadow
+            BoxShadow(
+              color: Colors.grey,
+              offset: const Offset(0.0, 0.0),
+              blurRadius: 2.5,
+              spreadRadius: 0.0,
+            ),
+          ], color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          height: 160,
+          child: Row(
+            children: [
+              Image.asset("assets/task.png"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    customText("Task Type: ", taskElement.category),
+                    customText(
+                        "AssignedTo: ",
+                        taskElement.tblUsers.name +
+                            "\n(${taskElement.tblUsers.designation})"),
+                    customText("Property Owner's Name: \n",
+                        taskElement.propertyOwner.ownerName),
+                    // Row(
+                    //   children: [
+                    //     Container(
+                    //         decoration: BoxDecoration(
+                    //             color: Color(0xff314B8C),
+                    //             borderRadius: BorderRadius.circular(30)),
+                    //         child: Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               vertical: 4.0, horizontal: 10),
+                    //           child: Text(
+                    //             taskElement.startDateTime,
+                    //             style: TextStyle(color: Colors.white),
+                    //           ),
+                    //         )),
+                    //     SizedBox(
+                    //       width: 10,
+                    //     ),
+                    //     Container(
+                    //         decoration: BoxDecoration(
+                    //             color: Color(0xff314B8C),
+                    //             borderRadius: BorderRadius.circular(30)),
+                    //         child: Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               vertical: 4.0, horizontal: 10),
+                    //           child: Text(
+                    //             taskElement.endDateTime,
+                    //             style: TextStyle(color: Colors.white),
+                    //           ),
+                    //         )),
+                    //   ],
+                    // ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
