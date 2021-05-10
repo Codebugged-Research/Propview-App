@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:propview/services/authService.dart';
-import 'package:propview/views/Home/HomeScreen.dart';
+import 'package:propview/views/Home/homeScreen.dart';
 import 'package:propview/views/Profile/ProfileScreen.dart';
-import 'package:propview/views/TaskManager/TaskManagerHome.dart';
-import 'package:propview/views/loginSceen.dart';
+import 'package:propview/views/TaskManager/taskManagerHome.dart';
 
 class LandingScreen extends StatefulWidget {
+  final int selectedIndex;
+  LandingScreen({this.selectedIndex});
   @override
   _LandingScreenState createState() => _LandingScreenState();
 }
 
 class _LandingScreenState extends State<LandingScreen> {
+  int _selectedIndex = 0;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _selectedIndex = widget.selectedIndex;
   }
 
-  int _selectedIndex = 1;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
