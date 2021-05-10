@@ -1,15 +1,118 @@
 // To parse this JSON data, do
 //
-//     final user = userFromJson(jsonString);
+//     final task = taskFromJson(jsonString);
 
 import 'dart:convert';
 
-User userFromJson(String str) => User.fromJson(json.decode(str));
+import 'PropertyOwner.dart';
 
-String userToJson(User data) => json.encode(data.toJson());
+Task taskFromJson(String str) => Task.fromJson(json.decode(str));
 
-class User {
-  User({
+String taskToJson(Task data) => json.encode(data.toJson());
+
+class Task {
+  Task({
+    this.count,
+    this.data,
+  });
+
+  int count;
+  Data data;
+
+  factory Task.fromJson(Map<String, dynamic> json) => Task(
+    count: json["count"] == null ? null : json["count"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "count": count == null ? null : count,
+    "data": data == null ? null : data.toJson(),
+  };
+}
+
+class Data {
+  Data({
+    this.task,
+  });
+
+  List<TaskElement> task;
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    task: json["task"] == null ? null : List<TaskElement>.from(json["task"].map((x) => TaskElement.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "task": task == null ? null : List<dynamic>.from(task.map((x) => x.toJson())),
+  };
+}
+
+class TaskElement {
+  TaskElement({
+    this.taskId,
+    this.category,
+    this.taskName,
+    this.taskDesc,
+    this.startDateTime,
+    this.assignedTo,
+    this.propertyRef,
+    this.endDateTime,
+    this.taskStatus,
+    this.createdAt,
+    this.updatedAt,
+    this.propertyOwner,
+    this.tblUsers,
+  });
+
+  int taskId;
+  String category;
+  String taskName;
+  String taskDesc;
+  String startDateTime;
+  String assignedTo;
+  String propertyRef;
+  String endDateTime;
+  String taskStatus;
+  String createdAt;
+  String updatedAt;
+  PropertyOwnerElement propertyOwner;
+  TblUsers tblUsers;
+
+  factory TaskElement.fromJson(Map<String, dynamic> json) => TaskElement(
+    taskId: json["task_id"] == null ? null : json["task_id"],
+    category: json["category"] == null ? null : json["category"],
+    taskName: json["task_name"] == null ? null : json["task_name"],
+    taskDesc: json["task_desc"] == null ? null : json["task_desc"],
+    startDateTime: json["start_dateTime"] == null ? null : json["start_dateTime"],
+    assignedTo: json["assigned_to"] == null ? null : json["assigned_to"],
+    propertyRef: json["property_ref"] == null ? null : json["property_ref"],
+    endDateTime: json["end_dateTime"] == null ? null : json["end_dateTime"],
+    taskStatus: json["task_status"] == null ? null : json["task_status"],
+    createdAt: json["created_at"] == null ? null : json["created_at"],
+    updatedAt: json["updated_at"] == null ? null : json["updated_at"],
+    propertyOwner: json["property_owner"] == null ? null : PropertyOwnerElement.fromJson(json["property_owner"]),
+    tblUsers: json["tbl_users"] == null ? null : TblUsers.fromJson(json["tbl_users"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "task_id": taskId == null ? null : taskId,
+    "category": category == null ? null : category,
+    "task_name": taskName == null ? null : taskName,
+    "task_desc": taskDesc == null ? null : taskDesc,
+    "start_dateTime": startDateTime == null ? null : startDateTime,
+    "assigned_to": assignedTo == null ? null : assignedTo,
+    "property_ref": propertyRef == null ? null : propertyRef,
+    "end_dateTime": endDateTime == null ? null : endDateTime,
+    "task_status": taskStatus == null ? null : taskStatus,
+    "created_at": createdAt == null ? null : createdAt,
+    "updated_at": updatedAt == null ? null : updatedAt,
+    "property_owner": propertyOwner == null ? null : propertyOwner.toJson(),
+    "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
+  };
+}
+
+
+class TblUsers {
+  TblUsers({
     this.userId,
     this.parentId,
     this.name,
@@ -67,11 +170,11 @@ class User {
   int status;
   String addedOn;
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory TblUsers.fromJson(Map<String, dynamic> json) => TblUsers(
     userId: json["user_id"] == null ? null : json["user_id"],
     parentId: json["parent_id"] == null ? null : json["parent_id"],
     name: json["name"] == null ? null : json["name"],
-    designation: json["designation"] == null ? null : json["designation"],
+    designation: json["designation"] == null ? "NA" : json["designation"],
     officialEmail: json["official_email"] == null ? null : json["official_email"],
     personalEmail: json["personal_email"] == null ? null : json["personal_email"],
     officialNumber: json["official_number"] == null ? null : json["official_number"],

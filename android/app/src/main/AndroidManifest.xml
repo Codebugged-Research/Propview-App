@@ -2,6 +2,7 @@
     package="com.propdial.propview">
    <application
         android:label="propview"
+       android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
