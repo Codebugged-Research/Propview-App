@@ -16,5 +16,5 @@ class UIConstants {
   //Assets
 
   // Logo
-
+  static const logo = 'assets/login.png';
 }
