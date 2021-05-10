@@ -20,6 +20,19 @@ class TaskService extends AuthService {
     }
   }
 
+  static Future<bool> createTask(payload) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/task/create',
+        body: payload,
+        method: 'POST');
+    if (response.statusCode == 200) {
+      print(response.body);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // ignore: missing_return
   static Future<Task> getAllTask() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
@@ -27,7 +40,7 @@ class TaskService extends AuthService {
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      Task taskList = Task.fromJson(responseMap) ;
+      Task taskList = Task.fromJson(responseMap);
       return taskList;
     } else {
       print("DEBUG");

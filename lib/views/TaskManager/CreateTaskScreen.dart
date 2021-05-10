@@ -1,10 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/PropertyOwner.dart';
+import 'package:propview/models/Task.dart';
 import 'package:propview/models/TaskCategory.dart';
+import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
+import 'package:propview/services/taskServices.dart';
+import 'package:propview/services/userService.dart';
+
+import '../landingPage.dart';
+
+// Approved/NotApproved/Completed/transferred
 
 class CreateTasKScreen extends StatefulWidget {
   const CreateTasKScreen({Key key}) : super(key: key);
@@ -18,6 +28,8 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
   var _selectedTaskCategory;
   List<DropdownMenuItem> _propertyDropdownList = [];
   var _selectedProperty;
+  List<DropdownMenuItem> _userDropdownList = [];
+  var _selectedUser;
 
   TextEditingController _taskDescription = new TextEditingController();
   TextEditingController _taskName = new TextEditingController();
@@ -27,6 +39,7 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
       new TextEditingController(text: DateTime.now().toString());
 
   List<TaskCategory> taskCategories = [];
+  List<User> users = [];
   PropertyOwner propertyOwner;
   bool loading = false;
   void initState() {
@@ -43,7 +56,7 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
       _taskCategoryDropdownList.add(
         DropdownMenuItem(
           child: Text(taskCategories[i].category),
-          value: taskCategories[i].taskCategoryId,
+          value: taskCategories[i].category,
         ),
       );
     }
@@ -61,12 +74,40 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
         ),
       );
     }
+    users = await UserService.getAllUser();
+    for (int i = 0; i < users.length; i++) {
+      _userDropdownList.add(
+        DropdownMenuItem(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                users[i].name,
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+              Text(
+                users[i].designation,
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          value: users[i].userId,
+        ),
+      );
+    }
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       _selectedProperty = _propertyDropdownList[0].value;
+      _selectedUser = _userDropdownList[0].value;
       loading = false;
     });
   }
+
+  bool load = false;
 
   @override
   Widget build(BuildContext context) {
@@ -131,21 +172,24 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
                                   color: Color(0xff314B8C).withOpacity(0.12),
                                 ),
                                 child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                      value: _selectedTaskCategory,
-                                      isExpanded: true,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black),
-                                      icon: Icon(
-                                        Icons.list_alt,
-                                        color: Colors.black,
-                                      ),
-                                      items: _taskCategoryDropdownList,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedTaskCategory = value;
-                                        });
-                                      }),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: DropdownButton(
+                                        value: _selectedTaskCategory,
+                                        isExpanded: true,
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.black),
+                                        icon: Icon(
+                                          Icons.list_alt,
+                                          color: Colors.black,
+                                        ),
+                                        items: _taskCategoryDropdownList,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedTaskCategory = value;
+                                          });
+                                        }),
+                                  ),
                                 ),
                               ),
                             ),
@@ -232,6 +276,7 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
                             Align(
                               alignment: Alignment.topLeft,
                               child: Container(
+                                height: 75,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 4),
                                 decoration: BoxDecoration(
@@ -239,21 +284,24 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
                                   color: Color(0xff314B8C).withOpacity(0.12),
                                 ),
                                 child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                      value: _selectedTaskCategory,
-                                      isExpanded: true,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black),
-                                      icon: Icon(
-                                        Icons.list_alt,
-                                        color: Colors.black,
-                                      ),
-                                      items: _taskCategoryDropdownList,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedTaskCategory = value;
-                                        });
-                                      }),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: DropdownButton(
+                                        value: _selectedUser,
+                                        isExpanded: true,
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.black),
+                                        icon: Icon(
+                                          Icons.list_alt,
+                                          color: Colors.black,
+                                        ),
+                                        items: _userDropdownList,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedUser = value;
+                                          });
+                                        }),
+                                  ),
                                 ),
                               ),
                             ),
@@ -263,21 +311,56 @@ class _CreateTasKScreenState extends State<CreateTasKScreen> {
                       SizedBox(
                         height: 16,
                       ),
-                      MaterialButton(
-                        minWidth: 250,
-                        color: Color(0xff314B8C),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Create Task",
-                            style: GoogleFonts.nunito(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
+                      load
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : MaterialButton(
+                              minWidth: 250,
+                              color: Color(0xff314B8C),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Create Task",
+                                  style: GoogleFonts.nunito(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              onPressed: () async {
+                                setState(() {
+                                  load = true;
+                                });
+                                var payload = jsonEncode({
+                                  "category": _selectedTaskCategory,
+                                  "task_name": _taskName.text,
+                                  "task_desc": _taskDescription.text,
+                                  "task_status": "Approved",
+                                  "start_dateTime": _taskStartDateTime.text,
+                                  "end_dateTime": _taskEndDateTime.text,
+                                  "assigned_to": _selectedUser.toString(),
+                                  "property_ref": _selectedProperty.toString(),
+                                  "created_at": DateTime.now().toString(),
+                                  "updated_at": DateTime.now().toString(),
+                                });
+                                bool response =
+                                    await TaskService.createTask(payload);
+                                setState(() {
+                                  load = false;
+                                });
+                                if (response) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => LandingScreen()));
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Task Creation Failed"),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                     ],
                   ),
                 ),

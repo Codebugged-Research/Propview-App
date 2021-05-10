@@ -250,37 +250,37 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           "\n(${taskElement.tblUsers.designation})"),
                   customText("Property Owner's Name: \n",
                       taskElement.propertyOwner.ownerName),
-                  Row(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              color: Color(0xff314B8C),
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4.0, horizontal: 10),
-                            child: Text(
-                              taskElement.startDateTime,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                          decoration: BoxDecoration(
-                              color: Color(0xff314B8C),
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4.0, horizontal: 10),
-                            child: Text(
-                              taskElement.endDateTime,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Container(
+                  //         decoration: BoxDecoration(
+                  //             color: Color(0xff314B8C),
+                  //             borderRadius: BorderRadius.circular(30)),
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.symmetric(
+                  //               vertical: 4.0, horizontal: 10),
+                  //           child: Text(
+                  //             taskElement.startDateTime,
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //         )),
+                  //     SizedBox(
+                  //       width: 10,
+                  //     ),
+                  //     Container(
+                  //         decoration: BoxDecoration(
+                  //             color: Color(0xff314B8C),
+                  //             borderRadius: BorderRadius.circular(30)),
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.symmetric(
+                  //               vertical: 4.0, horizontal: 10),
+                  //           child: Text(
+                  //             taskElement.endDateTime,
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //         )),
+                  //   ],
+                  // ),
                 ],
               ),
             )
