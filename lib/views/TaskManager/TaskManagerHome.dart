@@ -260,7 +260,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             padding: const EdgeInsets.symmetric(
                                 vertical: 4.0, horizontal: 10),
                             child: Text(
-                              taskElement.startDate,
+                              taskElement.startDateTime,
                               style: TextStyle(color: Colors.white),
                             ),
                           )),
@@ -275,7 +275,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             padding: const EdgeInsets.symmetric(
                                 vertical: 4.0, horizontal: 10),
                             child: Text(
-                              taskElement.endDate,
+                              taskElement.endDateTime,
                               style: TextStyle(color: Colors.white),
                             ),
                           )),
