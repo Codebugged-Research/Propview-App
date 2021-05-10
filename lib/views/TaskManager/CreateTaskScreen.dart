@@ -171,21 +171,24 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 color: Color(0xff314B8C).withOpacity(0.12),
                               ),
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                    value: _selectedTaskCategory,
-                                    isExpanded: true,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                    icon: Icon(
-                                      Icons.list_alt,
-                                      color: Colors.black,
-                                    ),
-                                    items: _taskCategoryDropdownList,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedTaskCategory = value;
-                                      });
-                                    }),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: DropdownButton(
+                                      value: _selectedTaskCategory,
+                                      isExpanded: true,
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                      icon: Icon(
+                                        Icons.list_alt,
+                                        color: Colors.black,
+                                      ),
+                                      items: _taskCategoryDropdownList,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedTaskCategory = value;
+                                        });
+                                      }),
+                                ),
                               ),
                             ),
                           ),
@@ -264,7 +267,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold),
                             ),
-
                           ),
                           SizedBox(
                             height: 8,
@@ -279,21 +281,24 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 color: Color(0xff314B8C).withOpacity(0.12),
                               ),
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                    value: _selectedTaskCategory,
-                                    isExpanded: true,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.black),
-                                    icon: Icon(
-                                      Icons.list_alt,
-                                      color: Colors.black,
-                                    ),
-                                    items: _taskCategoryDropdownList,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedTaskCategory = value;
-                                      });
-                                    }),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: DropdownButton(
+                                      value: _selectedUser,
+                                      isExpanded: true,
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                      icon: Icon(
+                                        Icons.list_alt,
+                                        color: Colors.black,
+                                      ),
+                                      items: _userDropdownList,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedUser = value;
+                                        });
+                                      }),
+                                ),
                               ),
                             ),
                           ),
@@ -312,10 +317,42 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             style:
                                 Theme.of(context).primaryTextTheme.subtitle1),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        setState(() {
+                          load = true;
+                        });
+                        var payload = jsonEncode({
+                          "category": _selectedTaskCategory,
+                          "task_name": _taskName.text,
+                          "task_desc": _taskDescription.text,
+                          "task_status": "Approved",
+                          "start_dateTime": _taskStartDateTime.text,
+                          "end_dateTime": _taskEndDateTime.text,
+                          "assigned_to": _selectedUser.toString(),
+                          "property_ref": _selectedProperty.toString(),
+                          "created_at": DateTime.now().toString(),
+                          "updated_at": DateTime.now().toString(),
+                        });
+                        bool response = await TaskService.createTask(payload);
+                        setState(() {
+                          load = false;
+                        });
+                        if (response) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => LandingScreen(
+                                    selectedIndex: 1,
+                                  )));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Task Creation Failed"),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ],
-   ),
+                ),
               ),
             ),
     );

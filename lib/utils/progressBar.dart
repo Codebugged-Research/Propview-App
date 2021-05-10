@@ -8,7 +8,8 @@ Widget circularProgressWidget() {
       ? Align(
           alignment: Alignment.center,
           child: CircularProgressIndicator(
-              valueColor: new AlwaysStoppedAnimation<Color>(Color(0xff314B8C))),
+            valueColor: new AlwaysStoppedAnimation<Color>(Color(0xff314B8C)),
+          ),
         )
       : CupertinoActivityIndicator(
           animating: true,
