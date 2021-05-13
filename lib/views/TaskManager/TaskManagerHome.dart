@@ -27,6 +27,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   User user;
   bool loading = false;
   Task taskData;
+  List pendingTaskList = [];
+  List completedTaskList = [];
+
 
   getData() async {
     setState(() {
@@ -34,6 +37,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     });
     user = await UserService.getUser();
     taskData = await TaskService.getAllTask();
+    for(int i=0;i<taskData.data.task.length;i++){
+      if(taskData.data.task[i].taskStatus == "Approved"){
+        pendingTaskList.add(taskData.data.task[i]);
+      }else if(taskData.data.task[i].taskStatus == "Completed"){
+        completedTaskList.add(taskData.data.task[i]);
+      }
+    }
     setState(() {
       loading = false;
     });
@@ -163,15 +173,15 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         controller: _tabController,
                         children: <Widget>[
                           ListView.builder(
-                            itemCount: taskData.count,
+                            itemCount: pendingTaskList.length,
                             itemBuilder: (context, index) {
-                              return taskCard(taskData.data.task[index]);
+                              return taskCard(pendingTaskList[index]);
                             },
                           ),
                           ListView.builder(
-                            itemCount: taskData.count,
+                            itemCount: completedTaskList.length,
                             itemBuilder: (context, index) {
-                              return taskCard(taskData.data.task[index]);
+                              return taskCard(completedTaskList[index]);
                             },
                           ),
                         ],
