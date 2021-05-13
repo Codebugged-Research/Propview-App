@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/TaskCategory.dart';
@@ -37,7 +38,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   var _selectedUser;
 
   TextEditingController _taskDescription = new TextEditingController();
+
+  TextEditingController _user = new TextEditingController();
   TextEditingController _propertyOwner = new TextEditingController();
+  TextEditingController _property = new TextEditingController();
   TextEditingController _taskName = new TextEditingController();
   TextEditingController _taskStartDateTime =
       new TextEditingController(text: DateTime.now().toString());
@@ -45,6 +49,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       new TextEditingController(text: DateTime.now().toString());
 
   List<TaskCategory> taskCategories = [];
+  List<PropertyElement> properties = [];
   List<User> users = [];
   PropertyOwner propertyOwner;
   // PropertyOwner propertyOwner;
@@ -82,34 +87,33 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     //   );
     // }
     users = await UserService.getAllUser();
-    for (int i = 0; i < users.length; i++) {
-      _userDropdownList.add(
-        DropdownMenuItem(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                users[i].name,
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-              Text(
-                users[i].designation,
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          value: users[i].userId,
-        ),
-      );
-    }
+    // for (int i = 0; i < users.length; i++) {
+    //   _userDropdownList.add(
+    //     DropdownMenuItem(
+    //       child: Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         children: [
+    //           Text(
+    //             users[i].name,
+    //             style: TextStyle(color: Colors.black, fontSize: 16),
+    //           ),
+    //           Text(
+    //             users[i].designation,
+    //             style: TextStyle(
+    //                 color: Colors.grey,
+    //                 fontSize: 12,
+    //                 fontWeight: FontWeight.bold),
+    //           ),
+    //         ],
+    //       ),
+    //       value: users[i].userId,
+    //     ),
+    //   );
+    // }
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
-      // _selectedProperty = _propertyDropdownList[0].value;
-      _selectedUser = _userDropdownList[0].value;
+      // _selectedUser = _userDropdownList[0].value;
       loading = false;
     });
   }
@@ -276,6 +280,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) async {
+                                  propertySelectBox = false;
                                   this._propertyOwner.text =
                                       suggestion.ownerName.toString();
                                   _selectedPropertyOwner = suggestion.ownerId;
@@ -292,6 +297,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                         context,
                                         "${response.count} property found in database !",
                                         2500);
+                                    setState(() {
+                                      properties.clear();
+                                      properties = response.data.property;
+                                    });
                                     propertySelectBox = true;
                                   }
                                 },
@@ -305,19 +314,23 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    propertySelectBox ? Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Select Property of the Owner: ",
-                        style: GoogleFonts.nunito(
-                            color: Color(0xff314B8C),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ): Container(),
+                    propertySelectBox
+                        ? SizedBox(
+                            height: 8,
+                          )
+                        : Container(),
+                    propertySelectBox
+                        ? Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "Select Property of the Owner: ",
+                              style: GoogleFonts.nunito(
+                                  color: Color(0xff314B8C),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        : Container(),
                     SizedBox(
                       height: 8,
                     ),
@@ -336,24 +349,21 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
-                                  controller: this._propertyOwner,
+                                  controller: this._property,
                                 ),
                                 suggestionsCallback: (pattern) {
-                                  List<PropertyOwnerElement> matches = [];
-                                  matches
-                                      .addAll(propertyOwner.data.propertyOwner);
-                                  matches.retainWhere((s) => s.ownerName
+                                  List<PropertyElement> matches = [];
+                                  matches.addAll(properties);
+                                  matches.retainWhere((s) => s.unitNo
                                       .toLowerCase()
                                       .contains(pattern.toLowerCase()));
                                   return matches;
                                 },
                                 itemBuilder:
-                                    (context, PropertyOwnerElement suggestion) {
+                                    (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.ownerName),
-                                    // subtitle: Text(propertyOwner.data.propertyOwner[i].ownerAddress,overflow: TextOverflow.ellipsis,softWrap: true,),
-                                    leading:
-                                        Text(suggestion.ownerId.toString()),
+                                    title: Text(suggestion.socid.toString()),
+                                    leading: Text(suggestion.unitNo.toString()),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -363,7 +373,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Type to find owners property!',
+                                        'Type to find property!',
                                         style: TextStyle(
                                             color:
                                                 Theme.of(context).disabledColor,
@@ -377,8 +387,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._propertyOwner.text = suggestion.ownerId;
-                                  propertySelectBox = true;
+                                  this._property.text = suggestion.unitNo.toString() + " " + suggestion.socid.toString();
+                                  setState(() {
+                                    _selectedProperty = suggestion.propertyId;
+                                  });
                                 },
                                 validator: (value) => value.isEmpty
                                     ? 'Please select a property'
@@ -387,6 +399,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                             ),
                           )
+                        : Container(),
+                    propertySelectBox
+                        ? SizedBox(
+                      height: 8,
+                    )
                         : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
@@ -416,34 +433,68 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Container(
+                              height: 75,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 4),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 color: Color(0xff314B8C).withOpacity(0.12),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 16.0),
-                                  child: DropdownButton(
-                                      value: _selectedUser,
-                                      isExpanded: true,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black),
-                                      icon: Icon(
-                                        Icons.list_alt,
-                                        color: Colors.black,
-                                      ),
-                                      items: _userDropdownList,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedUser = value;
-                                        });
-                                      }),
+                              child: TypeAheadFormField(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  controller: this._user,
                                 ),
+                                suggestionsCallback: (pattern) {
+                                  List<User> matches = [];
+                                  matches.addAll(users);
+                                  matches.retainWhere((s) => s.name
+                                      .toLowerCase()
+                                      .contains(pattern.toLowerCase()));
+                                  return matches;
+                                },
+                                itemBuilder:
+                                    (context, User user) {
+                                  return ListTile(
+                                    title: Text(user.name),
+                                    subtitle: Text(user.designation),
+                                  );
+                                },
+                                noItemsFoundBuilder: (context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Type to find executive!',
+                                        style: TextStyle(
+                                            color:
+                                            Theme.of(context).disabledColor,
+                                            fontSize: 18.0),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected: (suggestion) {
+                                  this._user.text = suggestion.name.toString() + "\n" + suggestion.designation.toString();
+                                 setState(() {
+                                   _selectedUser = suggestion.userId;
+                                 });
+                                },
+                                validator: (value) => value.isEmpty
+                                    ? 'Please select a property'
+                                    : null,
+                                // onSaved: (value) => this.propertyOwner = value,
                               ),
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
