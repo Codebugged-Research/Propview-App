@@ -262,8 +262,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         "AssignedTo: ",
                         taskElement.tblUsers.name +
                             "\n(${taskElement.tblUsers.designation})"),
-                    customText("Property Owner's Name: \n",
-                        taskElement.propertyOwner.ownerName),
+                    customText("Property Name: \n",
+                        taskElement.property.socid.toString() + " "+taskElement.property.unitNo.toString()),
                     // Row(
                     //   children: [
                     //     Container(

@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'Property.dart';
 import 'PropertyOwner.dart';
 
 Task taskFromJson(String str) => Task.fromJson(json.decode(str));
@@ -59,7 +60,7 @@ class TaskElement {
     this.taskStatus,
     this.createdAt,
     this.updatedAt,
-    this.propertyOwner,
+    this.property,
     this.tblUsers,
   });
 
@@ -74,7 +75,7 @@ class TaskElement {
   String taskStatus;
   String createdAt;
   String updatedAt;
-  PropertyOwnerElement propertyOwner;
+  PropertyElement property;
   TblUsers tblUsers;
 
   factory TaskElement.fromJson(Map<String, dynamic> json) => TaskElement(
@@ -89,7 +90,7 @@ class TaskElement {
     taskStatus: json["task_status"] == null ? null : json["task_status"],
     createdAt: json["created_at"] == null ? null : json["created_at"],
     updatedAt: json["updated_at"] == null ? null : json["updated_at"],
-    propertyOwner: json["property_owner"] == null ? null : PropertyOwnerElement.fromJson(json["property_owner"]),
+    property: json["tableproperty"] == null ? null : PropertyElement.fromJson(json["tableproperty"]),
     tblUsers: json["tbl_users"] == null ? null : TblUsers.fromJson(json["tbl_users"]),
   );
 
@@ -105,7 +106,7 @@ class TaskElement {
     "task_status": taskStatus == null ? null : taskStatus,
     "created_at": createdAt == null ? null : createdAt,
     "updated_at": updatedAt == null ? null : updatedAt,
-    "property_owner": propertyOwner == null ? null : propertyOwner.toJson(),
+    "tableproperty": property == null ? null : property.toJson(),
     "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
   };
 }
