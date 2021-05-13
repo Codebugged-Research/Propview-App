@@ -317,7 +317,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             fontSize: 18,
                             fontWeight: FontWeight.bold),
                       ),
-                    ),
+                    ): Container(),
                     SizedBox(
                       height: 8,
                     ),
