@@ -1,35 +1,49 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
-import 'package:propview/models/Task.dart';
 
 import 'authService.dart';
 
-class PropertyOwnerService extends AuthService {
+class PropertyService extends AuthService {
   // ignore: missing_return
-  static Future<PropertyOwnerElement> getPropertyOwner(String id) async {
+  static Future<PropertyElement> getPropertyById(String id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/propertyOwner/$id',
+        AuthService.BASE_URI + 'api/property/$id',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      PropertyOwnerElement  propertyOwner = PropertyOwnerElement.fromJson(responseMap);
-      return propertyOwner;
+      PropertyElement  property = PropertyElement.fromJson(responseMap);
+      return property;
     } else {
       print("DEBUG");
     }
   }
 
   // ignore: missing_return
-  static Future<PropertyOwner> getAllPropertyOwner() async {
+  static Future<Property> getAllProperties() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/propertyOwner',
+        AuthService.BASE_URI + 'api/properties',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      PropertyOwner propertyOwner = PropertyOwner.fromJson(responseMap);
-      return propertyOwner;
+      Property property = Property.fromJson(responseMap);
+      return property;
+    } else {
+      print("DEBUG");
+    }
+  }
+
+  // ignore: missing_return
+  static Future<Property> getAllPropertiesByOwnerId(id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/property/owner/$id',
+        method: 'GET');
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      Property property = Property.fromJson(responseMap);
+      return property;
     } else {
       print("DEBUG");
     }

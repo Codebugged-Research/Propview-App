@@ -8,10 +8,12 @@ import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/snackBar.dart';
 
 import '../landingPage.dart';
 
@@ -273,11 +275,25 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                     (context, suggestionsBox, controller) {
                                   return suggestionsBox;
                                 },
-                                onSuggestionSelected: (suggestion) {
+                                onSuggestionSelected: (suggestion) async {
                                   this._propertyOwner.text =
                                       suggestion.ownerName.toString();
                                   _selectedPropertyOwner = suggestion.ownerId;
-                                  propertySelectBox = true;
+                                  var response = await PropertyService
+                                      .getAllPropertiesByOwnerId(
+                                          _selectedPropertyOwner);
+                                  if (response == null) {
+                                    showInSnackBar(
+                                        context,
+                                        "No property found in database !",
+                                        2500);
+                                  } else {
+                                    showInSnackBar(
+                                        context,
+                                        "${response.count} property found in database !",
+                                        2500);
+                                    propertySelectBox = true;
+                                  }
                                 },
                                 validator: (value) => value.isEmpty
                                     ? 'Please select an Owner Name'
@@ -292,7 +308,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     SizedBox(
                       height: 8,
                     ),
-                    Align(
+                    propertySelectBox ? Align(
                       alignment: Alignment.topLeft,
                       child: Text(
                         "Select Property of the Owner: ",
@@ -305,73 +321,73 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     SizedBox(
                       height: 8,
                     ),
-                    // propertySelectBox
-                    //     ? Align(
-                    //         alignment: Alignment.topLeft,
-                    //         child: Container(
-                    //           padding: EdgeInsets.symmetric(
-                    //               horizontal: 12, vertical: 4),
-                    //           decoration: BoxDecoration(
-                    //             borderRadius: BorderRadius.circular(12),
-                    //             color: Color(0xff314B8C).withOpacity(0.12),
-                    //           ),
-                    //           child: TypeAheadFormField(
-                    //             textFieldConfiguration: TextFieldConfiguration(
-                    //               decoration: InputDecoration(
-                    //                 border: InputBorder.none,
-                    //               ),
-                    //               controller: this._propertyOwner,
-                    //             ),
-                    //             suggestionsCallback: (pattern) {
-                    //               List<PropertyOwnerElement> matches = [];
-                    //               matches
-                    //                   .addAll(propertyOwner.data.propertyOwner);
-                    //               matches.retainWhere((s) => s.ownerName
-                    //                   .toLowerCase()
-                    //                   .contains(pattern.toLowerCase()));
-                    //               return matches;
-                    //             },
-                    //             itemBuilder:
-                    //                 (context, PropertyOwnerElement suggestion) {
-                    //               return ListTile(
-                    //                 title: Text(suggestion.ownerName),
-                    //                 // subtitle: Text(propertyOwner.data.propertyOwner[i].ownerAddress,overflow: TextOverflow.ellipsis,softWrap: true,),
-                    //                 leading:
-                    //                     Text(suggestion.ownerId.toString()),
-                    //               );
-                    //             },
-                    //             noItemsFoundBuilder: (context) {
-                    //               return Padding(
-                    //                 padding: const EdgeInsets.symmetric(
-                    //                     vertical: 8.0),
-                    //                 child: Align(
-                    //                   alignment: Alignment.center,
-                    //                   child: Text(
-                    //                     'Type to find owners property!',
-                    //                     style: TextStyle(
-                    //                         color:
-                    //                             Theme.of(context).disabledColor,
-                    //                         fontSize: 18.0),
-                    //                   ),
-                    //                 ),
-                    //               );
-                    //             },
-                    //             transitionBuilder:
-                    //                 (context, suggestionsBox, controller) {
-                    //               return suggestionsBox;
-                    //             },
-                    //             onSuggestionSelected: (suggestion) {
-                    //               this._propertyOwner.text = suggestion.ownerId;
-                    //               propertySelectBox = true;
-                    //             },
-                    //             validator: (value) => value.isEmpty
-                    //                 ? 'Please select a property'
-                    //                 : null,
-                    //             // onSaved: (value) => this.propertyOwner = value,
-                    //           ),
-                    //         ),
-                    //       )
-                    //     : Container(),
+                    propertySelectBox
+                        ? Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color(0xff314B8C).withOpacity(0.12),
+                              ),
+                              child: TypeAheadFormField(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  controller: this._propertyOwner,
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  List<PropertyOwnerElement> matches = [];
+                                  matches
+                                      .addAll(propertyOwner.data.propertyOwner);
+                                  matches.retainWhere((s) => s.ownerName
+                                      .toLowerCase()
+                                      .contains(pattern.toLowerCase()));
+                                  return matches;
+                                },
+                                itemBuilder:
+                                    (context, PropertyOwnerElement suggestion) {
+                                  return ListTile(
+                                    title: Text(suggestion.ownerName),
+                                    // subtitle: Text(propertyOwner.data.propertyOwner[i].ownerAddress,overflow: TextOverflow.ellipsis,softWrap: true,),
+                                    leading:
+                                        Text(suggestion.ownerId.toString()),
+                                  );
+                                },
+                                noItemsFoundBuilder: (context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Type to find owners property!',
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).disabledColor,
+                                            fontSize: 18.0),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected: (suggestion) {
+                                  this._propertyOwner.text = suggestion.ownerId;
+                                  propertySelectBox = true;
+                                },
+                                validator: (value) => value.isEmpty
+                                    ? 'Please select a property'
+                                    : null,
+                                // onSaved: (value) => this.propertyOwner = value,
+                              ),
+                            ),
+                          )
+                        : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
                     inputDateTime(
