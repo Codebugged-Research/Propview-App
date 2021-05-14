@@ -8,6 +8,7 @@ import 'package:propview/views/Notification/notificationScreen.dart';
 import 'package:propview/views/TaskManager/createTaskScreen.dart';
 
 import '../../utils/progressBar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'TaskDetailScreen.dart';
 
 class TaskMangerHome extends StatefulWidget {
@@ -23,6 +24,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
   }
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
 
   User user;
   bool loading = false;
@@ -37,6 +40,19 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     });
     user = await UserService.getUser();
     taskData = await TaskService.getAllTask();
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+    String token = await messaging.getToken();
+    print(token);
     for(int i=0;i<taskData.data.task.length;i++){
       if(taskData.data.task[i].taskStatus == "Approved"){
         pendingTaskList.add(taskData.data.task[i]);
@@ -55,6 +71,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

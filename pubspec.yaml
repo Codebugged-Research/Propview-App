@@ -24,6 +24,8 @@ dependencies:
   google_nav_bar: ^5.0.5
   fl_chart:
   flutter_datetime_picker: ^1.5.1
+  firebase_core: ^1.1.1
+  firebase_messaging: ^9.1.4
 
 dev_dependencies:
   flutter_test:

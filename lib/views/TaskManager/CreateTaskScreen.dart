@@ -124,6 +124,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: loading
           ? circularProgressWidget()
           : SingleChildScrollView(

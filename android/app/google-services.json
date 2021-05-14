@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "964705230961",
+    "project_id": "propview-1fe6c",
+    "storage_bucket": "propview-1fe6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964705230961:android:438420c5530cb52b0cfbd0",
+        "android_client_info": {
+          "package_name": "com.propdial.propview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964705230961-mavsrc75ng3q1qdn94bd880i1bjlk0rk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVjbKzJhknszSQS7W6HEvRMEqtV6vMrU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964705230961-mavsrc75ng3q1qdn94bd880i1bjlk0rk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
