@@ -6,7 +6,6 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
-import 'package:propview/models/Task.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyOwnerService.dart';
@@ -16,11 +15,11 @@ import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/snackBar.dart';
 
-import '../landingPage.dart';
+import 'package:propview/views/landingPage.dart';
 
 // Approved/NotApproved/Completed/transferred
 
-import '../../utils/progressBar.dart';
+import 'package:propview/utils/progressBar.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({Key key}) : super(key: key);
@@ -388,7 +387,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._property.text = suggestion.unitNo.toString() + " " + suggestion.socid.toString();
+                                  this._property.text =
+                                      suggestion.unitNo.toString() +
+                                          " " +
+                                          suggestion.socid.toString();
                                   setState(() {
                                     _selectedProperty = suggestion.propertyId;
                                   });
@@ -403,8 +405,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         : Container(),
                     propertySelectBox
                         ? SizedBox(
-                      height: 8,
-                    )
+                            height: 8,
+                          )
                         : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
@@ -456,8 +458,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                       .contains(pattern.toLowerCase()));
                                   return matches;
                                 },
-                                itemBuilder:
-                                    (context, User user) {
+                                itemBuilder: (context, User user) {
                                   return ListTile(
                                     title: Text(user.name),
                                     subtitle: Text(user.designation),
@@ -473,7 +474,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                         'Type to find executive!',
                                         style: TextStyle(
                                             color:
-                                            Theme.of(context).disabledColor,
+                                                Theme.of(context).disabledColor,
                                             fontSize: 18.0),
                                       ),
                                     ),
@@ -484,10 +485,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._user.text = suggestion.name.toString() + "\n" + suggestion.designation.toString();
-                                 setState(() {
-                                   _selectedUser = suggestion.userId;
-                                 });
+                                  this._user.text = suggestion.name.toString() +
+                                      "\n" +
+                                      suggestion.designation.toString();
+                                  setState(() {
+                                    _selectedUser = suggestion.userId;
+                                  });
                                 },
                                 validator: (value) => value.isEmpty
                                     ? 'Please select a property'
@@ -506,7 +509,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       minWidth: 250,
                       color: Color(0xff314B8C),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(12.0),
                         child: Text("Create Task",
                             style:
                                 Theme.of(context).primaryTextTheme.subtitle1),

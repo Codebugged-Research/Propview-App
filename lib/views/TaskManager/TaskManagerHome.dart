@@ -1,14 +1,16 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Notification/notificationScreen.dart';
 import 'package:propview/views/TaskManager/createTaskScreen.dart';
+import 'package:propview/widgets/taskCard.dart';
 
-import '../../utils/progressBar.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'TaskDetailScreen.dart';
 
 class TaskMangerHome extends StatefulWidget {
@@ -24,15 +26,14 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
   }
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   User user;
   bool loading = false;
   Task taskData;
   List pendingTaskList = [];
   List completedTaskList = [];
-
 
   getData() async {
     setState(() {
@@ -53,10 +54,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     print('User granted permission: ${settings.authorizationStatus}');
     String token = await messaging.getToken();
     print(token);
-    for(int i=0;i<taskData.data.task.length;i++){
-      if(taskData.data.task[i].taskStatus == "Approved"){
+    for (int i = 0; i < taskData.data.task.length; i++) {
+      if (taskData.data.task[i].taskStatus == "Approved") {
         pendingTaskList.add(taskData.data.task[i]);
-      }else if(taskData.data.task[i].taskStatus == "Completed"){
+      } else if (taskData.data.task[i].taskStatus == "Completed") {
         completedTaskList.add(taskData.data.task[i]);
       }
     }
@@ -192,13 +193,15 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           ListView.builder(
                             itemCount: pendingTaskList.length,
                             itemBuilder: (context, index) {
-                              return taskCard(pendingTaskList[index]);
+                              return TaskCard(
+                                  taskElement: pendingTaskList[index]);
                             },
                           ),
                           ListView.builder(
                             itemCount: completedTaskList.length,
                             itemBuilder: (context, index) {
-                              return taskCard(completedTaskList[index]);
+                              return TaskCard(
+                                  taskElement: completedTaskList[index]);
                             },
                           ),
                         ],
@@ -209,116 +212,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                 ],
               ),
             ),
-    );
-  }
-
-  taskCard(TaskElement taskElement) {
-    customText(label, data) {
-      return RichText(
-        text: TextSpan(
-          text: label,
-          style: GoogleFonts.nunito(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-          children: <TextSpan>[
-            TextSpan(
-              text: data,
-              style: GoogleFonts.nunito(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.normal,
-              ),
-            )
-          ],
-        ),
-      );
-    }
-
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => TaskDetailScreen(
-            taskElement: taskElement,
-          ),
-        ));
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 12),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: const Offset(0.0, 0.0),
-                  blurRadius: 2.5,
-                  spreadRadius: 0.0,
-                ),
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: const Offset(0.0, 0.0),
-                  blurRadius: 2.5,
-                  spreadRadius: 0.0,
-                ),
-              ]),
-          height: 160,
-          child: Row(
-            children: [
-              Image.asset("assets/task.png"),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    customText("Task Type: ", taskElement.category),
-                    customText(
-                        "AssignedTo: ",
-                        taskElement.tblUsers.name +
-                            "\n(${taskElement.tblUsers.designation})"),
-                    customText("Property Name: \n",
-                        taskElement.property.socid.toString() + " "+taskElement.property.unitNo.toString()),
-                    // Row(
-                    //   children: [
-                    //     Container(
-                    //         decoration: BoxDecoration(
-                    //             color: Color(0xff314B8C),
-                    //             borderRadius: BorderRadius.circular(30)),
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.symmetric(
-                    //               vertical: 4.0, horizontal: 10),
-                    //           child: Text(
-                    //             taskElement.startDateTime,
-                    //             style: TextStyle(color: Colors.white),
-                    //           ),
-                    //         )),
-                    //     SizedBox(
-                    //       width: 10,
-                    //     ),
-                    //     Container(
-                    //         decoration: BoxDecoration(
-                    //             color: Color(0xff314B8C),
-                    //             borderRadius: BorderRadius.circular(30)),
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.symmetric(
-                    //               vertical: 4.0, horizontal: 10),
-                    //           child: Text(
-                    //             taskElement.endDateTime,
-                    //             style: TextStyle(color: Colors.white),
-                    //           ),
-                    //         )),
-                    //   ],
-                    // ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

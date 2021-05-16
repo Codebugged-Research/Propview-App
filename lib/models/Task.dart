@@ -5,7 +5,6 @@
 import 'dart:convert';
 
 import 'Property.dart';
-import 'PropertyOwner.dart';
 
 Task taskFromJson(String str) => Task.fromJson(json.decode(str));
 
