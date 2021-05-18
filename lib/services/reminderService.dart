@@ -115,7 +115,7 @@ class ReminderService extends ChangeNotifier {
 
   DateTime determineScheduledTime() {
     DateTime currentDateTime = DateTime.now();
-    DateTime scheduledDateTime = currentDateTime.add(Duration(seconds: 15));
+    DateTime scheduledDateTime = currentDateTime.add(Duration(seconds: -15));
     return scheduledDateTime;
   }
 }

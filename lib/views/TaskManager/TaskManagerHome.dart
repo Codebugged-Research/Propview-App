@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/NotificationService.dart';
+import 'package:propview/services/reminderService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
@@ -41,19 +43,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     });
     user = await UserService.getUser();
     taskData = await TaskService.getAllTask();
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    print('User granted permission: ${settings.authorizationStatus}');
-    String token = await messaging.getToken();
-    print(token);
     for (int i = 0; i < taskData.data.task.length; i++) {
       if (taskData.data.task[i].taskStatus == "Approved") {
         pendingTaskList.add(taskData.data.task[i]);
@@ -105,40 +94,84 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      trailing: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => NotificationScreen()));
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey[200],
-                                  offset: const Offset(
-                                    0.0,
-                                    0.0,
-                                  ),
-                                  blurRadius: 4.0,
-                                  spreadRadius: 0.0,
-                                ), //BoxShadow
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  offset: const Offset(0.0, 0.0),
-                                  blurRadius: 4.0,
-                                  spreadRadius: 0.0,
-                                ),
-                              ]),
-                          child: Icon(
-                            Icons.notifications_none_outlined,
-                            color: Color(0xff314B8C),
-                            size: 32,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          InkWell(
+                            onTap: () async{
+                              await NotificationService.sendPushToSelf("title", "message");
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => NotificationScreen()));
+
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[200],
+                                      offset: const Offset(
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ), //BoxShadow
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: const Offset(0.0, 0.0),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ),
+                                  ]),
+                              child: Icon(
+                                Icons.notifications_none_outlined,
+                                color: Color(0xff314B8C),
+                                size: 24,
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(width: 16,),
+                          InkWell(
+                            onTap: () {
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => NotificationScreen()));
+
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[200],
+                                      offset: const Offset(
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ), //BoxShadow
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: const Offset(0.0, 0.0),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ),
+                                  ]),
+                              child: Icon(
+                                Icons.calendar_today_outlined,
+                                color: Color(0xff314B8C),
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

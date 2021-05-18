@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/services/NotificationService.dart';
 import 'package:propview/services/authService.dart';
 import 'package:propview/views/landingPage.dart';
 
@@ -24,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final formkey = new GlobalKey<FormState>();
 
   TextEditingController emailController = TextEditingController();
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   TextEditingController passwordController = TextEditingController();
 
   @override
@@ -62,8 +65,28 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         bool isAuthenticated = await AuthService.authenticate(email, password);
         if (isAuthenticated) {
-          Routing.makeRouting(context,
-              routeMethod: 'pushReplacement', newWidget: LandingScreen(selectedIndex: 0));
+          NotificationSettings settings = await messaging.requestPermission(
+            alert: true,
+            announcement: false,
+            badge: true,
+            carPlay: false,
+            criticalAlert: false,
+            provisional: false,
+            sound: true,
+          );
+          if (settings.authorizationStatus.toString() == "AuthorizationStatus.authorized") {
+            showInSnackBar(context, 'Logged In Successfully !!', 2500);
+            var id = await NotificationService.genTokenID();
+            await NotificationService.sendPushToOne(
+                "Welcome", "You are successfully logged in into PropView", id);
+
+            Routing.makeRouting(context,
+                routeMethod: 'pushReplacement',
+                newWidget: LandingScreen(selectedIndex: 0));
+          } else {
+            showInSnackBar(context, 'Check notification settings', 2500);
+            AuthService.clearAuth();
+          }
         } else {
           showInSnackBar(context, 'Authentication Denied!', 2500);
         }
@@ -154,12 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onPressed: () async {
         await login();
       },
-      child: Text(
-        "Login",
-        style: Theme.of(context)
-            .primaryTextTheme
-            .subtitle1
-      ),
+      child: Text("Login", style: Theme.of(context).primaryTextTheme.subtitle1),
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:propview/views/Home/homeScreen.dart';
@@ -19,8 +20,8 @@ class _LandingScreenState extends State<LandingScreen> {
     _selectedIndex = widget.selectedIndex;
   }
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+  // static const TextStyle optionStyle =
+  //     TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     TaskMangerHome(),
