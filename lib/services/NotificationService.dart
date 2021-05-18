@@ -19,7 +19,12 @@ class NotificationService {
       String title, String message, deviceToken) async {
     final Map<String, String> headers = {"Content-Type": "application/json"};
     var body = jsonEncode(
-      {"title": title, "message": message, "deviceToken": deviceToken,"data": {"name": "sambit"} },
+      {
+        "title": title,
+        "message": message,
+        "deviceToken": deviceToken,
+        "data": {"name": "sambit"}
+      },
     );
     http.Response response = await http.post(
         Uri.parse("http://68.183.247.233/api/notification/one"),
@@ -37,7 +42,15 @@ class NotificationService {
     var deviceToken = pref.getString("deviceToken");
     final Map<String, String> headers = {"Content-Type": "application/json"};
     var body = jsonEncode(
-      {"title": title, "message": message, "deviceToken": deviceToken,"data": {"name": "sambit"}},
+      {
+        "title": title,
+        "message": message,
+        "deviceToken": deviceToken,
+        "data": {
+          "startTime": DateTime.now().toString(),
+          "endTime": DateTime.now().add(Duration(seconds: 10)).toString()
+        }
+      },
     );
     http.Response response = await http.post(
         Uri.parse("http://68.183.247.233/api/notification/one"),
@@ -49,6 +62,5 @@ class NotificationService {
     } else {
       return response.body;
     }
-
   }
 }

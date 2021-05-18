@@ -3,20 +3,22 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:propview/notification_test.dart';
 import 'package:provider/provider.dart';
 
 import 'package:propview/services/reminderService.dart';
-import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/theme.dart';
 import 'package:propview/views/splashScreen.dart';
+
+import 'services/reminderService.dart';
+import 'services/reminderService.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   //TODO:alert dialog box
 
   if (message.notification != null) {
-    print('background Message also contained a notification: ${message.notification}');
+    print(
+        'background Message also contained a notification: ${message.notification}');
   }
 
   if (message.data != null) {
@@ -33,15 +35,15 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
 );
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
-void main()async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -61,6 +63,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    ReminderService reminderService;
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       //TODO:alert dialog box
       print('Got a message whilst in the foreground!');
@@ -68,6 +71,7 @@ class _MyAppState extends State<MyApp> {
       if (message.data != null) {
         //TODO:trigger schedule
         print('Message also contained a notification: ${message.notification}');
+        reminderService.sheduledNotification(message.data['startTime'], message.data['endTime']);
       }
     });
     print("initited");
@@ -83,7 +87,7 @@ class _MyAppState extends State<MyApp> {
     ]);
 
     return MultiProvider(
-        child:  MaterialApp(
+        child: MaterialApp(
           title: 'Propview',
           debugShowCheckedModeBanner: false,
           theme: ThemeClass.buildTheme(context),

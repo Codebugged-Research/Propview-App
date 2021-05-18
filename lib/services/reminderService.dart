@@ -82,8 +82,11 @@ class ReminderService extends ChangeNotifier {
 
   //Sheduled Notification
 
-  Future sheduledNotification() async {
-    var scheduledNotificationDateTime = determineScheduledTime();
+  Future sheduledNotification(String startTime, String endTime) async {
+    var scheduledNotificationStartTime =
+        determineScheduledTime(startTime);
+        var scheduledNotificationEndTime =
+        determineScheduledTime(endTime);
     var bigPicture = BigPictureStyleInformation(
         DrawableResourceAndroidBitmap("logo"),
         largeIcon: DrawableResourceAndroidBitmap("logo"),
@@ -101,9 +104,16 @@ class ReminderService extends ChangeNotifier {
 
     await _flutterLocalNotificationsPlugin.schedule(
         0,
-        "Package  is ready for pickup.",
-        "Reach  to pick up",
-        scheduledNotificationDateTime,
+        "Scheduled Task",
+        "Your scehduled task will about to start within 15 minutes",
+        scheduledNotificationStartTime,
+        platform);
+
+     await _flutterLocalNotificationsPlugin.schedule(
+        0,
+        "Scheduled Task",
+        "Your scehduled task will about to end within 15 minutes",
+        scheduledNotificationEndTime,
         platform);
   }
 
@@ -113,9 +123,9 @@ class ReminderService extends ChangeNotifier {
     await _flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  DateTime determineScheduledTime() {
-    DateTime currentDateTime = DateTime.now();
-    DateTime scheduledDateTime = currentDateTime.add(Duration(seconds: -15));
-    return scheduledDateTime;
+  DateTime determineScheduledTime(String time) {
+    DateTime start = DateTime.parse(time);
+    DateTime scheduledTime = start.subtract(Duration(minutes: 15));
+    return scheduledTime;
   }
 }
