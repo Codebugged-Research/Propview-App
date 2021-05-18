@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'Property.dart';
+import 'PropertyOwner.dart';
 
 Task taskFromJson(String str) => Task.fromJson(json.decode(str));
 
@@ -45,7 +46,6 @@ class Data {
     "task": task == null ? null : List<dynamic>.from(task.map((x) => x.toJson())),
   };
 }
-
 class TaskElement {
   TaskElement({
     this.taskId,
@@ -59,6 +59,8 @@ class TaskElement {
     this.taskStatus,
     this.createdAt,
     this.updatedAt,
+    this.propertyOwnerRef,
+    this.propertyOwner,
     this.property,
     this.tblUsers,
   });
@@ -67,13 +69,15 @@ class TaskElement {
   String category;
   String taskName;
   String taskDesc;
-  String startDateTime;
+  DateTime startDateTime;
   String assignedTo;
   String propertyRef;
-  String endDateTime;
+  DateTime endDateTime;
   String taskStatus;
-  String createdAt;
-  String updatedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
+  String propertyOwnerRef;
+  PropertyOwner propertyOwner;
   PropertyElement property;
   TblUsers tblUsers;
 
@@ -82,13 +86,15 @@ class TaskElement {
     category: json["category"] == null ? null : json["category"],
     taskName: json["task_name"] == null ? null : json["task_name"],
     taskDesc: json["task_desc"] == null ? null : json["task_desc"],
-    startDateTime: json["start_dateTime"] == null ? null : json["start_dateTime"],
+    startDateTime: json["start_dateTime"] == null ? null : DateTime.parse(json["start_dateTime"]),
     assignedTo: json["assigned_to"] == null ? null : json["assigned_to"],
     propertyRef: json["property_ref"] == null ? null : json["property_ref"],
-    endDateTime: json["end_dateTime"] == null ? null : json["end_dateTime"],
+    endDateTime: json["end_dateTime"] == null ? null : DateTime.parse(json["end_dateTime"]),
     taskStatus: json["task_status"] == null ? null : json["task_status"],
-    createdAt: json["created_at"] == null ? null : json["created_at"],
-    updatedAt: json["updated_at"] == null ? null : json["updated_at"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    propertyOwnerRef: json["property_owner_ref"] == null ? null : json["property_owner_ref"],
+    propertyOwner: json["property_owner"] == null ? null : PropertyOwner.fromJson(json["property_owner"]),
     property: json["tableproperty"] == null ? null : PropertyElement.fromJson(json["tableproperty"]),
     tblUsers: json["tbl_users"] == null ? null : TblUsers.fromJson(json["tbl_users"]),
   );
@@ -98,13 +104,15 @@ class TaskElement {
     "category": category == null ? null : category,
     "task_name": taskName == null ? null : taskName,
     "task_desc": taskDesc == null ? null : taskDesc,
-    "start_dateTime": startDateTime == null ? null : startDateTime,
+    "start_dateTime": startDateTime == null ? null : startDateTime.toIso8601String(),
     "assigned_to": assignedTo == null ? null : assignedTo,
     "property_ref": propertyRef == null ? null : propertyRef,
-    "end_dateTime": endDateTime == null ? null : endDateTime,
+    "end_dateTime": endDateTime == null ? null : endDateTime.toIso8601String(),
     "task_status": taskStatus == null ? null : taskStatus,
-    "created_at": createdAt == null ? null : createdAt,
-    "updated_at": updatedAt == null ? null : updatedAt,
+    "created_at": createdAt == null ? null : createdAt.toIso8601String(),
+    "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
+    "property_owner_ref": propertyOwnerRef == null ? null : propertyOwnerRef,
+    "property_owner": propertyOwner == null ? null : propertyOwner.toJson(),
     "tableproperty": property == null ? null : property.toJson(),
     "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
   };
