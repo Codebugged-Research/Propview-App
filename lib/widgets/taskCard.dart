@@ -119,7 +119,15 @@ class TaskCard extends StatelessWidget {
                           endIndent: 100,
                         )),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Task ID: ', '${taskElement.taskId}'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        titleWidget(
+                            context, 'Task ID: ', '${taskElement.taskId}'),
+                        titleWidget(context, 'Task Status: ',
+                            '${taskElement.taskStatus}'),
+                      ],
+                    ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(
                         context, 'Task Category: ', '${taskElement.category}'),
@@ -137,13 +145,16 @@ class TaskCard extends StatelessWidget {
                         '${taskElement.endDateTime}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Assigned-to: ',
-                        '${taskElement.assignedTo}'),
+                        '${taskElement.tblUsers.name} [${taskElement.tblUsers.designation}]'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(
-                        context, 'Task Status: ', '${taskElement.taskStatus}'),
+                    titleWidget(context, 'Property Name: ',
+                        '${taskElement.property.socid} + ${taskElement.property.unitNo}'),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    titleWidget(context, 'Property Address: ',
+                        '${taskElement.property.propertyDetail}'),
                   ],
                 ),
-              ),
+              ), 
             ));
   }
 

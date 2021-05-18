@@ -32,7 +32,7 @@ class _NotificationTestState extends State<NotificationTest> {
             onPressed: () => model.stylishNotification(),
             child: Text('Media Notification')),
         ElevatedButton(
-            onPressed: () => model.sheduledNotification(),
+            onPressed: () => model.sheduledNotification('12', '12'),
             child: Text('Scheduled Notification')),
         ElevatedButton(
             onPressed: () => model.cancelNotification(),

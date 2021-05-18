@@ -4,16 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
-import 'package:propview/services/NotificationService.dart';
-import 'package:propview/services/reminderService.dart';
+import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Notification/notificationScreen.dart';
 import 'package:propview/views/TaskManager/createTaskScreen.dart';
 import 'package:propview/widgets/taskCard.dart';
 
-import 'TaskDetailScreen.dart';
 
 class TaskMangerHome extends StatefulWidget {
   @override
