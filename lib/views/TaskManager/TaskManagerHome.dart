@@ -8,6 +8,7 @@ import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/TaskManager/createTaskScreen.dart';
 import 'package:propview/widgets/taskCard.dart';
 
@@ -134,8 +135,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           SizedBox(width: 16,),
                           InkWell(
                             onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => NotificationScreen()));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => CalenderScreen(taskList: pendingTaskList,)));
 
                             },
                             child: Container(

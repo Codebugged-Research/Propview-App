@@ -1,11 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
+import 'package:propview/services/taskServices.dart';
 
-class TaskCard extends StatelessWidget {
+class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
-  TaskCard({this.taskElement});
+  final Function refresh;
+  TaskCard({this.taskElement, this.refresh});
+
+  @override
+  _TaskCardState createState() => _TaskCardState();
+}
+
+class _TaskCardState extends State<TaskCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -42,18 +52,19 @@ class TaskCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    textWidget(context, "Task Type: ", taskElement.category),
+                    textWidget(
+                        context, "Task Type: ", widget.taskElement.category),
                     textWidget(
                         context,
                         "AssignedTo: ",
-                        taskElement.tblUsers.name +
-                            "\n(${taskElement.tblUsers.designation})"),
+                        widget.taskElement.tblUsers.name +
+                            "\n(${widget.taskElement.tblUsers.designation})"),
                     textWidget(
                         context,
                         "Property Name: \n",
-                        taskElement.property.socid.toString() +
+                        widget.taskElement.property.socid.toString() +
                             " " +
-                            taskElement.property.unitNo.toString()),
+                            widget.taskElement.property.unitNo.toString()),
                   ],
                 ),
               )
@@ -122,39 +133,126 @@ class TaskCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        titleWidget(
-                            context, 'Task ID: ', '${taskElement.taskId}'),
+                        titleWidget(context, 'Task ID: ',
+                            '${widget.taskElement.taskId}'),
                         titleWidget(context, 'Task Status: ',
-                            '${taskElement.taskStatus}'),
+                            '${widget.taskElement.taskStatus}'),
                       ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(
-                        context, 'Task Category: ', '${taskElement.category}'),
+                    titleWidget(context, 'Task Category: ',
+                        '${widget.taskElement.category}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(
-                        context, 'Task name: ', '${taskElement.taskName}'),
+                    titleWidget(context, 'Task name: ',
+                        '${widget.taskElement.taskName}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Description: ',
-                        '${taskElement.taskDesc}'),
+                        '${widget.taskElement.taskDesc}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Start Time: ',
-                        '${taskElement.startDateTime}'),
+                        '${widget.taskElement.startDateTime}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task End Time: ',
-                        '${taskElement.endDateTime}'),
+                        '${widget.taskElement.endDateTime}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Assigned-to: ',
-                        '${taskElement.tblUsers.name} [${taskElement.tblUsers.designation}]'),
+                        '${widget.taskElement.tblUsers.name} [${widget.taskElement.tblUsers.designation}]'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Property Name: ',
-                        '${taskElement.property.socid} + ${taskElement.property.unitNo}'),
+                        '${widget.taskElement.property.socid}  ${widget.taskElement.property.unitNo}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Property Address: ',
-                        '${taskElement.property.propertyDetail}'),
+                        '${widget.taskElement.propertyOwner.ownerAddress}'),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    widget.taskElement.taskStatus != "Completed"
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: MaterialButton(
+                              child: Text(
+                                "Complete Task",
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle2
+                                    .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600),
+                              ),
+                              color: Color(0xff314B8C),
+                              onPressed: () async {
+                                await showDialog(
+                                  builder: (context) => AlertDialog(
+                                    title: Text(
+                                      "Alert !",
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .headline5
+                                          .copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    content: Text(
+                                      "Do you want to submit your task ?",
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle1
+                                          .copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    actions: [
+                                      MaterialButton(
+                                        onPressed: () async {
+                                          setState(() {
+                                            widget.taskElement.taskStatus =
+                                                "Completed";
+                                          });
+                                          print(jsonEncode(
+                                              widget.taskElement.toJson()));
+                                          var response =
+                                              await TaskService.updateTask(
+                                                  widget.taskElement.taskId,
+                                                  jsonEncode(widget.taskElement
+                                                      .toJson()));
+                                          print(response);
+                                          Navigator.of(context).pop();
+
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          "Yes",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .subtitle2
+                                              .copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      MaterialButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          "No",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .subtitle2
+                                              .copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  context: context,
+                                );
+                              },
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
-              ), 
+              ),
             ));
   }
 

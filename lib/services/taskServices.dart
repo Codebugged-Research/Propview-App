@@ -33,6 +33,19 @@ class TaskService extends AuthService {
     }
   }
 
+  static Future<bool> updateTask(id,payload) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/task/update/$id',
+        body: payload,
+        method: 'PUT');
+    if (response.statusCode == 200) {
+      print(response.body);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // ignore: missing_return
   static Future<Task> getAllTask() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(

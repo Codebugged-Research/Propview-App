@@ -77,7 +77,7 @@ class TaskElement {
   DateTime createdAt;
   DateTime updatedAt;
   String propertyOwnerRef;
-  PropertyOwner propertyOwner;
+  PropertyOwnerElement propertyOwner;
   PropertyElement property;
   TblUsers tblUsers;
 
@@ -94,7 +94,7 @@ class TaskElement {
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     propertyOwnerRef: json["property_owner_ref"] == null ? null : json["property_owner_ref"],
-    propertyOwner: json["property_owner"] == null ? null : PropertyOwner.fromJson(json["property_owner"]),
+    propertyOwner: json["property_owner"] == null ? null : PropertyOwnerElement.fromJson(json["property_owner"]),
     property: json["tableproperty"] == null ? null : PropertyElement.fromJson(json["tableproperty"]),
     tblUsers: json["tbl_users"] == null ? null : TblUsers.fromJson(json["tbl_users"]),
   );
@@ -112,9 +112,9 @@ class TaskElement {
     "created_at": createdAt == null ? null : createdAt.toIso8601String(),
     "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
     "property_owner_ref": propertyOwnerRef == null ? null : propertyOwnerRef,
-    "property_owner": propertyOwner == null ? null : propertyOwner.toJson(),
-    "tableproperty": property == null ? null : property.toJson(),
-    "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
+    // "property_owner": propertyOwner == null ? null : propertyOwner.toJson(),
+    // "tableproperty": property == null ? null : property.toJson(),
+    // "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
   };
 }
 
