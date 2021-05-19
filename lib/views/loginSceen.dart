@@ -1,17 +1,19 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:propview/services/notificationService.dart';
-import 'package:propview/services/authService.dart';
-import 'package:propview/views/landingPage.dart';
 
 import 'package:propview/constants/uiContants.dart';
-
-import '../utils/progressBar.dart';
-import '../utils/routing.dart';
-import '../utils/snackBar.dart';
-import '../utils/snackBar.dart';
-import 'landingPage.dart';
+import 'package:propview/models/User.dart';
+import 'package:propview/services/authService.dart';
+import 'package:propview/services/notificationService.dart';
+import 'package:propview/services/userService.dart';
+import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/landingPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -45,6 +47,13 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  getDeviceToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String fcmToken = await messaging.getToken();
+    prefs.setString('device_token', fcmToken);
+    return fcmToken;
+  }
+
   checkFields() {
     final form = formkey.currentState;
     if (form.validate()) {
@@ -65,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         bool isAuthenticated = await AuthService.authenticate(email, password);
         if (isAuthenticated) {
+          getUserAndSaveToken();
           NotificationSettings settings = await messaging.requestPermission(
             alert: true,
             announcement: false,
@@ -74,7 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
             provisional: false,
             sound: true,
           );
-          if (settings.authorizationStatus.toString() == "AuthorizationStatus.authorized") {
+          if (settings.authorizationStatus.toString() ==
+              "AuthorizationStatus.authorized") {
             showInSnackBar(context, 'Logged In Successfully !!', 2500);
             var id = await NotificationService.genTokenID();
             await NotificationService.sendPushToOne(
@@ -105,6 +116,16 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  getUserAndSaveToken() async {
+    User user = await UserService.getUser();
+    String deviceToken = await getDeviceToken();
+    setState(() {
+      user.deviceToken = deviceToken;
+    });
+    bool isUpdated = await UserService.updateUser(json.encode(user.toJson()));
+    print(isUpdated);
   }
 
   @override
