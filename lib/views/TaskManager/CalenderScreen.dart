@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Task.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import 'CreateTaskScreen.dart';
+
 class CalenderScreen extends StatefulWidget {
   final List taskList;
   const CalenderScreen({Key key, this.taskList}) : super(key: key);
@@ -46,6 +48,9 @@ class _CalenderScreenState extends State<CalenderScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
+          onTap: (event){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CreateTaskScreen()));
+          },
           dataSource: _getCalendarDataSource(widget.taskList),
           view: CalendarView.month,
           showDatePickerButton: true,

@@ -8,6 +8,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/NotificationService.dart';
 import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
@@ -33,8 +34,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   var _selectedTaskCategory;
   var _selectedPropertyOwner;
   var _selectedProperty;
-  List<DropdownMenuItem> _userDropdownList = [];
-  var _selectedUser;
+  User _selectedUser;
 
   TextEditingController _taskDescription = new TextEditingController();
 
@@ -51,7 +51,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   List<PropertyElement> properties = [];
   List<User> users = [];
   PropertyOwner propertyOwner;
-  // PropertyOwner propertyOwner;
   bool loading = false;
   void initState() {
     getData();
@@ -72,47 +71,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       );
     }
     propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
-    // for (int i = 0; i < propertyOwner.data.propertyOwner.length; i++) {
-    //   _propertyDropdownList.add(
-    //     DropdownMenuItem(
-    //       child: ListTile(
-    //         title: Text(propertyOwner.data.propertyOwner[i].ownerName),
-    //         // subtitle: Text(propertyOwner.data.propertyOwner[i].ownerAddress,overflow: TextOverflow.ellipsis,softWrap: true,),
-    //         leading:
-    //             Text(propertyOwner.data.propertyOwner[i].ownerId.toString()),
-    //       ),
-    //       value: propertyOwner.data.propertyOwner[i].ownerId,
-    //     ),
-    //   );
-    // }
     users = await UserService.getAllUser();
-    // for (int i = 0; i < users.length; i++) {
-    //   _userDropdownList.add(
-    //     DropdownMenuItem(
-    //       child: Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           Text(
-    //             users[i].name,
-    //             style: TextStyle(color: Colors.black, fontSize: 16),
-    //           ),
-    //           Text(
-    //             users[i].designation,
-    //             style: TextStyle(
-    //                 color: Colors.grey,
-    //                 fontSize: 12,
-    //                 fontWeight: FontWeight.bold),
-    //           ),
-    //         ],
-    //       ),
-    //       value: users[i].userId,
-    //     ),
-    //   );
-    // }
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
-      // _selectedUser = _userDropdownList[0].value;
       loading = false;
     });
   }
@@ -283,7 +244,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   propertySelectBox = false;
                                   this._propertyOwner.text =
                                       suggestion.ownerName.toString();
-                                  _selectedPropertyOwner = suggestion.ownerId;
+                                 setState(() {
+                                   _selectedPropertyOwner = suggestion.ownerId;
+                                 });
                                   var response = await PropertyService
                                       .getAllPropertiesByOwnerId(
                                           _selectedPropertyOwner);
@@ -489,7 +452,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                       "\n" +
                                       suggestion.designation.toString();
                                   setState(() {
-                                    _selectedUser = suggestion.userId;
+                                    _selectedUser = suggestion;
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -525,16 +488,22 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "task_status": "Approved",
                           "start_dateTime": _taskStartDateTime.text,
                           "end_dateTime": _taskEndDateTime.text,
-                          "assigned_to": _selectedUser.toString(),
+                          "assigned_to": _selectedUser.userId.toString(),
                           "property_ref": _selectedProperty.toString(),
                           "created_at": DateTime.now().toString(),
                           "updated_at": DateTime.now().toString(),
+                          "property_owner_ref": _selectedPropertyOwner,
                         });
+                        print(payload);
                         bool response = await TaskService.createTask(payload);
                         setState(() {
                           load = false;
                         });
                         if (response) {
+                          NotificationService.sendPushToOne(
+                              "New Task Assigned",
+                              "A new task Has been Assigned to you by the admin.",
+                              _selectedUser.deviceToken);
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => LandingScreen(
                                     selectedIndex: 1,

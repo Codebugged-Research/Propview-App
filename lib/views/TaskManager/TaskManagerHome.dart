@@ -97,7 +97,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         children: [
                           InkWell(
                             onTap: () async{
-                              await NotificationService.sendPushToSelf("title", "message");
+                              String fcmToken = await messaging.getToken();
+                              print(fcmToken);
+                              // await NotificationService.sendPushToSelf("title", "message");
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (context) => NotificationScreen()));
 

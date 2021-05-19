@@ -44,8 +44,9 @@ class _TaskCardState extends State<TaskCard> {
               ]),
           height: 160,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Image.asset("assets/task.png"),
+              Image.asset("assets/task.png",height: 75,),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

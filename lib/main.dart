@@ -14,17 +14,12 @@ import 'services/reminderService.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  //TODO:alert dialog box
-
-  if (message.notification != null) {
-    print(
-        'background Message also contained a notification: ${message.notification}');
-  }
-
-  if (message.data != null) {
-    //TODO:trigger schedule
-    print(' background Message also contained a data: ${message.data["name"]}');
-  }
+  //
+  // if (message.data != null) {
+  //   ReminderService reminderService;
+  //   reminderService.sheduledNotification(
+  //       message.data['startTime'], message.data['endTime']);
+  // }
 }
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -63,17 +58,21 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    ReminderService reminderService;
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      //TODO:alert dialog box
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-      if (message.data != null) {
-        //TODO:trigger schedule
-        print('Message also contained a notification: ${message.notification}');
-        reminderService.sheduledNotification(message.data['startTime'], message.data['endTime']);
-      }
-    });
+    // ReminderService reminderService;
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   showDialog(
+    //       context: context,
+    //       builder: (context) => AlertDialog(
+    //             content:
+    //                 Text("A new task Has been Assigned to you by the admin."),
+    //             title: Text("Alert"),
+    //           ));
+    //   // if (message.data != null) {
+    //   //   print('Message also contained a notification: ${message.notification}');
+    //   //   reminderService.sheduledNotification(
+    //   //       message.data['startTime'], message.data['endTime']);
+    //   // }
+    // });
     print("initited");
   }
 
