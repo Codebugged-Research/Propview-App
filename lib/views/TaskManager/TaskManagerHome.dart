@@ -32,8 +32,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   User user;
   bool loading = false;
   Task taskData;
-  List pendingTaskList = [];
-  List completedTaskList = [];
+  List<TaskElement> pendingTaskList = [];
+  List<TaskElement> completedTaskList = [];
 
   getData() async {
     setState(() {

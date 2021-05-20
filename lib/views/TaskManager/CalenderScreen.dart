@@ -5,7 +5,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'CreateTaskScreen.dart';
 
 class CalenderScreen extends StatefulWidget {
-  final List taskList;
+  final List<TaskElement> taskList;
   const CalenderScreen({Key key, this.taskList}) : super(key: key);
 
   @override
@@ -18,14 +18,22 @@ class DataSource extends CalendarDataSource {
   }
 }
 
-DataSource _getCalendarDataSource(tasks) {
+DataSource _getCalendarDataSource(List<TaskElement> tasks) {
   List appointments = [];
   tasks.forEach((element) {
     appointments.add(Appointment(
-      startTime:element.startDateTime,
+      startTime: element.startDateTime,
       endTime: element.endDateTime,
-      subject: element.taskName,
-      color: Colors.blue,
+      subject: element.taskName +
+          "\n" +
+          element.startDateTime.toString() +
+          " " +
+          element.startDateTime.toString(),
+      notes: element.taskDesc,
+      location: element.propertyOwner.ownerAddress,
+      color: element.endDateTime.difference(element.startDateTime).inDays > 1
+          ? Colors.orange
+          : Colors.blue,
       startTimeZone: '',
       endTimeZone: '',
     ));
@@ -48,19 +56,49 @@ class _CalenderScreenState extends State<CalenderScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
-          onTap: (event){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CreateTaskScreen()));
+          onLongPress: (event) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MaterialButton(
+                      onPressed: () {
+                        //TODO:edit task
+                      },
+                      child: Text("Edit Task"),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        //TODO:cancel task
+                      },
+                      child: Text("Cancel Task"),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CreateTaskScreen(),
+                          ),
+                        );
+                      },
+                      child: Text("Create Task"),
+                    ),
+                  ],
+                ),
+              ),
+            );
           },
           dataSource: _getCalendarDataSource(widget.taskList),
           view: CalendarView.month,
           showDatePickerButton: true,
+          appointmentTimeTextFormat: 'HH:mm',
           allowedViews: [
             CalendarView.day,
             CalendarView.month,
             CalendarView.timelineDay,
             CalendarView.timelineMonth,
-            CalendarView.timelineWeek,
-            CalendarView.week,
           ],
           monthViewSettings: MonthViewSettings(
               showAgenda: true,
@@ -69,7 +107,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
           scheduleViewSettings:
               ScheduleViewSettings(hideEmptyScheduleWeek: false),
           timeSlotViewSettings: TimeSlotViewSettings(
-              timeInterval: Duration(hours: 1), startHour: 7, endHour: 21),
+              timeInterval: Duration(minutes: 30), startHour: 7, endHour: 21),
         ),
       ),
     );
