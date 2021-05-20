@@ -12,7 +12,6 @@ import 'package:propview/views/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/TaskManager/createTaskScreen.dart';
 import 'package:propview/widgets/taskCard.dart';
 
-
 class TaskMangerHome extends StatefulWidget {
   @override
   _TaskMangerHomeState createState() => _TaskMangerHomeState();
@@ -73,7 +72,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 48, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
                       leading: Image.asset("assets/dummy.png"),
                       title: Text(
@@ -92,86 +91,42 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          InkWell(
-                            onTap: () async{
-                              String fcmToken = await messaging.getToken();
-                              print(fcmToken);
-                              // await NotificationService.sendPushToSelf("title", "message");
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => NotificationScreen()));
-
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[200],
-                                      offset: const Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ), //BoxShadow
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: const Offset(0.0, 0.0),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ),
-                                  ]),
-                              child: Icon(
-                                Icons.notifications_none_outlined,
-                                color: Color(0xff314B8C),
-                                size: 24,
-                              ),
-                            ),
+                      trailing: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CalenderScreen(
+                                    taskList: pendingTaskList,
+                                  )));
+                        },
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey[200],
+                                  offset: const Offset(
+                                    0.0,
+                                    0.0,
+                                  ),
+                                  blurRadius: 4.0,
+                                  spreadRadius: 0.0,
+                                ), //BoxShadow
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: const Offset(0.0, 0.0),
+                                  blurRadius: 4.0,
+                                  spreadRadius: 0.0,
+                                ),
+                              ]),
+                          child: Icon(
+                            Icons.calendar_today_outlined,
+                            color: Color(0xff314B8C),
+                            size: 24,
                           ),
-                          SizedBox(width: 16,),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CalenderScreen(taskList: pendingTaskList,)));
-
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[200],
-                                      offset: const Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ), //BoxShadow
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: const Offset(0.0, 0.0),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ),
-                                  ]),
-                              child: Icon(
-                                Icons.calendar_today_outlined,
-                                color: Color(0xff314B8C),
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -224,6 +179,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         controller: _tabController,
                         children: <Widget>[
                           ListView.builder(
+                            padding: EdgeInsets.only(top: 0),
                             itemCount: pendingTaskList.length,
                             itemBuilder: (context, index) {
                               return TaskCard(
@@ -231,6 +187,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             },
                           ),
                           ListView.builder(
+                            padding: EdgeInsets.only(top: 0),
                             itemCount: completedTaskList.length,
                             itemBuilder: (context, index) {
                               return TaskCard(

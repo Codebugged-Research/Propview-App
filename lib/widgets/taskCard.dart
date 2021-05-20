@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/services/taskServices.dart';
+import 'package:propview/views/Property/PropertyDetailScreen.dart';
 
 class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
@@ -46,7 +47,10 @@ class _TaskCardState extends State<TaskCard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Image.asset("assets/task.png",height: 75,),
+              Image.asset(
+                "assets/task.png",
+                height: 75,
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -132,7 +136,7 @@ class _TaskCardState extends State<TaskCard> {
                         )),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         titleWidget(context, 'Task ID: ',
                             '${widget.taskElement.taskId}'),
@@ -159,8 +163,19 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(context, 'Task Assigned-to: ',
                         '${widget.taskElement.tblUsers.name} [${widget.taskElement.tblUsers.designation}]'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Property Name: ',
-                        '${widget.taskElement.property.socid}  ${widget.taskElement.property.unitNo}'),
+                    InkWell(
+                      child: titleWidget(context, 'Property Name: ',
+                          '${widget.taskElement.property.socid}  ${widget.taskElement.property.unitNo}'),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => PropertyDetailScreen(
+                              propertyElement: widget.taskElement.property,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Property Address: ',
                         '${widget.taskElement.propertyOwner.ownerAddress}'),
