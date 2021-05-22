@@ -77,15 +77,16 @@ class AuthService extends BaseService {
       Map<String, dynamic> responseMap = json.decode(response.body);
       String token = responseMap['token'];
       String id = responseMap['user']['user_id'].toString();
+      String role = responseMap['user']['user_type'].toString();
       bool success = token != null;
-      if (success) _saveToken(token, email, id);
+      if (success) _saveToken(token, email, id, role);
       return success;
     } else {
       return false;
     }
   }
 
-  static _saveToken(String token, String email, String id) async {
+  static _saveToken(String token, String email, String id, String role) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(
         authNamespace,
@@ -93,6 +94,7 @@ class AuthService extends BaseService {
           "token": token,
           "email": email,
           "id": id,
+          "role": role
         }));
   }
 

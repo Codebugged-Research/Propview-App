@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
-import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
@@ -22,7 +21,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   @override
   void initState() {
     getData();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     super.initState();
   }
 
@@ -33,6 +32,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   Task taskData;
   List<TaskElement> pendingTaskList = [];
   List<TaskElement> completedTaskList = [];
+  List<TaskElement> unApprovedTaskList = [];
 
   getData() async {
     setState(() {
@@ -45,6 +45,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
         pendingTaskList.add(taskData.data.task[i]);
       } else if (taskData.data.task[i].taskStatus == "Completed") {
         completedTaskList.add(taskData.data.task[i]);
+      } else if (taskData.data.task[i].taskStatus == "Unapproved") {
+        unApprovedTaskList.add(taskData.data.task[i]);
       }
     }
     setState(() {
@@ -151,12 +153,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             unselectedLabelColor: Colors.black.withOpacity(0.4),
                             labelColor: Color(0xff314B8C),
                             tabs: [
-                              Tab(
-                                text: "Pending",
-                              ),
-                              Tab(
-                                text: "Completed",
-                              ),
+                              Tab(text: "Pending"),
+                              Tab(text: "Completed"),
+                              Tab(text: "UnApproved"),
                             ],
                             onTap: (value) {
                               setState(() {
@@ -178,22 +177,66 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         physics: NeverScrollableScrollPhysics(),
                         controller: _tabController,
                         children: <Widget>[
-                          ListView.builder(
-                            padding: EdgeInsets.only(top: 0),
-                            itemCount: pendingTaskList.length,
-                            itemBuilder: (context, index) {
-                              return TaskCard(
-                                  taskElement: pendingTaskList[index]);
-                            },
-                          ),
-                          ListView.builder(
-                            padding: EdgeInsets.only(top: 0),
-                            itemCount: completedTaskList.length,
-                            itemBuilder: (context, index) {
-                              return TaskCard(
-                                  taskElement: completedTaskList[index]);
-                            },
-                          ),
+                          pendingTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: pendingTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                        taskElement: pendingTaskList[index]);
+                                  },
+                                ),
+                          completedTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: completedTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                        taskElement: completedTaskList[index]);
+                                  },
+                                ),
+                          unApprovedTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: completedTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                        taskElement: unApprovedTaskList[index]);
+                                  },
+                                ),
                         ],
                       ),
                     ),

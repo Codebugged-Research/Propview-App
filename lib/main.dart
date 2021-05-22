@@ -9,9 +9,6 @@ import 'package:propview/services/reminderService.dart';
 import 'package:propview/utils/theme.dart';
 import 'package:propview/views/splashScreen.dart';
 
-import 'services/reminderService.dart';
-import 'services/reminderService.dart';
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   //

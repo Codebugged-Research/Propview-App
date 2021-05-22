@@ -124,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       user.deviceToken = deviceToken;
     });
+    print(user.toJson());
     bool isUpdated = await UserService.updateUser(json.encode(user.toJson()));
     print(isUpdated);
   }

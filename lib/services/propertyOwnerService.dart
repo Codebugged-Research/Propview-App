@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:propview/models/PropertyOwner.dart';
-import 'package:propview/models/Task.dart';
 
-import 'authService.dart';
+
+import 'package:propview/services/authService.dart';
 
 class PropertyOwnerService extends AuthService {
   // ignore: missing_return

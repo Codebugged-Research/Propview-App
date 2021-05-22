@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:propview/models/Property.dart';
-import 'package:propview/models/PropertyOwner.dart';
 
 import 'authService.dart';
 
