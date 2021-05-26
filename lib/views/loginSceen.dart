@@ -12,7 +12,9 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/landingPage.dart';
+import 'package:propview/views/Admin/landingPage.dart' as ad;
+import 'package:propview/views/Manager/landingPage.dart' as man;
+import 'package:propview/views/Employee/landingPage.dart' as emp;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   String email;
   String password;
+  User tempUser;
 
   final formkey = new GlobalKey<FormState>();
 
@@ -87,13 +90,26 @@ class _LoginScreenState extends State<LoginScreen> {
           if (settings.authorizationStatus.toString() ==
               "AuthorizationStatus.authorized") {
             showInSnackBar(context, 'Logged In Successfully !!', 2500);
-            var id = await NotificationService.genTokenID();
-            await NotificationService.sendPushToOne(
-                "Welcome", "You are successfully logged in into PropView", id);
-
-            Routing.makeRouting(context,
-                routeMethod: 'pushReplacement',
-                newWidget: LandingScreen(selectedIndex: 0));
+            await NotificationService.sendPushToSelf(
+                "Welcome", "You are successfully logged in into PropView");
+            if (tempUser.userType == "admin" ||
+                tempUser.userType == "super_admin") {
+              Routing.makeRouting(context,
+                  routeMethod: 'pushReplacement',
+                  newWidget: ad.LandingScreen(selectedIndex: 0));
+            } else if (tempUser.userType == "manager") {
+              Routing.makeRouting(context,
+                  routeMethod: 'pushReplacement',
+                  newWidget: man.LandingScreen(selectedIndex: 0));
+            } else if (tempUser.userType == "employee") {
+              Routing.makeRouting(context,
+                  routeMethod: 'pushReplacement',
+                  newWidget: emp.LandingScreen(selectedIndex: 0));
+            } else {
+              Routing.makeRouting(context,
+                  routeMethod: 'pushReplacement',
+                  newWidget: emp.LandingScreen(selectedIndex: 0));
+            }
           } else {
             showInSnackBar(context, 'Check notification settings', 2500);
             AuthService.clearAuth();
@@ -119,13 +135,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   getUserAndSaveToken() async {
-    User user = await UserService.getUser();
+    tempUser = await UserService.getUser();
     String deviceToken = await getDeviceToken();
     setState(() {
-      user.deviceToken = deviceToken;
+      tempUser.deviceToken = deviceToken;
     });
-    print(user.toJson());
-    bool isUpdated = await UserService.updateUser(json.encode(user.toJson()));
+    print(tempUser.toJson());
+    bool isUpdated =
+        await UserService.updateUser(json.encode(tempUser.toJson()));
     print(isUpdated);
   }
 

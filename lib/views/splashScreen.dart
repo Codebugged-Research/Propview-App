@@ -5,7 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/services/authService.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/landingPage.dart';
+import 'package:propview/views/Admin/landingPage.dart'as ad;
+import 'package:propview/views/Manager/landingPage.dart'as man;
+import 'package:propview/views/Employee/landingPage.dart'as emp;
 import 'package:propview/views/loginSceen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -28,9 +30,24 @@ class _SplashScreenState extends State<SplashScreen> {
   void navigate() async {
     var auth = await AuthService.getSavedAuth();
     if (auth != null) {
-      Routing.makeRouting(context,
-          routeMethod: 'pushReplacement',
-          newWidget: LandingScreen(selectedIndex: 0));
+      if (auth["role"] == "admin" ||
+          auth["role"]== "super_admin") {
+        Routing.makeRouting(context,
+            routeMethod: 'pushReplacement',
+            newWidget: ad.LandingScreen(selectedIndex: 0));
+      } else if (auth["role"] == "manager") {
+        Routing.makeRouting(context,
+            routeMethod: 'pushReplacement',
+            newWidget: man.LandingScreen(selectedIndex: 0));
+      } else if (auth["role"] == "employee") {
+        Routing.makeRouting(context,
+            routeMethod: 'pushReplacement',
+            newWidget: emp.LandingScreen(selectedIndex: 0));
+      } else {
+        Routing.makeRouting(context,
+            routeMethod: 'pushReplacement',
+            newWidget: emp.LandingScreen(selectedIndex: 0));
+      }
     } else {
       Routing.makeRouting(context,
           routeMethod: 'pushReplacement', newWidget: LoginScreen());

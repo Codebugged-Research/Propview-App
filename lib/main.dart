@@ -53,29 +53,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  void initState() {
-    super.initState();
-    // ReminderService reminderService;
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   showDialog(
-    //       context: context,
-    //       builder: (context) => AlertDialog(
-    //             content:
-    //                 Text("A new task Has been Assigned to you by the admin."),
-    //             title: Text("Alert"),
-    //           ));
-    //   // if (message.data != null) {
-    //   //   print('Message also contained a notification: ${message.notification}');
-    //   //   reminderService.sheduledNotification(
-    //   //       message.data['startTime'], message.data['endTime']);
-    //   // }
-    // });
-    print("initited");
-  }
-
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
-  @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

@@ -2,9 +2,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:propview/services/reminderService.dart';
-import 'package:propview/views/Home/homeScreen.dart';
-import 'package:propview/views/Profile/ProfileScreen.dart';
-import 'package:propview/views/TaskManager/taskManagerHome.dart';
+import 'package:propview/views/Employee/Home/homeScreen.dart';
+import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
+import 'package:propview/views/Employee/TaskManager/taskManagerHome.dart';
 
 class LandingScreen extends StatefulWidget {
   final int selectedIndex;
@@ -24,8 +24,8 @@ class _LandingScreenState extends State<LandingScreen> {
           context: context,
           builder: (context) => AlertDialog(
             content:
-            Text("A new task Has been Assigned to you by the admin."),
-            title: Text("Alert"),
+            Text(message.notification.body),
+            title: Text(message.notification.title),
           ));
       // if (message.data != null) {
       //   print('Message also contained a notification: ${message.notification}');

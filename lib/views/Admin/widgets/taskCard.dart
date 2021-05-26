@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/services/taskServices.dart';
-import 'package:propview/views/Property/PropertyDetailScreen.dart';
+import 'package:propview/views/Admin//Property/PropertyDetailScreen.dart';
 
 class TaskCard extends StatefulWidget {
   final TaskElement taskElement;

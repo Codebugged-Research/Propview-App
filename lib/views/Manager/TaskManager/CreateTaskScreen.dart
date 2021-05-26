@@ -16,7 +16,7 @@ import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/snackBar.dart';
 
-import 'package:propview/views/landingPage.dart';
+import 'package:propview/views/Manager/landingPage.dart';
 
 // Approved/NotApproved/Completed/transferred
 

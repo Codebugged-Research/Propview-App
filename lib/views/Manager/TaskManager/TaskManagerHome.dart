@@ -7,9 +7,9 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/TaskManager/CalenderScreen.dart';
-import 'package:propview/views/TaskManager/createTaskScreen.dart';
-import 'package:propview/widgets/taskCard.dart';
+import 'package:propview/views/Manager/TaskManager/CalenderScreen.dart';
+import 'package:propview/views/Manager/TaskManager/createTaskScreen.dart';
+import 'package:propview/views/Manager/widgets/taskCard.dart';
 
 class TaskMangerHome extends StatefulWidget {
   @override
@@ -20,9 +20,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     with TickerProviderStateMixin {
   @override
   void initState() {
-    getData();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     super.initState();
+    getData();
   }
 
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -39,14 +38,19 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       loading = true;
     });
     user = await UserService.getUser();
-    taskData = await TaskService.getAllTask();
-    for (int i = 0; i < taskData.data.task.length; i++) {
-      if (taskData.data.task[i].taskStatus == "Approved") {
-        pendingTaskList.add(taskData.data.task[i]);
-      } else if (taskData.data.task[i].taskStatus == "Completed") {
-        completedTaskList.add(taskData.data.task[i]);
-      } else if (taskData.data.task[i].taskStatus == "Unapproved") {
-        unApprovedTaskList.add(taskData.data.task[i]);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    var taskData1 = await TaskService.getAllTaskByUserId(user.userId);
+    var taskData12 = await TaskService.getAllTaskByManagerId(user.userId);
+    List<TaskElement> taskList = [];
+    taskList.addAll(taskData1.data.task);
+    taskList.addAll(taskData12.data.task);
+    for (int i = 0; i < taskList.length; i++) {
+      if (taskList[i].taskStatus == "Approved") {
+        pendingTaskList.add(taskList[i]);
+      } else if (taskList[i].taskStatus == "Completed") {
+        completedTaskList.add(taskList[i]);
+      } else if (taskList[i].taskStatus == "Unapproved") {
+        unApprovedTaskList.add(taskList[i]);
       }
     }
     setState(() {
@@ -86,7 +90,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         ),
                       ),
                       subtitle: Text(
-                        user.userType,
+                        "Manager",
                         style: GoogleFonts.nunito(
                           color: Color(0xffB2B2B2),
                           fontSize: 18,

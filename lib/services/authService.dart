@@ -72,6 +72,7 @@ class AuthService extends BaseService {
     http.Response response = await BaseService.makeUnauthenticatedRequest(
         BaseService.BASE_URI + 'api/signin',
         body: payload);
+    print(response.body);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = json.decode(response.body);
@@ -88,14 +89,8 @@ class AuthService extends BaseService {
 
   static _saveToken(String token, String email, String id, String role) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        authNamespace,
-        json.encode({
-          "token": token,
-          "email": email,
-          "id": id,
-          "role": role
-        }));
+    await prefs.setString(authNamespace,
+        json.encode({"token": token, "email": email, "id": id, "role": role}));
   }
 
   static clearAuth() async {
