@@ -198,8 +198,7 @@ class _TaskCardState extends State<TaskCard> {
                           },
                         ),
                         SizedBox(
-                          width: 8,
-                        ),
+                            width: MediaQuery.of(context).size.width * 0.02),
                         InkWell(
                           child: Card(
                             elevation: 2,
@@ -236,8 +235,7 @@ class _TaskCardState extends State<TaskCard> {
                           },
                         ),
                         SizedBox(
-                          width: 8,
-                        ),
+                            width: MediaQuery.of(context).size.width * 0.02),
                         InkWell(
                           child: Card(
                             elevation: 2,
@@ -369,7 +367,10 @@ class _TaskCardState extends State<TaskCard> {
                             : Container()
                         : Container(),
                     widget.currentUser.parentId.toString() ==
-                            widget.taskElement.tblUsers.parentId.toString() || widget.currentUser.userType == "admin" || widget.currentUser.userType == "super_admin"
+                                widget.taskElement.tblUsers.parentId
+                                    .toString() ||
+                            widget.currentUser.userType == "admin" ||
+                            widget.currentUser.userType == "super_admin"
                         ? widget.taskElement.taskStatus == "Unapproved"
                             ? Align(
                                 alignment: Alignment.center,

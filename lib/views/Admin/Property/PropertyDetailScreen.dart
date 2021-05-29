@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/services/propertyService.dart';
+import 'package:propview/utils/progressBar.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final String propertyId;
@@ -13,7 +15,6 @@ class PropertyDetailScreen extends StatefulWidget {
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
@@ -36,85 +37,174 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Padding(
-              padding: const EdgeInsets.only(top: 56.0, left: 24, right: 24),
+          ? circularProgressWidget()
+          : Container(
+              height: UIConstants.fitToHeight(640, context),
+              width: UIConstants.fitToWidth(360, context),
               child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Property Details',
-                          style: Theme.of(context).primaryTextTheme.headline6,
-                        )),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Divider(
-                          color: Color(0xff314B8C),
-                          thickness: 2.5,
-                          indent: 100,
-                          endIndent: 100,
-                        )),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Name: ',
-                        '${property.tblSociety.socname} ${property.tblLocality.locname} ${property.tableproperty.unitNo}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'For: ',
-                        '${property.tableproperty.propertyFor}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Type: ',
-                        '${property.tableproperty.propertyType}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(
-                        context, 'BHK Type: ', '${property.tableproperty.bhk}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Demand Rent: ',
-                        '${property.tableproperty.demand}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Demand Sale: ',
-                        '${property.tableproperty.demandSale}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(
-                        context,
-                        'Maintenance (${property.tableproperty.maintenanceType}): ',
-                        '${property.tableproperty.maintenance}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Security Deposit: ',
-                        '${property.tableproperty.securityDeposit}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    titleWidget(context, 'Super Area: ',
-                        '${property.tableproperty.superArea}'),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      headerWidget(context),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05),
+                      profileSectionWidget(
+                          context,
+                          'Name',
+                          '${property.tblSociety.socname} ${property.tblLocality.locname} ${property.tableproperty.unitNo}',
+                          Icons.home),
+                      profileSectionWidget(context, 'City',
+                          '${property.tblCity.ccname}', Icons.home),
+                      profileSectionWidget(context, 'State',
+                          '${property.tblState.sname}', Icons.home),
+                      profileSectionWidget(context, 'Country',
+                          '${property.tblCountry.cname}', Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Property For',
+                          '${property.tableproperty.propertyFor.replaceFirst(property.tableproperty.propertyFor.substring(0, 1), property.tableproperty.propertyFor.substring(0, 1).toUpperCase())}',
+                          Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Property Kind',
+                          '${property.tableproperty.propertyKind.replaceFirst(property.tableproperty.propertyKind.substring(0, 1), property.tableproperty.propertyKind.substring(0, 1).toUpperCase())}',
+                          Icons.home),
+                      profileSectionWidget(context, 'Property Type',
+                          '${property.tableproperty.propertyType}', Icons.home),
+                      profileSectionWidget(context, 'BHK',
+                          '${property.tableproperty.bhk}', Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Bedrooms',
+                          '${property.tableproperty.bedrooms} Rooms',
+                          Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Bathrooms',
+                          '${property.tableproperty.bathrooms} Rooms',
+                          Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Balcony',
+                          '${property.tableproperty.balcony} Balcony',
+                          Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Super Area',
+                          '${property.tableproperty.superArea} ${property.tableproperty.superPrefix}',
+                          Icons.home),
+                      profileSectionWidget(context, 'Furnshing',
+                          '${property.tableproperty.furnishing}', Icons.home),
+                      profileSectionWidget(context, 'Ownership',
+                          '${property.tableproperty.ownership}', Icons.home),
+                      profileSectionWidget(context, 'Flats Floor',
+                          '${property.tableproperty.flatsFloor}', Icons.home),
+                      profileSectionWidget(context, 'Demand',
+                          '₹${property.tableproperty.demand}', Icons.home),
+                      profileSectionWidget(context, 'Demand Sale',
+                          '₹${property.tableproperty.demandSale}', Icons.home),
+                      profileSectionWidget(context, 'Maintainance',
+                          '₹${property.tableproperty.maintenance}', Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Maintainance Type',
+                          '${property.tableproperty.maintenanceType}',
+                          Icons.home),
+                      profileSectionWidget(
+                          context,
+                          'Security Deposit',
+                          '₹${property.tableproperty.securityDeposit}',
+                          Icons.home),
+                    ],
+                  ),
                 ),
               ),
             ),
     );
   }
 
-  Widget titleWidget(BuildContext context, String label, String data) {
+  Widget headerWidget(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [textWidget(context), imageWidget(context)]);
+  }
+
+  Widget textWidget(BuildContext context) {
     return RichText(
-      text: TextSpan(
-        text: label,
-        style: Theme.of(context).primaryTextTheme.headline6.copyWith(
-            color: Color(0xff314B8C),
-            fontWeight: FontWeight.w700,
-            fontSize: 20),
-        children: <TextSpan>[
+        text: TextSpan(
+            text: "Property\n",
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline3
+                .copyWith(fontSize: 42, fontWeight: FontWeight.bold),
+            children: [
           TextSpan(
-            text: data,
-            style: Theme.of(context).primaryTextTheme.headline6.copyWith(
-                color: Color(0xff141414),
-                fontWeight: FontWeight.w600,
-                fontSize: 18),
-          )
+              text: 'Details',
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .headline5
+                  .copyWith(fontWeight: FontWeight.normal))
+        ]));
+  }
+
+  Widget imageWidget(BuildContext context) {
+    return Image.asset(
+      "assets/house.png",
+      height: UIConstants.fitToHeight(75, context),
+      width: UIConstants.fitToWidth(75, context),
+    );
+  }
+
+  Widget profileSectionWidget(
+      BuildContext context, String heading, String body, IconData iconData) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                iconData,
+                color: Color(0xff314B8C),
+              ),
+              SizedBox(width: UIConstants.fitToWidth(16, context)),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(heading,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600)),
+                  Container(
+                      width: UIConstants.fitToHeight(210, context),
+                      child: Text(
+                        body,
+                        // overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        maxLines: 1,
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(color: Colors.black),
+                      )),
+                ],
+              )
+            ],
+          ),
         ],
       ),
     );
