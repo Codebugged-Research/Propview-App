@@ -4,13 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
+import 'package:propview/models/User.dart';
 import 'package:propview/services/taskServices.dart';
-import 'package:propview/views/Admin//Property/PropertyDetailScreen.dart';
+import 'package:propview/views/Admin/AssignedPersonDetailScreen.dart';
+import 'package:propview/views/Admin/Property/PropertyDetailScreen.dart';
+import 'package:propview/views/Admin/Property/PropertyOwnerDetailScreen.dart';
 
 class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
-  final Function refresh;
-  TaskCard({this.taskElement, this.refresh});
+  // final Function refresh;
+  final User currentUser;
+  TaskCard({this.taskElement, this.currentUser});
 
   @override
   _TaskCardState createState() => _TaskCardState();
@@ -65,11 +69,7 @@ class _TaskCardState extends State<TaskCard> {
                         widget.taskElement.tblUsers.name +
                             "\n(${widget.taskElement.tblUsers.designation})"),
                     textWidget(
-                        context,
-                        "Property Name: \n",
-                        widget.taskElement.property.socid.toString() +
-                            " " +
-                            widget.taskElement.property.unitNo.toString()),
+                        context, "Task Name: \n", widget.taskElement.taskName),
                   ],
                 ),
               )
@@ -160,111 +160,305 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(context, 'Task End Time: ',
                         '${widget.taskElement.endDateTime}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Task Assigned-to: ',
-                        '${widget.taskElement.tblUsers.name} [${widget.taskElement.tblUsers.designation}]'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    InkWell(
-                      child: titleWidget(context, 'Property Name: ',
-                          '${widget.taskElement.property.socid}  ${widget.taskElement.property.unitNo}'),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => PropertyDetailScreen(
-                              propertyElement: widget.taskElement.property,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          child: Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/house.png",
+                                    height: 35,
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                    "Property\ndetails",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        );
-                      },
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PropertyDetailScreen(
+                                  propertyId: widget.taskElement.propertyRef,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        InkWell(
+                          child: Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/owner.png",
+                                    height: 35,
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                    "Property\nOwner details",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PropertyOwnerDetailScreen(
+                                  propertyOwnerId:
+                                      widget.taskElement.propertyOwnerRef,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        InkWell(
+                          child: Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    "assets/person.png",
+                                    height: 35,
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                    "Assigned\nPerson details",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AssignedPersonDetailScreen(
+                                  assignedTo: widget.taskElement.assignedTo,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Property Address: ',
-                        '${widget.taskElement.propertyOwner.ownerAddress}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    widget.taskElement.taskStatus != "Completed"
-                        ? Align(
-                            alignment: Alignment.center,
-                            child: MaterialButton(
-                              child: Text(
-                                "Complete Task",
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle2
-                                    .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600),
-                              ),
-                              color: Color(0xff314B8C),
-                              onPressed: () async {
-                                await showDialog(
-                                  builder: (context) => AlertDialog(
-                                    title: Text(
-                                      "Alert !",
-                                      style: Theme.of(context)
-                                          .primaryTextTheme
-                                          .headline5
-                                          .copyWith(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                    content: Text(
-                                      "Do you want to submit your task ?",
-                                      style: Theme.of(context)
-                                          .primaryTextTheme
-                                          .subtitle1
-                                          .copyWith(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                    actions: [
-                                      MaterialButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            widget.taskElement.taskStatus =
-                                                "Completed";
-                                          });
-                                          print(jsonEncode(
-                                              widget.taskElement.toJson()));
-                                          var response =
-                                              await TaskService.updateTask(
-                                                  widget.taskElement.taskId,
-                                                  jsonEncode(widget.taskElement
-                                                      .toJson()));
-                                          print(response);
-                                          Navigator.of(context).pop();
-
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          "Yes",
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle2
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      MaterialButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          "No",
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle2
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                    ],
+                    widget.currentUser.userId.toString() ==
+                            widget.taskElement.assignedTo
+                        ? widget.taskElement.taskStatus != "Completed"
+                            ? Align(
+                                alignment: Alignment.center,
+                                child: MaterialButton(
+                                  child: Text(
+                                    "Complete Task",
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle2
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
                                   ),
-                                  context: context,
-                                );
-                              },
-                            ),
-                          )
+                                  color: Color(0xff314B8C),
+                                  onPressed: () async {
+                                    await showDialog(
+                                      builder: (context) => AlertDialog(
+                                        title: Text(
+                                          "Alert !",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .headline5
+                                              .copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        content: Text(
+                                          "Do you want to submit your task ?",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .subtitle1
+                                              .copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        actions: [
+                                          MaterialButton(
+                                            onPressed: () async {
+                                              setState(() {
+                                                widget.taskElement.taskStatus =
+                                                    "Completed";
+                                              });
+                                              print(jsonEncode(
+                                                  widget.taskElement.toJson()));
+                                              var response =
+                                                  await TaskService.updateTask(
+                                                      widget.taskElement.taskId,
+                                                      jsonEncode(widget
+                                                          .taskElement
+                                                          .toJson()));
+                                              print(response);
+                                              Navigator.of(context).pop();
+
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              "Yes",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle2
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                          ),
+                                          MaterialButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              "No",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle2
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      context: context,
+                                    );
+                                  },
+                                ),
+                              )
+                            : Container()
+                        : Container(),
+                    widget.currentUser.parentId.toString() ==
+                            widget.taskElement.tblUsers.parentId.toString() || widget.currentUser.userType == "admin" || widget.currentUser.userType == "super_admin"
+                        ? widget.taskElement.taskStatus == "Unapproved"
+                            ? Align(
+                                alignment: Alignment.center,
+                                child: MaterialButton(
+                                  child: Text(
+                                    "Approve Task",
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle2
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                  ),
+                                  color: Color(0xff314B8C),
+                                  onPressed: () async {
+                                    await showDialog(
+                                      builder: (context) => AlertDialog(
+                                        title: Text(
+                                          "Alert !",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .headline5
+                                              .copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        content: Text(
+                                          "Do you want to approve the assignment of task ?",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .subtitle1
+                                              .copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        actions: [
+                                          MaterialButton(
+                                            onPressed: () async {
+                                              setState(() {
+                                                widget.taskElement.taskStatus =
+                                                    "Approved";
+                                              });
+                                              print(jsonEncode(
+                                                  widget.taskElement.toJson()));
+                                              var response =
+                                                  await TaskService.updateTask(
+                                                      widget.taskElement.taskId,
+                                                      jsonEncode(widget
+                                                          .taskElement
+                                                          .toJson()));
+                                              print(response);
+                                              Navigator.of(context).pop();
+
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              "Yes",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle2
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                          ),
+                                          MaterialButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              "No",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle2
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      context: context,
+                                    );
+                                  },
+                                ),
+                              )
+                            : Container()
                         : Container(),
                   ],
                 ),

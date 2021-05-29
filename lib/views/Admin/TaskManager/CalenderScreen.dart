@@ -18,28 +18,82 @@ class DataSource extends CalendarDataSource {
   }
 }
 
-DataSource _getCalendarDataSource(List<TaskElement> tasks) {
-  List appointments = [];
-  tasks.forEach((element) {
-    appointments.add(Appointment(
-      startTime: element.startDateTime,
-      endTime: element.endDateTime,
-      subject: element.taskName +
-          "\n" +
-          element.startDateTime.toString() +
-          " " +
-          element.startDateTime.toString(),
-      notes: element.taskDesc,
-      location: element.propertyOwner.ownerAddress,
-      color: element.endDateTime.difference(element.startDateTime).inDays > 1
-          ? Colors.orange
-          : Colors.blue,
-      startTimeZone: '',
-      endTimeZone: '',
-    ));
-  });
+class TaskTile {
+  TaskTile(
+      {this.eventName = '',
+      this.from,
+      this.to,
+      this.background,
+      this.isAllDay = false});
 
-  return DataSource(appointments);
+  String eventName;
+  DateTime from;
+  DateTime to;
+  Color background;
+  bool isAllDay;
+}
+
+class MeetingDataSource extends CalendarDataSource {
+  MeetingDataSource(List<TaskTile> source) {
+    appointments = source;
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return appointments[index].from;
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments[index].to;
+  }
+
+  @override
+  bool isAllDay(int index) {
+    return appointments[index].isAllDay;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments[index].eventName;
+  }
+
+  @override
+  Color getColor(int index) {
+    return appointments[index].background;
+  }
+}
+
+MeetingDataSource _getCalendarDataSource(List<TaskElement> tasks) {
+  List<TaskTile> taskTiles = <TaskTile>[];
+  tasks.forEach(
+    (element) {
+      print(DateTime(2019, 12, 20, 10)
+          .difference(
+            DateTime(2019, 12, 18, 10),
+          )
+          .inDays);
+      taskTiles.add(
+        TaskTile(
+          eventName:
+              'meeting meeting meeting meetingmeeting meetingmeeting meeting',
+          from: DateTime.now(),
+          to: DateTime.now().add(
+            Duration(days: 2),
+          ),
+          background: DateTime(2019, 12, 20, 10)
+                      .difference(
+                        DateTime(2019, 12, 18, 10),
+                      )
+                      .inDays >
+                  1
+              ? Colors.orange
+              : Colors.blue,
+        ),
+      );
+    },
+  );
+  return MeetingDataSource(taskTiles);
 }
 
 class _CalenderScreenState extends State<CalenderScreen> {
@@ -57,24 +111,13 @@ class _CalenderScreenState extends State<CalenderScreen> {
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
           onLongPress: (event) {
+            print(event.date);
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    MaterialButton(
-                      onPressed: () {
-                        //TODO:edit task
-                      },
-                      child: Text("Edit Task"),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        //TODO:cancel task
-                      },
-                      child: Text("Cancel Task"),
-                    ),
                     MaterialButton(
                       onPressed: () {
                         Navigator.of(context).push(
@@ -90,6 +133,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
               ),
             );
           },
+          showNavigationArrow: true,
           dataSource: _getCalendarDataSource(widget.taskList),
           view: CalendarView.month,
           showDatePickerButton: true,
@@ -101,9 +145,11 @@ class _CalenderScreenState extends State<CalenderScreen> {
             CalendarView.timelineMonth,
           ],
           monthViewSettings: MonthViewSettings(
-              showAgenda: true,
-              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-              numberOfWeeksInView: 6),
+            showAgenda: true,
+            showTrailingAndLeadingDates: false,
+            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+            numberOfWeeksInView: 6,
+          ),
           scheduleViewSettings:
               ScheduleViewSettings(hideEmptyScheduleWeek: false),
           timeSlotViewSettings: TimeSlotViewSettings(

@@ -317,16 +317,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 suggestionsCallback: (pattern) {
                                   List<PropertyElement> matches = [];
                                   matches.addAll(properties);
-                                  matches.retainWhere((s) => s.unitNo
+                                  print(matches[0].toJson());
+                                  matches.retainWhere((s) => s.tableproperty.unitNo
                                       .toLowerCase()
-                                      .contains(pattern.toLowerCase()));
+                                      .contains(pattern!=null?pattern.toLowerCase():""));
                                   return matches;
                                 },
                                 itemBuilder:
                                     (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.socid.toString()),
-                                    leading: Text(suggestion.unitNo.toString()),
+                                    title: Text(suggestion.tableproperty.socid.toString()),
+                                    leading: Text(suggestion.tableproperty.unitNo.toString()),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -351,11 +352,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 },
                                 onSuggestionSelected: (suggestion) {
                                   this._property.text =
-                                      suggestion.unitNo.toString() +
+                                      suggestion.tableproperty.unitNo.toString() +
                                           " " +
-                                          suggestion.socid.toString();
+                                          suggestion.tableproperty.socid.toString();
                                   setState(() {
-                                    _selectedProperty = suggestion.propertyId;
+                                    _selectedProperty = suggestion.tableproperty.propertyId;
                                   });
                                 },
                                 validator: (value) => value.isEmpty

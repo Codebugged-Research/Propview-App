@@ -34,6 +34,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   List<TaskElement> unApprovedTaskList = [];
 
   getData() async {
+    pendingTaskList.clear();
+    completedTaskList.clear();
+    unApprovedTaskList.clear();
     setState(() {
       loading = true;
     });
@@ -93,42 +96,84 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      trailing: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => CalenderScreen(
-                                    taskList: pendingTaskList,
-                                  )));
-                        },
-                        child: Container(
-                          height: 35,
-                          width: 35,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey[200],
-                                  offset: const Offset(
-                                    0.0,
-                                    0.0,
-                                  ),
-                                  blurRadius: 4.0,
-                                  spreadRadius: 0.0,
-                                ), //BoxShadow
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  offset: const Offset(0.0, 0.0),
-                                  blurRadius: 4.0,
-                                  spreadRadius: 0.0,
-                                ),
-                              ]),
-                          child: Icon(
-                            Icons.calendar_today_outlined,
-                            color: Color(0xff314B8C),
-                            size: 24,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              getData();
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[200],
+                                      offset: const Offset(
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ), //BoxShadow
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: const Offset(0.0, 0.0),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ),
+                                  ]),
+                              child: Icon(
+                                Icons.refresh,
+                                color: Color(0xff314B8C),
+                                size: 24,
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => CalenderScreen(
+                                        taskList: pendingTaskList,
+                                      )));
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[200],
+                                      offset: const Offset(
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ), //BoxShadow
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: const Offset(0.0, 0.0),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ),
+                                  ]),
+                              child: Icon(
+                                Icons.calendar_today_outlined,
+                                color: Color(0xff314B8C),
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -194,7 +239,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                 itemCount: pendingTaskList.length,
                                 itemBuilder: (context, index) {
                                   return TaskCard(
-                                      taskElement: pendingTaskList[index]);
+                                    taskElement: pendingTaskList[index],
+                                    currentUser: user,
+                                  );
                                 },
                               ),
                         completedTaskList.length == 0
@@ -214,7 +261,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                 itemCount: completedTaskList.length,
                                 itemBuilder: (context, index) {
                                   return TaskCard(
-                                      taskElement: completedTaskList[index]);
+                                    taskElement: completedTaskList[index],
+                                    currentUser: user,
+                                  );
                                 },
                               ),
                         unApprovedTaskList.length == 0
@@ -231,10 +280,12 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                               )
                             : ListView.builder(
                                 padding: EdgeInsets.only(top: 0),
-                                itemCount: completedTaskList.length,
+                                itemCount: unApprovedTaskList.length,
                                 itemBuilder: (context, index) {
                                   return TaskCard(
-                                      taskElement: unApprovedTaskList[index]);
+                                    taskElement: unApprovedTaskList[index],
+                                    currentUser: user,
+                                  );
                                 },
                               ),
                       ],

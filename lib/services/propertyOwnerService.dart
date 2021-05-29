@@ -14,7 +14,7 @@ class PropertyOwnerService extends AuthService {
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      PropertyOwnerElement  propertyOwner = PropertyOwnerElement.fromJson(responseMap);
+      PropertyOwnerElement  propertyOwner = PropertyOwnerElement.fromJson(responseMap["data"]["propertyOwner"][0]);
       return propertyOwner;
     } else {
       print("DEBUG");

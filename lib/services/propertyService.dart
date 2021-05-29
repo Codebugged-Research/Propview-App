@@ -13,7 +13,7 @@ class PropertyService extends AuthService {
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      PropertyElement  property = PropertyElement.fromJson(responseMap);
+      PropertyElement  property = PropertyElement.fromJson(responseMap["data"]["property"][0]);
       return property;
     } else {
       print("DEBUG");
@@ -42,6 +42,8 @@ class PropertyService extends AuthService {
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       Property property = Property.fromJson(responseMap);
+      print(responseMap);
+      print(property.toJson());
       return property;
     } else {
       print("DEBUG");

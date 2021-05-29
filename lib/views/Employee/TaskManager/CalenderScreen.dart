@@ -30,7 +30,6 @@ DataSource _getCalendarDataSource(List<TaskElement> tasks) {
           " " +
           element.startDateTime.toString(),
       notes: element.taskDesc,
-      location: element.propertyOwner.ownerAddress,
       color: element.endDateTime.difference(element.startDateTime).inDays > 1
           ? Colors.orange
           : Colors.blue,

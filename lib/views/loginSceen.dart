@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
   getDeviceToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String fcmToken = await messaging.getToken();
-    prefs.setString('device_token', fcmToken);
+    prefs.setString('deviceToken', fcmToken);
     return fcmToken;
   }
 
@@ -140,7 +140,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       tempUser.deviceToken = deviceToken;
     });
-    print(tempUser.toJson());
     bool isUpdated =
         await UserService.updateUser(json.encode(tempUser.toJson()));
     print(isUpdated);

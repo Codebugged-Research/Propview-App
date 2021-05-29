@@ -21,6 +21,19 @@ class UserService extends AuthService {
   }
 
   // ignore: missing_return
+  static Future<User> getUserById(id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/user/$id}',
+        method: 'GET');
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      return user;
+    } else {
+      print("DEBUG");
+    }
+  }
+
+  // ignore: missing_return
   static Future<List<User>> getAllUser() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/users',
@@ -38,7 +51,7 @@ class UserService extends AuthService {
   static Future<bool> updateUser(var payload) async {
     var auth = await AuthService.getSavedAuth();
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'user/update/${auth['id']}',
+        AuthService.BASE_URI + 'api/user/update/${auth['id']}',
         method: 'PUT',
         body: payload);
     if (response.statusCode == 200) {
