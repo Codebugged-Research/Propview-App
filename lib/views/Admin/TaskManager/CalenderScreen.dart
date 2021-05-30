@@ -76,7 +76,7 @@ MeetingDataSource _getCalendarDataSource(List<TaskElement> tasks) {
       taskTiles.add(
         TaskTile(
           eventName:
-              'meeting meeting meeting meetingmeeting meetingmeeting meeting',
+              element.taskName+"-"+element.tblUsers.name,
           from: DateTime.now(),
           to: DateTime.now().add(
             Duration(days: 2),
@@ -111,7 +111,6 @@ class _CalenderScreenState extends State<CalenderScreen> {
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
           onLongPress: (event) {
-            print(event.date);
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -126,7 +125,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                           ),
                         );
                       },
-                      child: Text("Create Task"),
+                      child: Text("Create New Task"),
                     ),
                   ],
                 ),

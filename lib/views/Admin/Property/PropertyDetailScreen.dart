@@ -60,7 +60,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       profileSectionWidget(
                           context,
                           'Name',
-                          '${property.tblSociety.socname} ${property.tblLocality.locname} ${property.tableproperty.unitNo}',
+                          '${property.tblSociety.socname} ,${property.tableproperty.unitNo}',
                           Icons.home),
                       profileSectionWidget(context, 'City',
                           '${property.tblCity.ccname}', Icons.home),
