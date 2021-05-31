@@ -74,54 +74,51 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
     });
     if (checkFields()) {
-      try {
-        bool isAuthenticated = await AuthService.authenticate(email, password);
-        if (isAuthenticated) {
-          getUserAndSaveToken();
-          NotificationSettings settings = await messaging.requestPermission(
-            alert: true,
-            announcement: false,
-            badge: true,
-            carPlay: false,
-            criticalAlert: false,
-            provisional: false,
-            sound: true,
-          );
-          if (settings.authorizationStatus.toString() ==
-              "AuthorizationStatus.authorized") {
-            showInSnackBar(context, 'Logged In Successfully !!', 2500);
-            await NotificationService.sendPushToSelf(
-                "Welcome", "You are successfully logged in into PropView");
-            if (tempUser.userType == "admin" ||
-                tempUser.userType == "super_admin") {
-              Routing.makeRouting(context,
-                  routeMethod: 'pushReplacement',
-                  newWidget: ad.LandingScreen(selectedIndex: 0));
-            } else if (tempUser.userType == "manager") {
-              Routing.makeRouting(context,
-                  routeMethod: 'pushReplacement',
-                  newWidget: man.LandingScreen(selectedIndex: 0));
-            } else if (tempUser.userType == "employee") {
-              Routing.makeRouting(context,
-                  routeMethod: 'pushReplacement',
-                  newWidget: emp.LandingScreen(selectedIndex: 0));
-            } else {
-              Routing.makeRouting(context,
-                  routeMethod: 'pushReplacement',
-                  newWidget: emp.LandingScreen(selectedIndex: 0));
-            }
+      bool isAuthenticated = await AuthService.authenticate(email, password);
+      if (isAuthenticated) {
+        await getUserAndSaveToken();
+        NotificationSettings settings = await messaging.requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+        print(settings.authorizationStatus.toString());
+        if (settings.authorizationStatus.toString() ==
+            "AuthorizationStatus.authorized") {
+          showInSnackBar(context, 'Logged In Successfully !!', 2500);
+          setState(() {
+            isLoading = false;
+          });
+          await NotificationService.sendPushToSelf(
+              "Welcome", "You are successfully logged in into PropView");
+          if (tempUser.userType == "admin" ||
+              tempUser.userType == "super_admin") {
+            Routing.makeRouting(context,
+                routeMethod: 'pushReplacement',
+                newWidget: ad.LandingScreen(selectedIndex: 0));
+          } else if (tempUser.userType == "manager") {
+            Routing.makeRouting(context,
+                routeMethod: 'pushReplacement',
+                newWidget: man.LandingScreen(selectedIndex: 0));
+          } else if (tempUser.userType == "employee") {
+            Routing.makeRouting(context,
+                routeMethod: 'pushReplacement',
+                newWidget: emp.LandingScreen(selectedIndex: 0));
           } else {
-            showInSnackBar(context, 'Check notification settings', 2500);
-            AuthService.clearAuth();
+            Routing.makeRouting(context,
+                routeMethod: 'pushReplacement',
+                newWidget: emp.LandingScreen(selectedIndex: 0));
           }
         } else {
-          showInSnackBar(context, 'Authentication Denied!', 2500);
+          showInSnackBar(context, 'Check notification settings', 2500);
         }
-      } catch (e) {
-        setState(() {
-          isLoading = false;
-        });
-        showInSnackBar(context, 'Something went wrong!', 2500);
+      } else {
+        showInSnackBar(context, 'Authentication Denied!', 2500);
+        AuthService.clearAuth();
       }
     } else {
       setState(() {
@@ -137,12 +134,13 @@ class _LoginScreenState extends State<LoginScreen> {
   getUserAndSaveToken() async {
     tempUser = await UserService.getUser();
     String deviceToken = await getDeviceToken();
+    print(deviceToken);
     setState(() {
       tempUser.deviceToken = deviceToken;
     });
     bool isUpdated =
         await UserService.updateUser(json.encode(tempUser.toJson()));
-    print(isUpdated);
+    return isUpdated;
   }
 
   @override

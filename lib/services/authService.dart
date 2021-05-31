@@ -77,9 +77,8 @@ class AuthService extends BaseService {
       String token = responseMap['token'];
       String id = responseMap['user']['user_id'].toString();
       String role = responseMap['user']['user_type'].toString();
-      bool success = token != null;
-      if (success) _saveToken(token, email, id, role);
-      return success;
+      await _saveToken(token, email, id, role);
+      return true;
     } else {
       return false;
     }

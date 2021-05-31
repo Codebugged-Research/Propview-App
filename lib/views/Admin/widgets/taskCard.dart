@@ -48,32 +48,23 @@ class _TaskCardState extends State<TaskCard> {
                 ),
               ]),
           height: 160,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Image.asset(
-                "assets/task.png",
-                height: 75,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    textWidget(
-                        context, "Task Type: ", widget.taskElement.category),
-                    textWidget(
-                        context,
-                        "AssignedTo: ",
-                        widget.taskElement.tblUsers.name +
-                            "\n(${widget.taskElement.tblUsers.designation})"),
-                    textWidget(
-                        context, "Task Name: \n", widget.taskElement.taskName),
-                  ],
-                ),
-              )
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                textWidget(
+                    context, "Task Type: ", widget.taskElement.category),
+                textWidget(
+                    context,
+                    "AssignedTo: ",
+                    widget.taskElement.tblUsers.name +
+                        "\n(${widget.taskElement.tblUsers.designation})"),
+                textWidget(
+                    context, "Task Name: \n", widget.taskElement.taskName),
+              ],
+            ),
           ),
         ),
       ),
