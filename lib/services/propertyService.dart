@@ -50,4 +50,16 @@ class PropertyService extends AuthService {
       print("DEBUG");
     }
   }
+
+  static Future<String> getSocietyName(id)async{
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/property/society/$id',
+        method: 'GET');
+    var responseMap = json.decode(response.body);
+    if (response.statusCode == 200) {
+      return responseMap[0]["socname"];
+    }else{
+      return "error";
+    }
+  }
 }

@@ -199,8 +199,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             labelColor: Color(0xff314B8C),
                             tabs: [
                               Tab(text: "Pending"),
-                              Tab(text: "Completed"),
                               Tab(text: "UnApproved"),
+                              Tab(text: "Completed"),
                             ],
                             onTap: (value) {
                               setState(() {
@@ -218,78 +218,79 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   ),
                   Expanded(
                     child: Container(
-                        child: TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: _tabController,
-                      children: <Widget>[
-                        pendingTaskList.length == 0
-                            ? Center(
-                                child: Text(
-                                  'No Task!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle1
-                                      .copyWith(
-                                          color: Color(0xff314B8C),
-                                          fontWeight: FontWeight.bold),
+                      child: TabBarView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: _tabController,
+                        children: <Widget>[
+                          pendingTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: pendingTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                      taskElement: pendingTaskList[index],
+                                      currentUser: user,
+                                    );
+                                  },
                                 ),
-                              )
-                            : ListView.builder(
-                                padding: EdgeInsets.only(top: 0),
-                                itemCount: pendingTaskList.length,
-                                itemBuilder: (context, index) {
-                                  return TaskCard(
-                                    taskElement: pendingTaskList[index],
-                                    currentUser: user,
-                                  );
-                                },
-                              ),
-                        completedTaskList.length == 0
-                            ? Center(
-                                child: Text(
-                                  'No Task!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle1
-                                      .copyWith(
-                                          color: Color(0xff314B8C),
-                                          fontWeight: FontWeight.bold),
+                          unApprovedTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: unApprovedTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                      taskElement: unApprovedTaskList[index],
+                                      currentUser: user,
+                                    );
+                                  },
                                 ),
-                              )
-                            : ListView.builder(
-                                padding: EdgeInsets.only(top: 0),
-                                itemCount: completedTaskList.length,
-                                itemBuilder: (context, index) {
-                                  return TaskCard(
-                                    taskElement: completedTaskList[index],
-                                    currentUser: user,
-                                  );
-                                },
-                              ),
-                        unApprovedTaskList.length == 0
-                            ? Center(
-                                child: Text(
-                                  'No Task!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle1
-                                      .copyWith(
-                                          color: Color(0xff314B8C),
-                                          fontWeight: FontWeight.bold),
+                          completedTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: completedTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                      taskElement: completedTaskList[index],
+                                      currentUser: user,
+                                    );
+                                  },
                                 ),
-                              )
-                            : ListView.builder(
-                                padding: EdgeInsets.only(top: 0),
-                                itemCount: unApprovedTaskList.length,
-                                itemBuilder: (context, index) {
-                                  return TaskCard(
-                                    taskElement: unApprovedTaskList[index],
-                                    currentUser: user,
-                                  );
-                                },
-                              ),
-                      ],
-                    )),
+                        ],
+                      ),
+                    ),
                     flex: 9,
                   ),
                 ],

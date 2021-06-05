@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/views/Admin/AssignedPersonDetailScreen.dart';
 import 'package:propview/views/Admin/Property/PropertyDetailScreen.dart';
@@ -22,53 +23,85 @@ class TaskCard extends StatefulWidget {
 
 class _TaskCardState extends State<TaskCard> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  String propName;
+  bool loading = false;
+
+  getData() async {
+    setState(() {
+      loading = true;
+    });
+    propName = await PropertyService.getSocietyName(
+            widget.taskElement.property.socid) +
+        " , " +
+        widget.taskElement.property.unitNo;
+    setState(() {
+      loading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        taskDetailsWidget(context);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: const Offset(0.0, 0.0),
-                  blurRadius: 2.5,
-                  spreadRadius: 0.0,
+    return loading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : GestureDetector(
+            onTap: () {
+              taskDetailsWidget(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: const Offset(0.0, 0.0),
+                        blurRadius: 2.5,
+                        spreadRadius: 0.0,
+                      ),
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: const Offset(0.0, 0.0),
+                        blurRadius: 2.5,
+                        spreadRadius: 0.0,
+                      ),
+                    ]),
+                height: 160,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      textWidget(
+                        context,
+                        "Property: ",
+                        propName,
+                      ),
+                      textWidget(context, "Task Name: \n",
+                          widget.taskElement.taskName),
+                      textWidget(
+                          context, "Task Type: ", widget.taskElement.category),
+                      textWidget(
+                          context,
+                          "AssignedTo: ",
+                          widget.taskElement.tblUsers.name +
+                              "\n(${widget.taskElement.tblUsers.designation})"),
+                    ],
+                  ),
                 ),
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: const Offset(0.0, 0.0),
-                  blurRadius: 2.5,
-                  spreadRadius: 0.0,
-                ),
-              ]),
-          height: 160,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                textWidget(
-                    context, "Task Type: ", widget.taskElement.category),
-                textWidget(
-                    context,
-                    "AssignedTo: ",
-                    widget.taskElement.tblUsers.name +
-                        "\n(${widget.taskElement.tblUsers.designation})"),
-                textWidget(
-                    context, "Task Name: \n", widget.taskElement.taskName),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 
   Widget textWidget(BuildContext context, String label, String data) {

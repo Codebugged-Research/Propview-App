@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:propview/models/Property.dart';
+
 Task taskFromJson(String str) => Task.fromJson(json.decode(str));
 
 String taskToJson(Task data) => json.encode(data.toJson());
@@ -56,6 +58,7 @@ class TaskElement {
     this.taskStatus,
     this.createdAt,
     this.updatedAt,
+    this.property,
     this.propertyOwnerRef,
     this.tblUsers,
   });
@@ -72,6 +75,7 @@ class TaskElement {
   DateTime createdAt;
   DateTime updatedAt;
   String propertyOwnerRef;
+  Tableproperty property;
   TblUsers tblUsers;
 
   factory TaskElement.fromJson(Map<String, dynamic> json) => TaskElement(
@@ -87,6 +91,7 @@ class TaskElement {
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     propertyOwnerRef: json["property_owner_ref"] == null ? null : json["property_owner_ref"],
+    property: json["tableproperty"] == null ? null : Tableproperty.fromJson(json ["tableproperty"]),
     tblUsers: json["tbl_users"] == null ? null : TblUsers.fromJson(json["tbl_users"]),
   );
 
@@ -104,7 +109,7 @@ class TaskElement {
     "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
     "property_owner_ref": propertyOwnerRef == null ? null : propertyOwnerRef,
     // "property_owner": propertyOwner == null ? null : propertyOwner.toJson(),
-    // "tableproperty": property == null ? null : property.toJson(),
+    "tableproperty": property == null ? null : property.toJson(),
     "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
   };
 }
