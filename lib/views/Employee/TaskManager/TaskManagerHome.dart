@@ -41,7 +41,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     taskData = await TaskService.getAllTaskByUserId(user.userId);
     for (int i = 0; i < taskData.data.task.length; i++) {
-      if (taskData.data.task[i].taskStatus == "Approved") {
+      if (taskData.data.task[i].taskStatus == "Pending") {
         pendingTaskList.add(taskData.data.task[i]);
       } else if (taskData.data.task[i].taskStatus == "Completed") {
         completedTaskList.add(taskData.data.task[i]);
@@ -93,7 +93,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      trailing:  Row(
+                      trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           InkWell(
@@ -130,13 +130,15 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                               ),
                             ),
                           ),
-                          SizedBox(width: 16,),
+                          SizedBox(
+                            width: 16,
+                          ),
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => CalenderScreen(
-                                    taskList: pendingTaskList,
-                                  )));
+                                        taskList: pendingTaskList,
+                                      )));
                             },
                             child: Container(
                               height: 35,
@@ -194,8 +196,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             labelColor: Color(0xff314B8C),
                             tabs: [
                               Tab(text: "Pending"),
-                              Tab(text: "Completed"),
                               Tab(text: "UnApproved"),
+                              Tab(text: "Completed"),
                             ],
                             onTap: (value) {
                               setState(() {
@@ -234,7 +236,31 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   itemCount: pendingTaskList.length,
                                   itemBuilder: (context, index) {
                                     return TaskCard(
-                                        taskElement: pendingTaskList[index]);
+                                      taskElement: pendingTaskList[index],
+                                      currentUser: user,
+                                    );
+                                  },
+                                ),
+                          unApprovedTaskList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No Task!',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Color(0xff314B8C),
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemCount: unApprovedTaskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                      taskElement: unApprovedTaskList[index],
+                                      currentUser: user,
+                                    );
                                   },
                                 ),
                           completedTaskList.length == 0
@@ -254,27 +280,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   itemCount: completedTaskList.length,
                                   itemBuilder: (context, index) {
                                     return TaskCard(
-                                        taskElement: completedTaskList[index]);
-                                  },
-                                ),
-                          unApprovedTaskList.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No Task!',
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle1
-                                        .copyWith(
-                                            color: Color(0xff314B8C),
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  padding: EdgeInsets.only(top: 0),
-                                  itemCount: completedTaskList.length,
-                                  itemBuilder: (context, index) {
-                                    return TaskCard(
-                                        taskElement: unApprovedTaskList[index]);
+                                      taskElement: completedTaskList[index],
+                                      currentUser: user,
+                                    );
                                   },
                                 ),
                         ],

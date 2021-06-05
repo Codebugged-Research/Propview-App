@@ -486,7 +486,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "category": _selectedTaskCategory,
                           "task_name": _taskName.text,
                           "task_desc": _taskDescription.text,
-                          "task_status": "Approved",
+                          "task_status": "Pending",
                           "start_dateTime": _taskStartDateTime.text,
                           "end_dateTime": _taskEndDateTime.text,
                           "assigned_to": _selectedUser.userId.toString(),

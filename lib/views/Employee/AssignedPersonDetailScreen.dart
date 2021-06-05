@@ -5,7 +5,6 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-
 class AssignedPersonDetailScreen extends StatefulWidget {
   final String assignedTo;
   const AssignedPersonDetailScreen({Key key, this.assignedTo})

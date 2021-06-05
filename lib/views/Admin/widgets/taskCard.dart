@@ -75,7 +75,7 @@ class _TaskCardState extends State<TaskCard> {
                         spreadRadius: 0.0,
                       ),
                     ]),
-                height: 160,
+                height: 142,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -87,8 +87,8 @@ class _TaskCardState extends State<TaskCard> {
                         "Property: ",
                         propName,
                       ),
-                      textWidget(context, "Task Name: \n",
-                          widget.taskElement.taskName),
+                      textWidget(
+                          context, "Task Name: ", widget.taskElement.taskName),
                       textWidget(
                           context, "Task Type: ", widget.taskElement.category),
                       textWidget(
@@ -167,6 +167,12 @@ class _TaskCardState extends State<TaskCard> {
                         titleWidget(context, 'Task Status: ',
                             '${widget.taskElement.taskStatus}'),
                       ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    titleWidget(
+                      context,
+                      'Property: ',
+                      propName,
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Category: ',
@@ -300,7 +306,7 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.currentUser.userId.toString() ==
                             widget.taskElement.assignedTo
-                        ? widget.taskElement.taskStatus != "Completed"
+                        ? widget.taskElement.taskStatus == "Pending"
                             ? Align(
                                 alignment: Alignment.center,
                                 child: MaterialButton(
@@ -340,7 +346,7 @@ class _TaskCardState extends State<TaskCard> {
                                             onPressed: () async {
                                               setState(() {
                                                 widget.taskElement.taskStatus =
-                                                    "Completed";
+                                                    "Unapproved";
                                               });
                                               print(jsonEncode(
                                                   widget.taskElement.toJson()));
@@ -390,7 +396,7 @@ class _TaskCardState extends State<TaskCard> {
                               )
                             : Container()
                         : Container(),
-                    widget.currentUser.parentId.toString() ==
+                    widget.currentUser.parentId.toString() != "" && widget.currentUser.userId.toString() ==
                                 widget.taskElement.tblUsers.parentId
                                     .toString() ||
                             widget.currentUser.userType == "admin" ||
@@ -435,7 +441,7 @@ class _TaskCardState extends State<TaskCard> {
                                             onPressed: () async {
                                               setState(() {
                                                 widget.taskElement.taskStatus =
-                                                    "Approved";
+                                                    "Completed";
                                               });
                                               print(jsonEncode(
                                                   widget.taskElement.toJson()));

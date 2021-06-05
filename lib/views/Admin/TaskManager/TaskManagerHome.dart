@@ -32,24 +32,44 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   List<TaskElement> pendingTaskList = [];
   List<TaskElement> completedTaskList = [];
   List<TaskElement> unApprovedTaskList = [];
+  List<TaskElement> pendingTaskList2 = [];
+  List<TaskElement> completedTaskList2 = [];
+  List<TaskElement> unApprovedTaskList2 = [];
 
   getData() async {
     pendingTaskList.clear();
     completedTaskList.clear();
     unApprovedTaskList.clear();
+    pendingTaskList2.clear();
+    completedTaskList2.clear();
+    unApprovedTaskList2.clear();
     setState(() {
       loading = true;
     });
     user = await UserService.getUser();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    _tabController21 = TabController(length: 3, vsync: this, initialIndex: 0);
+    _tabController22 = TabController(length: 3, vsync: this, initialIndex: 0);
     taskData = await TaskService.getAllTask();
     for (int i = 0; i < taskData.data.task.length; i++) {
-      if (taskData.data.task[i].taskStatus == "Approved") {
-        pendingTaskList.add(taskData.data.task[i]);
+      if (taskData.data.task[i].taskStatus == "Pending") {
+        if (taskData.data.task[i].assignedTo == user.userId.toString()) {
+          pendingTaskList.add(taskData.data.task[i]);
+        } else {
+          pendingTaskList2.add(taskData.data.task[i]);
+        }
       } else if (taskData.data.task[i].taskStatus == "Completed") {
-        completedTaskList.add(taskData.data.task[i]);
+        if (taskData.data.task[i].assignedTo == user.userId.toString()) {
+          completedTaskList.add(taskData.data.task[i]);
+        } else {
+          completedTaskList2.add(taskData.data.task[i]);
+        }
       } else if (taskData.data.task[i].taskStatus == "Unapproved") {
-        unApprovedTaskList.add(taskData.data.task[i]);
+        if (taskData.data.task[i].assignedTo == user.userId.toString()) {
+          unApprovedTaskList.add(taskData.data.task[i]);
+        } else {
+          unApprovedTaskList2.add(taskData.data.task[i]);
+        }
       }
     }
     setState(() {
@@ -58,7 +78,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   }
 
   TabController _tabController;
-  int _index = 0;
+  TabController _tabController21;
+  TabController _tabController22;
 
   @override
   Widget build(BuildContext context) {
@@ -198,17 +219,15 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             unselectedLabelColor: Colors.black.withOpacity(0.4),
                             labelColor: Color(0xff314B8C),
                             tabs: [
-                              Tab(text: "Pending"),
-                              Tab(text: "UnApproved"),
-                              Tab(text: "Completed"),
+                              Tab(text: "Self"),
+                              Tab(text: "Team"),
                             ],
                             onTap: (value) {
-                              setState(() {
-                                _index = value;
-                              });
-                              _tabController.animateTo(value,
-                                  curve: Curves.easeIn,
-                                  duration: Duration(milliseconds: 600));
+                              _tabController.animateTo(
+                                value,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 600),
+                              );
                             },
                           ),
                         ],
@@ -221,73 +240,238 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       child: TabBarView(
                         physics: NeverScrollableScrollPhysics(),
                         controller: _tabController,
-                        children: <Widget>[
-                          pendingTaskList.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No Task!',
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle1
-                                        .copyWith(
-                                            color: Color(0xff314B8C),
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  padding: EdgeInsets.only(top: 0),
-                                  itemCount: pendingTaskList.length,
-                                  itemBuilder: (context, index) {
-                                    return TaskCard(
-                                      taskElement: pendingTaskList[index],
-                                      currentUser: user,
-                                    );
-                                  },
+                        children: [
+                          Column(
+                            children: [
+                              TabBar(
+                                isScrollable: true,
+                                controller: _tabController21,
+                                indicator: UnderlineTabIndicator(
+                                  borderSide: BorderSide(
+                                      color: Color(0xff314B8C), width: 4.0),
                                 ),
-                          unApprovedTaskList.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No Task!',
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle1
-                                        .copyWith(
-                                            color: Color(0xff314B8C),
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  padding: EdgeInsets.only(top: 0),
-                                  itemCount: unApprovedTaskList.length,
-                                  itemBuilder: (context, index) {
-                                    return TaskCard(
-                                      taskElement: unApprovedTaskList[index],
-                                      currentUser: user,
-                                    );
-                                  },
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff314B8C),
                                 ),
-                          completedTaskList.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No Task!',
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle1
-                                        .copyWith(
-                                            color: Color(0xff314B8C),
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  padding: EdgeInsets.only(top: 0),
-                                  itemCount: completedTaskList.length,
-                                  itemBuilder: (context, index) {
-                                    return TaskCard(
-                                      taskElement: completedTaskList[index],
-                                      currentUser: user,
-                                    );
-                                  },
+                                unselectedLabelStyle: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                unselectedLabelColor:
+                                    Colors.black.withOpacity(0.4),
+                                labelColor: Color(0xff314B8C),
+                                tabs: [
+                                  Tab(text: "Pending"),
+                                  Tab(text: "UnApproved"),
+                                  Tab(text: "Completed"),
+                                ],
+                                onTap: (value) {
+                                  _tabController21.animateTo(
+                                    value,
+                                    curve: Curves.easeIn,
+                                    duration: Duration(milliseconds: 600),
+                                  );
+                                },
+                              ),
+                              Expanded(
+                                child: TabBarView(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  controller: _tabController21,
+                                  children: <Widget>[
+                                    pendingTaskList.length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'No Task!',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Color(0xff314B8C),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.only(top: 0),
+                                            itemCount: pendingTaskList.length,
+                                            itemBuilder: (context, index) {
+                                              return TaskCard(
+                                                taskElement:
+                                                    pendingTaskList[index],
+                                                currentUser: user,
+                                              );
+                                            },
+                                          ),
+                                    unApprovedTaskList.length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'No Task!',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Color(0xff314B8C),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.only(top: 0),
+                                            itemCount:
+                                                unApprovedTaskList.length,
+                                            itemBuilder: (context, index) {
+                                              return TaskCard(
+                                                taskElement:
+                                                    unApprovedTaskList[index],
+                                                currentUser: user,
+                                              );
+                                            },
+                                          ),
+                                    completedTaskList.length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'No Task!',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Color(0xff314B8C),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.only(top: 0),
+                                            itemCount: completedTaskList.length,
+                                            itemBuilder: (context, index) {
+                                              return TaskCard(
+                                                taskElement:
+                                                    completedTaskList[index],
+                                                currentUser: user,
+                                              );
+                                            },
+                                          ),
+                                  ],
                                 ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              TabBar(
+                                isScrollable: true,
+                                controller: _tabController22,
+                                indicator: UnderlineTabIndicator(
+                                  borderSide: BorderSide(
+                                      color: Color(0xff314B8C), width: 4.0),
+                                ),
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff314B8C),
+                                ),
+                                unselectedLabelStyle: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                unselectedLabelColor:
+                                    Colors.black.withOpacity(0.4),
+                                labelColor: Color(0xff314B8C),
+                                tabs: [
+                                  Tab(text: "Pending"),
+                                  Tab(text: "UnApproved"),
+                                  Tab(text: "Completed"),
+                                ],
+                                onTap: (value) {
+                                  _tabController22.animateTo(
+                                    value,
+                                    curve: Curves.easeIn,
+                                    duration: Duration(milliseconds: 600),
+                                  );
+                                },
+                              ),
+                              Expanded(
+                                child: TabBarView(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  controller: _tabController22,
+                                  children: <Widget>[
+                                    pendingTaskList2.length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'No Task!',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Color(0xff314B8C),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.only(top: 0),
+                                            itemCount: pendingTaskList2.length,
+                                            itemBuilder: (context, index) {
+                                              return TaskCard(
+                                                taskElement:
+                                                    pendingTaskList2[index],
+                                                currentUser: user,
+                                              );
+                                            },
+                                          ),
+                                    unApprovedTaskList2.length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'No Task!',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Color(0xff314B8C),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.only(top: 0),
+                                            itemCount:
+                                                unApprovedTaskList2.length,
+                                            itemBuilder: (context, index) {
+                                              return TaskCard(
+                                                taskElement:
+                                                    unApprovedTaskList2[index],
+                                                currentUser: user,
+                                              );
+                                            },
+                                          ),
+                                    completedTaskList2.length == 0
+                                        ? Center(
+                                            child: Text(
+                                              'No Task!',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Color(0xff314B8C),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.only(top: 0),
+                                            itemCount:
+                                                completedTaskList2.length,
+                                            itemBuilder: (context, index) {
+                                              return TaskCard(
+                                                taskElement:
+                                                    completedTaskList2[index],
+                                                currentUser: user,
+                                              );
+                                            },
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
