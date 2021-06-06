@@ -8,7 +8,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
-import 'package:propview/services/NotificationService.dart';
+import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
@@ -509,12 +509,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           load = false;
                         });
                         if (response) {
-                          NotificationService.sendPushToOne(
-                            "New Task Assigned",
-                            "A new task Has been Assigned : ${_taskName.text}",
-                            _selectedUser.deviceToken,
-                          );
-                          var managerToken = await UserService.getDeviceToken(_selectedUser.parentId);
+                          NotificationService.sendPushToOneWithTime(
+                              "New Task Assigned",
+                              "A new task Has been Assigned : ${_taskName.text}",
+                              _selectedUser.deviceToken,
+                              _taskStartDateTime.text,
+                              _taskEndDateTime.text);
+                          var managerToken = await UserService.getDeviceToken(
+                              _selectedUser.parentId);
                           NotificationService.sendPushToOne(
                             "New Task Assigned",
                             "A new task Has been Assigned to your employee : ${_taskName.text}",

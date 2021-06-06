@@ -9,14 +9,75 @@ import 'package:propview/services/reminderService.dart';
 import 'package:propview/utils/theme.dart';
 import 'package:propview/views/splashScreen.dart';
 
+ReminderService reminderService;
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  AndroidInitializationSettings androidInitializationSettings =
+      AndroidInitializationSettings("logo");
+
+  IOSInitializationSettings iosInitializationSettings =
+      IOSInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true);
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: androidInitializationSettings, iOS: iosInitializationSettings);
+
+  await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
   await Firebase.initializeApp();
-  //
-  // if (message.data != null) {
-  //   ReminderService reminderService;
-  //   reminderService.sheduledNotification(
-  //       message.data['startTime'], message.data['endTime']);
-  // }
+  if (message.data != null) {
+    scheduleIncoming(_flutterLocalNotificationsPlugin, message);
+    scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
+  }
+}
+
+scheduleIncoming(
+    FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
+    RemoteMessage message) async {
+  var scheduledNotificationStartTime =
+      determineScheduledTime(message.data['startTime']);
+  var android = AndroidNotificationDetails("id", "channel", "description");
+  var ios = IOSNotificationDetails();
+  var platform = new NotificationDetails(android: android, iOS: ios);
+  // ignore: deprecated_member_use
+  await _flutterLocalNotificationsPlugin.schedule(
+      0,
+      "Scheduled Task",
+      "Your scehduled task will about to start within 15 minutes",
+      scheduledNotificationStartTime,
+      platform);
+}
+
+scheduleOutgoing(
+    FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
+    RemoteMessage message) async {
+  var scheduledNotificationEndTime =
+      determineScheduledTime(message.data['endTime']);
+
+  var android = AndroidNotificationDetails("id", "channel", "description");
+
+  var ios = IOSNotificationDetails();
+
+  var platform = new NotificationDetails(android: android, iOS: ios);
+  // ignore: deprecated_member_use
+  await _flutterLocalNotificationsPlugin.schedule(
+      0,
+      "Scheduled Task",
+      "Your scehduled task will about to end within 15 minutes",
+      scheduledNotificationEndTime,
+      platform);
+}
+
+DateTime determineScheduledTime(String time) {
+  DateTime start = DateTime.parse(time);
+  DateTime scheduledTime = start.subtract(Duration(minutes: 15));
+  print(scheduledTime);
+  return scheduledTime;
 }
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
