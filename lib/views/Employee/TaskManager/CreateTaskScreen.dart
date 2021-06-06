@@ -502,9 +502,16 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         });
                         if (response) {
                           NotificationService.sendPushToOne(
-                              "New Task Assigned",
-                              "A new task Has been Assigned to you by the admin.",
-                              _selectedUser.deviceToken);
+                            "New Task Assigned",
+                            "A new task Has been Assigned : ${_taskName.text}",
+                            _selectedUser.deviceToken,
+                          );
+                          var managerToken = await UserService.getDeviceToken(_selectedUser.parentId);
+                          NotificationService.sendPushToOne(
+                            "New Task Assigned",
+                            "A new task Has been Assigned to your employee : ${_taskName.text}",
+                            managerToken,
+                          );
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => LandingScreen(
                                     selectedIndex: 1,

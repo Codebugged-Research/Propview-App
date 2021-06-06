@@ -144,6 +144,7 @@ class TblUsers {
     this.userType,
     this.status,
     this.addedOn,
+    this.deviceToken,
   });
 
   int userId;
@@ -173,6 +174,7 @@ class TblUsers {
   String userType;
   int status;
   String addedOn;
+  String deviceToken;
 
   factory TblUsers.fromJson(Map<String, dynamic> json) => TblUsers(
     userId: json["user_id"] == null ? null : json["user_id"],
@@ -192,6 +194,7 @@ class TblUsers {
     sid: json["sid"] == null ? null : json["sid"],
     ccid: json["ccid"] == null ? null : json["ccid"],
     refName1: json["ref_name1"] == null ? null : json["ref_name1"],
+    deviceToken: json["device_token"] == null ? null : json["device_token"],
     refEmail1: json["ref_email1"] == null ? null : json["ref_email1"],
     refMobile1: json["ref_mobile1"] == null ? null : json["ref_mobile1"],
     refAddress1: json["ref_address1"] == null ? null : json["ref_address1"],
@@ -209,6 +212,7 @@ class TblUsers {
     "parent_id": parentId == null ? null : parentId,
     "name": name == null ? null : name,
     "designation": designation == null ? null : designation,
+    "device_token": deviceToken == null ? null : deviceToken,
     "official_email": officialEmail == null ? null : officialEmail,
     "personal_email": personalEmail == null ? null : personalEmail,
     "official_number": officialNumber == null ? null : officialNumber,

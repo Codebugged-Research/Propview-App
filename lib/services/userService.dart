@@ -41,7 +41,7 @@ class UserService extends AuthService {
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       List<User> users =
-      responseMap.map<User>((usersMap) => User.fromJson(usersMap)).toList();
+          responseMap.map<User>((usersMap) => User.fromJson(usersMap)).toList();
       return users;
     } else {
       print("DEBUG");
@@ -59,6 +59,20 @@ class UserService extends AuthService {
     } else {
       print("Debug update user");
       return false;
+    }
+  }
+
+  static Future<String> getDeviceToken(String id) async {
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+    http.Response response = await http.post(
+      Uri.parse("http://68.183.247.233/api/user/deviceToken/$id"),
+      headers: headers,
+    );
+    var decodedMsg = await jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return decodedMsg["device_token"];
+    } else {
+      return "";
     }
   }
 }

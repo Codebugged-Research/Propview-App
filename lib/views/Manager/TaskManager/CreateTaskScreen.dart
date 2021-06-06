@@ -244,9 +244,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   propertySelectBox = false;
                                   this._propertyOwner.text =
                                       suggestion.ownerName.toString();
-                                 setState(() {
-                                   _selectedPropertyOwner = suggestion.ownerId;
-                                 });
+                                  setState(() {
+                                    _selectedPropertyOwner = suggestion.ownerId;
+                                  });
                                   var response = await PropertyService
                                       .getAllPropertiesByOwnerId(
                                           _selectedPropertyOwner);
@@ -318,16 +318,22 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   List<PropertyElement> matches = [];
                                   matches.addAll(properties);
                                   print(matches[0].toJson());
-                                  matches.retainWhere((s) => s.tableproperty.unitNo
+                                  matches.retainWhere((s) => s
+                                      .tableproperty.unitNo
                                       .toLowerCase()
-                                      .contains(pattern!=null?pattern.toLowerCase():""));
+                                      .contains(pattern != null
+                                          ? pattern.toLowerCase()
+                                          : ""));
                                   return matches;
                                 },
                                 itemBuilder:
                                     (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.tableproperty.socid.toString()),
-                                    leading: Text(suggestion.tableproperty.unitNo.toString()),
+                                    title: Text(suggestion.tableproperty.socid
+                                        .toString()),
+                                    leading: Text(suggestion
+                                        .tableproperty.unitNo
+                                        .toString()),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -351,12 +357,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._property.text =
-                                      suggestion.tableproperty.unitNo.toString() +
-                                          " " +
-                                          suggestion.tableproperty.socid.toString();
+                                  this._property.text = suggestion
+                                          .tableproperty.unitNo
+                                          .toString() +
+                                      " " +
+                                      suggestion.tableproperty.socid.toString();
                                   setState(() {
-                                    _selectedProperty = suggestion.tableproperty.propertyId;
+                                    _selectedProperty =
+                                        suggestion.tableproperty.propertyId;
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -502,9 +510,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         });
                         if (response) {
                           NotificationService.sendPushToOne(
-                              "New Task Assigned",
-                              "A new task Has been Assigned to you by the admin.",
-                              _selectedUser.deviceToken);
+                            "New Task Assigned",
+                            "A new task Has been Assigned : ${_taskName.text}",
+                            _selectedUser.deviceToken,
+                          );
+                          var managerToken = await UserService.getDeviceToken(
+                              _selectedUser.parentId);
+                          NotificationService.sendPushToOne(
+                            "New Task Assigned",
+                            "A new task Has been Assigned to your employee : ${_taskName.text}",
+                            managerToken,
+                          );
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => LandingScreen(
                                     selectedIndex: 1,

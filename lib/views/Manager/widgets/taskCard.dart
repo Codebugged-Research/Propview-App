@@ -5,8 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/NotificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskServices.dart';
+import 'package:propview/services/userService.dart';
 import 'package:propview/views/Manager/AssignedPersonDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyOwnerDetailScreen.dart';
@@ -348,6 +350,17 @@ class _TaskCardState extends State<TaskCard> {
                                                 widget.taskElement.taskStatus =
                                                 "Unapproved";
                                               });
+                                              NotificationService.sendPushToOne(
+                                                "Task Submitted",
+                                                "Task " + widget.taskElement.taskName + " is submitted by " + widget.taskElement.tblUsers.name,
+                                                widget.taskElement.tblUsers.deviceToken,
+                                              );
+                                              var managerToken = await UserService.getDeviceToken(widget.taskElement.tblUsers.parentId);
+                                              NotificationService.sendPushToOne(
+                                                "Task Submitted",
+                                                "Task " + widget.taskElement.taskName + " is submitted by " + widget.taskElement.tblUsers.name,
+                                                managerToken,
+                                              );
                                               var response =
                                                   await TaskService.updateTask(
                                                       widget.taskElement.taskId,
@@ -440,8 +453,11 @@ class _TaskCardState extends State<TaskCard> {
                                                 widget.taskElement.taskStatus =
                                                     "Completed";
                                               });
-                                              print(jsonEncode(
-                                                  widget.taskElement.toJson()));
+                                              NotificationService.sendPushToOne(
+                                                "Task Approved",
+                                                "Task " + widget.taskElement.taskName + " is approved",
+                                                widget.taskElement.tblUsers.deviceToken,
+                                              );
                                               var response =
                                                   await TaskService.updateTask(
                                                       widget.taskElement.taskId,
