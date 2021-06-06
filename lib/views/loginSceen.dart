@@ -93,8 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             isLoading = false;
           });
-          await NotificationService.sendPushToSelf(
-              "Welcome", "You are successfully logged in into PropView");
           if (tempUser.userType == "admin" ||
               tempUser.userType == "super_admin") {
             Routing.makeRouting(context,

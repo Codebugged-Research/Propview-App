@@ -62,15 +62,7 @@ class _LandingScreenState extends State<LandingScreen> {
       RemoteMessage message) async {
     var scheduledNotificationStartTime =
         determineScheduledTime(message.data['startTime']);
-    var bigPicture = BigPictureStyleInformation(
-        DrawableResourceAndroidBitmap("logo"),
-        largeIcon: DrawableResourceAndroidBitmap("logo"),
-        contentTitle: "Pickup Package Notification",
-        summaryText: "Pickup your package from .",
-        htmlFormatContent: true,
-        htmlFormatContentTitle: true);
-    var android = AndroidNotificationDetails("id", "channel", "description",
-        styleInformation: bigPicture);
+    var android = AndroidNotificationDetails("id", "channel", "description");
     var ios = IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: ios);
     // ignore: deprecated_member_use
@@ -87,16 +79,7 @@ class _LandingScreenState extends State<LandingScreen> {
       RemoteMessage message) async {
     var scheduledNotificationEndTime =
         determineScheduledTime(message.data['endTime']);
-    var bigPicture = BigPictureStyleInformation(
-        DrawableResourceAndroidBitmap("logo"),
-        largeIcon: DrawableResourceAndroidBitmap("logo"),
-        contentTitle: "Pickup Package Notification",
-        summaryText: "Pickup your package from .",
-        htmlFormatContent: true,
-        htmlFormatContentTitle: true);
-
-    var android = AndroidNotificationDetails("id", "channel", "description",
-        styleInformation: bigPicture);
+    var android = AndroidNotificationDetails("id", "channel", "description");
 
     var ios = IOSNotificationDetails();
 

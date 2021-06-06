@@ -111,8 +111,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Icons.call, () {}),
                   profileInfo(
                       'Email', '${user.officialEmail}', Icons.mail, () {}),
-                  profileInfo('Access Level', '${user.userType}',
-                      Icons.security, () {}),
+                  profileInfo(
+                      'Access Level',
+                      '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
+                      Icons.security,
+                      () {}),
                   profileInfo('Logout', '', Icons.exit_to_app_rounded, () {
                     AuthService.clearAuth();
                     Navigator.of(context).pushReplacement(
