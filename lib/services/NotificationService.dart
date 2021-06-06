@@ -23,7 +23,10 @@ class NotificationService {
         "title": title,
         "message": message,
         "deviceToken": deviceToken,
-        "data": {"name": "sambit"}
+        "data": {
+          "startTime": DateTime.now().toString(),
+          "endTime": DateTime.now().add(Duration(seconds: 10)).toString()
+        }
       },
     );
     http.Response response = await http.post(
@@ -63,6 +66,4 @@ class NotificationService {
       return response.body;
     }
   }
-
-
 }

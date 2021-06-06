@@ -27,11 +27,11 @@ class _LandingScreenState extends State<LandingScreen> {
             Text(message.notification.body),
             title: Text(message.notification.title),
           ));
-      // if (message.data != null) {
-      //   print('Message also contained a notification: ${message.notification}');
-      //   reminderService.sheduledNotification(
-      //       message.data['startTime'], message.data['endTime']);
-      // }
+      if (message.data != null) {
+        print('Message also contained a notification: ${message.notification}');
+        reminderService.sheduledNotification(
+            message.data['startTime'], message.data['endTime']);
+      }
     });
     _selectedIndex = widget.selectedIndex;
   }
