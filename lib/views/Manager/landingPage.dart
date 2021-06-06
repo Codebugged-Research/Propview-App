@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:propview/services/reminderService.dart';
 import 'package:propview/views/Manager/Home/homeScreen.dart';
 import 'package:propview/views/Manager/Profile/ProfileScreen.dart';
 import 'package:propview/views/Manager/TaskManager/taskManagerHome.dart';
@@ -15,10 +15,12 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   int _selectedIndex = 0;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     super.initState();
-    ReminderService reminderService;
+    initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       showDialog(
           context: context,
@@ -26,13 +28,92 @@ class _LandingScreenState extends State<LandingScreen> {
                 content: Text(message.notification.body),
                 title: Text(message.notification.title),
               ));
-      // if (message.data != null) {
-      //   print('Message also contained a notification: ${message.notification}');
-      //   reminderService.sheduledNotification(
-      //       message.data['startTime'], message.data['endTime']);
-      // }
+      if (message.data != null) {
+        print('Message also contained a notification: ${message.notification}');
+        scheduleIncoming(_flutterLocalNotificationsPlugin, message);
+        scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
+      }
     });
     _selectedIndex = widget.selectedIndex;
+  }
+
+  initialiseLocalNotification() async {
+    AndroidInitializationSettings androidInitializationSettings =
+        AndroidInitializationSettings("logo");
+
+    IOSInitializationSettings iosInitializationSettings =
+        IOSInitializationSettings(
+            requestAlertPermission: true,
+            requestBadgePermission: true,
+            requestSoundPermission: true);
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: androidInitializationSettings,
+            iOS: iosInitializationSettings);
+
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  // *
+  scheduleIncoming(
+      FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
+      RemoteMessage message) async {
+    var scheduledNotificationStartTime =
+        determineScheduledTime(message.data['startTime']);
+    var bigPicture = BigPictureStyleInformation(
+        DrawableResourceAndroidBitmap("logo"),
+        largeIcon: DrawableResourceAndroidBitmap("logo"),
+        contentTitle: "Pickup Package Notification",
+        summaryText: "Pickup your package from .",
+        htmlFormatContent: true,
+        htmlFormatContentTitle: true);
+    var android = AndroidNotificationDetails("id", "channel", "description",
+        styleInformation: bigPicture);
+    var ios = IOSNotificationDetails();
+    var platform = new NotificationDetails(android: android, iOS: ios);
+    // ignore: deprecated_member_use
+    await _flutterLocalNotificationsPlugin.schedule(
+        0,
+        "Scheduled Task",
+        "Your scehduled task will about to start within 15 minutes",
+        scheduledNotificationStartTime,
+        platform);
+  }
+
+  scheduleOutgoing(
+      FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
+      RemoteMessage message) async {
+    var scheduledNotificationEndTime =
+        determineScheduledTime(message.data['endTime']);
+    var bigPicture = BigPictureStyleInformation(
+        DrawableResourceAndroidBitmap("logo"),
+        largeIcon: DrawableResourceAndroidBitmap("logo"),
+        contentTitle: "Pickup Package Notification",
+        summaryText: "Pickup your package from .",
+        htmlFormatContent: true,
+        htmlFormatContentTitle: true);
+
+    var android = AndroidNotificationDetails("id", "channel", "description",
+        styleInformation: bigPicture);
+
+    var ios = IOSNotificationDetails();
+
+    var platform = new NotificationDetails(android: android, iOS: ios);
+    // ignore: deprecated_member_use
+    await _flutterLocalNotificationsPlugin.schedule(
+        0,
+        "Scheduled Task",
+        "Your scehduled task will about to end within 15 minutes",
+        scheduledNotificationEndTime,
+        platform);
+  }
+
+  DateTime determineScheduledTime(String time) {
+    DateTime start = DateTime.parse(time);
+    DateTime scheduledTime = start.subtract(Duration(minutes: 15));
+    print(scheduledTime);
+    return scheduledTime;
   }
 
   // static const TextStyle optionStyle =

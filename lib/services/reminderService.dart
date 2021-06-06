@@ -83,10 +83,9 @@ class ReminderService extends ChangeNotifier {
   //Sheduled Notification
 
   Future sheduledNotification(String startTime, String endTime) async {
-    var scheduledNotificationStartTime =
-        determineScheduledTime(startTime);
-        var scheduledNotificationEndTime =
-        determineScheduledTime(endTime);
+    print("Hello");
+    var scheduledNotificationStartTime = determineScheduledTime(startTime);
+    var scheduledNotificationEndTime = determineScheduledTime(endTime);
     var bigPicture = BigPictureStyleInformation(
         DrawableResourceAndroidBitmap("logo"),
         largeIcon: DrawableResourceAndroidBitmap("logo"),
@@ -102,6 +101,7 @@ class ReminderService extends ChangeNotifier {
 
     var platform = new NotificationDetails(android: android, iOS: ios);
 
+    // ignore: deprecated_member_use
     await _flutterLocalNotificationsPlugin.schedule(
         0,
         "Scheduled Task",
@@ -109,7 +109,7 @@ class ReminderService extends ChangeNotifier {
         scheduledNotificationStartTime,
         platform);
 
-     await _flutterLocalNotificationsPlugin.schedule(
+    await _flutterLocalNotificationsPlugin.schedule(
         0,
         "Scheduled Task",
         "Your scehduled task will about to end within 15 minutes",
@@ -125,7 +125,7 @@ class ReminderService extends ChangeNotifier {
 
   DateTime determineScheduledTime(String time) {
     DateTime start = DateTime.parse(time);
-    DateTime scheduledTime = start.subtract(Duration(minutes: 15));
+    DateTime scheduledTime = start.subtract(Duration(minutes: 1));
     return scheduledTime;
   }
 }

@@ -9,9 +9,6 @@ class NotificationService {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String id = await messaging.getToken();
     pref.setString("deviceToken", id);
-    print(id);
-    //TODO: update user device token upon login
-    // UserService.updateUser(jsonEncode({"deviceToken": id}));
     return id;
   }
 
@@ -23,10 +20,28 @@ class NotificationService {
         "title": title,
         "message": message,
         "deviceToken": deviceToken,
-        "data": {
-          "startTime": DateTime.now().toString(),
-          "endTime": DateTime.now().add(Duration(seconds: 10)).toString()
-        }
+      },
+    );
+    http.Response response = await http.post(
+        Uri.parse("http://68.183.247.233/api/notification/one"),
+        headers: headers,
+        body: body);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<bool> sendPushToOneWithTime(String title, String message,
+      deviceToken, String startTime, String endTime) async {
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+    var body = jsonEncode(
+      {
+        "title": title,
+        "message": message,
+        "deviceToken": deviceToken,
+        "data": {"startTime": startTime, "endTime": endTime}
       },
     );
     http.Response response = await http.post(
