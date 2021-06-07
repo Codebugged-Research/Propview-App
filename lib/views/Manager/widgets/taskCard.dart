@@ -9,6 +9,7 @@ import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/AssignedPersonDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyOwnerDetailScreen.dart';
@@ -50,9 +51,7 @@ class _TaskCardState extends State<TaskCard> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
+        ? circularProgressWidget()
         : GestureDetector(
             onTap: () {
               taskDetailsWidget(context);
@@ -187,10 +186,10 @@ class _TaskCardState extends State<TaskCard> {
                         '${widget.taskElement.taskDesc}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Start Time: ',
-                        '${widget.taskElement.startDateTime}'),
+                        '${widget.taskElement.startDateTime.day.toString().padLeft(2, "0")}/${widget.taskElement.startDateTime.month.toString().padLeft(2, "0")}/${widget.taskElement.startDateTime.year}    ${widget.taskElement.startDateTime.hour.toString().padLeft(2, "0")}:${widget.taskElement.startDateTime.minute.toString().padLeft(2, "0")}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task End Time: ',
-                        '${widget.taskElement.endDateTime}'),
+                        '${widget.taskElement.endDateTime.day.toString().padLeft(2, "0")}/${widget.taskElement.endDateTime.month.toString().padLeft(2, "0")}/${widget.taskElement.endDateTime.year.toString()}      ${widget.taskElement.endDateTime.hour.toString().padLeft(2, "0")}:${widget.taskElement.endDateTime.minute.toString().padLeft(2, "0")}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +198,7 @@ class _TaskCardState extends State<TaskCard> {
                           child: Card(
                             elevation: 2,
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
@@ -235,7 +234,7 @@ class _TaskCardState extends State<TaskCard> {
                           child: Card(
                             elevation: 2,
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
@@ -272,7 +271,7 @@ class _TaskCardState extends State<TaskCard> {
                           child: Card(
                             elevation: 2,
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
@@ -348,17 +347,33 @@ class _TaskCardState extends State<TaskCard> {
                                             onPressed: () async {
                                               setState(() {
                                                 widget.taskElement.taskStatus =
-                                                "Unapproved";
+                                                    "Unapproved";
                                               });
                                               NotificationService.sendPushToOne(
                                                 "Task Submitted",
-                                                "Task " + widget.taskElement.taskName + " is submitted by " + widget.taskElement.tblUsers.name,
-                                                widget.taskElement.tblUsers.deviceToken,
+                                                "Task " +
+                                                    widget
+                                                        .taskElement.taskName +
+                                                    " is submitted by " +
+                                                    widget.taskElement.tblUsers
+                                                        .name,
+                                                widget.taskElement.tblUsers
+                                                    .deviceToken,
                                               );
-                                              var managerToken = await UserService.getDeviceToken(widget.taskElement.tblUsers.parentId);
+                                              var managerToken =
+                                                  await UserService
+                                                      .getDeviceToken(widget
+                                                          .taskElement
+                                                          .tblUsers
+                                                          .parentId);
                                               NotificationService.sendPushToOne(
                                                 "Task Submitted",
-                                                "Task " + widget.taskElement.taskName + " is submitted by " + widget.taskElement.tblUsers.name,
+                                                "Task " +
+                                                    widget
+                                                        .taskElement.taskName +
+                                                    " is submitted by " +
+                                                    widget.taskElement.tblUsers
+                                                        .name,
                                                 managerToken,
                                               );
                                               var response =
@@ -455,8 +470,12 @@ class _TaskCardState extends State<TaskCard> {
                                               });
                                               NotificationService.sendPushToOne(
                                                 "Task Approved",
-                                                "Task " + widget.taskElement.taskName + " is approved",
-                                                widget.taskElement.tblUsers.deviceToken,
+                                                "Task " +
+                                                    widget
+                                                        .taskElement.taskName +
+                                                    " is approved",
+                                                widget.taskElement.tblUsers
+                                                    .deviceToken,
                                               );
                                               var response =
                                                   await TaskService.updateTask(

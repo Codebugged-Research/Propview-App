@@ -574,12 +574,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       showTitleActions: true,
                       onChanged: (date) {
                         setState(() {
-                          controller.text = date.hour.toString()+date.minute.toString()+date.second.toString();
+                          controller.text = date.toString();
                         });
                       },
                       onConfirm: (date) {
                         setState(() {
-                          controller.text = date.hour.toString()+date.minute.toString()+date.second.toString();
+                          controller.text = date.toString();
                         });
                       },
                       currentTime: DateTime.now(),

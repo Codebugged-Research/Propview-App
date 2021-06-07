@@ -197,6 +197,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -244,9 +245,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   propertySelectBox = false;
                                   this._propertyOwner.text =
                                       suggestion.ownerName.toString();
-                                 setState(() {
-                                   _selectedPropertyOwner = suggestion.ownerId;
-                                 });
+                                  setState(() {
+                                    _selectedPropertyOwner = suggestion.ownerId;
+                                  });
                                   var response = await PropertyService
                                       .getAllPropertiesByOwnerId(
                                           _selectedPropertyOwner);
@@ -309,6 +310,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -318,16 +320,22 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   List<PropertyElement> matches = [];
                                   matches.addAll(properties);
                                   print(matches[0].toJson());
-                                  matches.retainWhere((s) => s.tableproperty.unitNo
+                                  matches.retainWhere((s) => s
+                                      .tableproperty.unitNo
                                       .toLowerCase()
-                                      .contains(pattern!=null?pattern.toLowerCase():""));
+                                      .contains(pattern != null
+                                          ? pattern.toLowerCase()
+                                          : ""));
                                   return matches;
                                 },
                                 itemBuilder:
                                     (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.tableproperty.socid.toString()),
-                                    leading: Text(suggestion.tableproperty.unitNo.toString()),
+                                    title: Text(suggestion.tableproperty.socid
+                                        .toString()),
+                                    leading: Text(suggestion
+                                        .tableproperty.unitNo
+                                        .toString()),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -351,12 +359,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._property.text =
-                                      suggestion.tableproperty.unitNo.toString() +
-                                          " " +
-                                          suggestion.tableproperty.socid.toString();
+                                  this._property.text = suggestion
+                                          .tableproperty.unitNo
+                                          .toString() +
+                                      " " +
+                                      suggestion.tableproperty.socid.toString();
                                   setState(() {
-                                    _selectedProperty = suggestion.tableproperty.propertyId;
+                                    _selectedProperty =
+                                        suggestion.tableproperty.propertyId;
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -409,6 +419,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -501,13 +512,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           load = false;
                         });
                         if (response) {
-                         NotificationService.sendPushToOneWithTime(
+                          NotificationService.sendPushToOneWithTime(
                               "New Task Assigned",
                               "A new task Has been Assigned : ${_taskName.text}",
                               _selectedUser.deviceToken,
                               _taskStartDateTime.text,
                               _taskEndDateTime.text);
-                          var managerToken = await UserService.getDeviceToken(_selectedUser.parentId);
+                          var managerToken = await UserService.getDeviceToken(
+                              _selectedUser.parentId);
                           NotificationService.sendPushToOne(
                             "New Task Assigned",
                             "A new task Has been Assigned to your employee : ${_taskName.text}",
@@ -595,6 +607,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             child: TextField(
               enabled: false,
               style: TextStyle(fontSize: 16, color: Colors.black),
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 suffixIcon: Icon(
                   Icons.list_alt,
@@ -644,6 +657,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             ),
             child: TextField(
               style: TextStyle(fontSize: 16, color: Colors.black),
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 suffixIcon: Icon(
                   Icons.list_alt,
