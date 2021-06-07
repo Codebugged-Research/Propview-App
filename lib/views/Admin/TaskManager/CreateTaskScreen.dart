@@ -309,6 +309,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -573,12 +574,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       showTitleActions: true,
                       onChanged: (date) {
                         setState(() {
-                          controller.text = date.toString();
+                          controller.text = date.hour.toString()+date.minute.toString()+date.second.toString();
                         });
                       },
                       onConfirm: (date) {
                         setState(() {
-                          controller.text = date.toString();
+                          controller.text = date.hour.toString()+date.minute.toString()+date.second.toString();
                         });
                       },
                       currentTime: DateTime.now(),
@@ -656,6 +657,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             ),
             child: TextField(
               style: TextStyle(fontSize: 16, color: Colors.black),
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 suffixIcon: Icon(
                   Icons.list_alt,

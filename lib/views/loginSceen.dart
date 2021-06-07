@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/authService.dart';
-import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
@@ -29,6 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
   User tempUser;
 
   final formkey = new GlobalKey<FormState>();
+
+  bool isVisible = false;
 
   TextEditingController emailController = TextEditingController();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -224,15 +225,15 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               formheaderWidget(context, 'Email/Username'),
-              inputWidget(emailController, "Please Enter your Email", false,
-                  (value) {
+              inputEmailWidget(
+                  emailController, "Please Enter your Email", false, (value) {
                 email = value;
               }),
               SizedBox(
                 height: UIConstants.fitToHeight(18, context),
               ),
               formheaderWidget(context, 'Password'),
-              inputWidget(
+              inputPasswordlWidget(
                   passwordController, "Please Enter your Password", true,
                   (value) {
                 password = value;
@@ -250,13 +251,32 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget inputWidget(TextEditingController textEditingController,
+  Widget inputEmailWidget(TextEditingController textEditingController,
       String validation, bool, save) {
     return TextFormField(
       controller: textEditingController,
       obscureText: bool,
       validator: (value) => value.isEmpty ? validation : null,
       onSaved: save,
+    );
+  }
+
+  Widget inputPasswordlWidget(TextEditingController textEditingController,
+      String validation, bool, save) {
+    return TextFormField(
+      controller: textEditingController,
+      obscureText: isVisible,
+      validator: (value) => value.isEmpty ? validation : null,
+      onSaved: save,
+      decoration: InputDecoration(
+          suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  isVisible = !isVisible;
+                });
+              },
+              icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.blue))),
     );
   }
 }
