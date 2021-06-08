@@ -18,8 +18,6 @@ import 'package:propview/utils/snackBar.dart';
 
 import 'package:propview/views/Employee/landingPage.dart';
 
-// Approved/NotApproved/Completed/transferred
-
 import 'package:propview/utils/progressBar.dart';
 
 class CreateTaskScreen extends StatefulWidget {

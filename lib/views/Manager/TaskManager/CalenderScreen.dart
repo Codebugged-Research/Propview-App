@@ -64,18 +64,6 @@ class _CalenderScreenState extends State<CalenderScreen> {
                   children: [
                     MaterialButton(
                       onPressed: () {
-                        //TODO:edit task
-                      },
-                      child: Text("Edit Task"),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        //TODO:cancel task
-                      },
-                      child: Text("Cancel Task"),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => CreateTaskScreen(),

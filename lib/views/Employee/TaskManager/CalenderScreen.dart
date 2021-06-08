@@ -55,40 +55,40 @@ class _CalenderScreenState extends State<CalenderScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
-          onLongPress: (event) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {
-                        //TODO:edit task
-                      },
-                      child: Text("Edit Task"),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        //TODO:cancel task
-                      },
-                      child: Text("Cancel Task"),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CreateTaskScreen(),
-                          ),
-                        );
-                      },
-                      child: Text("Create Task"),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+          // onLongPress: (event) {
+          //   showDialog(
+          //     context: context,
+          //     builder: (context) => AlertDialog(
+          //       content: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: [
+          //           MaterialButton(
+          //             onPressed: () {
+          //               //TODO:edit task
+          //             },
+          //             child: Text("Edit Task"),
+          //           ),
+          //           MaterialButton(
+          //             onPressed: () {
+          //               //TODO:cancel task
+          //             },
+          //             child: Text("Cancel Task"),
+          //           ),
+          //           MaterialButton(
+          //             onPressed: () {
+          //               Navigator.of(context).push(
+          //                 MaterialPageRoute(
+          //                   builder: (context) => CreateTaskScreen(),
+          //                 ),
+          //               );
+          //             },
+          //             child: Text("Create Task"),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   );
+          // },
           dataSource: _getCalendarDataSource(widget.taskList),
           view: CalendarView.month,
           showDatePickerButton: true,

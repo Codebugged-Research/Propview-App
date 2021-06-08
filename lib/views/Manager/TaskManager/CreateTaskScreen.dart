@@ -46,6 +46,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       new TextEditingController(text: DateTime.now().toString());
   TextEditingController _taskEndDateTime =
       new TextEditingController(text: DateTime.now().toString());
+  TextEditingController _taskStartDateTime2 =
+      new TextEditingController(text: DateTime.now().toString());
+  TextEditingController _taskEndDateTime2 =
+      new TextEditingController(text: DateTime.now().toString());
 
   List<TaskCategory> taskCategories = [];
   List<PropertyElement> properties = [];
@@ -387,8 +391,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
                     inputDateTime(
-                        "Enter Start Date and Time", _taskStartDateTime),
-                    inputDateTime("Enter End Date and Time", _taskEndDateTime),
+                        "Enter Start Date and Time", _taskStartDateTime,_taskStartDateTime2),
+                    inputDateTime("Enter End Date and Time", _taskEndDateTime,_taskEndDateTime2),
                     Padding(
                       padding: const EdgeInsets.only(
                         bottom: 8.0,
@@ -501,8 +505,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "task_name": _taskName.text,
                           "task_desc": _taskDescription.text,
                           "task_status": "Pending",
-                          "start_dateTime": _taskStartDateTime.text,
-                          "end_dateTime": _taskEndDateTime.text,
+                          "start_dateTime": _taskStartDateTime2.text,
+                          "end_dateTime": _taskEndDateTime2.text,
                           "assigned_to": _selectedUser.userId.toString(),
                           "property_ref": _selectedProperty.toString(),
                           "created_at": DateTime.now().toString(),
@@ -548,7 +552,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  inputDateTime(label, controller) {
+  inputDateTime(label, controller,controller2) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 8.0,
@@ -576,12 +580,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       showTitleActions: true,
                       onChanged: (date) {
                         setState(() {
-                          controller.text = date.toString();
+                          controller.text = '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller2.text = date.toString();
                         });
                       },
                       onConfirm: (date) {
                         setState(() {
-                          controller.text = date.toString();
+                          controller.text =  '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller2.text = date.toString();
                         });
                       },
                       currentTime: DateTime.now(),
