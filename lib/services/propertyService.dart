@@ -59,8 +59,6 @@ class PropertyService extends AuthService {
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       Property property = Property.fromJson(responseMap);
-      print(responseMap);
-      print(property.toJson());
       return property;
     } else {
       print("DEBUG");

@@ -8,7 +8,7 @@ import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/TaskManager/CalenderScreen.dart';
-import 'package:propview/views/Manager/TaskManager/createTaskScreen.dart';
+import 'package:propview/views/Manager/TaskManager/CreateTaskScreen.dart';
 import 'package:propview/views/Manager/widgets/taskCard.dart';
 
 class TaskMangerHome extends StatefulWidget {
@@ -93,7 +93,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CreateTaskScreen()));
+              MaterialPageRoute(builder: (context) => CreateTaskScreen(user: user)));
         },
       ),
       body: loading

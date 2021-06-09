@@ -23,7 +23,8 @@ import 'package:propview/views/Manager/landingPage.dart';
 import 'package:propview/utils/progressBar.dart';
 
 class CreateTaskScreen extends StatefulWidget {
-  const CreateTaskScreen({Key key}) : super(key: key);
+  final User user;
+  CreateTaskScreen({this.user});
 
   @override
   _CreateTaskScreenState createState() => _CreateTaskScreenState();
@@ -54,7 +55,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   List<TaskCategory> taskCategories = [];
   List<PropertyElement> properties = [];
   List<User> users = [];
-  PropertyOwner propertyOwner;
+  // PropertyOwner propertyOwner;
+
+  List<PropertyOwnerElement> propertyOwnerList = [];
+
+  Property propertyList;
   bool loading = false;
   void initState() {
     getData();
@@ -65,6 +70,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     setState(() {
       loading = true;
     });
+    // propertyList =
+    //     await PropertyService.getAllPropertiesByUserId(widget.user.userId);
+    propertyList = await PropertyService.getAllPropertiesByUserId(72);
+
     taskCategories = await TaskCategoryService.getTaskCategories();
     for (int i = 0; i < taskCategories.length; i++) {
       _taskCategoryDropdownList.add(
@@ -74,7 +83,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
       );
     }
-    propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
+    for (int i = 0; i < propertyList.count; i++) {
+      propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
+    }
+    // propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
     users = await UserService.getAllUser();
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
@@ -201,8 +213,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
-              textCapitalization: TextCapitalization.words,
-
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -210,8 +221,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 ),
                                 suggestionsCallback: (pattern) {
                                   List<PropertyOwnerElement> matches = [];
-                                  matches
-                                      .addAll(propertyOwner.data.propertyOwner);
+                                  matches.addAll(propertyOwnerList);
                                   matches.retainWhere((s) => s.ownerName
                                       .toLowerCase()
                                       .contains(pattern.toLowerCase()));
@@ -253,9 +263,13 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedPropertyOwner = suggestion.ownerId;
                                   });
-                                  var response = await PropertyService
-                                      .getAllPropertiesByOwnerId(
-                                          _selectedPropertyOwner);
+                                  var response = propertyList.data.property
+                                      .where((element) =>
+                                          element.tableproperty.ownerId ==
+                                          suggestion.ownerId).toList();
+                                  // var response = await PropertyService
+                                  //     .getAllPropertiesByOwnerId(
+                                  //         _selectedPropertyOwner);
                                   if (response == null) {
                                     showInSnackBar(
                                         context,
@@ -264,11 +278,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   } else {
                                     showInSnackBar(
                                         context,
-                                        "${response.count} property found in database !",
+                                        "${response.length} property found in database !",
                                         2500);
                                     setState(() {
                                       properties.clear();
-                                      properties = response.data.property;
+                                      properties = response;
                                     });
                                     propertySelectBox = true;
                                   }
@@ -315,8 +329,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
-              textCapitalization: TextCapitalization.words,
-
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -390,9 +403,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
-                    inputDateTime(
-                        "Enter Start Date and Time", _taskStartDateTime,_taskStartDateTime2),
-                    inputDateTime("Enter End Date and Time", _taskEndDateTime,_taskEndDateTime2),
+                    inputDateTime("Enter Start Date and Time",
+                        _taskStartDateTime, _taskStartDateTime2),
+                    inputDateTime("Enter End Date and Time", _taskEndDateTime,
+                        _taskEndDateTime2),
                     Padding(
                       padding: const EdgeInsets.only(
                         bottom: 8.0,
@@ -425,8 +439,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               ),
                               child: TypeAheadFormField(
                                 textFieldConfiguration: TextFieldConfiguration(
-              textCapitalization: TextCapitalization.words,
-
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -552,7 +565,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  inputDateTime(label, controller,controller2) {
+  inputDateTime(label, controller, controller2) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 8.0,
@@ -580,13 +593,15 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       showTitleActions: true,
                       onChanged: (date) {
                         setState(() {
-                          controller.text = '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller.text =
+                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
                           controller2.text = date.toString();
                         });
                       },
                       onConfirm: (date) {
                         setState(() {
-                          controller.text =  '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller.text =
+                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
                           controller2.text = date.toString();
                         });
                       },
@@ -617,7 +632,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               enabled: false,
               style: TextStyle(fontSize: 16, color: Colors.black),
               textCapitalization: TextCapitalization.words,
-
               decoration: InputDecoration(
                 suffixIcon: Icon(
                   Icons.list_alt,

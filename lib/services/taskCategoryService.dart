@@ -7,9 +7,9 @@ import 'authService.dart';
 
 class TaskCategoryService extends AuthService {
   // ignore: missing_return
-  static Future<TaskCategory> getTaskCategory(String task_id) async {
+  static Future<TaskCategory> getTaskCategory(String taskId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/taskCategory/$task_id',
+        AuthService.BASE_URI + 'api/taskCategory/$taskId',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
