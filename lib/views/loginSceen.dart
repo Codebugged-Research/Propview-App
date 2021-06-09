@@ -275,8 +275,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   isVisible = !isVisible;
                 });
               },
-              icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.blue))),
+              icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.black))),
     );
   }
 }

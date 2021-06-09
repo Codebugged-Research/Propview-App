@@ -48,6 +48,21 @@ class UserService extends AuthService {
     }
   }
 
+  // ignore: missing_return
+  static Future<List<User>> getAllUserUnderManger(id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/user/manager/$id',
+        method: 'GET');
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      List<User> users =
+          responseMap.map<User>((usersMap) => User.fromJson(usersMap)).toList();
+      return users;
+    } else {
+      print("DEBUG");
+    }
+  }
+
   static Future<bool> updateUser(var payload) async {
     var auth = await AuthService.getSavedAuth();
     http.Response response = await AuthService.makeAuthenticatedRequest(

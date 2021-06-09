@@ -9,7 +9,6 @@ import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/notificationService.dart';
-import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
 import 'package:propview/services/taskServices.dart';
@@ -70,10 +69,19 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     setState(() {
       loading = true;
     });
-    // propertyList =
-    //     await PropertyService.getAllPropertiesByUserId(widget.user.userId);
-    propertyList = await PropertyService.getAllPropertiesByUserId(72);
-
+    users = await UserService.getAllUserUnderManger(widget.user.userId);
+    //getting manager property list
+    propertyList =
+        await PropertyService.getAllPropertiesByUserId(widget.user.userId);
+    print(propertyList.count);
+    //get list of all peroperties assigned to his employees and merge
+    for (int i = 0; i < users.length; i++) {
+      var tempPropertyList =
+          await PropertyService.getAllPropertiesByUserId(users[i].userId);
+      propertyList.count += tempPropertyList.count;
+      propertyList.data.property.addAll(tempPropertyList.data.property);
+    }
+    // propertyList = await PropertyService.getAllPropertiesByUserId(72);
     taskCategories = await TaskCategoryService.getTaskCategories();
     for (int i = 0; i < taskCategories.length; i++) {
       _taskCategoryDropdownList.add(
@@ -87,7 +95,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
     }
     // propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
-    users = await UserService.getAllUser();
+    // users = await UserService.getAllUser();
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       loading = false;
@@ -266,7 +274,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   var response = propertyList.data.property
                                       .where((element) =>
                                           element.tableproperty.ownerId ==
-                                          suggestion.ownerId).toList();
+                                          suggestion.ownerId)
+                                      .toList();
                                   // var response = await PropertyService
                                   //     .getAllPropertiesByOwnerId(
                                   //         _selectedPropertyOwner);
@@ -536,8 +545,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               "New Task Assigned",
                               "A new task Has been Assigned : ${_taskName.text}",
                               _selectedUser.deviceToken,
-                              _taskStartDateTime.text,
-                              _taskEndDateTime.text);
+                              _taskStartDateTime2.text,
+                              _taskEndDateTime2.text);
                           var managerToken = await UserService.getDeviceToken(
                               _selectedUser.parentId);
                           NotificationService.sendPushToOne(
