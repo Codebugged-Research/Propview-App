@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final formkey = new GlobalKey<FormState>();
 
-  bool isVisible = false;
+  bool isVisible = true;
 
   TextEditingController emailController = TextEditingController();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
