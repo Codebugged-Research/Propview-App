@@ -61,13 +61,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.add),
-      //   onPressed: () {
-      //     Navigator.of(context).push(
-      //         MaterialPageRoute(builder: (context) => CreateTaskScreen()));
-      //   },
-      // ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => CreateTaskScreen(user:user)));
+        },
+      ),
       body: loading
           ? circularProgressWidget()
           : Container(

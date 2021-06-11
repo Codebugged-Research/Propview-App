@@ -23,7 +23,8 @@ import 'package:propview/views/Admin/landingPage.dart';
 import 'package:propview/utils/progressBar.dart';
 
 class CreateTaskScreen extends StatefulWidget {
-  const CreateTaskScreen({Key key}) : super(key: key);
+  final User user;
+  const CreateTaskScreen({this.user});
 
   @override
   _CreateTaskScreenState createState() => _CreateTaskScreenState();
@@ -42,10 +43,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   TextEditingController _propertyOwner = new TextEditingController();
   TextEditingController _property = new TextEditingController();
   TextEditingController _taskName = new TextEditingController();
-  TextEditingController _taskStartDateTime =
-      new TextEditingController(text: DateTime.now().toString());
-  TextEditingController _taskEndDateTime =
-      new TextEditingController(text: DateTime.now().toString());
+  TextEditingController _taskStartDateTime = new TextEditingController(
+      text:
+          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
+  TextEditingController _taskEndDateTime = new TextEditingController(
+      text:
+          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
   TextEditingController _taskStartDateTime2 =
       new TextEditingController(text: DateTime.now().toString());
   TextEditingController _taskEndDateTime2 =
@@ -76,6 +79,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     }
     propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
     users = await UserService.getAllUser();
+    _selectedUser = widget.user;
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       loading = false;
@@ -217,11 +221,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 },
                                 itemBuilder:
                                     (context, PropertyOwnerElement suggestion) {
-                                  return ListTile(
-                                    title: Text(suggestion.ownerName),
-                                    leading:
-                                        Text(suggestion.ownerId.toString()),
-                                  );
+                                  return ListTile();
                                 },
                                 noItemsFoundBuilder: (context) {
                                   return Padding(
@@ -320,7 +320,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 suggestionsCallback: (pattern) {
                                   List<PropertyElement> matches = [];
                                   matches.addAll(properties);
-                                  print(matches[0].toJson());
                                   matches.retainWhere((s) => s
                                       .tableproperty.unitNo
                                       .toLowerCase()
@@ -332,11 +331,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 itemBuilder:
                                     (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.tableproperty.socid
-                                        .toString()),
-                                    leading: Text(suggestion
-                                        .tableproperty.unitNo
-                                        .toString()),
+                                    title: Text(
+                                      suggestion.tblSociety.socname +
+                                          ", " +
+                                          suggestion.tableproperty.unitNo
+                                              .toString(),
+                                    ),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -360,11 +360,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._property.text = suggestion
-                                          .tableproperty.unitNo
-                                          .toString() +
-                                      " " +
-                                      suggestion.tableproperty.socid.toString();
+                                  this._property.text =
+                                      suggestion.tblSociety.socname +
+                                          ", " +
+                                          suggestion.tableproperty.unitNo
+                                              .toString();
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
@@ -576,13 +576,15 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       showTitleActions: true,
                       onChanged: (date) {
                         setState(() {
-                          controller.text = '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller.text =
+                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
                           controller2.text = date.toString();
                         });
                       },
                       onConfirm: (date) {
                         setState(() {
-                          controller.text =  '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller.text =
+                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
                           controller2.text = date.toString();
                         });
                       },

@@ -76,4 +76,16 @@ class PropertyService extends AuthService {
       return "error";
     }
   }
+
+  static Future<String> getCountryName(id)async{
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/property/country/$id',
+        method: 'GET');
+    var responseMap = json.decode(response.body);
+    if (response.statusCode == 200) {
+      return responseMap[0]["cname"];
+    }else{
+      return "error";
+    }
+  }
 }

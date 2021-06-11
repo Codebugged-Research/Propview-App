@@ -9,7 +9,6 @@ import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/notificationService.dart';
-import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
 import 'package:propview/services/taskServices.dart';
@@ -21,7 +20,8 @@ import 'package:propview/views/Employee/landingPage.dart';
 import 'package:propview/utils/progressBar.dart';
 
 class CreateTaskScreen extends StatefulWidget {
-  const CreateTaskScreen({Key key}) : super(key: key);
+  final User user;
+  CreateTaskScreen({this.user});
 
   @override
   _CreateTaskScreenState createState() => _CreateTaskScreenState();
@@ -40,15 +40,21 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   TextEditingController _propertyOwner = new TextEditingController();
   TextEditingController _property = new TextEditingController();
   TextEditingController _taskName = new TextEditingController();
-  TextEditingController _taskStartDateTime =
+  TextEditingController _taskStartDateTime = new TextEditingController(
+      text:
+          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
+  TextEditingController _taskEndDateTime = new TextEditingController(
+      text:
+          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
+  TextEditingController _taskStartDateTime2 =
       new TextEditingController(text: DateTime.now().toString());
-  TextEditingController _taskEndDateTime =
+  TextEditingController _taskEndDateTime2 =
       new TextEditingController(text: DateTime.now().toString());
 
   List<TaskCategory> taskCategories = [];
   List<PropertyElement> properties = [];
-  List<User> users = [];
-  PropertyOwner propertyOwner;
+  List<PropertyOwnerElement> propertyOwnerList = [];
+  Property propertyList;
   bool loading = false;
   void initState() {
     getData();
@@ -68,8 +74,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
       );
     }
-    propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
-    users = await UserService.getAllUser();
+    propertyList = await PropertyService.getAllPropertiesByUserId(widget.user);
+    for (int i = 0; i < propertyList.count; i++) {
+      propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
+    }
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       loading = false;
@@ -204,7 +212,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 suggestionsCallback: (pattern) {
                                   List<PropertyOwnerElement> matches = [];
                                   matches
-                                      .addAll(propertyOwner.data.propertyOwner);
+                                      .addAll(propertyOwnerList);
                                   matches.retainWhere((s) => s.ownerName
                                       .toLowerCase()
                                       .contains(pattern.toLowerCase()));
@@ -213,10 +221,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 itemBuilder:
                                     (context, PropertyOwnerElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.ownerName),
-                                    // subtitle: Text(propertyOwner.data.propertyOwner[i].ownerAddress,overflow: TextOverflow.ellipsis,softWrap: true,),
-                                    leading:
-                                        Text(suggestion.ownerId.toString()),
+                                    title:
+                                        Text(suggestion.ownerName + "/" + "In"),
+                                    subtitle: Text(suggestion.ownerEmail),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -246,9 +253,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedPropertyOwner = suggestion.ownerId;
                                   });
-                                  var response = await PropertyService
-                                      .getAllPropertiesByOwnerId(
-                                          _selectedPropertyOwner);
+                                 var response = propertyList.data.property
+                                      .where((element) =>
+                                          element.tableproperty.ownerId ==
+                                          suggestion.ownerId)
+                                      .toList();
                                   if (response == null) {
                                     showInSnackBar(
                                         context,
@@ -257,11 +266,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   } else {
                                     showInSnackBar(
                                         context,
-                                        "${response.count} property found in database !",
+                                        "${response.length} property found in database !",
                                         2500);
                                     setState(() {
                                       properties.clear();
-                                      properties = response.data.property;
+                                      properties = response;
                                     });
                                     propertySelectBox = true;
                                   }
@@ -329,11 +338,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 itemBuilder:
                                     (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.tableproperty.socid
-                                        .toString()),
-                                    leading: Text(suggestion
-                                        .tableproperty.unitNo
-                                        .toString()),
+                                    title: Text(suggestion.tblSociety.socname +
+                                        ", " +
+                                        suggestion.tableproperty.unitNo
+                                            .toString()),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -357,11 +365,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._property.text = suggestion
-                                          .tableproperty.unitNo
-                                          .toString() +
-                                      " " +
-                                      suggestion.tableproperty.socid.toString();
+                                  this._property.text =
+                                      suggestion.tblSociety.socname +
+                                          ", " +
+                                          suggestion.tableproperty.unitNo
+                                              .toString();
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
@@ -385,96 +393,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     inputDateTime(
                         "Enter Start Date and Time", _taskStartDateTime),
                     inputDateTime("Enter End Date and Time", _taskEndDateTime),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Select Employee: ",
-                              style: GoogleFonts.nunito(
-                                  color: Color(0xff314B8C),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              height: 75,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color(0xff314B8C).withOpacity(0.12),
-                              ),
-                              child: TypeAheadFormField(
-                                textFieldConfiguration: TextFieldConfiguration(
-                                  textCapitalization: TextCapitalization.words,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                  ),
-                                  controller: this._user,
-                                ),
-                                suggestionsCallback: (pattern) {
-                                  List<User> matches = [];
-                                  matches.addAll(users);
-                                  matches.retainWhere((s) => s.name
-                                      .toLowerCase()
-                                      .contains(pattern.toLowerCase()));
-                                  return matches;
-                                },
-                                itemBuilder: (context, User user) {
-                                  return ListTile(
-                                    title: Text(user.name),
-                                    subtitle: Text(user.designation),
-                                  );
-                                },
-                                noItemsFoundBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Type to find executive!',
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).disabledColor,
-                                            fontSize: 18.0),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                transitionBuilder:
-                                    (context, suggestionsBox, controller) {
-                                  return suggestionsBox;
-                                },
-                                onSuggestionSelected: (suggestion) {
-                                  this._user.text = suggestion.name.toString() +
-                                      "\n" +
-                                      suggestion.designation.toString();
-                                  setState(() {
-                                    _selectedUser = suggestion;
-                                  });
-                                },
-                                validator: (value) => value.isEmpty
-                                    ? 'Please select a property'
-                                    : null,
-                                // onSaved: (value) => this.propertyOwner = value,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
                     SizedBox(
                       height: 16,
                     ),
@@ -498,7 +416,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "task_status": "pending",
                           "start_dateTime": _taskStartDateTime.text,
                           "end_dateTime": _taskEndDateTime.text,
-                          "assigned_to": _selectedUser.userId.toString(),
+                          "assigned_to": widget.user.userId.toString(),
                           "property_ref": _selectedProperty.toString(),
                           "created_at": DateTime.now().toString(),
                           "updated_at": DateTime.now().toString(),
@@ -513,11 +431,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           NotificationService.sendPushToOneWithTime(
                               "New Task Assigned",
                               "A new task Has been Assigned : ${_taskName.text}",
-                              _selectedUser.deviceToken,
+                              widget.user.deviceToken,
                               _taskStartDateTime.text,
                               _taskEndDateTime.text);
                           var managerToken = await UserService.getDeviceToken(
-                              _selectedUser.parentId);
+                              widget.user.parentId);
                           NotificationService.sendPushToOne(
                             "New Task Assigned",
                             "A new task Has been Assigned to your employee : ${_taskName.text}",

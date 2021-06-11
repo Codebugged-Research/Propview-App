@@ -42,10 +42,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   TextEditingController _propertyOwner = new TextEditingController();
   TextEditingController _property = new TextEditingController();
   TextEditingController _taskName = new TextEditingController();
-  TextEditingController _taskStartDateTime =
-      new TextEditingController(text: DateTime.now().toString());
-  TextEditingController _taskEndDateTime =
-      new TextEditingController(text: DateTime.now().toString());
+  TextEditingController _taskStartDateTime = new TextEditingController(
+      text:
+          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
+  TextEditingController _taskEndDateTime = new TextEditingController(
+      text:
+          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
   TextEditingController _taskStartDateTime2 =
       new TextEditingController(text: DateTime.now().toString());
   TextEditingController _taskEndDateTime2 =
@@ -65,11 +67,26 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     super.initState();
   }
 
+  bool loader = false;
+
+  getCountry(id) async {
+    setState(() {
+      loading = true;
+    });
+    var res = await PropertyService.getCountryName(id);
+    setState(() {
+      loading = false;
+    });
+    return res;
+  }
+
   getData() async {
     setState(() {
       loading = true;
     });
     users = await UserService.getAllUserUnderManger(widget.user.userId);
+    users.add(widget.user);
+    _selectedUser = widget.user;
     //getting manager property list
     propertyList =
         await PropertyService.getAllPropertiesByUserId(widget.user.userId);
@@ -94,8 +111,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     for (int i = 0; i < propertyList.count; i++) {
       propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
     }
-    // propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
-    // users = await UserService.getAllUser();
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       loading = false;
@@ -238,10 +253,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 itemBuilder:
                                     (context, PropertyOwnerElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.ownerName),
-                                    // subtitle: Text(propertyOwner.data.propertyOwner[i].ownerAddress,overflow: TextOverflow.ellipsis,softWrap: true,),
-                                    leading:
-                                        Text(suggestion.ownerId.toString()),
+                                    title:
+                                        Text(suggestion.ownerName + "/" + "In"),
+                                    subtitle: Text(suggestion.ownerEmail),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -276,9 +290,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                           element.tableproperty.ownerId ==
                                           suggestion.ownerId)
                                       .toList();
-                                  // var response = await PropertyService
-                                  //     .getAllPropertiesByOwnerId(
-                                  //         _selectedPropertyOwner);
                                   if (response == null) {
                                     showInSnackBar(
                                         context,
@@ -359,11 +370,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 itemBuilder:
                                     (context, PropertyElement suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.tableproperty.socid
-                                        .toString()),
-                                    leading: Text(suggestion
-                                        .tableproperty.unitNo
-                                        .toString()),
+                                    title: Text(suggestion.tblSociety.socname +
+                                        ", " +
+                                        suggestion.tableproperty.unitNo
+                                            .toString()),
                                   );
                                 },
                                 noItemsFoundBuilder: (context) {
@@ -387,11 +397,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._property.text = suggestion
-                                          .tableproperty.unitNo
-                                          .toString() +
-                                      " " +
-                                      suggestion.tableproperty.socid.toString();
+                                  this._property.text =
+                                      suggestion.tblSociety.socname +
+                                          ", " +
+                                          suggestion.tableproperty.unitNo
+                                              .toString();
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
