@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:propview/services/reminderService.dart';
+import 'package:propview/views/Employee/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Employee/Home/homeScreen.dart';
 import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
 import 'package:propview/views/Employee/TaskManager/taskManagerHome.dart';
@@ -105,6 +106,7 @@ class _LandingScreenState extends State<LandingScreen> {
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     TaskMangerHome(),
+    AttendanceHome(),
     ProfileScreen(),
   ];
 
@@ -145,6 +147,10 @@ class _LandingScreenState extends State<LandingScreen> {
                 GButton(
                   icon: Icons.work,
                   text: 'Task',
+                ),
+                GButton(
+                  icon: Icons.fact_check,
+                  text: 'Attendance',
                 ),
                 GButton(
                   icon: Icons.person,

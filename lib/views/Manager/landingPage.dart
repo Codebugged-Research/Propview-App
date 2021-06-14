@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:propview/views/Manager/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Manager/Home/homeScreen.dart';
 import 'package:propview/views/Manager/Profile/ProfileScreen.dart';
 import 'package:propview/views/Manager/TaskManager/taskManagerHome.dart';
@@ -105,6 +106,7 @@ class _LandingScreenState extends State<LandingScreen> {
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     TaskMangerHome(),
+    AttendanceHome(),
     ProfileScreen(),
   ];
 
@@ -145,6 +147,10 @@ class _LandingScreenState extends State<LandingScreen> {
                 GButton(
                   icon: Icons.work,
                   text: 'Task',
+                ),
+                GButton(
+                  icon: Icons.fact_check,
+                  text: 'Attendance',
                 ),
                 GButton(
                   icon: Icons.person,
