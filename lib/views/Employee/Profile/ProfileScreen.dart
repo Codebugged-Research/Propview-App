@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:propview/constants/uiContants.dart';
@@ -5,6 +7,8 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/authService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/loginSceen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -15,6 +19,16 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   User user;
   bool isLoading = false;
+  bool isNewVisible = true;
+  bool isCurrentVisible = true;
+
+  final formkey = new GlobalKey<FormState>();
+
+  String currentPassword;
+  String newPassword;
+
+  TextEditingController currentPasswordController = new TextEditingController();
+  TextEditingController newPasswordController = new TextEditingController();
 
   @override
   void initState() {
@@ -30,6 +44,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  updatePasswordRequest() async {
+    print(currentPasswordController.text + "_" + user.password + "x" + newPasswordController.text);
+    if (currentPasswordController.text == user.password) {
+      setState(() {
+        user.password = newPasswordController.text;
+      });
+      bool isUpdated = await UserService.updateUser(jsonEncode(user.toJson()));      
+      Routing.makeRouting(context, routeMethod: 'pop');
+      if(isUpdated) 
+      showInSnackBar(context, 'Password updated!', 4000);
+      else 
+      showInSnackBar(context, 'failed to update the password', 4000);
+    } else {
+      showInSnackBar(context, 'Current Password not matched!', 4000);
+    }
   }
 
   Widget profileInfo(
@@ -121,11 +152,163 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   }),
-                  SizedBox(
-                    height: UIConstants.fitToHeight(100, context),
-                  ),
+                  updatePasswordButton(context),
+                  SizedBox(height: UIConstants.fitToHeight(24, context)),
                 ],
               ),
             ));
+  }
+
+  Widget updatePasswordButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: MaterialButton(
+        minWidth: 360,
+        height: 55,
+        color: Color(0xff314B8C),
+        onPressed: () async {
+          await passwordModalSheet(context);
+        },
+        child: Text("Update Password",
+            style: Theme.of(context).primaryTextTheme.subtitle1),
+      ),
+    );
+  }
+
+  passwordModalSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Color(0xFFFFFFFF),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+        ),
+        builder: (BuildContext context) => StatefulBuilder(
+              builder: (BuildContext context, StateSetter stateSetter) =>
+                  Container(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: UIConstants.fitToHeight(16, context)),
+                      Text(
+                        'Update Password',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .headline6
+                            .copyWith(
+                                color: Color(0xff314B8C),
+                                fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: UIConstants.fitToHeight(16, context)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                        child: Container(
+                          child: Form(
+                              key: formkey,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    inputWidget(
+                                        currentPasswordController,
+                                        "Please Enter your Current Password",
+                                        isCurrentVisible,
+                                        "Current Password",
+                                        'Current Password', (value) {
+                                      currentPassword = value;
+                                    }, stateSetter),
+                                    SizedBox(
+                                      height:
+                                          UIConstants.fitToHeight(18, context),
+                                    ),
+                                    inputWidget(
+                                        newPasswordController,
+                                        "Please Enter your New Password",
+                                        isNewVisible,
+                                        "New Password",
+                                        'New Password', (value) {
+                                      newPassword = value;
+                                    }, stateSetter),
+                                  ],
+                                ),
+                              )),
+                        ),
+                      ),
+                      SizedBox(height: UIConstants.fitToHeight(24, context)),
+                      updatePassword(context),
+                      SizedBox(height: UIConstants.fitToHeight(24, context)),
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  Widget inputWidget(
+      TextEditingController textEditingController,
+      String validation,
+      bool isVisible,
+      String label,
+      String hint,
+      save,
+      StateSetter stateSetter) {
+    return TextFormField(
+      style: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+      controller: textEditingController,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        hintText: hint,
+        hintStyle: TextStyle(fontSize: 15.0, color: Color(0xff9FA0AD)),
+        labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+        suffixIcon: IconButton(
+            onPressed: () {
+              stateSetter(() {
+                isVisible = !isVisible;
+              });
+            },
+            icon: Icon(!isVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.black)),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xff314B8C)),
+            borderRadius: BorderRadius.circular(12.0)),
+        focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xff314B8C)),
+            borderRadius: BorderRadius.circular(12.0)),
+        border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xff314B8C)),
+            borderRadius: BorderRadius.circular(12.0)),
+      ),
+      obscureText: isVisible,
+      validator: (value) => value.isEmpty ? validation : null,
+      onSaved: save,
+    );
+  }
+
+  Widget updatePassword(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: UIConstants.fitToWidth(296, context),
+        child: MaterialButton(
+            onPressed: () async {
+              await updatePasswordRequest();
+            },
+            color: Color(0xff314B8C),
+            splashColor: Colors.grey,
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Text('Update Password',
+                style: Theme.of(context)
+                    .primaryTextTheme
+                    .button
+                    .copyWith(fontWeight: FontWeight.w800, fontSize: 16))),
+      ),
+    );
   }
 }

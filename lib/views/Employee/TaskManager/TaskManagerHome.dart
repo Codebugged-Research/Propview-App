@@ -238,6 +238,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                     return TaskCard(
                                       taskElement: pendingTaskList[index],
                                       currentUser: user,
+                                      isSelf: true,
                                     );
                                   },
                                 ),
@@ -260,6 +261,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                     return TaskCard(
                                       taskElement: unApprovedTaskList[index],
                                       currentUser: user,
+                                      isSelf: true,
                                     );
                                   },
                                 ),
@@ -282,6 +284,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                     return TaskCard(
                                       taskElement: completedTaskList[index],
                                       currentUser: user,
+                                      isSelf: true,
                                     );
                                   },
                                 ),

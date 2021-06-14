@@ -13,12 +13,14 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/AssignedPersonDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyOwnerDetailScreen.dart';
+import 'package:propview/views/Manager/TaskManager/SoloCalendar.dart';
 
 class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
   // final Function refresh;
   final User currentUser;
-  TaskCard({this.taskElement, this.currentUser});
+  final bool isSelf;
+  TaskCard({this.taskElement, this.currentUser, this.isSelf});
 
   @override
   _TaskCardState createState() => _TaskCardState();
@@ -56,6 +58,17 @@ class _TaskCardState extends State<TaskCard> {
             onTap: () {
               taskDetailsWidget(context);
             },
+            onLongPress: widget.isSelf
+                ? () {}
+                : () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SoloCalendar(
+                          id: widget.taskElement.assignedTo,
+                        ),
+                      ),
+                    );
+                  },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
               child: Container(
@@ -76,12 +89,13 @@ class _TaskCardState extends State<TaskCard> {
                         spreadRadius: 0.0,
                       ),
                     ]),
-                height: 142,
+                height:  widget.isSelf ? 120 : 142,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       textWidget(
                         context,
@@ -92,11 +106,11 @@ class _TaskCardState extends State<TaskCard> {
                           context, "Task Name: ", widget.taskElement.taskName),
                       textWidget(
                           context, "Task Type: ", widget.taskElement.category),
-                      textWidget(
+                      !widget.isSelf ? textWidget(
                           context,
                           "AssignedTo: ",
                           widget.taskElement.tblUsers.name +
-                              "\n(${widget.taskElement.tblUsers.designation})"),
+                              "\n(${widget.taskElement.tblUsers.designation})"): Container(),
                     ],
                   ),
                 ),

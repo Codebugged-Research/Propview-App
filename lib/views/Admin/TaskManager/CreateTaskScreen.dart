@@ -80,6 +80,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
     users = await UserService.getAllUser();
     _selectedUser = widget.user;
+    _user.text = _selectedUser.name;
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       loading = false;
@@ -368,6 +369,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
+                                    _taskName.text =
+                                        suggestion.tblSociety.socname +
+                                            ", " +
+                                            suggestion.tableproperty.unitNo
+                                                .toString();
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -411,7 +417,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Container(
-                              height: 75,
+                              height: 60,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 4),
                               decoration: BoxDecoration(
@@ -460,9 +466,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   return suggestionsBox;
                                 },
                                 onSuggestionSelected: (suggestion) {
-                                  this._user.text = suggestion.name.toString() +
-                                      "\n" +
-                                      suggestion.designation.toString();
+                                  this._user.text = suggestion.name.toString();
+                                  //  +
+                                  //     "\n" +
+                                  //     suggestion.designation.toString();
                                   setState(() {
                                     _selectedUser = suggestion;
                                   });

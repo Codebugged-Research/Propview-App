@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Task.dart';
+import 'package:propview/services/taskServices.dart';
+import 'package:propview/views/Manager/TaskManager/CreateTaskScreen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import 'CreateTaskScreen.dart';
-
-class CalenderScreen extends StatefulWidget {
-  final List<TaskElement> taskList;
-  const CalenderScreen({Key key, this.taskList}) : super(key: key);
+class SoloCalendar extends StatefulWidget {
+  final String id;
+  const SoloCalendar({this.id});
 
   @override
-  _CalenderScreenState createState() => _CalenderScreenState();
+  _SoloCalendarState createState() => _SoloCalendarState();
 }
 
 class DataSource extends CalendarDataSource {
@@ -37,18 +37,30 @@ _getCalendarDataSource(List<TaskElement> tasks) {
   return DataSource(appointments);
 }
 
-class _CalenderScreenState extends State<CalenderScreen> {
+class _SoloCalendarState extends State<SoloCalendar> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // createEvents();
+    createEvent();
+  }
+
+  Task task;
+  bool loading = false;
+
+  createEvent() async {
+    setState(() {
+      loading = true;
+    });
+    task = await TaskService.getAllPendingTaskByUserId(widget.id);
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+      body:loading ? Center(child: CircularProgressIndicator(),) :  Padding(
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
           onLongPress: (event) {
@@ -74,7 +86,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
             );
           },
           showNavigationArrow: true,
-          dataSource: _getCalendarDataSource(widget.taskList),
+          dataSource: _getCalendarDataSource(task.data.task),
           view: CalendarView.month,
           showDatePickerButton: true,
           appointmentTimeTextFormat: 'HH:mm',

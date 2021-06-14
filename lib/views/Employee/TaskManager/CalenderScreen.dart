@@ -24,11 +24,7 @@ DataSource _getCalendarDataSource(List<TaskElement> tasks) {
     appointments.add(Appointment(
       startTime: element.startDateTime,
       endTime: element.endDateTime,
-      subject: element.taskName +
-          "\n" +
-          element.startDateTime.toString() +
-          " " +
-          element.startDateTime.toString(),
+      subject: element.taskName,
       notes: element.taskDesc,
       color: element.endDateTime.difference(element.startDateTime).inDays > 1
           ? Colors.orange

@@ -18,7 +18,8 @@ class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
   // final Function refresh;
   final User currentUser;
-  TaskCard({this.taskElement, this.currentUser});
+  final bool isSelf;
+  TaskCard({this.taskElement, this.currentUser, this.isSelf});
 
   @override
   _TaskCardState createState() => _TaskCardState();
@@ -78,12 +79,13 @@ class _TaskCardState extends State<TaskCard> {
                         spreadRadius: 0.0,
                       ),
                     ]),
-                height: 142,
+                height: widget.isSelf ? 120 : 142,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       textWidget(
                         context,
@@ -94,11 +96,11 @@ class _TaskCardState extends State<TaskCard> {
                           context, "Task Name: ", widget.taskElement.taskName),
                       textWidget(
                           context, "Task Type: ", widget.taskElement.category),
-                      textWidget(
+                      !widget.isSelf ? textWidget(
                           context,
                           "AssignedTo: ",
                           widget.taskElement.tblUsers.name +
-                              "\n(${widget.taskElement.tblUsers.designation})"),
+                              "\n(${widget.taskElement.tblUsers.designation})"): Container(),
                     ],
                   ),
                 ),
@@ -354,13 +356,29 @@ class _TaskCardState extends State<TaskCard> {
                                               });
                                               NotificationService.sendPushToOne(
                                                 "Task Submitted",
-                                                "Task " + widget.taskElement.taskName + " is submitted by " + widget.taskElement.tblUsers.name,
-                                                widget.taskElement.tblUsers.deviceToken,
+                                                "Task " +
+                                                    widget
+                                                        .taskElement.taskName +
+                                                    " is submitted by " +
+                                                    widget.taskElement.tblUsers
+                                                        .name,
+                                                widget.taskElement.tblUsers
+                                                    .deviceToken,
                                               );
-                                              var managerToken = await UserService.getDeviceToken(widget.taskElement.tblUsers.parentId);
+                                              var managerToken =
+                                                  await UserService
+                                                      .getDeviceToken(widget
+                                                          .taskElement
+                                                          .tblUsers
+                                                          .parentId);
                                               NotificationService.sendPushToOne(
                                                 "Task Submitted",
-                                                "Task " + widget.taskElement.taskName + " is submitted by " + widget.taskElement.tblUsers.name,
+                                                "Task " +
+                                                    widget
+                                                        .taskElement.taskName +
+                                                    " is submitted by " +
+                                                    widget.taskElement.tblUsers
+                                                        .name,
                                                 managerToken,
                                               );
                                               print(jsonEncode(
@@ -410,9 +428,10 @@ class _TaskCardState extends State<TaskCard> {
                               )
                             : Container()
                         : Container(),
-                    widget.currentUser.parentId.toString() != "" && widget.currentUser.userId.toString() ==
-                                widget.taskElement.tblUsers.parentId
-                                    .toString() ||
+                    widget.currentUser.parentId.toString() != "" &&
+                                widget.currentUser.userId.toString() ==
+                                    widget.taskElement.tblUsers.parentId
+                                        .toString() ||
                             widget.currentUser.userType == "admin" ||
                             widget.currentUser.userType == "super_admin"
                         ? widget.taskElement.taskStatus == "Unapproved"
@@ -459,8 +478,12 @@ class _TaskCardState extends State<TaskCard> {
                                               });
                                               NotificationService.sendPushToOne(
                                                 "Task Approved",
-                                                "Task " + widget.taskElement.taskName + " is approved",
-                                                widget.taskElement.tblUsers.deviceToken,
+                                                "Task " +
+                                                    widget
+                                                        .taskElement.taskName +
+                                                    " is approved",
+                                                widget.taskElement.tblUsers
+                                                    .deviceToken,
                                               );
                                               print(jsonEncode(
                                                   widget.taskElement.toJson()));

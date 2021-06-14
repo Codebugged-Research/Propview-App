@@ -65,6 +65,7 @@ class UserService extends AuthService {
 
   static Future<bool> updateUser(var payload) async {
     var auth = await AuthService.getSavedAuth();
+    print(auth["id"]);
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/user/update/${auth['id']}',
         method: 'PUT',

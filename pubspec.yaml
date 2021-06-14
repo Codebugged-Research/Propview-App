@@ -12,9 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  firebase_analytics: null
   firebase_core: ^1.1.1
   firebase_messaging: ^9.1.4
-  firebase_analytics:
   fl_chart: null
   flutter_datetime_picker: ^1.5.1
   flutter_local_notifications: ^5.0.0+4
@@ -24,12 +24,13 @@ dependencies:
   google_nav_bar: ^5.0.5
   http: ^0.13.1
   image_cropper: ^1.4.0
-  image_picker: ^0.7.4
+  image_picker: ^0.8.0+3
   intl: ^0.17.0
+  path_provider: ^2.0.2
   provider: ^5.0.0
   shared_preferences: ^2.0.5
-  url_launcher: ^6.0.3
   syncfusion_flutter_calendar: ^19.1.64
+  url_launcher: ^6.0.3
 
 dev_dependencies:
   flutter_test:

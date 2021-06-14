@@ -211,8 +211,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 ),
                                 suggestionsCallback: (pattern) {
                                   List<PropertyOwnerElement> matches = [];
-                                  matches
-                                      .addAll(propertyOwnerList);
+                                  matches.addAll(propertyOwnerList);
                                   matches.retainWhere((s) => s.ownerName
                                       .toLowerCase()
                                       .contains(pattern.toLowerCase()));
@@ -253,7 +252,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedPropertyOwner = suggestion.ownerId;
                                   });
-                                 var response = propertyList.data.property
+                                  var response = propertyList.data.property
                                       .where((element) =>
                                           element.tableproperty.ownerId ==
                                           suggestion.ownerId)
@@ -373,6 +372,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
+                                    _taskName.text =
+                                        suggestion.tblSociety.socname +
+                                            ", " +
+                                            suggestion.tableproperty.unitNo
+                                                .toString();
                                   });
                                 },
                                 validator: (value) => value.isEmpty

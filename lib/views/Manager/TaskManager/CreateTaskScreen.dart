@@ -405,6 +405,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
+                                    _taskName.text =
+                                        suggestion.tblSociety.socname +
+                                            ", " +
+                                            suggestion.tableproperty.unitNo
+                                                .toString();
                                   });
                                 },
                                 validator: (value) => value.isEmpty

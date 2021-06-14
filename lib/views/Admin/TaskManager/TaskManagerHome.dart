@@ -35,7 +35,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   List<TaskElement> pendingTaskList2 = [];
   List<TaskElement> completedTaskList2 = [];
   List<TaskElement> unApprovedTaskList2 = [];
-
   getData() async {
     pendingTaskList.clear();
     completedTaskList.clear();
@@ -72,7 +71,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
         }
       }
     }
+
     setState(() {
+      searchResult21.addAll(pendingTaskList2);
+      searchResult22.addAll(unApprovedTaskList2);
+      searchResult23.addAll(completedTaskList2);
       loading = false;
     });
   }
@@ -81,6 +84,89 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   TabController _tabController21;
   TabController _tabController22;
 
+  TextEditingController _searchController21 = TextEditingController();
+  TextEditingController _searchController22 = TextEditingController();
+  TextEditingController _searchController23 = TextEditingController();
+
+  List searchResult21 = [];
+  List searchResult22 = [];
+  List searchResult23 = [];
+
+  void searchOperation21(String searchText) {
+    searchResult21.clear();
+    if (searchText.isNotEmpty) {
+      List templist = [];
+      pendingTaskList2.forEach((element) {
+        if (element.tblUsers.name
+            .toLowerCase()
+            .contains(searchText.toLowerCase())) {
+          setState(() {
+            templist.add(element);
+          });
+        }
+      });
+      setState(() {
+        searchResult21.clear();
+        searchResult21.addAll(templist);
+      });
+    } else {
+      setState(() {
+        searchResult21.clear();
+        searchResult21.addAll(pendingTaskList2);
+      });
+    }
+  }
+
+  void searchOperation22(String searchText) {
+    searchResult22.clear();
+    if (searchText.isNotEmpty) {
+      List templist = [];
+      unApprovedTaskList2.forEach((element) {
+        if (element.tblUsers.name
+            .toLowerCase()
+            .contains(searchText.toLowerCase())) {
+          setState(() {
+            templist.add(element);
+          });
+        }
+      });
+      setState(() {
+        searchResult22.clear();
+        searchResult22.addAll(templist);
+      });
+    } else {
+      setState(() {
+        searchResult22.clear();
+        searchResult22.addAll(pendingTaskList2);
+      });
+    }
+  }
+
+  void searchOperation23(String searchText) {
+    searchResult23.clear();
+    if (searchText.isNotEmpty) {
+      List templist = [];
+      completedTaskList2.forEach((element) {
+        if (element.tblUsers.name
+            .toLowerCase()
+            .contains(searchText.toLowerCase())) {
+          setState(() {
+            templist.add(element);
+          });
+        }
+      });
+      setState(() {
+        searchResult23.clear();
+        searchResult23.addAll(templist);
+      });
+    } else {
+      setState(() {
+        searchResult23.clear();
+        searchResult23.addAll(pendingTaskList2);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,8 +174,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CreateTaskScreen()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => CreateTaskScreen(
+                    user: user,
+                  )));
         },
       ),
       body: loading
@@ -198,42 +286,39 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(
-                      child: Column(
-                        children: [
-                          TabBar(
-                            isScrollable: true,
-                            controller: _tabController,
-                            indicator: UnderlineTabIndicator(
-                              borderSide: BorderSide(
-                                  color: Color(0xff314B8C), width: 4.0),
-                            ),
-                            labelStyle: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff314B8C),
-                            ),
-                            unselectedLabelStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                            unselectedLabelColor: Colors.black.withOpacity(0.4),
-                            labelColor: Color(0xff314B8C),
-                            tabs: [
-                              Tab(text: "Self"),
-                              Tab(text: "Team"),
-                            ],
-                            onTap: (value) {
-                              _tabController.animateTo(
-                                value,
-                                curve: Curves.easeIn,
-                                duration: Duration(milliseconds: 600),
-                              );
-                            },
+                  Container(
+                    child: Column(
+                      children: [
+                        TabBar(
+                          isScrollable: true,
+                          controller: _tabController,
+                          indicator: UnderlineTabIndicator(
+                            borderSide: BorderSide(
+                                color: Color(0xff314B8C), width: 4.0),
                           ),
-                        ],
-                      ),
+                          labelStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff314B8C),
+                          ),
+                          unselectedLabelStyle: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                          unselectedLabelColor: Colors.black.withOpacity(0.4),
+                          labelColor: Color(0xff314B8C),
+                          tabs: [
+                            Tab(text: "Self"),
+                            Tab(text: "Team"),
+                          ],
+                          onTap: (value) {
+                            _tabController.animateTo(
+                              value,
+                              curve: Curves.easeIn,
+                              duration: Duration(milliseconds: 600),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    flex: 1,
                   ),
                   Expanded(
                     child: Container(
@@ -273,6 +358,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   );
                                 },
                               ),
+                              SizedBox(
+                                height: 8,
+                              ),
                               Expanded(
                                 child: TabBarView(
                                   physics: NeverScrollableScrollPhysics(),
@@ -299,6 +387,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                 taskElement:
                                                     pendingTaskList[index],
                                                 currentUser: user,
+                                                isSelf: true,
                                               );
                                             },
                                           ),
@@ -324,6 +413,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                 taskElement:
                                                     unApprovedTaskList[index],
                                                 currentUser: user,
+                                                isSelf: true,
                                               );
                                             },
                                           ),
@@ -348,6 +438,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                 taskElement:
                                                     completedTaskList[index],
                                                 currentUser: user,
+                                                isSelf: true,
                                               );
                                             },
                                           ),
@@ -393,80 +484,261 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   physics: NeverScrollableScrollPhysics(),
                                   controller: _tabController22,
                                   children: <Widget>[
-                                    pendingTaskList2.length == 0
-                                        ? Center(
-                                            child: Text(
-                                              'No Task!',
-                                              style: Theme.of(context)
-                                                  .primaryTextTheme
-                                                  .subtitle1
-                                                  .copyWith(
-                                                      color: Color(0xff314B8C),
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 0),
+                                          child: Container(
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.grey,
+                                                    offset: Offset(
+                                                        0.0, 1.5), //(x,y)
+                                                    blurRadius: 2,
+                                                    spreadRadius: 0.1),
+                                              ],
                                             ),
-                                          )
-                                        : ListView.builder(
-                                            padding: EdgeInsets.only(top: 0),
-                                            itemCount: pendingTaskList2.length,
-                                            itemBuilder: (context, index) {
-                                              return TaskCard(
-                                                taskElement:
-                                                    pendingTaskList2[index],
-                                                currentUser: user,
-                                              );
-                                            },
-                                          ),
-                                    unApprovedTaskList2.length == 0
-                                        ? Center(
-                                            child: Text(
-                                              'No Task!',
-                                              style: Theme.of(context)
-                                                  .primaryTextTheme
-                                                  .subtitle1
-                                                  .copyWith(
-                                                      color: Color(0xff314B8C),
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: TextFormField(
+                                                controller: _searchController21,
+                                                onChanged: searchOperation21,
+                                                decoration: InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Color(0xff314B8C),
+                                                  ),
+                                                  border: InputBorder.none,
+                                                  hintText: 'Search By Name',
+                                                  hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          )
-                                        : ListView.builder(
-                                            padding: EdgeInsets.only(top: 0),
-                                            itemCount:
-                                                unApprovedTaskList2.length,
-                                            itemBuilder: (context, index) {
-                                              return TaskCard(
-                                                taskElement:
-                                                    unApprovedTaskList2[index],
-                                                currentUser: user,
-                                              );
-                                            },
                                           ),
-                                    completedTaskList2.length == 0
-                                        ? Center(
-                                            child: Text(
-                                              'No Task!',
-                                              style: Theme.of(context)
-                                                  .primaryTextTheme
-                                                  .subtitle1
-                                                  .copyWith(
-                                                      color: Color(0xff314B8C),
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                        ),
+                                        Expanded(
+                                          child: searchResult21.length == 0
+                                              ? Center(
+                                                  child: Text(
+                                                    'No Task!',
+                                                    style: Theme.of(context)
+                                                        .primaryTextTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                            color: Color(
+                                                                0xff314B8C),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                  ),
+                                                )
+                                              : ListView.builder(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount:
+                                                      searchResult21.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return TaskCard(
+                                                      taskElement:
+                                                          searchResult21[index],
+                                                      currentUser: user,
+                                                      isSelf: false,
+                                                    );
+                                                  },
+                                                ),
+                                        )
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 0),
+                                          child: Container(
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.grey,
+                                                    offset: Offset(
+                                                        0.0, 1.5), //(x,y)
+                                                    blurRadius: 2,
+                                                    spreadRadius: 0.1),
+                                              ],
                                             ),
-                                          )
-                                        : ListView.builder(
-                                            padding: EdgeInsets.only(top: 0),
-                                            itemCount:
-                                                completedTaskList2.length,
-                                            itemBuilder: (context, index) {
-                                              return TaskCard(
-                                                taskElement:
-                                                    completedTaskList2[index],
-                                                currentUser: user,
-                                              );
-                                            },
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: TextFormField(
+                                                controller: _searchController22,
+                                                onChanged: searchOperation22,
+                                                decoration: InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Color(0xff314B8C),
+                                                  ),
+                                                  border: InputBorder.none,
+                                                  hintText: 'Search By Name',
+                                                  hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
+                                        ),
+                                        Expanded(
+                                          child: searchResult22.length == 0
+                                              ? Center(
+                                                  child: Text(
+                                                    'No Task!',
+                                                    style: Theme.of(context)
+                                                        .primaryTextTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                            color: Color(
+                                                                0xff314B8C),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                  ),
+                                                )
+                                              : ListView.builder(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount:
+                                                      searchResult22.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return TaskCard(
+                                                      taskElement:
+                                                          searchResult22[index],
+                                                      currentUser: user,
+                                                      isSelf: false,
+                                                    );
+                                                  },
+                                                ),
+                                        )
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 0),
+                                          child: Container(
+                                            height: 60,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.grey,
+                                                    offset: Offset(
+                                                        0.0, 1.5), //(x,y)
+                                                    blurRadius: 2,
+                                                    spreadRadius: 0.1),
+                                              ],
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: TextFormField(
+                                                controller: _searchController23,
+                                                onChanged: searchOperation23,
+                                                decoration: InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Color(0xff314B8C),
+                                                  ),
+                                                  border: InputBorder.none,
+                                                  hintText: 'Search By Name',
+                                                  hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: searchResult23.length == 0
+                                              ? Center(
+                                                  child: Text(
+                                                    'No Task!',
+                                                    style: Theme.of(context)
+                                                        .primaryTextTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                            color: Color(
+                                                                0xff314B8C),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                  ),
+                                                )
+                                              : ListView.builder(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount:
+                                                      searchResult23.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return TaskCard(
+                                                      taskElement:
+                                                          searchResult23[index],
+                                                      currentUser: user,
+                                                      isSelf: false,
+                                                    );
+                                                  },
+                                                ),
+                                        )
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -475,7 +747,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         ],
                       ),
                     ),
-                    flex: 9,
+                    flex: 10,
                   ),
                 ],
               ),

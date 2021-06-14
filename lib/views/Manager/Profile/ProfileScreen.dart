@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/User.dart';
@@ -8,6 +13,8 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/loginSceen.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -34,6 +41,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     getData();
   }
 
+  bool newDp = false;
+  File _image;
+  final picker = ImagePicker();
+
   getData() async {
     setState(() {
       isLoading = true;
@@ -45,17 +56,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   updatePasswordRequest() async {
+    print(currentPasswordController.text +
+        "_" +
+        user.password +
+        "x" +
+        newPasswordController.text);
     if (currentPasswordController.text == user.password) {
       setState(() {
         user.password = newPasswordController.text;
       });
-      // try {} catch (e) {}
-      print(user.toJson());
-      bool isUpdated = await UserService.updateUser(user.toJson());
-      print(isUpdated);
+      bool isUpdated = await UserService.updateUser(jsonEncode(user.toJson()));
       Routing.makeRouting(context, routeMethod: 'pop');
+      if (isUpdated)
+        showInSnackBar(context, 'Password updated!', 4000);
+      else
+        showInSnackBar(context, 'failed to update the password', 4000);
     } else {
-      showInSnackBar(context, 'Current Password not marched!', 4000);
+      showInSnackBar(context, 'Current Password not matched!', 4000);
     }
   }
 
@@ -75,6 +92,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       onTap: function,
     );
+  }
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      String dir = (await getApplicationDocumentsDirectory()).path;
+      String newPath = path.join(dir, user.userId.toString() + ".png");
+      File _image = await File(pickedFile.path).copy(newPath);
+      showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              content: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 80,
+                child: ClipOval(
+                  child: Image.file(_image),
+                ),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () async {
+                    var request = http.MultipartRequest(
+                        'POST', Uri.parse("http://68.183.247.233/api/upload/image"));
+                    request.files.add(
+                        await http.MultipartFile.fromPath('upload', newPath));
+                    var res = await request.send();
+                    if (res.statusCode == 200) {
+                      Navigator.of(context).pop();
+                      setState(() {
+                        newDp = true;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Profile picture updated."),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Profile picture not updated."),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text("Update"),
+                )
+              ],
+            );
+          },
+        ),
+      );
+    } else {
+      print('No image selected.');
+    }
   }
 
   @override
@@ -102,11 +176,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: 75),
-                        CircleAvatar(
-                          backgroundImage: AssetImage("assets/dummy.png"),
-                          backgroundColor: Colors.white,
-                          radius: 80,
-                        ),
+                        newDp
+                            ? CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 80,
+                                child: ClipOval(
+                                  child: Image.file(_image),
+                                ),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 80,
+                                child: ClipOval(
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: "assets/loader.gif",
+                                    image:
+                                        "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                    imageErrorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace stackTrace) {
+                                      return CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 80,
+                                        backgroundImage: AssetImage(
+                                          "assets/dummy.png",
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
                         SizedBox(height: 20),
                         Text('${user.name}',
                             style: TextStyle(
@@ -120,13 +219,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTap: () {
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (context) => AddDataScreen()));
+                              getImage();
                             },
-                            child: Text(
-                              'Edit',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
+                            child: Container(
+                              height: 30,
+                              width: 75,
+                              child: Text(
+                                'Edit',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
                             ),
                           ),
                         )
@@ -180,8 +284,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) => StatefulBuilder(
-          builder: (BuildContext context, StateSetter stateSetter) =>
-          Container(
+              builder: (BuildContext context, StateSetter stateSetter) =>
+                  Container(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: SingleChildScrollView(
@@ -242,11 +346,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-        ));
+            ));
   }
 
-  Widget inputWidget(TextEditingController textEditingController,
-      String validation, bool isVisible, String label, String hint, save, StateSetter stateSetter) {
+  Widget inputWidget(
+      TextEditingController textEditingController,
+      String validation,
+      bool isVisible,
+      String label,
+      String hint,
+      save,
+      StateSetter stateSetter) {
     return TextFormField(
       style: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
       controller: textEditingController,
