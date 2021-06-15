@@ -24,7 +24,7 @@ DataSource _getCalendarDataSource(List<TaskElement> tasks) {
     appointments.add(Appointment(
       startTime: element.startDateTime,
       endTime: element.endDateTime,
-      subject: element.taskName +
+      subject: element.propertyName +
           "\n" +
           element.startDateTime.toString() +
           " " +

@@ -74,7 +74,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
       );
     }
-    propertyList = await PropertyService.getAllPropertiesByUserId(widget.user);
+    propertyList = await PropertyService.getAllPropertiesByUserId(widget.user.userId);
     for (int i = 0; i < propertyList.count; i++) {
       propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
     }
@@ -372,11 +372,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
-                                    _taskName.text =
-                                        suggestion.tblSociety.socname +
-                                            ", " +
-                                            suggestion.tableproperty.unitNo
-                                                .toString();
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -394,9 +389,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
-                    inputDateTime(
-                        "Enter Start Date and Time", _taskStartDateTime),
-                    inputDateTime("Enter End Date and Time", _taskEndDateTime),
+                     inputDateTime("Enter Start Date and Time",
+                        _taskStartDateTime, _taskStartDateTime2),
+                    inputDateTime("Enter End Date and Time", _taskEndDateTime,
+                        _taskEndDateTime2),
                     SizedBox(
                       height: 16,
                     ),
@@ -417,9 +413,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "category": _selectedTaskCategory,
                           "task_name": _taskName.text,
                           "task_desc": _taskDescription.text,
-                          "task_status": "pending",
-                          "start_dateTime": _taskStartDateTime.text,
-                          "end_dateTime": _taskEndDateTime.text,
+                          "task_status": "Pending",
+                          "property_name": _property.text,
+                          "start_dateTime": _taskStartDateTime2.text,
+                          "end_dateTime": _taskEndDateTime2.text,
                           "assigned_to": widget.user.userId.toString(),
                           "property_ref": _selectedProperty.toString(),
                           "created_at": DateTime.now().toString(),
@@ -465,7 +462,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  inputDateTime(label, controller) {
+  inputDateTime(label, controller, controller2) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 8.0,
@@ -493,12 +490,16 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       showTitleActions: true,
                       onChanged: (date) {
                         setState(() {
-                          controller.text = date.toString();
+                          controller.text =
+                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller2.text = date.toString();
                         });
                       },
                       onConfirm: (date) {
                         setState(() {
-                          controller.text = date.toString();
+                          controller.text =
+                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                          controller2.text = date.toString();
                         });
                       },
                       currentTime: DateTime.now(),

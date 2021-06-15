@@ -13,7 +13,8 @@ class PropertyService extends AuthService {
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      PropertyElement  property = PropertyElement.fromJson(responseMap["data"]["property"][0]);
+      PropertyElement property =
+          PropertyElement.fromJson(responseMap["data"]["property"][0]);
       return property;
     } else {
       print("DEBUG");
@@ -24,7 +25,7 @@ class PropertyService extends AuthService {
   static Future<Property> getAllProperties() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         // AuthService.BASE_URI + 'api/properties',
-    AuthService.BASE_URI + 'api/property/owner/14',
+        AuthService.BASE_URI + 'api/property/owner/14',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
@@ -65,26 +66,26 @@ class PropertyService extends AuthService {
     }
   }
 
-  static Future<String> getSocietyName(id)async{
+  static Future<String> getSocietyName(id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/property/society/$id',
         method: 'GET');
     var responseMap = json.decode(response.body);
     if (response.statusCode == 200) {
       return responseMap[0]["socname"];
-    }else{
+    } else {
       return "error";
     }
   }
 
-  static Future<String> getCountryName(id)async{
+  static Future<String> getCountryName(id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/property/country/$id',
         method: 'GET');
     var responseMap = json.decode(response.body);
     if (response.statusCode == 200) {
       return responseMap[0]["cname"];
-    }else{
+    } else {
       return "error";
     }
   }

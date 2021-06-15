@@ -5,6 +5,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:propview/views/Admin/Home/homeScreen.dart';
 import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/TaskManager/taskManagerHome.dart';
+import 'package:propview/views/Admin/Attendance/AttendanceHome.dart';
 
 class LandingScreen extends StatefulWidget {
   final int selectedIndex;
@@ -107,6 +108,7 @@ class _LandingScreenState extends State<LandingScreen> {
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     TaskMangerHome(),
+    AttendanceHome(),
     ProfileScreen(),
   ];
 
@@ -147,6 +149,10 @@ class _LandingScreenState extends State<LandingScreen> {
                 GButton(
                   icon: Icons.work,
                   text: 'Task',
+                ),
+                GButton(
+                  icon: Icons.fact_check,
+                  text: 'Attendance',
                 ),
                 GButton(
                   icon: Icons.person,

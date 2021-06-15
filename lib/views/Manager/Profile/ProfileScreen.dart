@@ -40,9 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     getData();
   }
-
-  bool newDp = false;
-  File _image;
   final picker = ImagePicker();
 
   getData() async {
@@ -105,26 +102,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context) => StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              backgroundColor: Colors.grey.shade100,
               content: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 80,
-                child: ClipOval(
-                  child: Image.file(_image),
-                ),
+                backgroundImage: FileImage(_image),
               ),
               actions: [
                 MaterialButton(
                   onPressed: () async {
-                    var request = http.MultipartRequest(
-                        'POST', Uri.parse("http://68.183.247.233/api/upload/image"));
+                    var request = http.MultipartRequest('POST',
+                        Uri.parse("http://68.183.247.233/api/upload/image"));
                     request.files.add(
                         await http.MultipartFile.fromPath('upload', newPath));
                     var res = await request.send();
                     if (res.statusCode == 200) {
+                      imageCache.clear();
                       Navigator.of(context).pop();
-                      setState(() {
-                        newDp = true;
-                      });
+                      getData();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text("Profile picture updated."),
@@ -176,36 +171,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: 75),
-                        newDp
-                            ? CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 80,
-                                child: ClipOval(
-                                  child: Image.file(_image),
-                                ),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 80,
-                                child: ClipOval(
-                                  child: FadeInImage.assetNetwork(
-                                    placeholder: "assets/loader.gif",
-                                    image:
-                                        "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
-                                    imageErrorBuilder: (BuildContext context,
-                                        Object exception,
-                                        StackTrace stackTrace) {
-                                      return CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 80,
-                                        backgroundImage: AssetImage(
-                                          "assets/dummy.png",
-                                        ),
-                                      );
-                                    },
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 80,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                              height: 160,
+                              width: 160,
+                              fit: BoxFit.cover,
+                              placeholder: "assets/loader.gif",
+                              image:
+                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                              imageErrorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stackTrace) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 80,
+                                  backgroundImage: AssetImage(
+                                    "assets/dummy.png",
                                   ),
-                                ),
-                              ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                         SizedBox(height: 20),
                         Text('${user.name}',
                             style: TextStyle(
@@ -217,19 +206,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: EdgeInsets.only(top: 10, bottom: 50),
                           child: InkWell(
                             onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => AddDataScreen()));
                               getImage();
                             },
                             child: Container(
-                              height: 30,
-                              width: 75,
-                              child: Text(
-                                'Edit',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                              height: 35,
+                              width: 175,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'update Profile Picture',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

@@ -111,6 +111,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     for (int i = 0; i < propertyList.count; i++) {
       propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
     }
+    
+    _selectedUser = widget.user;
+    _user.text = _selectedUser.name;
     setState(() {
       _selectedTaskCategory = _taskCategoryDropdownList[0].value;
       loading = false;
@@ -405,11 +408,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
-                                    _taskName.text =
-                                        suggestion.tblSociety.socname +
-                                            ", " +
-                                            suggestion.tableproperty.unitNo
-                                                .toString();
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -542,6 +540,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "task_name": _taskName.text,
                           "task_desc": _taskDescription.text,
                           "task_status": "Pending",
+                          "property_name": _property.text,
                           "start_dateTime": _taskStartDateTime2.text,
                           "end_dateTime": _taskEndDateTime2.text,
                           "assigned_to": _selectedUser.userId.toString(),

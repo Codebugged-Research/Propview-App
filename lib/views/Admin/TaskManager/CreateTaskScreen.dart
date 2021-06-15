@@ -215,14 +215,20 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   List<PropertyOwnerElement> matches = [];
                                   matches
                                       .addAll(propertyOwner.data.propertyOwner);
+                                  print(matches.length);
                                   matches.retainWhere((s) => s.ownerName
                                       .toLowerCase()
                                       .contains(pattern.toLowerCase()));
+                                  print(matches.length);
                                   return matches;
                                 },
                                 itemBuilder:
                                     (context, PropertyOwnerElement suggestion) {
-                                  return ListTile();
+                                  return ListTile(
+                                    title:
+                                        Text(suggestion.ownerName + "/" + "In"),
+                                    subtitle: Text(suggestion.ownerEmail),
+                                  );
                                 },
                                 noItemsFoundBuilder: (context) {
                                   return Padding(
@@ -369,11 +375,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                   setState(() {
                                     _selectedProperty =
                                         suggestion.tableproperty.propertyId;
-                                    _taskName.text =
-                                        suggestion.tblSociety.socname +
-                                            ", " +
-                                            suggestion.tableproperty.unitNo
-                                                .toString();
                                   });
                                 },
                                 validator: (value) => value.isEmpty
@@ -503,6 +504,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         var payload = jsonEncode({
                           "category": _selectedTaskCategory,
                           "task_name": _taskName.text,
+                          "property_name": _property.text,
                           "task_desc": _taskDescription.text,
                           "task_status": "Pending",
                           "start_dateTime": _taskStartDateTime2.text,
@@ -513,7 +515,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           "updated_at": DateTime.now().toString(),
                           "property_owner_ref": _selectedPropertyOwner,
                         });
-                        print(payload);
                         bool response = await TaskService.createTask(payload);
                         setState(() {
                           load = false;
@@ -526,7 +527,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                               _taskStartDateTime2.text,
                               _taskEndDateTime2.text);
                           var managerToken = await UserService.getDeviceToken(
-                              _selectedUser.parentId);
+                              _selectedUser.parentId.toString());
                           NotificationService.sendPushToOne(
                             "New Task Assigned",
                             "A new task Has been Assigned to your employee : ${_taskName.text}",

@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/User.dart';
@@ -10,6 +13,8 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/loginSceen.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -23,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isCurrentVisible = true;
 
   final formkey = new GlobalKey<FormState>();
+  final picker = ImagePicker();
 
   String currentPassword;
   String newPassword;
@@ -47,7 +53,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   updatePasswordRequest() async {
-    print(currentPasswordController.text + "_" + user.password + "x" + newPasswordController.text);
     if (currentPasswordController.text == user.password) {
       setState(() {
         user.password = newPasswordController.text;
@@ -81,6 +86,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      String dir = (await getApplicationDocumentsDirectory()).path;
+      String newPath = path.join(dir, user.userId.toString() + ".png");
+      File _image = await File(pickedFile.path).copy(newPath);
+      showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.grey.shade100,
+              content: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 80,
+                backgroundImage: FileImage(_image),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () async {
+                    var request = http.MultipartRequest('POST',
+                        Uri.parse("http://68.183.247.233/api/upload/image"));
+                    request.files.add(
+                        await http.MultipartFile.fromPath('upload', newPath));
+                    var res = await request.send();
+                    if (res.statusCode == 200) {
+                      imageCache.clear();
+                      Navigator.of(context).pop();
+                      getData();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Profile picture updated."),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Profile picture not updated."),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text("Update"),
+                )
+              ],
+            );
+          },
+        ),
+      );
+    } else {
+      print('No image selected.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading
@@ -106,10 +166,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: 75),
-                        CircleAvatar(
-                          backgroundImage: AssetImage("assets/dummy.png"),
+                       CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 80,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                              height: 160,
+                              width: 160,
+                              fit: BoxFit.cover,
+                              placeholder: "assets/loader.gif",
+                              image:
+                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                              imageErrorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stackTrace) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 80,
+                                  backgroundImage: AssetImage(
+                                    "assets/dummy.png",
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
                         SizedBox(height: 20),
                         Text('${user.name}',
@@ -122,15 +201,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: EdgeInsets.only(top: 10, bottom: 50),
                           child: InkWell(
                             onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => AddDataScreen()));
+                               getImage();
                             },
-                            child: Text(
-                              'Edit',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
+                            child: Container(
+                              height: 35,
+                              width: 175,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'update Profile Picture',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         )

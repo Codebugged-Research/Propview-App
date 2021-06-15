@@ -188,7 +188,30 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
-                      leading: Image.asset("assets/dummy.png"),
+                      leading: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 30,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                              height: 60,
+                              width: 60,
+                              fit: BoxFit.cover,
+                              placeholder: "assets/loader.gif",
+                              image:
+                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                              imageErrorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stackTrace) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  backgroundImage: AssetImage(
+                                    "assets/dummy.png",
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       title: Text(
                         user.name,
                         style: GoogleFonts.nunito(
