@@ -36,12 +36,17 @@ class _AttendanceHomeState extends State<AttendanceHome> {
 
   savePunch() {}
 
-  String start = "-- : --";
-  String end = "-- : --";
+  String start = "--/--/-- -- : --";
+  String end = "--/--/-- -- : --";
   String startMeter = "-- : --";
   String endMeter = "-- : --";
 
   bool reset = false;
+
+  dateTimeFormatter(String dat) {
+    DateTime date = DateTime.parse(dat);
+    return '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${DateTime.now().year}  ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,18 +124,32 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Icon(
-                                      Icons.replay,
-                                    ),
-                                  ),
-                                )
+                                reset
+                                    ? InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            start = "--/--/-- -- : --";
+                                            end = "--/--/-- -- : --";
+                                            startMeter = "-- : --";
+                                            endMeter = "-- : --";
+                                            reset = false;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Icon(
+                                              Icons.replay,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
                               ],
                             ),
                           ),
@@ -155,11 +174,13 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                                       ),
                                     ),
                                     Text(
-                                      start,
+                                      start == "--/--/-- -- : --"
+                                          ? start
+                                          : dateTimeFormatter(start),
                                       style: GoogleFonts.nunito(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: start == "-- : --"
+                                        color: start == "--/--/-- -- : --"
                                             ? Colors.red
                                             : Colors.green,
                                       ),
@@ -179,11 +200,13 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                                       ),
                                     ),
                                     Text(
-                                      end,
+                                      end == "--/--/-- -- : --"
+                                          ? end
+                                          : dateTimeFormatter(end),
                                       style: GoogleFonts.nunito(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: end == "-- : --"
+                                        color: end == "--/--/-- -- : --"
                                             ? Colors.red
                                             : Colors.green,
                                       ),
@@ -218,7 +241,7 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                                       style: GoogleFonts.nunito(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: startMeter == "-- : --"
+                                        color: startMeter == ""
                                             ? Colors.red
                                             : Colors.green,
                                       ),
@@ -255,8 +278,20 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                           SizedBox(
                             height: 32,
                           ),
-                          MaterialButton(
-                            onPressed: () {},
+                          end == "--/--/-- -- : --"
+                                    ? MaterialButton(
+                            onPressed: () {
+                              if (start == "--/--/-- -- : --") {
+                                setState(() {
+                                  reset = true;
+                                  start = DateTime.now().toString();
+                                });
+                              } else {
+                                setState(() {
+                                  end = DateTime.now().toString();
+                                });
+                              }
+                            },
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -265,7 +300,9 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8.0, vertical: 8),
                               child: Text(
-                                start == "-- : --" ? "Punch In" : "Punch Out",
+                                start == "--/--/-- -- : --"
+                                    ? "Punch In"
+                                    : "Punch Out",
                                 style: GoogleFonts.nunito(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -273,11 +310,11 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                                 ),
                               ),
                             ),
-                          )
+                          ):Container(),
                         ],
                       ),
                     ),
-                    flex: 4,
+                    flex: 3,
                   )
                 ],
               ),
