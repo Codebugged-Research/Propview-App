@@ -9,14 +9,14 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AttendanceHome extends StatefulWidget {
-  const AttendanceHome();
+class SoloAttendance extends StatefulWidget {
+  const SoloAttendance();
 
   @override
-  _AttendanceHomeState createState() => _AttendanceHomeState();
+  _SoloAttendanceState createState() => _SoloAttendanceState();
 }
 
-class _AttendanceHomeState extends State<AttendanceHome> {
+class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   void initState() {
     // TODO: implement initState
@@ -173,7 +173,7 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                               ),
                             ),
                             Text(
-                              "Employee",
+                              "Admin",
                               style: GoogleFonts.nunito(
                                 color: Color(0xffB2B2B2),
                                 fontSize: 18,

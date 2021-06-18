@@ -104,9 +104,9 @@ class _TaskCardState extends State<TaskCard> {
                         propName,
                       ),
                       textWidget(
-                          context, "Task Name: ", widget.taskElement.taskName),
-                      textWidget(
                           context, "Task Type: ", widget.taskElement.category),
+                      textWidget(
+                          context, "Task Name: ", widget.taskElement.taskName),
                       !widget.isSelf
                           ? textWidget(
                               context,

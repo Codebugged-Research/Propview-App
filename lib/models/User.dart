@@ -108,11 +108,12 @@ class User {
       );
 
   static capNamer(String name) {
-    var arr = name.split(" ");
-    List arr2 = [];
-    arr.forEach((e) => arr2.add(e[0].toUpperCase() + e.substring(1)));
-    var arr3 = arr2.join(" ");
-    return arr3;
+    // var arr = name.split(" ");
+    // List arr2 = [];
+    // arr.forEach((e) => arr2.add(e[0].toUpperCase() + e.substring(1)));
+    // var arr3 = arr2.join(" ");
+    // return arr3;
+    return name;
   }
 
   Map<String, dynamic> toJson() => {

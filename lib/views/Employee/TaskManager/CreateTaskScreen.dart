@@ -74,7 +74,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
       );
     }
-    propertyList = await PropertyService.getAllPropertiesByUserId(widget.user.userId);
+    propertyList =
+        await PropertyService.getAllPropertiesByUserId(widget.user.userId);
     for (int i = 0; i < propertyList.count; i++) {
       propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
     }
@@ -86,6 +87,22 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   bool load = false;
   bool propertySelectBox = false;
+
+  checkPayload() {
+    if (_selectedProperty.toString().length > 0 &&
+        _taskName.text.length > 0 &&
+        _taskDescription.text.length > 0 &&
+        _property.text.length > 0 &&
+        _taskStartDateTime2.text.length > 0 &&
+        _taskEndDateTime2.text.length > 0 &&
+        _selectedUser.userId.toString().length > 0 &&
+        _selectedProperty.toString().length > 0 &&
+        _selectedPropertyOwner.toString().length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +406,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
-                     inputDateTime("Enter Start Date and Time",
+                    inputDateTime("Enter Start Date and Time",
                         _taskStartDateTime, _taskStartDateTime2),
                     inputDateTime("Enter End Date and Time", _taskEndDateTime,
                         _taskEndDateTime2),
@@ -406,50 +423,58 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 Theme.of(context).primaryTextTheme.subtitle1),
                       ),
                       onPressed: () async {
-                        setState(() {
-                          load = true;
-                        });
-                        var payload = jsonEncode({
-                          "category": _selectedTaskCategory,
-                          "task_name": _taskName.text,
-                          "task_desc": _taskDescription.text,
-                          "task_status": "Pending",
-                          "property_name": _property.text,
-                          "start_dateTime": _taskStartDateTime2.text,
-                          "end_dateTime": _taskEndDateTime2.text,
-                          "assigned_to": widget.user.userId.toString(),
-                          "property_ref": _selectedProperty.toString(),
-                          "created_at": DateTime.now().toString(),
-                          "updated_at": DateTime.now().toString(),
-                          "property_owner_ref": _selectedPropertyOwner,
-                        });
-                        print(payload);
-                        bool response = await TaskService.createTask(payload);
-                        setState(() {
-                          load = false;
-                        });
-                        if (response) {
-                          NotificationService.sendPushToOneWithTime(
+                        if (checkPayload()) {
+                          setState(() {
+                            load = true;
+                          });
+                          var payload = jsonEncode({
+                            "category": _selectedTaskCategory,
+                            "task_name": _taskName.text,
+                            "task_desc": _taskDescription.text,
+                            "task_status": "Pending",
+                            "property_name": _property.text,
+                            "start_dateTime": _taskStartDateTime2.text,
+                            "end_dateTime": _taskEndDateTime2.text,
+                            "assigned_to": widget.user.userId.toString(),
+                            "property_ref": _selectedProperty.toString(),
+                            "created_at": DateTime.now().toString(),
+                            "updated_at": DateTime.now().toString(),
+                            "property_owner_ref": _selectedPropertyOwner,
+                          });
+                          print(payload);
+                          bool response = await TaskService.createTask(payload);
+                          setState(() {
+                            load = false;
+                          });
+                          if (response) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => LandingScreen(
+                                      selectedIndex: 1,
+                                    )));
+                            NotificationService.sendPushToOneWithTime(
+                                "New Task Assigned",
+                                "A new task Has been Assigned : ${_taskName.text}",
+                                widget.user.deviceToken,
+                                _taskStartDateTime.text,
+                                _taskEndDateTime.text);
+                            var managerToken = await UserService.getDeviceToken(
+                                widget.user.parentId);
+                            NotificationService.sendPushToOne(
                               "New Task Assigned",
-                              "A new task Has been Assigned : ${_taskName.text}",
-                              widget.user.deviceToken,
-                              _taskStartDateTime.text,
-                              _taskEndDateTime.text);
-                          var managerToken = await UserService.getDeviceToken(
-                              widget.user.parentId);
-                          NotificationService.sendPushToOne(
-                            "New Task Assigned",
-                            "A new task Has been Assigned to your employee : ${_taskName.text}",
-                            managerToken,
-                          );
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => LandingScreen(
-                                    selectedIndex: 1,
-                                  )));
+                              "A new task Has been Assigned to your employee : ${_taskName.text}",
+                              managerToken,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Task Creation Failed"),
+                              ),
+                            );
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("Task Creation Failed"),
+                              content: Text("Fill all details"),
                             ),
                           );
                         }

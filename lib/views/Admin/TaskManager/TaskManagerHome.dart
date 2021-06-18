@@ -221,7 +221,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         ),
                       ),
                       subtitle: Text(
-                        "Admin/Super_Admin",
+                        "Admin",
                         style: GoogleFonts.nunito(
                           color: Color(0xffB2B2B2),
                           fontSize: 18,

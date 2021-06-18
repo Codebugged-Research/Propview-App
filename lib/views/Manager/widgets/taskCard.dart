@@ -89,7 +89,7 @@ class _TaskCardState extends State<TaskCard> {
                         spreadRadius: 0.0,
                       ),
                     ]),
-                height:  widget.isSelf ? 120 : 142,
+                height: widget.isSelf ? 120 : 142,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -103,14 +103,16 @@ class _TaskCardState extends State<TaskCard> {
                         propName,
                       ),
                       textWidget(
-                          context, "Task Name: ", widget.taskElement.taskName),
-                      textWidget(
                           context, "Task Type: ", widget.taskElement.category),
-                      !widget.isSelf ? textWidget(
-                          context,
-                          "AssignedTo: ",
-                          widget.taskElement.tblUsers.name +
-                              "\n(${widget.taskElement.tblUsers.designation})"): Container(),
+                      textWidget(
+                          context, "Task Name: ", widget.taskElement.taskName),
+                      !widget.isSelf
+                          ? textWidget(
+                              context,
+                              "AssignedTo: ",
+                              widget.taskElement.tblUsers.name +
+                                  "\n(${widget.taskElement.tblUsers.designation})")
+                          : Container(),
                     ],
                   ),
                 ),

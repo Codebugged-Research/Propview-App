@@ -8,6 +8,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Manager/Attendance/LogCard.dart';
+import 'package:propview/views/Manager/Attendance/SoloAttendance.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -80,55 +81,82 @@ class _AttendanceHomeState extends State<AttendanceHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
                     child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 30,
-                            child: ClipOval(
-                              child: FadeInImage.assetNetwork(
-                              height: 60,
-                              width: 60,
-                                placeholder: "assets/loader.gif",
-                                fit: BoxFit.cover,
-                                image:
-                                    "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
-                                imageErrorBuilder: (BuildContext context,
-                                    Object exception, StackTrace stackTrace) {
-                                  return CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    radius: 30,
-                                    backgroundImage: AssetImage(
-                                      "assets/dummy.png",
-                                    ),
-                                  );
-                                },
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30,
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                  height: 60,
+                                  width: 60,
+                                  placeholder: "assets/loader.gif",
+                                  fit: BoxFit.cover,
+                                  image:
+                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                  imageErrorBuilder: (BuildContext context,
+                                      Object exception, StackTrace stackTrace) {
+                                    return CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: 30,
+                                      backgroundImage: AssetImage(
+                                        "assets/dummy.png",
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 16,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.black,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "Manager",
+                                  style: GoogleFonts.nunito(
+                                    color: Color(0xffB2B2B2),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                          child:  Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                user.name,
-                                style: GoogleFonts.nunito(
-                                  color: Colors.black,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Image.asset(
+                                "assets/immigration.png",
+                                height: 50,
                               ),
-                              Text(
-                                "Manager",
-                                style: GoogleFonts.nunito(
-                                  color: Color(0xffB2B2B2),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              Text("Punch In",style: TextStyle(fontWeight: FontWeight.bold),)
                             ],
                           ),
-                        ],
-                      ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => SoloAttendance(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
