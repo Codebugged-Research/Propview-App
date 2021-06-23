@@ -9,17 +9,24 @@ import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Employee/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Employee/Property/PropertyOwnerDetailScreen.dart';
 
 import '../AssignedPersonDetailScreen.dart';
 
+// ignore: must_be_immutable
 class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
-  // final Function refresh;
+  Function change;
   final User currentUser;
   final bool isSelf;
-  TaskCard({this.taskElement, this.currentUser, this.isSelf});
+  TaskCard({
+    this.taskElement,
+    this.currentUser,
+    this.isSelf,
+    this.change,
+  });
 
   @override
   _TaskCardState createState() => _TaskCardState();
@@ -96,11 +103,13 @@ class _TaskCardState extends State<TaskCard> {
                           context, "Task Name: ", widget.taskElement.taskName),
                       textWidget(
                           context, "Task Type: ", widget.taskElement.category),
-                      !widget.isSelf ? textWidget(
-                          context,
-                          "AssignedTo: ",
-                          widget.taskElement.tblUsers.name +
-                              "\n(${widget.taskElement.tblUsers.designation})"): Container(),
+                      !widget.isSelf
+                          ? textWidget(
+                              context,
+                              "AssignedTo: ",
+                              widget.taskElement.tblUsers.name +
+                                  "\n(${widget.taskElement.tblUsers.designation})")
+                          : Container(),
                     ],
                   ),
                 ),
@@ -316,7 +325,7 @@ class _TaskCardState extends State<TaskCard> {
                                 alignment: Alignment.center,
                                 child: MaterialButton(
                                   child: Text(
-                                    "Complete Task",
+                                    "Submit Task",
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .subtitle2
@@ -349,49 +358,78 @@ class _TaskCardState extends State<TaskCard> {
                                         actions: [
                                           MaterialButton(
                                             onPressed: () async {
-                                              // print(widget.currentUser.parentId == "");
                                               setState(() {
                                                 widget.taskElement.taskStatus =
                                                     "Unapproved";
                                               });
-                                              NotificationService.sendPushToOne(
-                                                "Task Submitted",
-                                                "Task " +
-                                                    widget
-                                                        .taskElement.taskName +
-                                                    " is submitted by " +
-                                                    widget.taskElement.tblUsers
-                                                        .name,
-                                                widget.taskElement.tblUsers
-                                                    .deviceToken,
-                                              );
-                                              var managerToken =
-                                                  await UserService
-                                                      .getDeviceToken(widget
-                                                          .taskElement
-                                                          .tblUsers
-                                                          .parentId);
-                                              NotificationService.sendPushToOne(
-                                                "Task Submitted",
-                                                "Task " +
-                                                    widget
-                                                        .taskElement.taskName +
-                                                    " is submitted by " +
-                                                    widget.taskElement.tblUsers
-                                                        .name,
-                                                managerToken,
-                                              );
-                                              print(jsonEncode(
-                                                  widget.taskElement.toJson()));
                                               var response =
                                                   await TaskService.updateTask(
                                                       widget.taskElement.taskId,
                                                       jsonEncode(widget
                                                           .taskElement
                                                           .toJson()));
-                                              print(response);
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).pop();
+                                              if (response) {
+                                                if (widget.taskElement.tblUsers
+                                                        .deviceToken !=
+                                                    "") {
+                                                  NotificationService
+                                                      .sendPushToOne(
+                                                    "Task Submitted",
+                                                    "Task " +
+                                                        widget.taskElement
+                                                            .taskName +
+                                                        " is submitted by " +
+                                                        widget.taskElement
+                                                            .tblUsers.name,
+                                                    widget.taskElement.tblUsers
+                                                        .deviceToken,
+                                                  );
+                                                  if (widget
+                                                              .taskElement
+                                                              .tblUsers
+                                                              .parentId !=
+                                                          "0" &&
+                                                      widget
+                                                              .taskElement
+                                                              .tblUsers
+                                                              .parentId !=
+                                                          "") {
+                                                    var managerToken =
+                                                        await UserService
+                                                            .getDeviceToken(
+                                                                widget
+                                                                    .taskElement
+                                                                    .tblUsers
+                                                                    .parentId);
+                                                    NotificationService
+                                                        .sendPushToOne(
+                                                      "Task Submitted",
+                                                      "Task " +
+                                                          widget.taskElement
+                                                              .taskName +
+                                                          " is submitted by " +
+                                                          widget.taskElement
+                                                              .tblUsers.name,
+                                                      managerToken,
+                                                    );
+                                                  }
+
+                                                  widget.change(
+                                                      widget.taskElement);
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+                                                  showInSnackBar(
+                                                      context,
+                                                      "Task Updation successfull",
+                                                      1500);
+                                                } else {
+                                                  showInSnackBar(
+                                                      context,
+                                                      "Task Updation failed try agin later",
+                                                      800);
+                                                  Navigator.of(context).pop();
+                                                }
+                                              }
                                             },
                                             child: Text(
                                               "Yes",
@@ -476,27 +514,42 @@ class _TaskCardState extends State<TaskCard> {
                                                 widget.taskElement.taskStatus =
                                                     "Completed";
                                               });
-                                              NotificationService.sendPushToOne(
-                                                "Task Approved",
-                                                "Task " +
-                                                    widget
-                                                        .taskElement.taskName +
-                                                    " is approved",
-                                                widget.taskElement.tblUsers
-                                                    .deviceToken,
-                                              );
-                                              print(jsonEncode(
-                                                  widget.taskElement.toJson()));
                                               var response =
                                                   await TaskService.updateTask(
                                                       widget.taskElement.taskId,
                                                       jsonEncode(widget
                                                           .taskElement
                                                           .toJson()));
-                                              print(response);
-                                              Navigator.of(context).pop();
-
-                                              Navigator.of(context).pop();
+                                              if (response) {
+                                                if (widget.taskElement.tblUsers
+                                                        .deviceToken !=
+                                                    "") {
+                                                  NotificationService
+                                                      .sendPushToOne(
+                                                    "Task Submitted",
+                                                    "Task " +
+                                                        widget.taskElement
+                                                            .taskName +
+                                                        " is approved ",
+                                                    widget.taskElement.tblUsers
+                                                        .deviceToken,
+                                                  );
+                                                }
+                                                widget
+                                                    .change(widget.taskElement);
+                                                Navigator.of(context).pop();
+                                                Navigator.of(context).pop();
+                                                showInSnackBar(
+                                                    context,
+                                                    "Task Updation successfull ",
+                                                    1500);
+                                              } else {
+                                                showInSnackBar(
+                                                    context,
+                                                    "Task Updation failed try agin later",
+                                                    800);
+                                                Navigator.of(context).pop();
+                                              }
                                             },
                                             child: Text(
                                               "Yes",

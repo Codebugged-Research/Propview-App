@@ -60,6 +60,22 @@ class AttendanceService extends AuthService {
       return false;
     }
   }
+
+  
+  static Future getAllUserIdWithoutDate(id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+      AuthService.BASE_URI + 'api/attendance/user/$id',
+      method: 'GET',
+    );
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      Attendance attendance = Attendance.fromJson(responseMap);
+      return attendance;
+    } else {
+      return false;
+    }
+  }
+
   static Future getAllByMangerIdWithDate(id,date) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/attendance/manager/$id/$date',

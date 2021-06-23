@@ -84,7 +84,7 @@ class UserService extends AuthService {
       Uri.parse("http://68.183.247.233/api/user/deviceToken/$id"),
       headers: headers,
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && response.body!=null) {
       var decodedMsg = json.decode(response.body);
       return decodedMsg["device_token"];
     } else {

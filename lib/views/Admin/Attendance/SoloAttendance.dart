@@ -79,7 +79,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       "punch_out": end,
       "meter_in": user.status == 1 ? startMeter : "-",
       "meter_out": user.status == 1 ? endMeter : "-",
-      "work_hour": startTime.difference(endTime).inHours.toString(),
+      "work_hour": endTime.difference(startTime).inHours.toString(),
       "date": dateFormatter()
     };
     var result = await AttendanceService.createLog(payload);

@@ -48,11 +48,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
   TextEditingController _taskEndDateTime = new TextEditingController(
       text:
-          '${DateTime.now().day.toString().padLeft(2, "0")}/${DateTime.now().month.toString().padLeft(2, "0")}/${DateTime.now().year}    ${DateTime.now().hour.toString().padLeft(2, "0")}:${DateTime.now().minute.toString().padLeft(2, "0")}');
+          '${DateTime.now().add(Duration(minutes: 10)).day.toString().padLeft(2, "0")}/${DateTime.now().add(Duration(minutes: 10)).month.toString().padLeft(2, "0")}/${DateTime.now().add(Duration(minutes: 10)).year}    ${DateTime.now().add(Duration(minutes: 10)).hour.toString().padLeft(2, "0")}:${DateTime.now().add(Duration(minutes: 10)).minute.toString().padLeft(2, "0")}');
   TextEditingController _taskStartDateTime2 =
       new TextEditingController(text: DateTime.now().toString());
   TextEditingController _taskEndDateTime2 =
-      new TextEditingController(text: DateTime.now().toString());
+      new TextEditingController(text: DateTime.now().add(Duration(minutes: 10)).toString());
 
   List<TaskCategory> taskCategories = [];
   List<PropertyElement> properties = [];
@@ -409,9 +409,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
                     inputDateTime("Enter Start Date and Time",
-                        _taskStartDateTime, _taskStartDateTime2),
+                        _taskStartDateTime, _taskStartDateTime2,true),
                     inputDateTime("Enter End Date and Time", _taskEndDateTime,
-                        _taskEndDateTime2),
+                        _taskEndDateTime2,false),
                     Padding(
                       padding: const EdgeInsets.only(
                         bottom: 8.0,
@@ -581,7 +581,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  inputDateTime(label, controller, controller2) {
+  inputDateTime(label, controller, controller2,isStart) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 8.0,
@@ -591,71 +591,58 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         children: [
           Align(
             alignment: Alignment.topLeft,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  label,
-                  style: GoogleFonts.nunito(
-                      color: Color(0xff314B8C),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                MaterialButton(
+            child: Text(
+              label,
+              style: GoogleFonts.nunito(
                   color: Color(0xff314B8C),
-                  onPressed: () {
-                    DatePicker.showDateTimePicker(
-                      context,
-                      showTitleActions: true,
-                      onChanged: (date) {
-                        setState(() {
-                          controller.text =
-                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
-                          controller2.text = date.toString();
-                        });
-                      },
-                      onConfirm: (date) {
-                        setState(() {
-                          controller.text =
-                              '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
-                          controller2.text = date.toString();
-                        });
-                      },
-                      currentTime: DateTime.now(),
-                    );
-                  },
-                  child: Text(
-                    "Select",
-                    style: GoogleFonts.nunito(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(
             height: 8,
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Color(0xff314B8C).withOpacity(0.12),
-            ),
-            child: TextField(
-              enabled: false,
-              style: TextStyle(fontSize: 16, color: Colors.black),
-              decoration: InputDecoration(
-                suffixIcon: Icon(
-                  Icons.list_alt,
-                  color: Colors.black,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(20),
+          InkWell(
+            onTap: () {
+              DatePicker.showDateTimePicker(
+                context,
+                showTitleActions: true,
+                onChanged: (date) {
+                  setState(() {
+                    controller.text =
+                        '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                    controller2.text = date.toString();
+                  });
+                },
+                onConfirm: (date) {
+                  setState(() {
+                    controller.text =
+                        '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${date.year}    ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
+                    controller2.text = date.toString();
+                  });
+                },
+                currentTime: isStart? DateTime.now() : DateTime.now().add(Duration(minutes: 10)),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Color(0xff314B8C).withOpacity(0.12),
               ),
-              controller: controller,
+              child: TextField(
+                enabled: false,
+                style: TextStyle(fontSize: 16, color: Colors.black),
+                decoration: InputDecoration(
+                  suffixIcon: Icon(
+                    Icons.alarm_on,
+                    color: Colors.black,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(20),
+                ),
+                controller: controller,
+              ),
             ),
           ),
         ],
@@ -698,10 +685,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               style: TextStyle(fontSize: 16, color: Colors.black),
               textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
-                suffixIcon: Icon(
-                  Icons.list_alt,
-                  color: Colors.black,
-                ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(20),
               ),

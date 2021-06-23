@@ -178,8 +178,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CreateTaskScreen(user: user)));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => CreateTaskScreen(user: user)));
         },
       ),
       body: loading
@@ -191,29 +191,29 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
                       leading: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 30,
-                          child: ClipOval(
-                            child: FadeInImage.assetNetwork(
-                              height: 60,
-                              width: 60,
-                              fit: BoxFit.cover,
-                              placeholder: "assets/loader.gif",
-                              image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
-                              imageErrorBuilder: (BuildContext context,
-                                  Object exception, StackTrace stackTrace) {
-                                return CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 30,
-                                  backgroundImage: AssetImage(
-                                    "assets/dummy.png",
-                                  ),
-                                );
-                              },
-                            ),
+                        backgroundColor: Colors.white,
+                        radius: 30,
+                        child: ClipOval(
+                          child: FadeInImage.assetNetwork(
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                            placeholder: "assets/loader.gif",
+                            image:
+                                "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                            imageErrorBuilder: (BuildContext context,
+                                Object exception, StackTrace stackTrace) {
+                              return CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30,
+                                backgroundImage: AssetImage(
+                                  "assets/dummy.png",
+                                ),
+                              );
+                            },
                           ),
                         ),
+                      ),
                       title: Text(
                         user.name,
                         style: GoogleFonts.nunito(
@@ -413,6 +413,17 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     pendingTaskList[index],
                                                 currentUser: user,
                                                 isSelf: true,
+                                                change:
+                                                    (TaskElement taskElement) {
+                                                  setState(() {
+                                                    pendingTaskList.removeWhere(
+                                                        (element) =>
+                                                            element.taskId ==
+                                                            taskElement.taskId);
+                                                    unApprovedTaskList
+                                                        .add(taskElement);
+                                                  });
+                                                },
                                               );
                                             },
                                           ),
@@ -439,6 +450,20 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     unApprovedTaskList[index],
                                                 currentUser: user,
                                                 isSelf: true,
+                                                change:
+                                                    (TaskElement taskElement) {
+                                                  setState(() {
+                                                    unApprovedTaskList
+                                                        .removeWhere(
+                                                            (element) =>
+                                                                element
+                                                                    .taskId ==
+                                                                taskElement
+                                                                    .taskId);
+                                                    completedTaskList
+                                                        .add(taskElement);
+                                                  });
+                                                },
                                               );
                                             },
                                           ),
@@ -464,6 +489,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     completedTaskList[index],
                                                 currentUser: user,
                                                 isSelf: true,
+                                                change: (TaskElement
+                                                    taskElement) {},
                                               );
                                             },
                                           ),
