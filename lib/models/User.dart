@@ -36,6 +36,7 @@ class User {
     this.refAddress2,
     this.userType,
     this.status,
+    this.bikeReading,
     this.addedOn,
     this.deviceToken,
   });
@@ -66,6 +67,7 @@ class User {
   String refAddress2;
   String userType;
   int status;
+  int bikeReading;
   String addedOn;
   String deviceToken;
 
@@ -103,6 +105,7 @@ class User {
         refMobile2: json["ref_mobile2"] == null ? null : json["ref_mobile2"],
         refAddress2: json["ref_address2"] == null ? null : json["ref_address2"],
         userType: json["user_type"] == null ? null : json["user_type"],
+        bikeReading: json["bike_reading"] == null ? null : json["bike_reading"],
         status: json["status"] == null ? null : json["status"],
         addedOn: json["added_on"] == null ? null : json["added_on"],
       );
@@ -131,6 +134,7 @@ class User {
         "permanent_address": permanentAddress == null ? null : permanentAddress,
         "state": state == null ? null : state,
         "city": city == null ? null : city,
+        "bike_reading": bikeReading == null ? null : bikeReading,
         "cid": cid == null ? null : cid,
         "sid": sid == null ? null : sid,
         "ccid": ccid == null ? null : ccid,

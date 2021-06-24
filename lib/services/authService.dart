@@ -72,8 +72,8 @@ class AuthService extends BaseService {
     http.Response response = await BaseService.makeUnauthenticatedRequest(
         BaseService.BASE_URI + 'api/signin',
         body: payload);
-    if (response.statusCode == 200) {
       Map<String, dynamic> responseMap = json.decode(response.body);
+    if (response.statusCode == 200 && responseMap['user']['status'] == 1) {
       String token = responseMap['token'];
       String id = responseMap['user']['user_id'].toString();
       String role = responseMap['user']['user_type'].toString();

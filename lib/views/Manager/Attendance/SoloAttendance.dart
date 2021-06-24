@@ -77,8 +77,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       "parent_id": user.parentId,
       "punch_in": start,
       "punch_out": end,
-      "meter_in": user.status == 1 ? startMeter : "-",
-      "meter_out": user.status == 1 ? endMeter : "-",
+      "meter_in": user.bikeReading == 1 ? startMeter : "-",
+      "meter_out": user.bikeReading == 1 ? endMeter : "-",
       "work_hour": endTime.difference(startTime).inHours.toString(),
       "date": dateFormatter()
     };
@@ -361,7 +361,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                           ),
                           end == "--/--/-- -- : --"
                               ? MaterialButton(
-                                  onPressed: user.status == 1
+                                  onPressed: user.bikeReading == 1
                                       ? () {
                                           if (start == "--/--/-- -- : --") {
                                             _startMeterController.clear();

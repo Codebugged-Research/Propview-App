@@ -130,25 +130,29 @@ class _TaskCardState extends State<TaskCard> {
   }
 
   Widget textWidget(BuildContext context, String label, String data) {
-    return RichText(
-      text: TextSpan(
-        text: label,
-        style: GoogleFonts.nunito(
-          color: Colors.black,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.nunito(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        children: <TextSpan>[
-          TextSpan(
-            text: data,
+        Flexible(
+          child: Text(
+            data,
             style: GoogleFonts.nunito(
               color: Colors.black,
               fontSize: 15,
               fontWeight: FontWeight.normal,
             ),
-          )
-        ],
-      ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 
@@ -184,15 +188,11 @@ class _TaskCardState extends State<TaskCard> {
                           endIndent: 100,
                         )),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        titleWidget(context, 'Task ID: ',
-                            '${widget.taskElement.taskId}'),
-                        titleWidget(context, 'Task Status: ',
-                            '${widget.taskElement.taskStatus}'),
-                      ],
-                    ),
+                    titleWidget(
+                        context, 'Task ID: ', '${widget.taskElement.taskId}'),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    titleWidget(context, 'Task Status: ',
+                        '${widget.taskElement.taskStatus}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(
                       context,
@@ -204,16 +204,16 @@ class _TaskCardState extends State<TaskCard> {
                         '${widget.taskElement.category}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task name: ',
-                        '${widget.taskElement.taskName}'),
+                        '${widget.taskElement.taskName.trim()}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Description: ',
                         '${widget.taskElement.taskDesc}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Start Time: ',
-                        '${widget.taskElement.startDateTime}'),
+                        '${dateTimeFormatter(widget.taskElement.startDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task End Time: ',
-                        '${widget.taskElement.endDateTime}'),
+                        '${dateTimeFormatter(widget.taskElement.endDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -604,21 +604,30 @@ class _TaskCardState extends State<TaskCard> {
   }
 
   Widget titleWidget(BuildContext context, String label, String data) {
-    return RichText(
-      text: TextSpan(
-        text: label,
-        style: Theme.of(context)
-            .primaryTextTheme
-            .subtitle1
-            .copyWith(color: Color(0xff314B8C), fontWeight: FontWeight.w700),
-        children: <TextSpan>[
-          TextSpan(
-            text: data,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context)
+              .primaryTextTheme
+              .subtitle1
+              .copyWith(color: Color(0xff314B8C), fontWeight: FontWeight.w700),
+        ),
+        Flexible(
+          child: Text(
+            data,
             style: Theme.of(context).primaryTextTheme.subtitle2.copyWith(
                 color: Color(0xff141414), fontWeight: FontWeight.w600),
-          )
-        ],
-      ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
+  }
+
+  dateTimeFormatter(String dat) {
+    DateTime date = DateTime.parse(dat);
+    return '${date.day.toString().padLeft(2, "0")}/${date.month.toString().padLeft(2, "0")}/${DateTime.now().year}  ${date.hour.toString().padLeft(2, "0")}:${date.minute.toString().padLeft(2, "0")}';
   }
 }

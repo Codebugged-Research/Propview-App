@@ -521,8 +521,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           });
                           var payload = jsonEncode({
                             "category": _selectedTaskCategory,
-                            "task_name": _taskName.text,
-                            "property_name": _property.text,
+                            "task_name": _taskName.text.trim(),
+                            "property_name": _property.text.trim(),
                             "task_desc": _taskDescription.text,
                             "task_status": "Pending",
                             "start_dateTime": _taskStartDateTime2.text,
