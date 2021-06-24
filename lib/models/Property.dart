@@ -251,7 +251,7 @@ class Tableproperty {
     String moreInformation;
     int plotArea;
     String plotAreaPrefix;
-    int builtupArea;
+    double builtupArea;
     String builtupAreaPrefix;
     int lockin;
 
@@ -334,7 +334,7 @@ class Tableproperty {
         moreInformation: json["more_information"] == null ? null : json["more_information"],
         plotArea: json["plot_area"] == null ? null : json["plot_area"],
         plotAreaPrefix: json["plot_area_prefix"] == null ? null : json["plot_area_prefix"],
-        builtupArea: json["builtup_area"] == null ? null : json["builtup_area"],
+        builtupArea: json["builtup_area"] == null ? null : json["builtup_area"].toDouble(),
         builtupAreaPrefix: json["builtup_area_prefix"] == null ? null : json["builtup_area_prefix"],
         lockin: json["lockin"] == null ? null : json["lockin"],
     );

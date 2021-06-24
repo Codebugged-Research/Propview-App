@@ -43,6 +43,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     pendingTaskList2.clear();
     completedTaskList2.clear();
     unApprovedTaskList2.clear();
+    searchResult21.clear();
+    searchResult22.clear();
+    searchResult23.clear();
     setState(() {
       loading = true;
     });

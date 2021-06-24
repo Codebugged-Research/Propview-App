@@ -76,7 +76,7 @@ class AttendanceElement {
         userId: json["user_id"] == null ? null : json["user_id"],
         parentId: json["parent_id"] == null ? null : json["parent_id"],
         punchIn: json["punch_in"] == null ? null : DateTime.parse(json["punch_in"]),
-        punchOut: json["punch_out"] == null ? null : DateTime.parse(json["punch_out"]),
+        punchOut: json["punch_out"] == "--/--/-- -- : --" ? DateTime.now() : DateTime.parse(json["punch_out"]),
         meterIn: json["meter_in"] == null ? null : json["meter_in"],
         meterOut: json["meter_out"] == null ? null : json["meter_out"],
         workHour: json["work_hour"] == null ? null : json["work_hour"],
@@ -94,7 +94,6 @@ class AttendanceElement {
         "meter_out": meterOut == null ? null : meterOut,
         "work_hour": workHour == null ? null : workHour,
         "date": date == null ? null : date,
-        "tbl_users": tblUsers == null ? null : tblUsers.toJson(),
     };
 }
 

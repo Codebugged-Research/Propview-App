@@ -34,10 +34,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   List<TaskElement> unApprovedTaskList = [];
 
   getData() async {
+    setState(() {
     pendingTaskList.clear();
     completedTaskList.clear();
     unApprovedTaskList.clear();
-    setState(() {
       loading = true;
     });
     user = await UserService.getUser();

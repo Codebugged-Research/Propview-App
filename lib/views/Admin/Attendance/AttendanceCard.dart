@@ -73,7 +73,6 @@ class _AttendanceCardState extends State<AttendanceCard> {
                     children: [
                       textWidget(
                         context,
-                        // "Name: ",
                         widget.attd.user.name,
                         "",
                       ),
@@ -81,24 +80,11 @@ class _AttendanceCardState extends State<AttendanceCard> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.emoji_people,
-                    color: widget.attd.isPresent
-                        ? Colors.black
-                        : Colors.grey.shade300,
-                  ),
-                  VerticalDivider(
-                    color: Colors.grey.shade700,
-                  ),
-                  Icon(
-                    Icons.person,
-                    color: !widget.attd.isPresent
-                        ? Colors.black
-                        : Colors.grey.shade300,
-                  )
-                ],
+              Icon(
+                Icons.emoji_people,
+                color: widget.attd.isPresent
+                    ? Colors.black
+                    : Colors.grey.shade300,
               ),
             ],
           ),

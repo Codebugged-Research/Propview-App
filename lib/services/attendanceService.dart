@@ -6,6 +6,20 @@ import 'package:http/http.dart' as http;
 
 // ignore: non_constant_identifier_names
 class AttendanceService extends AuthService {
+  static Future getLogById(id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+      AuthService.BASE_URI + 'api/attendance/$id',
+      method: 'GET',
+    );
+    if (response.statusCode == 200) {
+      var responseMap = jsonDecode(response.body);
+      Attendance attendance = Attendance.fromJson(responseMap);
+      return attendance.data.attendance[0];
+    } else {
+      return false;
+    }
+  }
+
   static Future createLog(payload) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/attendance/create',
@@ -13,16 +27,31 @@ class AttendanceService extends AuthService {
       body: jsonEncode(payload),
     );
     if (response.statusCode == 200) {
-      return true;
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body)["data"]["attendance"]["insertId"];
     } else {
       return false;
     }
   }
 
-  static Future getAllWithoutDate() async {
+  static Future updateLog(payload, id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+      AuthService.BASE_URI + 'api/attendance/update/$id',
+      method: 'PUT',
+      body: jsonEncode(payload),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print(response.body);
+      return false;
+    }
+  }
+  static Future getAllWithoutDate(offset,limit) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/attendance/',
-      method: 'GET',
+      method: 'POST',
+      body: jsonEncode({"offset": offset,"limit":limit})
     );
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
@@ -61,7 +90,6 @@ class AttendanceService extends AuthService {
     }
   }
 
-  
   static Future getAllUserIdWithoutDate(id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/attendance/user/$id',
@@ -76,7 +104,7 @@ class AttendanceService extends AuthService {
     }
   }
 
-  static Future getAllByMangerIdWithDate(id,date) async {
+  static Future getAllByMangerIdWithDate(id, date) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/attendance/manager/$id/$date',
       method: 'GET',

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
 import 'package:propview/services/userService.dart';
@@ -19,7 +20,6 @@ class SoloAttendance extends StatefulWidget {
 class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
@@ -39,6 +39,9 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   getPunch() async {
+    setState(() {
+      loading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String json = prefs.getString("punch");
     if (json != null) {
@@ -49,8 +52,13 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         startMeter = decodedJson["inMeter"];
         endMeter = decodedJson["outMeter"];
         reset = decodedJson["reset"];
+        id = decodedJson["id"] == null ? "-" : decodedJson["id"];
       });
     }
+    print(id);
+    setState(() {
+      loading = false;
+    });
   }
 
   savePunch() async {
@@ -63,15 +71,57 @@ class _SoloAttendanceState extends State<SoloAttendance> {
           "out": end,
           "inMeter": startMeter,
           "outMeter": endMeter,
-          "reset": reset
+          "reset": reset,
+          "id": id
         },
       ),
     );
   }
 
-  createLog() async {
+  updateLog() async {
+    print(start);
+    print(end);
     DateTime startTime = DateTime.parse(start);
     DateTime endTime = DateTime.parse(end);
+    AttendanceElement tempAttendance;
+    if (id != "-") {
+      tempAttendance = await AttendanceService.getLogById(id);
+      print(tempAttendance.toJson());
+      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : "-";
+      tempAttendance.punchOut = endTime;
+      tempAttendance.workHour =
+          endTime.difference(startTime).inHours.toString();
+    }
+    var result = await AttendanceService.updateLog(
+        tempAttendance.toJson(), id);
+    if (result && id != "-") {
+      showInSnackBar(
+        context,
+        "Attendance updated successfully",
+        1500,
+      );
+    } else {
+      showInSnackBar(
+        context,
+        "Attendance updation failed",
+        1500,
+      );
+    }
+  }
+
+  createLog() async {
+    // DateTime startTime = DateTime.parse(start);
+    // DateTime endTime = DateTime.parse(end);
+    // var payload = {
+    // "user_id": user.userId,
+    // "parent_id": user.parentId,
+    // "punch_in": start,
+    // "punch_out": end,
+    // "meter_in": user.bikeReading == 1 ? startMeter : "-",
+    // "meter_out": user.bikeReading == 1 ? endMeter : "-",
+    // "work_hour": endTime.difference(startTime).inHours.toString(),
+    // "date": dateFormatter()
+    // };
     var payload = {
       "user_id": user.userId,
       "parent_id": user.parentId,
@@ -79,11 +129,15 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       "punch_out": end,
       "meter_in": user.bikeReading == 1 ? startMeter : "-",
       "meter_out": user.bikeReading == 1 ? endMeter : "-",
-      "work_hour": endTime.difference(startTime).inHours.toString(),
+      "work_hour": 0,
       "date": dateFormatter()
     };
     var result = await AttendanceService.createLog(payload);
-    if (result) {
+    if (result != false) {
+      setState(() {
+        id = result.toString();
+      });
+      savePunch();
       showInSnackBar(
         context,
         "Attendance added successfully",
@@ -102,6 +156,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   String end = "--/--/-- -- : --";
   String startMeter = "-";
   String endMeter = "-";
+  String id = "-";
 
   TextEditingController _startMeterController = TextEditingController();
   TextEditingController _endMeterController = TextEditingController();
@@ -215,6 +270,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             end = "--/--/-- -- : --";
                                             startMeter = "-";
                                             endMeter = "-";
+                                            id = "-";
                                             reset = false;
                                           });
                                           SharedPreferences prefs =
@@ -228,7 +284,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                                 "out": end,
                                                 "inMeter": startMeter,
                                                 "outMeter": endMeter,
-                                                "reset": reset
+                                                "reset": reset,
+                                                "id": id
                                               },
                                             ),
                                           );
@@ -364,243 +421,64 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                   onPressed: user.bikeReading == 1
                                       ? () {
                                           if (start == "--/--/-- -- : --") {
-                                            _startMeterController.clear();
                                             showDialog(
                                               context: context,
-                                              builder: (context) =>
-                                                  StatefulBuilder(
-                                                builder: (context, setState) {
-                                                  return AlertDialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        12,
-                                                      ),
-                                                    ),
-                                                    title: Text(
-                                                        "Enter punch in meter reading :",
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                    content: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        color: Color(0xff314B8C)
-                                                            .withOpacity(0.12),
-                                                      ),
-                                                      child: TextFormField(
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color:
-                                                                Colors.black),
-                                                        textCapitalization:
-                                                            TextCapitalization
-                                                                .words,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          suffixIcon: Icon(
-                                                            Icons.list_alt,
-                                                            color: Colors.black,
-                                                          ),
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                        ),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            startMeter =
-                                                                _startMeterController
-                                                                    .text;
-                                                          });
-                                                        },
-                                                        controller:
-                                                            _startMeterController,
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      MaterialButton(
-                                                        onPressed:
-                                                            _startMeterController
-                                                                    .text
-                                                                    .isNotEmpty
-                                                                ? () {
-                                                                    setState(
-                                                                      () {
-                                                                        start =
-                                                                            DateTime.now().toString();
-                                                                        reset =
-                                                                            true;
-                                                                        startMeter =
-                                                                            _startMeterController.text;
-                                                                        getData();
-                                                                        savePunch();
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                : () {
-                                                                    showInSnackBar(
-                                                                        context,
-                                                                        "Enter valid meter input to start",
-                                                                        1500);
-                                                                  },
-                                                        child: Text(
-                                                          "Punch In",
-                                                          style: GoogleFonts
-                                                              .nunito(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  );
-                                                },
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchInMeter,
+                                                  )
+                                                ],
                                               ),
                                             );
                                           } else {
-                                            _endMeterController.clear();
                                             showDialog(
                                               context: context,
-                                              builder: (context) =>
-                                                  StatefulBuilder(
-                                                builder: (context, setState) {
-                                                  return AlertDialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        12,
-                                                      ),
-                                                    ),
-                                                    title: Text(
-                                                        "Enter punch out meter reading :",
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                    content: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        color: Color(0xff314B8C)
-                                                            .withOpacity(0.12),
-                                                      ),
-                                                      child: TextFormField(
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color:
-                                                                Colors.black),
-                                                        textCapitalization:
-                                                            TextCapitalization
-                                                                .words,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          suffixIcon: Icon(
-                                                            Icons.list_alt,
-                                                            color: Colors.black,
-                                                          ),
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                        ),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            endMeter =
-                                                                _endMeterController
-                                                                    .text;
-                                                          });
-                                                        },
-                                                        controller:
-                                                            _endMeterController,
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      MaterialButton(
-                                                        onPressed:
-                                                            _endMeterController
-                                                                    .text
-                                                                    .isNotEmpty && (int.parse(startMeter)<int.parse(endMeter))
-                                                                ? () {
-                                                                    setState(
-                                                                      () {
-                                                                        end = DateTime.now()
-                                                                            .toString();
-                                                                        reset =
-                                                                            true;
-                                                                        endMeter =
-                                                                            _endMeterController.text;
-                                                                        getData();
-                                                                        savePunch();
-                                                                        createLog();
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                : () {
-                                                                    showInSnackBar(
-                                                                        context,
-                                                                        "Enter valid meter input to end",
-                                                                        1500);
-                                                                  },
-                                                        child: Text(
-                                                          "Punch Out",
-                                                          style: GoogleFonts
-                                                              .nunito(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  );
-                                                },
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch out now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch Out"),
+                                                    onPressed: punchOurMeter,
+                                                  )
+                                                ],
                                               ),
                                             );
                                           }
                                         }
                                       : () {
                                           if (start == "--/--/-- -- : --") {
-                                            setState(() {
-                                              reset = true;
-                                              start = DateTime.now().toString();
-                                            });
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchin,
+                                                  )
+                                                ],
+                                              ),
+                                            );
                                           } else {
-                                            setState(() {
-                                              end = DateTime.now().toString();
-                                            });
-                                            createLog();
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch out now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch Out"),
+                                                    onPressed: punchout,
+                                                  )
+                                                ],
+                                              ),
+                                            );
                                           }
                                         },
                                   color: Colors.white,
@@ -632,5 +510,180 @@ class _SoloAttendanceState extends State<SoloAttendance> {
               ),
             ),
     );
+  }
+
+  punchOurMeter() {
+    _endMeterController.clear();
+    Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                12,
+              ),
+            ),
+            title: Text("Enter punch out meter reading :",
+                style: GoogleFonts.nunito(
+                    fontSize: 18, fontWeight: FontWeight.bold)),
+            content: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Color(0xff314B8C).withOpacity(0.12),
+              ),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(fontSize: 16, color: Colors.black),
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  suffixIcon: Icon(
+                    Icons.list_alt,
+                    color: Colors.black,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(20),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    endMeter = _endMeterController.text;
+                  });
+                },
+                controller: _endMeterController,
+              ),
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: _endMeterController.text.isNotEmpty &&
+                        (int.parse(startMeter) <= int.parse(endMeter))
+                    ? () {
+                        setState(
+                          () {
+                            end = DateTime.now().toString();
+                            endMeter = double.parse(_endMeterController.text)
+                                .toInt()
+                                .toString();
+                            reset = true;
+                            savePunch();
+                            updateLog();
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      }
+                    : () {
+                        setState(() {
+                          endMeter = "-";
+                          reset = true;
+                        });
+                        Navigator.of(context).pop();
+                        showInSnackBar(context,
+                            "Enter valid meter input to punch out", 1800);
+                      },
+                child: Text(
+                  "Punch Out",
+                  style: GoogleFonts.nunito(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  punchInMeter() {
+    _startMeterController.clear();
+    Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                12,
+              ),
+            ),
+            title: Text("Enter punch in meter reading :",
+                style: GoogleFonts.nunito(
+                    fontSize: 18, fontWeight: FontWeight.bold)),
+            content: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Color(0xff314B8C).withOpacity(0.12),
+              ),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(fontSize: 16, color: Colors.black),
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  suffixIcon: Icon(
+                    Icons.list_alt,
+                    color: Colors.black,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(20),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    startMeter = _startMeterController.text;
+                  });
+                },
+                controller: _startMeterController,
+              ),
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: _startMeterController.text.isNotEmpty
+                    ? () {
+                        setState(
+                          () {
+                            start = DateTime.now().toString();
+                            startMeter =
+                                double.parse(_startMeterController.text)
+                                    .toInt()
+                                    .toString();
+                            createLog();
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      }
+                    : () {
+                        showInSnackBar(
+                            context, "Enter valid meter input to start", 1500);
+                      },
+                child: Text(
+                  "Punch In",
+                  style: GoogleFonts.nunito(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  punchin() {
+    setState(() {
+      start = DateTime.now().toString();
+    });
+    createLog();
+    Navigator.of(context).pop();
+  }
+
+  punchout() {
+    setState(() {
+      end = DateTime.now().toString();
+      reset = true;
+    });
+    savePunch();
+    updateLog();
+    Navigator.of(context).pop();
   }
 }
