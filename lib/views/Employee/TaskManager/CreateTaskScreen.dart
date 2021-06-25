@@ -94,7 +94,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         _property.text.length > 0 &&
         _taskStartDateTime2.text.length > 0 &&
         _taskEndDateTime2.text.length > 0 &&
-        _selectedUser.userId.toString().length > 0 &&
+        widget.user.userId.toString().length > 0 &&
         _selectedProperty.toString().length > 0 &&
         _selectedPropertyOwner.toString().length > 0) {
       return true;
@@ -404,11 +404,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           )
                         : Container(),
                     inputField("Enter Task Name", _taskName, 1),
-                    inputField("Enter Task Description", _taskDescription, 5),                    
+                    inputField("Enter Task Description", _taskDescription, 5),
                     inputDateTime("Enter Start Date and Time",
-                        _taskStartDateTime, _taskStartDateTime2,true),
+                        _taskStartDateTime, _taskStartDateTime2, true),
                     inputDateTime("Enter End Date and Time", _taskEndDateTime,
-                        _taskEndDateTime2,false),
+                        _taskEndDateTime2, false),
                     SizedBox(
                       height: 16,
                     ),
@@ -486,7 +486,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  inputDateTime(label, controller, controller2,isStart) {
+  inputDateTime(label, controller, controller2, isStart) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 8.0,
@@ -526,7 +526,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     controller2.text = date.toString();
                   });
                 },
-               currentTime: isStart? DateTime.now() : DateTime.now().add(Duration(minutes: 10)),
+                currentTime: isStart
+                    ? DateTime.now()
+                    : DateTime.now().add(Duration(minutes: 10)),
               );
             },
             child: Container(

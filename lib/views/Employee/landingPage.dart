@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:propview/services/baseService.dart';
 import 'package:propview/services/reminderService.dart';
+import 'package:propview/utils/constants.dart';
+import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Employee/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Employee/Home/homeScreen.dart';
 import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
@@ -23,6 +28,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
+    checkversion();
     initialiseLocalNotification();
     ReminderService reminderService;
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -111,13 +117,22 @@ class _LandingScreenState extends State<LandingScreen> {
     ProfileScreen(),
   ];
 
+  checkversion() async {
+    var getVersion = await BaseService.getAppCurrentVersion();
+    var responseMap = jsonDecode(getVersion);
+    if (responseMap != APPVERISON) {
+      versionErrorWiget(responseMap,context,
+          "https://play.google.com/store/apps/details?id=com.propdial.propview");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DoubleBackToCloseApp(       
-          snackBar: const SnackBar(
-            content: Text('Tap back again to exit'),
-          ),
+      body: DoubleBackToCloseApp(
+        snackBar: const SnackBar(
+          content: Text('Tap back again to exit'),
+        ),
         child: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),

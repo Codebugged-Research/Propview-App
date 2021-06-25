@@ -299,7 +299,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(4.0),
                                             child: Icon(
-                                              Icons.replay,
+                                              Icons.add,
                                             ),
                                           ),
                                         ),

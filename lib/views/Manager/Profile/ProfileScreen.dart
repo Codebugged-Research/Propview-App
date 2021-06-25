@@ -40,6 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     getData();
   }
+
   final picker = ImagePicker();
 
   getData() async {
@@ -252,6 +253,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   }),
+                  Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Center(child: Text("1.0.3+4")),
+                  ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),
                 ],

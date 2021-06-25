@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:propview/services/baseService.dart';
+import 'package:propview/utils/constants.dart';
+import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Admin/Home/homeScreen.dart';
 import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/TaskManager/taskManagerHome.dart';
@@ -22,6 +27,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
+    checkversion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       showDialog(
@@ -36,6 +42,14 @@ class _LandingScreenState extends State<LandingScreen> {
       }
     });
     _selectedIndex = widget.selectedIndex;
+  }
+
+  checkversion() async {
+    var getVersion = await BaseService.getAppCurrentVersion();
+    var responseMap = jsonDecode(getVersion);
+    if (responseMap != APPVERISON) {
+      versionErrorWiget(responseMap,context, "https://play.google.com/store/apps/details?id=com.propdial.propview");
+    }
   }
 
   initialiseLocalNotification() async {

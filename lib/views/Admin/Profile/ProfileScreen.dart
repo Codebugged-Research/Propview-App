@@ -57,12 +57,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         user.password = newPasswordController.text;
       });
-      bool isUpdated = await UserService.updateUser(jsonEncode(user.toJson()));      
+      bool isUpdated = await UserService.updateUser(jsonEncode(user.toJson()));
       Routing.makeRouting(context, routeMethod: 'pop');
-      if(isUpdated) 
-      showInSnackBar(context, 'Password updated!', 4000);
-      else 
-      showInSnackBar(context, 'failed to update the password', 4000);
+      if (isUpdated)
+        showInSnackBar(context, 'Password updated!', 4000);
+      else
+        showInSnackBar(context, 'failed to update the password', 4000);
     } else {
       showInSnackBar(context, 'Current Password not matched!', 4000);
     }
@@ -166,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: 75),
-                       CircleAvatar(
+                        CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 80,
                           child: ClipOval(
@@ -201,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: EdgeInsets.only(top: 10, bottom: 50),
                           child: InkWell(
                             onTap: () {
-                               getImage();
+                              getImage();
                             },
                             child: Container(
                               height: 35,
@@ -247,6 +247,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   }),
+                  Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Center(child: Text("1.0.3+4")),
+                  ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),
                 ],

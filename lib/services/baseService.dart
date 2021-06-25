@@ -6,6 +6,11 @@ class BaseService {
   static final Map<String, String> headers = {
     "Content-Type": "application/json"
   };
+  static Future getAppCurrentVersion() async{
+     http.Response response =
+        await http.get(Uri.parse("http://68.183.247.233/version"));
+    return response.body;
+  }
 
   // ignore: missing_return
   static Future<http.Response> makeUnauthenticatedRequest(String url,
