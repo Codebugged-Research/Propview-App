@@ -97,7 +97,6 @@ class _TaskCardState extends State<TaskCard> {
                         spreadRadius: 0.0,
                       ),
                     ]),
-                height: widget.isSelf ? 120 : 142,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(

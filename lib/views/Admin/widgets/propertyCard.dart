@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/inspectionHomeScreen.dart';
 import 'package:propview/views/Admin/Property/PropertyDetailScreen.dart';
 
 class PropertyCard extends StatefulWidget {
@@ -94,7 +96,7 @@ class _PropertyCardState extends State<PropertyCard> {
     );
   }
 
-  optionCard(label, image, onClick) {
+  Widget optionCard(label, image, onClick) {
     return InkWell(
       onTap: onClick,
       child: Container(
@@ -132,10 +134,10 @@ class _PropertyCardState extends State<PropertyCard> {
             SizedBox(
               height: 8,
             ),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-            ),
+            Text(label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).primaryTextTheme.caption.copyWith(
+                    fontWeight: FontWeight.w700, color: Colors.black)),
           ],
         ),
       ),
@@ -174,7 +176,10 @@ class _PropertyCardState extends State<PropertyCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  optionCard("Inspection", "task", () {}),
+                  optionCard("Inspection", "task", () {
+                    Routing.makeRouting(context,
+                        routeMethod: 'push', newWidget: InspectionHomeScreen());
+                  }),
                   optionCard("Edit\nProperty", "renovation", () {}),
                   optionCard("Property\nDetails", "house", () {
                     Navigator.of(context).push(
@@ -195,8 +200,6 @@ class _PropertyCardState extends State<PropertyCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   optionCard("Assign\nproperty", "owner", () {}),
-
-
                 ],
               ),
             ],

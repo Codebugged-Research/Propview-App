@@ -9,13 +9,12 @@ class ThemeClass {
       scaffoldBackgroundColor: Color(0xFFFFFFFF),
       appBarTheme: AppBarTheme(
           elevation: 0.0,
-          color: Color(0xff314B8C),
+          color: Color(0xFFFFFFFF),
           brightness: Brightness.dark,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: Color(0xff314B8C)),
           actionsIconTheme: IconThemeData(color: Colors.white)),
       bottomNavigationBarTheme:
-          BottomNavigationBarThemeData(
-            backgroundColor: Color(0xFFFFFFFF)),
+          BottomNavigationBarThemeData(backgroundColor: Color(0xFFFFFFFF)),
       floatingActionButtonTheme:
           FloatingActionButtonThemeData(backgroundColor: Color(0xff314B8C)),
       primaryTextTheme:
