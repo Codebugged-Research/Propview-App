@@ -203,7 +203,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             fit: BoxFit.cover,
                             placeholder: "assets/loader.gif",
                             image:
-                                "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
                             imageErrorBuilder: (BuildContext context,
                                 Object exception, StackTrace stackTrace) {
                               return CircleAvatar(

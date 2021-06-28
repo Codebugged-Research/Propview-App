@@ -40,10 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return loading
         ? circularProgressWidget()
         : Scaffold(
-            floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {},
-            ),
             body: Column(
               children: [
                 Padding(

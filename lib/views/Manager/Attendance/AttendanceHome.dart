@@ -96,7 +96,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                   placeholder: "assets/loader.gif",
                                   fit: BoxFit.cover,
                                   image:
-                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
                                   imageErrorBuilder: (BuildContext context,
                                       Object exception, StackTrace stackTrace) {
                                     return CircleAvatar(
@@ -137,14 +137,17 @@ class _AttendanceHomeState extends State<AttendanceHome>
                           ],
                         ),
                         InkWell(
-                          child:  Column(
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Image.asset(
                                 "assets/immigration.png",
                                 height: 50,
                               ),
-                              Text("Punch In",style: TextStyle(fontWeight: FontWeight.bold),)
+                              Text(
+                                "Punch In",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )
                             ],
                           ),
                           onTap: () {

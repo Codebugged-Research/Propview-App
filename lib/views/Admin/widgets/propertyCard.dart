@@ -180,7 +180,8 @@ class _PropertyCardState extends State<PropertyCard> {
                     Routing.makeRouting(context,
                         routeMethod: 'push', newWidget: InspectionHomeScreen());
                   }),
-                  optionCard("Edit\nProperty", "renovation", () {}),
+                  optionCard("Assign\nproperty", "owner", () {}),
+                  // optionCard("Edit\nProperty", "renovation", () {}),
                   optionCard("Property\nDetails", "house", () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -195,13 +196,13 @@ class _PropertyCardState extends State<PropertyCard> {
                 ],
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  optionCard("Assign\nproperty", "owner", () {}),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //   crossAxisAlignment: CrossAxisAlignment.center,
+              //   children: [
+              //     optionCard("Assign\nproperty", "owner", () {}),
+              //   ],
+              // ),
             ],
           ),
         ),

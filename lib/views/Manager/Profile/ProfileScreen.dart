@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -91,13 +93,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: function,
     );
   }
+  
+  Future compress(img) async {
+    print("pre compress");
+    Uint8List len = await img.readAsBytes();
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    print("beforeCompress = ${len.lengthInBytes / 1000000}");
+    final result = await FlutterImageCompress.compressAndGetFile(
+      img.path,
+      path.join(dir, user.userId.toString() + ".jpeg"),
+      format: CompressFormat.jpeg,
+      quality: 40,
+    );
+    print("after = ${result.readAsBytesSync().lengthInBytes / 1000000}");
+    return result;
+  }
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      String dir = (await getApplicationDocumentsDirectory()).path;
-      String newPath = path.join(dir, user.userId.toString() + ".png");
-      File _image = await File(pickedFile.path).copy(newPath);
+    if (pickedFile != null) {      
+      File img = await compress(pickedFile);
       showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
@@ -107,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               content: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 80,
-                backgroundImage: FileImage(_image),
+                backgroundImage: FileImage(img),
               ),
               actions: [
                 MaterialButton(
@@ -115,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     var request = http.MultipartRequest('POST',
                         Uri.parse("http://68.183.247.233/api/upload/image"));
                     request.files.add(
-                        await http.MultipartFile.fromPath('upload', newPath));
+                        await http.MultipartFile.fromPath('upload', img.path));
                     var res = await request.send();
                     if (res.statusCode == 200) {
                       imageCache.clear();
@@ -182,7 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fit: BoxFit.cover,
                               placeholder: "assets/loader.gif",
                               image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
                               imageErrorBuilder: (BuildContext context,
                                   Object exception, StackTrace stackTrace) {
                                 return CircleAvatar(

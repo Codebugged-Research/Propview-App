@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/formModels/tempFullInscpectionModel.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -29,20 +33,41 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     propertyElement = widget.propertyElement;
   }
 
+  List<Room> rooms = [
+    Room(roomId: 1, roomName: "Room1"),
+    Room(roomId: 2, roomName: "Room2"),
+    Room(roomId: 3, roomName: "Room3"),
+    Room(roomId: 4, roomName: "Room4"),
+    Room(roomId: 5, roomName: "Room5"),
+    Room(roomId: 6, roomName: "Room6"),
+  ];
+  List subRooms = [
+    SubRoom(roomId: 1, subRoomId: 1, subRoomName: "room1sub1"),
+    SubRoom(roomId: 1, subRoomId: 2, subRoomName: "room1sub2"),
+    SubRoom(roomId: 2, subRoomId: 1, subRoomName: "room2sub1"),
+    SubRoom(roomId: 3, subRoomId: 1, subRoomName: "room3sub1"),
+    SubRoom(roomId: 3, subRoomId: 2, subRoomName: "room3sub2"),
+    SubRoom(roomId: 4, subRoomId: 1, subRoomName: "room4sub1"),
+    SubRoom(roomId: 6, subRoomId: 1, subRoomName: "room6sub1")
+  ];
+
+  List<List<DataRow>> rows = [[]];
+  List headings = [];
+  int count = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: SingleChildScrollView(
+      body: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 RichText(
                     text: TextSpan(
@@ -90,65 +115,27 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 titleWidget(context, 'Any other'),
                 inputWidget(anyOtherController),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    dataRowHeight: 50,
-                    dividerThickness: 5,
-                    columns: [
-                      DataColumn(
-                          label: Text("Item/Issue Name",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .subtitle2
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black))),
-                      DataColumn(
-                          label: Text("Status",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .subtitle2
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black))),
-                      DataColumn(
-                          label: Text("Remarks",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .subtitle2
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black))),
-                      DataColumn(
-                          label: Text("Photos",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .subtitle2
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black))),
-                    ],
-                    rows: [
-                      DataRow(
-                        cells: <DataCell>[
-                          DataCell(Text('Janine')),
-                          DataCell(Text('43')),
-                          DataCell(Text('Professor')),
-                          DataCell(Text('Professor')),
-                        ],
-                      ),
-                      DataRow(
-                        cells: <DataCell>[
-                          DataCell(Text('Janine')),
-                          DataCell(Text('43')),
-                          DataCell(Text('Professor')),
-                          DataCell(Text('Professor')),
-                        ],
-                      ),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    titleWidget(context, 'Issues'),
+                    InkWell(
+                      child: Icon(Icons.add),
+                      onTap: () {
+                        showPicker(context);
+                      },
+                    )
+                  ],
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                ListView.builder(
+                  itemBuilder: (context, index) =>
+                      issueCard(constraints, index),
+                  itemCount: count,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                ),
+                // issueCard(constraints),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               ],
             ),
@@ -157,6 +144,145 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       ),
     );
   }
+
+  Widget issueCard(constraints, index) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        titleWidget(context, headings[index].toString()),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: constraints.minWidth),
+            child: DataTable(
+                dataRowHeight: 50,
+                dividerThickness: 2,
+                columns: [
+                  DataColumn(
+                      label: Text("Item/Issue Name",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Status",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Remarks",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Photos",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                ],
+                rows: rows[index]),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              color: Colors.blueAccent,
+              icon: Icon(Icons.add),
+              onPressed: () {
+                setState(() {
+                  rows[index].add(DataRow(cells: [
+                    DataCell(TextFormField()),
+                    DataCell(TextFormField()),
+                    DataCell(TextFormField()),
+                    DataCell(TextFormField()),
+                  ]));
+                });
+              },
+            ),
+            IconButton(
+              color: Colors.redAccent,
+              icon: Icon(Icons.remove),
+              onPressed: () {
+                setState(() {
+                  rows[index].removeLast();
+                });
+              },
+            ),
+            IconButton(
+              color: Colors.green,
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                setState(() {
+                  rows[index].clear();
+                });
+              },
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  showPicker(BuildContext context) {
+    Picker picker = new Picker(
+        height: 180,
+        adapter: PickerDataAdapter<String>(
+            pickerdata: new JsonDecoder().convert(PickerData), isArray: false),
+        changeToFirst: true,
+        textAlign: TextAlign.left,
+        columnPadding: const EdgeInsets.all(8.0),
+        onConfirm: (Picker picker, List value) {
+          print(value.toString());
+          print(picker.getSelectedValues());
+          setState(() {
+            count++;
+            headings.add(picker.getSelectedValues().join(""));
+          });
+        });
+    picker.show(_scaffoldKey.currentState);
+  }
+
+  static const PickerData = '''
+[
+    {
+        "room1": [
+             "room1SubRoom1",
+             "room1SubRoom2",
+             "room1SubRoom3"
+        ]
+    },
+    {
+        "room2": [
+             "room2SubRoom1",
+             "room3SubRoom2",
+             "room4SubRoom3"
+        ]
+    },
+    {
+        "room3": [
+            "noSubRooms"
+        ]
+    },
+    {
+        "room4": [
+             "room4SubRoom1"
+        ]
+    }
+]
+    ''';
 
   Widget titleWidget(BuildContext context, String title) {
     return Text(

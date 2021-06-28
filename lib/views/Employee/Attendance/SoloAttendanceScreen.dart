@@ -93,8 +93,7 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
       tempAttendance.workHour =
           endTime.difference(startTime).inHours.toString();
     }
-    var result = await AttendanceService.updateLog(
-        tempAttendance.toJson(), id);
+    var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
       showInSnackBar(
         context,
@@ -188,7 +187,7 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
                               placeholder: "assets/loader.gif",
                               fit: BoxFit.cover,
                               image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
                               imageErrorBuilder: (BuildContext context,
                                   Object exception, StackTrace stackTrace) {
                                 return CircleAvatar(

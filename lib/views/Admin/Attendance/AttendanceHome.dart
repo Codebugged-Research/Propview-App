@@ -41,7 +41,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     });
     user = await UserService.getUser();
     userList = await UserService.getAllUser();
-    attendance = await AttendanceService.getAllWithoutDate(0,1000);
+    attendance = await AttendanceService.getAllWithoutDate(0, 1000);
     attendanceToday = await AttendanceService.getAllWithDate(dateFormatter());
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
@@ -95,7 +95,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                   placeholder: "assets/loader.gif",
                                   fit: BoxFit.cover,
                                   image:
-                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
                                   imageErrorBuilder: (BuildContext context,
                                       Object exception, StackTrace stackTrace) {
                                     return CircleAvatar(

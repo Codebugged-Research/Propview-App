@@ -32,6 +32,8 @@ dependencies:
   shared_preferences: ^2.0.5
   syncfusion_flutter_calendar: ^19.1.64
   url_launcher: ^6.0.3
+  flutter_picker: ^2.0.2
+  flutter_image_compress: ^1.0.0
 
 dev_dependencies:
   flutter_test:

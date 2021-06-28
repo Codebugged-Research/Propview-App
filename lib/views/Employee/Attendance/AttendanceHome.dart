@@ -32,10 +32,9 @@ class _AttendanceHomeState extends State<AttendanceHome> {
   getData() async {
     setState(() {
       loading = true;
-    });    
+    });
     user = await UserService.getUser();
-    attendance =
-        await AttendanceService.getAllUserIdWithoutDate(user.userId);
+    attendance = await AttendanceService.getAllUserIdWithoutDate(user.userId);
     print(attendance.count);
     setState(() {
       loading = false;
@@ -71,7 +70,7 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                                   placeholder: "assets/loader.gif",
                                   fit: BoxFit.cover,
                                   image:
-                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.png",
+                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
                                   imageErrorBuilder: (BuildContext context,
                                       Object exception, StackTrace stackTrace) {
                                     return CircleAvatar(
