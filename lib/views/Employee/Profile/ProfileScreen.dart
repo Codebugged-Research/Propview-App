@@ -95,17 +95,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future compress(img) async {
-    print("pre compress");
-    Uint8List len = await img.readAsBytes();
     String dir = (await getApplicationDocumentsDirectory()).path;
-    print("beforeCompress = ${len.lengthInBytes / 1000000}");
     final result = await FlutterImageCompress.compressAndGetFile(
-      img.path,
+      img.path, 
       path.join(dir, user.userId.toString() + ".jpeg"),
       format: CompressFormat.jpeg,
       quality: 40,
     );
-    print("after = ${result.readAsBytesSync().lengthInBytes / 1000000}");
     return result;
   }
 

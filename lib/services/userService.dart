@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:api_cache_manager/models/cache_db_model.dart';
+import 'package:api_cache_manager/utils/cache_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:propview/models/User.dart';
 
@@ -35,16 +37,60 @@ class UserService extends AuthService {
 
   // ignore: missing_return
   static Future<List<User>> getAllUser() async {
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/users',
-        method: 'GET');
-    if (response.statusCode == 200) {
-      var responseMap = json.decode(response.body);
-      List<User> users =
-          responseMap.map<User>((usersMap) => User.fromJson(usersMap)).toList();
-      return users;
+    var cacheData = APICacheManager();
+    bool doesExist = await cacheData.isAPICacheKeyExist("getAllUser");
+    if (doesExist) {
+      APICacheDBModel responseBody = await cacheData.getCacheData("getAllUser");
+      DateTime lastCache =
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+      if (DateTime.now().difference(lastCache).inDays > 7) {
+        cacheData.deleteCache("getAllUser");
+        http.Response response = await AuthService.makeAuthenticatedRequest(
+            AuthService.BASE_URI + 'api/users',
+            method: 'GET');
+        if (response.statusCode == 200) {
+          cacheData.addCacheData(
+            APICacheDBModel(
+              key: "getAllUser",
+              syncData: response.body,
+              syncTime: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+          var responseMap = json.decode(response.body);
+          List<User> users = responseMap
+              .map<User>((usersMap) => User.fromJson(usersMap))
+              .toList();
+          return users;
+        } else {
+          print("DEBUG");
+        }
+      } else {
+        var responseMap = json.decode(responseBody.syncData);
+        List<User> users = responseMap
+            .map<User>((usersMap) => User.fromJson(usersMap))
+            .toList();
+        return users;
+      }
     } else {
-      print("DEBUG");
+      http.Response response = await AuthService.makeAuthenticatedRequest(
+          AuthService.BASE_URI + 'api/users',
+          method: 'GET');
+      if (response.statusCode == 200) {
+        cacheData.addCacheData(
+          APICacheDBModel(
+            key: "getAllUser",
+            syncData: response.body,
+            syncTime: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+        var responseMap = json.decode(response.body);
+        List<User> users = responseMap
+            .map<User>((usersMap) => User.fromJson(usersMap))
+            .toList();
+        return users;
+      } else {
+        print("DEBUG");
+      }
     }
   }
 
@@ -84,7 +130,7 @@ class UserService extends AuthService {
       Uri.parse("http://68.183.247.233/api/user/deviceToken/$id"),
       headers: headers,
     );
-    if (response.statusCode == 200 && response.body!=null) {
+    if (response.statusCode == 200 && response.body != null) {
       var decodedMsg = json.decode(response.body);
       return decodedMsg["device_token"];
     } else {

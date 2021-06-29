@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:api_cache_manager/api_cache_manager.dart';
+import 'package:api_cache_manager/models/cache_db_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:propview/models/Property.dart';
 
@@ -24,8 +26,8 @@ class PropertyService extends AuthService {
   // ignore: missing_return
   static Future<Property> getAllProperties() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        // AuthService.BASE_URI + 'api/properties',
-        AuthService.BASE_URI + 'api/property/owner/14',
+        AuthService.BASE_URI + 'api/properties',
+        // AuthService.BASE_URI + 'api/property/owner/14',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
@@ -33,6 +35,66 @@ class PropertyService extends AuthService {
       return property;
     } else {
       print("DEBUG");
+    }
+  }
+
+  // ignore: missing_return
+  static Future<Property> getAllPropertiesByLimit(offset, limit) async {
+    var cacheData = APICacheManager();
+    bool doesExist =
+        await cacheData.isAPICacheKeyExist("getAllProperties" + offset.toString());
+    if (doesExist) {
+      APICacheDBModel responseBody =
+          await cacheData.getCacheData("getAllProperties" + offset.toString());
+      DateTime lastCache =
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+      if (DateTime.now().difference(lastCache).inDays > 7) {
+        print("reset");
+        cacheData.deleteCache("getAllProperties"  + offset.toString());
+        http.Response response = await AuthService.makeAuthenticatedRequest(
+            AuthService.BASE_URI + 'api/properties/limit',
+            method: 'POST',
+            body: jsonEncode({"offset": offset, "limit": limit}));
+        if (response.statusCode == 200) {
+          cacheData.addCacheData(
+            APICacheDBModel(
+              key: "getAllProperties" + offset.toString(),
+              syncData: response.body,
+              syncTime: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+          var responseMap = json.decode(response.body);
+          Property property = Property.fromJson(responseMap);
+          return property;
+        } else {
+          print("DEBUG");
+        }
+      } else {
+        print("reuse");
+        var responseMap = json.decode(responseBody.syncData);
+        Property property = Property.fromJson(responseMap);
+        return property;
+      }
+    } else {
+      print("new");
+      http.Response response = await AuthService.makeAuthenticatedRequest(
+          AuthService.BASE_URI + 'api/properties/limit',
+          method: 'POST',
+          body: jsonEncode({"offset": offset, "limit": limit}));
+      if (response.statusCode == 200) {
+        cacheData.addCacheData(
+          APICacheDBModel(
+            key: "getAllProperties" + offset.toString(),
+            syncData: response.body,
+            syncTime: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+        var responseMap = json.decode(response.body);
+        Property property = Property.fromJson(responseMap);
+        return property;
+      } else {
+        print("DEBUG");
+      }
     }
   }
 
@@ -66,15 +128,55 @@ class PropertyService extends AuthService {
     }
   }
 
+  // ignore: missing_return
   static Future<String> getSocietyName(id) async {
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/property/society/$id',
-        method: 'GET');
-    var responseMap = json.decode(response.body);
-    if (response.statusCode == 200) {
-      return responseMap[0]["socname"];
+    var cacheData = APICacheManager();
+    bool doesExist =
+        await cacheData.isAPICacheKeyExist("getSocietyName" + id.toString());
+    if (doesExist) {
+      APICacheDBModel responseBody =
+          await cacheData.getCacheData("getSocietyName" + id.toString());
+      DateTime lastCache =
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+      if (DateTime.now().difference(lastCache).inDays > 30) {
+        cacheData.deleteCache("getSocietyName" + id.toString());
+        http.Response response = await AuthService.makeAuthenticatedRequest(
+            AuthService.BASE_URI + 'api/property/society/$id',
+            method: 'GET');
+        if (response.statusCode == 200) {
+          cacheData.addCacheData(
+            APICacheDBModel(
+              key: "getSocietyName" + id.toString(),
+              syncData: response.body,
+              syncTime: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+          var responseMap = json.decode(response.body);
+          return responseMap[0]["socname"];
+        } else {
+          print("DEBUG");
+        }
+      } else {
+        var responseMap = json.decode(responseBody.syncData);
+        return responseMap[0]["socname"];
+      }
     } else {
-      return "error";
+      http.Response response = await AuthService.makeAuthenticatedRequest(
+          AuthService.BASE_URI + 'api/property/society/$id',
+          method: 'GET');
+      if (response.statusCode == 200) {
+        cacheData.addCacheData(
+          APICacheDBModel(
+            key: "getSocietyName" + id.toString(),
+            syncData: response.body,
+            syncTime: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+        var responseMap = json.decode(response.body);
+        return responseMap[0]["socname"];
+      } else {
+        print("DEBUG");
+      }
     }
   }
 

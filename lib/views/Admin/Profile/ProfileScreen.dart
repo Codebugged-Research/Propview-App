@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:api_cache_manager/api_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -90,19 +91,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future compress(img) async {
-    print("pre compress");
-    Uint8List len = await img.readAsBytes();
     String dir = (await getApplicationDocumentsDirectory()).path;
-    print("beforeCompress = ${len.lengthInBytes / 1000000}");
     final result = await FlutterImageCompress.compressAndGetFile(
       img.path,
       path.join(dir, user.userId.toString() + ".jpeg"),
       format: CompressFormat.jpeg,
       quality: 40,
     );
-    print("after = ${result.readAsBytesSync().lengthInBytes / 1000000}");
     return result;
   }
+
+  bool clearLoader = false;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -157,6 +156,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('No image selected.');
     }
   }
+
+  var cacheData = APICacheManager();
 
   @override
   Widget build(BuildContext context) {
@@ -259,8 +260,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
                       Icons.security,
                       () {}),
-                  profileInfo('Logout', '', Icons.exit_to_app_rounded, () {
+                  profileInfo('Reset Cache', 'clear data', Icons.clear,
+                      () async {
+                    setState(() {
+                      clearLoader = true;
+                    });
+                    await cacheData.emptyCache();
+                    setState(() {
+                      clearLoader = false;
+                    });
+                  }),
+                  clearLoader
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Container(),
+                  profileInfo('Logout', '', Icons.exit_to_app_rounded, () async{
                     AuthService.clearAuth();
+                    await cacheData.emptyCache();
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   }),

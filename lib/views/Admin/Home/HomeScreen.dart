@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       loading = true;
     });
-    property = await PropertyService.getAllProperties();
+    property = await PropertyService.getAllPropertiesByLimit(0, 50);
     user = await UserService.getUser();
     setState(() {
       loading = false;

@@ -189,7 +189,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(0, 64, 0, 12),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.white,

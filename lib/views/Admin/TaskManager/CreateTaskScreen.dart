@@ -79,7 +79,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     }
     propertyOwner = await PropertyOwnerService.getAllPropertyOwner();
     users = await UserService.getAllUser();
-    print(users.length);
     _selectedUser = widget.user;
     _user.text = _selectedUser.name;
     setState(() {
