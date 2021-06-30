@@ -41,8 +41,8 @@ class PropertyService extends AuthService {
   // ignore: missing_return
   static Future<Property> getAllPropertiesByLimit(offset, limit) async {
     var cacheData = APICacheManager();
-    bool doesExist =
-        await cacheData.isAPICacheKeyExist("getAllProperties" + offset.toString());
+    bool doesExist = await cacheData
+        .isAPICacheKeyExist("getAllProperties" + offset.toString());
     if (doesExist) {
       APICacheDBModel responseBody =
           await cacheData.getCacheData("getAllProperties" + offset.toString());
@@ -50,7 +50,7 @@ class PropertyService extends AuthService {
           DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
       if (DateTime.now().difference(lastCache).inDays > 7) {
         print("reset");
-        cacheData.deleteCache("getAllProperties"  + offset.toString());
+        cacheData.deleteCache("getAllProperties" + offset.toString());
         http.Response response = await AuthService.makeAuthenticatedRequest(
             AuthService.BASE_URI + 'api/properties/limit',
             method: 'POST',
@@ -116,15 +116,57 @@ class PropertyService extends AuthService {
 
   // ignore: missing_return
   static Future<Property> getAllPropertiesByUserId(id) async {
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/properties/user/$id',
-        method: 'GET');
-    if (response.statusCode == 200) {
-      var responseMap = json.decode(response.body);
-      Property property = Property.fromJson(responseMap);
-      return property;
+    var cacheData = APICacheManager();
+    bool doesExist = await cacheData
+        .isAPICacheKeyExist("getAllPropertiesByUserId" + id.toString());
+    if (doesExist) {
+      APICacheDBModel responseBody = await cacheData
+          .getCacheData("getAllPropertiesByUserId" + id.toString());
+      DateTime lastCache =
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+      if (DateTime.now().difference(lastCache).inDays > 30) {
+        cacheData.deleteCache("getAllPropertiesByUserId" + id.toString());
+        http.Response response = await AuthService.makeAuthenticatedRequest(
+            AuthService.BASE_URI + 'api/properties/user/$id',
+            method: 'GET');
+        if (response.statusCode == 200) {
+          cacheData.addCacheData(
+            APICacheDBModel(
+              key: "getAllPropertiesByUserId" + id.toString(),
+              syncData: response.body,
+              syncTime: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+          var responseMap = json.decode(response.body);
+          Property property = Property.fromJson(responseMap);
+          return property;
+        } else {
+          print("DEBUG");
+        }
+      } else {
+        print("reuse");
+        var responseMap = json.decode(responseBody.syncData);
+        Property property = Property.fromJson(responseMap);
+        return property;
+      }
     } else {
-      print("DEBUG");
+      http.Response response = await AuthService.makeAuthenticatedRequest(
+          AuthService.BASE_URI + 'api/properties/user/$id',
+          method: 'GET');
+      if (response.statusCode == 200) {
+        cacheData.addCacheData(
+          APICacheDBModel(
+            key: "getAllPropertiesByUserId" + id.toString(),
+            syncData: response.body,
+            syncTime: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+        var responseMap = json.decode(response.body);
+        Property property = Property.fromJson(responseMap);
+        return property;
+      } else {
+        print("DEBUG");
+      }
     }
   }
 

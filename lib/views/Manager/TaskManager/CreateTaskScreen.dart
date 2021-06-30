@@ -111,7 +111,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     for (int i = 0; i < propertyList.count; i++) {
       propertyOwnerList.add(propertyList.data.property[i].propertyOwner);
     }
-
     _selectedUser = widget.user;
     _user.text = _selectedUser.name;
     setState(() {

@@ -20,6 +20,56 @@ class UserService extends AuthService {
     } else {
       print("DEBUG");
     }
+
+    var cacheData = APICacheManager();
+    bool doesExist = await cacheData.isAPICacheKeyExist("getUser");
+    if (doesExist) {
+      APICacheDBModel responseBody = await cacheData.getCacheData("getUser");
+      DateTime lastCache =
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+      if (DateTime.now().difference(lastCache).inDays > 30) {
+        cacheData.deleteCache("getUser");
+        http.Response response = await AuthService.makeAuthenticatedRequest(
+            AuthService.BASE_URI + 'api/user/${auth['id']}',
+            method: 'GET');
+        if (response.statusCode == 200) {
+          cacheData.addCacheData(
+            APICacheDBModel(
+              key: "getUser",
+              syncData: response.body,
+              syncTime: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+          var responseMap = json.decode(response.body);
+          User user = User.fromJson(responseMap);
+          return user;
+        } else {
+          print("DEBUG");
+        }
+      } else {
+        var responseMap = json.decode(responseBody.syncData);
+        User user = User.fromJson(responseMap);
+        return user;
+      }
+    } else {
+      http.Response response = await AuthService.makeAuthenticatedRequest(
+          AuthService.BASE_URI + 'api/user/${auth['id']}',
+          method: 'GET');
+      if (response.statusCode == 200) {
+        cacheData.addCacheData(
+          APICacheDBModel(
+            key: "getUser",
+            syncData: response.body,
+            syncTime: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+        var responseMap = json.decode(response.body);
+        User user = User.fromJson(responseMap);
+        return user;
+      } else {
+        print("DEBUG");
+      }
+    }
   }
 
   // ignore: missing_return
@@ -96,16 +146,62 @@ class UserService extends AuthService {
 
   // ignore: missing_return
   static Future<List<User>> getAllUserUnderManger(id) async {
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/user/manager/$id',
-        method: 'GET');
-    if (response.statusCode == 200) {
-      var responseMap = json.decode(response.body);
-      List<User> users =
-          responseMap.map<User>((usersMap) => User.fromJson(usersMap)).toList();
-      return users;
+    var cacheData = APICacheManager();
+    bool doesExist = await cacheData
+        .isAPICacheKeyExist("getAllUserUnderManger" + id.toString());
+    if (doesExist) {
+      APICacheDBModel responseBody =
+          await cacheData.getCacheData("getAllUserUnderManger" + id.toString());
+      DateTime lastCache =
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+      if (DateTime.now().difference(lastCache).inDays > 7) {
+        cacheData.deleteCache("getAllUserUnderManger" + id.toString());
+        http.Response response = await AuthService.makeAuthenticatedRequest(
+            AuthService.BASE_URI + 'api/user/manager/$id',
+            method: 'GET');
+        if (response.statusCode == 200) {
+          cacheData.addCacheData(
+            APICacheDBModel(
+              key: "getAllUserUnderManger" + id.toString(),
+              syncData: response.body,
+              syncTime: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+          var responseMap = json.decode(response.body);
+          List<User> users = responseMap
+              .map<User>((usersMap) => User.fromJson(usersMap))
+              .toList();
+          return users;
+        } else {
+          print("DEBUG");
+        }
+      } else {
+        var responseMap = json.decode(responseBody.syncData);
+        List<User> users = responseMap
+            .map<User>((usersMap) => User.fromJson(usersMap))
+            .toList();
+        return users;
+      }
     } else {
-      print("DEBUG");
+      http.Response response = await AuthService.makeAuthenticatedRequest(
+          AuthService.BASE_URI + 'api/user/manager/$id',
+          method: 'GET');
+      if (response.statusCode == 200) {
+        cacheData.addCacheData(
+          APICacheDBModel(
+            key: "getAllUserUnderManger" + id.toString(),
+            syncData: response.body,
+            syncTime: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+        var responseMap = json.decode(response.body);
+        List<User> users = responseMap
+            .map<User>((usersMap) => User.fromJson(usersMap))
+            .toList();
+        return users;
+      } else {
+        print("DEBUG");
+      }
     }
   }
 

@@ -11,6 +11,7 @@ import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/authService.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/constants.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
@@ -63,9 +64,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
       bool isUpdated = await UserService.updateUser(jsonEncode(user.toJson()));
       Routing.makeRouting(context, routeMethod: 'pop');
-      if (isUpdated)
+      if (isUpdated) {
         showInSnackBar(context, 'Password updated!', 4000);
-      else
+        cacheData.deleteCache("getUser");
+      } else
         showInSnackBar(context, 'failed to update the password', 4000);
     } else {
       showInSnackBar(context, 'Current Password not matched!', 4000);
@@ -275,7 +277,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: CircularProgressIndicator(),
                         )
                       : Container(),
-                  profileInfo('Logout', '', Icons.exit_to_app_rounded, () async{
+                  profileInfo('Logout', '', Icons.exit_to_app_rounded,
+                      () async {
                     AuthService.clearAuth();
                     await cacheData.emptyCache();
                     Navigator.of(context).pushReplacement(
@@ -283,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }),
                   Padding(
                     padding: EdgeInsets.all(12),
-                    child: Center(child: Text("1.0.3+4")),
+                    child: Center(child: Text(APPVERISON)),
                   ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),

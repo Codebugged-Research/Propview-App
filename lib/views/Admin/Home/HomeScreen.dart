@@ -18,21 +18,50 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     getData();
+    _sc.addListener(() {
+      if (_sc.position.pixels == _sc.position.maxScrollExtent) {
+        getNextData();
+      }
+    });
   }
 
   User user;
   Property property;
   bool loading = false;
+  bool loading2 = false;
+
+  int page = 0;
+  ScrollController _sc = new ScrollController();
 
   getData() async {
     setState(() {
       loading = true;
     });
-    property = await PropertyService.getAllPropertiesByLimit(0, 50);
+    property = await PropertyService.getAllPropertiesByLimit(page, 50);
     user = await UserService.getUser();
     setState(() {
+      page += 50;
       loading = false;
     });
+  }
+
+  getNextData() async {
+    setState(() {
+      loading2 = true;
+    });
+    Property tempList = await PropertyService.getAllPropertiesByLimit(page, 50);
+    setState(() {
+      property.data.property.addAll(tempList.data.property);
+      property.count += tempList.count;
+      page += 50;
+      loading2 = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _sc.dispose();
+    super.dispose();
   }
 
   @override
@@ -122,12 +151,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
+                    controller: _sc,
                     padding: EdgeInsets.only(top: 0, left: 8, right: 8),
-                    itemCount: property.data.property.length,
+                    itemCount: property.data.property.length + 1,
                     itemBuilder: (context, index) {
-                      return PropertyCard(
-                        propertyElement: property.data.property[index],
-                      );
+                      return index == property.data.property.length
+                          ? Center(
+                              child: loading2
+                                  ? CircularProgressIndicator()
+                                  : Container(
+                                      padding: EdgeInsets.all(16),
+                                      child: Text("No more properties"),
+                                    ))
+                          : PropertyCard(
+                              propertyElement: property.data.property[index],
+                            );
                     },
                   ),
                 )

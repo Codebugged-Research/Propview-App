@@ -44,6 +44,9 @@ class _AttendanceHomeState extends State<AttendanceHome>
         await AttendanceService.getAllByMangerIdWithoutDate(user.userId);
     attendanceToday = await AttendanceService.getAllByMangerIdWithDate(
         user.userId, dateFormatter());
+    Attendance myAttendance =
+        await AttendanceService.getAllUserIdWithoutDate(user.userId);
+    print(myAttendance.data.attendance.length);
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
               .where(
@@ -57,6 +60,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
     }
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     setState(() {
+      attendance.count += myAttendance.count;
+      attendance.data.attendance.addAll(myAttendance.data.attendance);
       loading = false;
     });
   }

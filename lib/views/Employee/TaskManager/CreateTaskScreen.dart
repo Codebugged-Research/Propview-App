@@ -454,8 +454,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 "New Task Assigned",
                                 "A new task Has been Assigned : ${_taskName.text}",
                                 widget.user.deviceToken,
-                                _taskStartDateTime.text,
-                                _taskEndDateTime.text);
+                                _taskStartDateTime2.text,
+                                _taskEndDateTime2.text);
                             var managerToken = await UserService.getDeviceToken(
                                 widget.user.parentId);
                             NotificationService.sendPushToOne(

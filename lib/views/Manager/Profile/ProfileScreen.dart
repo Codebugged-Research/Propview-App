@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:api_cache_manager/utils/cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,7 @@ import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/authService.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/constants.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
@@ -158,6 +160,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  
+  bool clearLoader = false;
+  var cacheData = APICacheManager();
+
   @override
   Widget build(BuildContext context) {
     return isLoading
@@ -259,14 +265,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
                       Icons.security,
                       () {}),
-                  profileInfo('Logout', '', Icons.exit_to_app_rounded, () {
+                   profileInfo('Reset Cache', 'clear data', Icons.clear,
+                      () async {
+                    setState(() {
+                      clearLoader = true;
+                    });
+                    await cacheData.emptyCache();
+                    setState(() {
+                      clearLoader = false;
+                    });
+                  }),
+                  profileInfo('Logout', '', Icons.exit_to_app_rounded, ()async {
                     AuthService.clearAuth();
+                    await cacheData.emptyCache();
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   }),
                   Padding(
                     padding: EdgeInsets.all(12),
-                    child: Center(child: Text("1.0.3+4")),
+                    child: Center(child: Text(APPVERISON)),
                   ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),
