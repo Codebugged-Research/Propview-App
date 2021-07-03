@@ -10,6 +10,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Employee/Attendance/LogCard.dart';
 import 'package:propview/views/Employee/Attendance/SoloAttendanceScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -36,10 +37,22 @@ class _AttendanceHomeState extends State<AttendanceHome> {
     user = await UserService.getUser();
     attendance = await AttendanceService.getAllUserIdWithoutDate(user.userId);
     print(attendance.count);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String json = prefs.getString("punch");
+    if (json != null) {
+      Map decodedJson = jsonDecode(json);
+      if(decodedJson["out"] == "--/--/-- -- : --"){
+        setState(() {
+          label = "Punch Out";
+        });
+      }
+    }
     setState(() {
       loading = false;
     });
   }
+
+  String label = "Punch In";
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +132,7 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                                 height: 50,
                               ),
                               Text(
-                                "Punch In",
+                               label,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               )
                             ],

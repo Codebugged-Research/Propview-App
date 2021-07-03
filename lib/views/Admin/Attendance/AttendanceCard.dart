@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/attd.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AttendanceCard extends StatefulWidget {
   final Attd attd;
@@ -42,30 +43,32 @@ class _AttendanceCardState extends State<AttendanceCard> {
               Row(
                 children: [
                   CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 15,
-                          child: ClipOval(
-                            child: FadeInImage.assetNetwork(
-                              height: 30,
-                              width: 30,
-                              fit: BoxFit.cover,
-                              placeholder: "assets/loader.gif",
-                              image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${widget.attd.user.userId}.png",
-                              imageErrorBuilder: (BuildContext context,
-                                  Object exception, StackTrace stackTrace) {
-                                return CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 15,
-                                  backgroundImage: AssetImage(
-                                    "assets/dummy.png",
-                                  ),
-                                );
-                              },
+                    backgroundColor: Colors.white,
+                    radius: 15,
+                    child: ClipOval(
+                      child: FadeInImage.assetNetwork(
+                        height: 30,
+                        width: 30,
+                        fit: BoxFit.cover,
+                        placeholder: "assets/loader.gif",
+                        image:
+                            "https://propview.sgp1.digitaloceanspaces.com/User/${widget.attd.user.userId}.png",
+                        imageErrorBuilder: (BuildContext context,
+                            Object exception, StackTrace stackTrace) {
+                          return CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 15,
+                            backgroundImage: AssetImage(
+                              "assets/dummy.png",
                             ),
-                          ),
-                        ),
-                        SizedBox(width: 8,),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,11 +83,30 @@ class _AttendanceCardState extends State<AttendanceCard> {
                   ),
                 ],
               ),
-              Icon(
-                Icons.emoji_people,
-                color: widget.attd.isPresent
-                    ? Colors.black
-                    : Colors.grey.shade300,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.emoji_people,
+                    color: widget.attd.isPresent
+                        ? Colors.black
+                        : Colors.grey.shade300,
+                  ),
+                  VerticalDivider(),
+                  InkWell(
+                    child: Icon(
+                      Icons.call,
+                      color: Colors.green,
+                    ),
+                    onTap: ()async{
+                      if (await canLaunch("tel:+91 ${widget.attd.user.officialNumber}")) {
+                      await launch("tel:+91 ${widget.attd.user.officialNumber}");
+                      } else {
+                      throw "tel:+91 ${widget.attd.user.officialNumber}";
+                      }
+                    },
+                  ),
+                ],
               ),
             ],
           ),

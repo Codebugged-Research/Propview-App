@@ -116,7 +116,7 @@ class _TaskCardState extends State<TaskCard> {
                       !widget.isSelf
                           ? textWidget(
                               context,
-                              "AssignedTo: ",
+                              "Assigned: ",
                               widget.taskElement.tblUsers.name +
                                   "\n(${widget.taskElement.tblUsers.designation})")
                           : Container(),

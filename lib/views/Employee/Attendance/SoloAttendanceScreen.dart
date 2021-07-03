@@ -9,6 +9,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Employee/Attendance/LogCard.dart';
+import 'package:propview/views/Employee/landingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SoloAttendanceScreen extends StatefulWidget {
@@ -176,7 +177,24 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
                     child: Row(
-                      children: [
+                      children: [ InkWell(
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => LandingScreen(
+                                selectedIndex: 2,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                        SizedBox(
+                          width: 16,
+                        ),
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 30,

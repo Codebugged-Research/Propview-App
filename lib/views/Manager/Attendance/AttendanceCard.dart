@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/attd.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AttendanceCard extends StatefulWidget {
   final Attd attd;
@@ -82,6 +83,7 @@ class _AttendanceCardState extends State<AttendanceCard> {
                 ],
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.emoji_people,
@@ -89,15 +91,20 @@ class _AttendanceCardState extends State<AttendanceCard> {
                         ? Colors.black
                         : Colors.grey.shade300,
                   ),
-                  VerticalDivider(
-                    color: Colors.grey.shade700,
+                  VerticalDivider(),
+                  InkWell(
+                    child: Icon(
+                      Icons.call,
+                      color: Colors.green,
+                    ),
+                    onTap: ()async{
+                      if (await canLaunch("tel:+91 ${widget.attd.user.officialNumber}")) {
+                        await launch("tel:+91 ${widget.attd.user.officialNumber}");
+                      } else {
+                        throw "tel:+91 ${widget.attd.user.officialNumber}";
+                      }
+                    },
                   ),
-                  Icon(
-                    Icons.person,
-                    color: !widget.attd.isPresent
-                        ? Colors.black
-                        : Colors.grey.shade300,
-                  )
                 ],
               ),
             ],

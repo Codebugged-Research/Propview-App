@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Attendance.dart';
@@ -9,6 +11,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Manager/Attendance/LogCard.dart';
 import 'package:propview/views/Manager/Attendance/SoloAttendance.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -50,12 +53,22 @@ class _AttendanceHomeState extends State<AttendanceHome>
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
               .where(
-                  (element) => element.userId == userList[i].userId.toString())
+                  (element) => element.userId == userList[i].userId.toString()&& element.isPresent)
               .length >
           0) {
         bools.add(true);
       } else {
         bools.add(false);
+      }
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String json = prefs.getString("punch");
+    if (json != null) {
+      Map decodedJson = jsonDecode(json);
+      if(decodedJson["out"] == "--/--/-- -- : --"){
+        setState(() {
+          label = "Punch Out";
+        });
       }
     }
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
@@ -65,6 +78,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
       loading = false;
     });
   }
+
+  String label = "Punch In";
 
   dateFormatter() {
     var date = DateTime.now();
@@ -150,7 +165,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                 height: 50,
                               ),
                               Text(
-                                "Punch In",
+                                label,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               )
                             ],

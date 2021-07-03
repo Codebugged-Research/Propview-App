@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Attendance.dart';
@@ -10,6 +12,7 @@ import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Admin/Attendance/LogCard.dart';
 import 'package:propview/views/Admin/Attendance/SoloAttendance.dart';
 import 'package:propview/views/Manager/TaskManager/SoloCalendar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -26,6 +29,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     super.initState();
     getData();
   }
+
 
   bool loading = false;
   User user;
@@ -46,7 +50,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
               .where(
-                  (element) => element.userId == userList[i].userId.toString())
+                  (element) => element.userId == userList[i].userId.toString() && element.isPresent)
               .length >
           0) {
         bools.add(true);
@@ -58,7 +62,19 @@ class _AttendanceHomeState extends State<AttendanceHome>
     setState(() {
       loading = false;
     });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String json = prefs.getString("punch");
+    if (json != null) {
+      Map decodedJson = jsonDecode(json);
+      if(decodedJson["out"] == "--/--/-- -- : --"){
+        setState(() {
+          label = "Punch Out";
+        });
+      }
+    }
   }
+
+  String label = "Punch In";
 
   dateFormatter() {
     var date = DateTime.now();
@@ -144,7 +160,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                 height: 50,
                               ),
                               Text(
-                                "Punch In",
+                                label,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               )
                             ],

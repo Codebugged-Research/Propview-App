@@ -8,6 +8,7 @@ import 'package:propview/services/attendanceService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/landingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SoloAttendance extends StatefulWidget {
@@ -109,18 +110,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   createLog() async {
-    // DateTime startTime = DateTime.parse(start);
-    // DateTime endTime = DateTime.parse(end);
-    // var payload = {
-    // "user_id": user.userId,
-    // "parent_id": user.parentId,
-    // "punch_in": start,
-    // "punch_out": end,
-    // "meter_in": user.bikeReading == 1 ? startMeter : "-",
-    // "meter_out": user.bikeReading == 1 ? endMeter : "-",
-    // "work_hour": endTime.difference(startTime).inHours.toString(),
-    // "date": dateFormatter()
-    // };
     var payload = {
       "user_id": user.userId,
       "parent_id": user.parentId,
@@ -188,6 +177,24 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                     padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
                     child: Row(
                       children: [
+                        InkWell(
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => LandingScreen(
+                                  selectedIndex: 2,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 30,

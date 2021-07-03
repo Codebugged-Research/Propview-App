@@ -8,6 +8,7 @@ import 'package:propview/services/attendanceService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Manager/landingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SoloAttendance extends StatefulWidget {
@@ -187,7 +188,24 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
                     child: Row(
-                      children: [
+                      children: [ InkWell(
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => LandingScreen(
+                                selectedIndex: 2,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                        SizedBox(
+                          width: 16,
+                        ),
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 30,
