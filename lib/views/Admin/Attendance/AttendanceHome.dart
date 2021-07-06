@@ -226,8 +226,10 @@ class _AttendanceHomeState extends State<AttendanceHome>
                               )
                             : ListView.builder(
                                 padding: EdgeInsets.only(top: 0),
-                                itemCount: userList.length,
+                                // itemCount: userList.length,
+                          itemCount: 2,
                                 itemBuilder: (context, index) {
+                                  return ExpansionTile(title: Text("tttt"), children: _buildExpandableContent(userList),);
                                   return AttendanceCard(
                                     attd: Attd(
                                       isPresent: bools[index],
@@ -265,5 +267,21 @@ class _AttendanceHomeState extends State<AttendanceHome>
               ),
             ),
     );
+  }
+
+  _buildExpandableContent(List<User> users) {
+    List<Widget> columnContent = [];
+
+    for(int i = 0; i<users.length;i++)
+      columnContent.add(
+          AttendanceCard(
+            attd: Attd(
+              isPresent: bools[i],
+              user: users[i],
+            ),
+          )
+      );
+
+    return columnContent;
   }
 }

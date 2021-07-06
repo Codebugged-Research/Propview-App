@@ -262,58 +262,58 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(),
-                                reset
-                                    ? InkWell(
-                                        onTap: () async {
-                                          setState(() {
-                                            start = "--/--/-- -- : --";
-                                            end = "--/--/-- -- : --";
-                                            startMeter = "-";
-                                            endMeter = "-";
-                                            id = "-";
-                                            reset = false;
-                                          });
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          prefs.setString(
-                                            "punch",
-                                            jsonEncode(
-                                              {
-                                                "in": start,
-                                                "out": end,
-                                                "inMeter": startMeter,
-                                                "outMeter": endMeter,
-                                                "reset": reset,
-                                                "id": id
-                                              },
-                                            ),
-                                          );
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Icon(
-                                              Icons.add,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.symmetric(horizontal: 32.0),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     children: [
+                          //       Container(),
+                          //       reset
+                          //           ? InkWell(
+                          //               onTap: () async {
+                          //                 setState(() {
+                          //                   start = "--/--/-- -- : --";
+                          //                   end = "--/--/-- -- : --";
+                          //                   startMeter = "-";
+                          //                   endMeter = "-";
+                          //                   id = "-";
+                          //                   reset = false;
+                          //                 });
+                          //                 SharedPreferences prefs =
+                          //                     await SharedPreferences
+                          //                         .getInstance();
+                          //                 prefs.setString(
+                          //                   "punch",
+                          //                   jsonEncode(
+                          //                     {
+                          //                       "in": start,
+                          //                       "out": end,
+                          //                       "inMeter": startMeter,
+                          //                       "outMeter": endMeter,
+                          //                       "reset": reset,
+                          //                       "id": id
+                          //                     },
+                          //                   ),
+                          //                 );
+                          //               },
+                          //               child: Container(
+                          //                 decoration: BoxDecoration(
+                          //                   color: Colors.white,
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(12),
+                          //                 ),
+                          //                 child: Padding(
+                          //                   padding: const EdgeInsets.all(4.0),
+                          //                   child: Icon(
+                          //                     Icons.refresh,
+                          //                   ),
+                          //                 ),
+                          //               ),
+                          //             )
+                          //           : Container(),
+                          //     ],
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 32,
                           ),
@@ -349,24 +349,28 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                     SizedBox(
                                       height: 16,
                                     ),
-                                    Text(
-                                      "Reading In",
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    Text(
-                                      startMeter,
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: startMeter == "-"
-                                            ? Colors.red
-                                            : Colors.green,
-                                      ),
-                                    ),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            "Reading In",
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                        : Container(),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            startMeter,
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: startMeter == "-"
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                            ),
+                                          )
+                                        : Container(),
                                   ],
                                 ),
                                 Column(
@@ -396,24 +400,28 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                     SizedBox(
                                       height: 16,
                                     ),
-                                    Text(
-                                      "Reading Out",
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    Text(
-                                      endMeter,
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: endMeter == "-"
-                                            ? Colors.red
-                                            : Colors.green,
-                                      ),
-                                    ),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            "Reading Out",
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                        : Container(),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            endMeter,
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: endMeter == "-"
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                            ),
+                                          )
+                                        : Container(),
                                   ],
                                 ),
                               ],
@@ -487,7 +495,9 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             );
                                           }
                                         },
-                                  color: Colors.white,
+                                  color: start == "--/--/-- -- : --"
+                                      ? Colors.white
+                                      : Colors.red,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -498,6 +508,111 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                       start == "--/--/-- -- : --"
                                           ? "Punch In"
                                           : "Punch Out",
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: start == "--/--/-- -- : --"
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          reset
+                              ? MaterialButton(
+                                  onPressed: user.bikeReading == 1
+                                      ? () async {
+                                          setState(() {
+                                            start = "--/--/-- -- : --";
+                                            end = "--/--/-- -- : --";
+                                            startMeter = "-";
+                                            endMeter = "-";
+                                            id = "-";
+                                            reset = false;
+                                          });
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString(
+                                            "punch",
+                                            jsonEncode(
+                                              {
+                                                "in": start,
+                                                "out": end,
+                                                "inMeter": startMeter,
+                                                "outMeter": endMeter,
+                                                "reset": reset,
+                                                "id": id
+                                              },
+                                            ),
+                                          );
+                                          if (start == "--/--/-- -- : --") {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchInMeter,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      : () async {
+                                          setState(() {
+                                            start = "--/--/-- -- : --";
+                                            end = "--/--/-- -- : --";
+                                            startMeter = "-";
+                                            endMeter = "-";
+                                            id = "-";
+                                            reset = false;
+                                          });
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString(
+                                            "punch",
+                                            jsonEncode(
+                                              {
+                                                "in": start,
+                                                "out": end,
+                                                "inMeter": startMeter,
+                                                "outMeter": endMeter,
+                                                "reset": reset,
+                                                "id": id
+                                              },
+                                            ),
+                                          );
+                                          if (start == "--/--/-- -- : --") {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchin,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 8),
+                                    child: Text(
+                                      "Punch In",
                                       style: GoogleFonts.nunito(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,

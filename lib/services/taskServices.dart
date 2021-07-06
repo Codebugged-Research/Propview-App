@@ -5,7 +5,7 @@ import 'package:propview/models/Task.dart';
 
 import 'authService.dart';
 
-class TaskService extends AuthService {
+class  TaskService extends AuthService {
   // ignore: missing_return
   static Future<TaskElement> getTask(String task_id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
