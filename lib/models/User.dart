@@ -23,6 +23,7 @@ class User {
     this.permanentAddress,
     this.state,
     this.city,
+    this.department,
     this.cid,
     this.sid,
     this.ccid,
@@ -44,6 +45,7 @@ class User {
   int userId;
   String parentId;
   String name;
+  String department;
   String designation;
   String officialEmail;
   String personalEmail;
@@ -69,6 +71,7 @@ class User {
   int status;
   int bikeReading;
   String addedOn;
+  bool present;
   String deviceToken;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -76,6 +79,7 @@ class User {
         deviceToken: json["device_token"] == null ? null : json["device_token"],
         parentId: json["parent_id"] == null ? null : json["parent_id"],
         name: json["name"] == null ? null : capNamer(json["name"]),
+        department: json["department"] == null ? null : json["department"],
         designation: json["designation"] == null ? null : json["designation"],
         officialEmail:
             json["official_email"] == null ? null : json["official_email"],
@@ -126,6 +130,7 @@ class User {
         "name": name == null ? null : name,
         "designation": designation == null ? null : designation,
         "official_email": officialEmail == null ? null : officialEmail,
+        "department": department == null ? null : department,
         "personal_email": personalEmail == null ? null : personalEmail,
         "official_number": officialNumber == null ? null : officialNumber,
         "personal_number": personalNumber == null ? null : personalNumber,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Attendance.dart';
@@ -30,7 +31,6 @@ class _AttendanceHomeState extends State<AttendanceHome>
     getData();
   }
 
-
   bool loading = false;
   User user;
   List<User> userList = [];
@@ -38,6 +38,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
   Attendance attendance;
   Attendance attendanceToday;
   List bools = [];
+  Map gg;
 
   getData() async {
     setState(() {
@@ -49,15 +50,17 @@ class _AttendanceHomeState extends State<AttendanceHome>
     attendanceToday = await AttendanceService.getAllWithDate(dateFormatter());
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
-              .where(
-                  (element) => element.userId == userList[i].userId.toString() && element.isPresent)
+              .where((element) =>
+                  element.userId == userList[i].userId.toString() &&
+                  element.isPresent)
               .length >
           0) {
-        bools.add(true);
+        userList[i].present = true;
       } else {
-        bools.add(false);
+        userList[i].present = false;
       }
     }
+    gg = genGrouping();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     setState(() {
       loading = false;
@@ -66,12 +69,19 @@ class _AttendanceHomeState extends State<AttendanceHome>
     String json = prefs.getString("punch");
     if (json != null) {
       Map decodedJson = jsonDecode(json);
-      if(decodedJson["out"] == "--/--/-- -- : --"){
+      if (decodedJson["out"] == "--/--/-- -- : --") {
         setState(() {
           label = "Punch Out";
         });
       }
     }
+  }
+
+  genGrouping() {
+    final groups = groupBy(userList, (User e) {
+      return e.department;
+    });
+    return groups;
   }
 
   String label = "Punch In";
@@ -226,15 +236,16 @@ class _AttendanceHomeState extends State<AttendanceHome>
                               )
                             : ListView.builder(
                                 padding: EdgeInsets.only(top: 0),
-                                // itemCount: userList.length,
-                          itemCount: 2,
+                                itemCount: gg.entries.length,
                                 itemBuilder: (context, index) {
-                                  return ExpansionTile(title: Text("tttt"), children: _buildExpandableContent(userList),);
-                                  return AttendanceCard(
-                                    attd: Attd(
-                                      isPresent: bools[index],
-                                      user: userList[index],
+                                  return ExpansionTile(
+                                    title: Text(
+                                      gg.entries.skip(index).first.key == ""
+                                          ? "Other"
+                                          : gg.entries.skip(index).first.key,
                                     ),
+                                    children: _buildExpandableContent(
+                                        gg.entries.skip(index).first.value),
                                   );
                                 },
                               ),
@@ -271,17 +282,13 @@ class _AttendanceHomeState extends State<AttendanceHome>
 
   _buildExpandableContent(List<User> users) {
     List<Widget> columnContent = [];
-
-    for(int i = 0; i<users.length;i++)
-      columnContent.add(
-          AttendanceCard(
-            attd: Attd(
-              isPresent: bools[i],
-              user: users[i],
-            ),
-          )
-      );
-
+    for (int i = 0; i < users.length; i++)
+      columnContent.add(AttendanceCard(
+        attd: Attd(
+          isPresent: users[i].present,
+          user: users[i],
+        ),
+      ));
     return columnContent;
   }
 }

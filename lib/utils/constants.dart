@@ -1,1 +1,1 @@
-const APPVERISON = "1.0.4+5";
+const APPVERISON = "1.0.5+6";

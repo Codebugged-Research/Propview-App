@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Attendance.dart';
@@ -56,11 +57,12 @@ class _AttendanceHomeState extends State<AttendanceHome>
                   (element) => element.userId == userList[i].userId.toString()&& element.isPresent)
               .length >
           0) {
-        bools.add(true);
+        userList[i].present = true;
       } else {
-        bools.add(false);
+        userList[i].present = false;
       }
     }
+    gg = genGrouping();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String json = prefs.getString("punch");
     if (json != null) {
@@ -77,6 +79,15 @@ class _AttendanceHomeState extends State<AttendanceHome>
       attendance.data.attendance.addAll(myAttendance.data.attendance);
       loading = false;
     });
+  }
+
+  Map gg;
+
+  genGrouping() {
+    final groups = groupBy(userList, (User e) {
+      return e.department;
+    });
+    return groups;
   }
 
   String label = "Punch In";
@@ -230,17 +241,18 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                 ),
                               )
                             : ListView.builder(
-                                padding: EdgeInsets.only(top: 0),
-                                itemCount: userList.length,
-                                itemBuilder: (context, index) {
-                                  return AttendanceCard(
-                                    attd: Attd(
-                                      isPresent: bools[index],
-                                      user: userList[index],
-                                    ),
-                                  );
-                                },
-                              ),
+                          padding: EdgeInsets.only(top: 0),
+                          itemCount: gg.entries.length,
+                          itemBuilder: (context, index) {
+                            return ExpansionTile(
+                              title: Text(
+                                  gg.entries.skip(index).first.key == ""
+                                      ? "Other"
+                                      : gg.entries.skip(index).first.key),
+                              children: _buildExpandableContent(gg.entries.skip(index).first.value),
+                            );
+                          },
+                        ),
                         attendance.count == 0
                             ? Center(
                                 child: Text(
@@ -270,5 +282,17 @@ class _AttendanceHomeState extends State<AttendanceHome>
               ),
             ),
     );
+  }
+
+  _buildExpandableContent(List<User> users) {
+    List<Widget> columnContent = [];
+    for (int i = 0; i < users.length; i++)
+      columnContent.add(AttendanceCard(
+        attd: Attd(
+          isPresent: users[i].present,
+          user: users[i],
+        ),
+      ));
+    return columnContent;
   }
 }
