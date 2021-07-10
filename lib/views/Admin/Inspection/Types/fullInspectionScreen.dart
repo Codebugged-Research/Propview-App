@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/formModels/tempFullInscpectionModel.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:propview/views/Admin/widgets/photoCaptureScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -30,9 +33,22 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   @override
   void initState() {
     super.initState();
+    getData();
     propertyElement = widget.propertyElement;
   }
 
+  bool loader = false;
+  getData() async {
+    setState(() {
+      loader = true;
+    });
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loader = false;
+    });
+  }
+
+  SharedPreferences prefs;
   List<Room> rooms = [
     Room(roomId: 1, roomName: "Room1"),
     Room(roomId: 2, roomName: "Room2"),
@@ -57,95 +73,153 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RichText(
-                    text: TextSpan(
-                        text: "Full\n",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .headline4
-                            .copyWith(fontWeight: FontWeight.bold),
+    return loader
+        ? CircularProgressIndicator()
+        : Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(),
+            body: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      RichText(
+                          text: TextSpan(
+                              text: "Full\n",
+                              style: Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline4
+                                  .copyWith(fontWeight: FontWeight.bold),
+                              children: [
+                            TextSpan(
+                                text: "Inspection",
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .headline3
+                                    .copyWith(fontWeight: FontWeight.normal))
+                          ])),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Maintenance Charges or CAM'),
+                      inputWidget(maintainanceController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Common Area Electricity (CAE)'),
+                      inputWidget(commonAreaController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Electricity (Society)'),
+                      inputWidget(electricitySocietyController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Electricity (Authority)'),
+                      inputWidget(electricityAuthorityController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Power Back-Up'),
+                      inputWidget(powerController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'PNG/LPG'),
+                      inputWidget(pngController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Club'),
+                      inputWidget(clubController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Water'),
+                      inputWidget(waterController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Property Tax'),
+                      inputWidget(propertyTaxController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      titleWidget(context, 'Any other'),
+                      inputWidget(anyOtherController),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                      TextSpan(
-                          text: "Inspection",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .headline3
-                              .copyWith(fontWeight: FontWeight.normal))
-                    ])),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Maintenance Charges or CAM'),
-                inputWidget(maintainanceController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Common Area Electricity (CAE)'),
-                inputWidget(commonAreaController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Electricity (Society)'),
-                inputWidget(electricitySocietyController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Electricity (Authority)'),
-                inputWidget(electricityAuthorityController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Power Back-Up'),
-                inputWidget(powerController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'PNG/LPG'),
-                inputWidget(pngController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Club'),
-                inputWidget(clubController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Water'),
-                inputWidget(waterController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Property Tax'),
-                inputWidget(propertyTaxController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                titleWidget(context, 'Any other'),
-                inputWidget(anyOtherController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    titleWidget(context, 'Issues'),
-                    InkWell(
-                      child: Icon(Icons.add),
-                      onTap: () {
-                        showPicker(context);
-                      },
-                    )
-                  ],
+                          titleWidget(context, 'Issues'),
+                          InkWell(
+                            child: Icon(Icons.add),
+                            onTap: () {
+                              showPicker(context);
+                            },
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      ListView.builder(
+                        itemBuilder: (context, index) =>
+                            issueCard(constraints, index),
+                        itemCount: count,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
+                      // issueCard(constraints),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                    ],
+                  ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                ListView.builder(
-                  itemBuilder: (context, index) =>
-                      issueCard(constraints, index),
-                  itemCount: count,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                ),
-                // issueCard(constraints),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+  }
+
+  List<List<Widget>> photo = [[]];
+
+  photoPick(list, name) {
+    return Container(
+      width: 100,
+      height: 50,
+      child: ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        itemCount: list.length + 1,
+        itemBuilder: (context, index) {
+          print(name);
+          return index == list.length
+              ? InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CameraScreen(name: name)));
+                  },
+                  child: Icon(Icons.add),
+                )
+              : list[index];
+        },
       ),
     );
   }
 
-  Widget issueCard(constraints, index) {
+  issueCard(constraints, index) {
+    photo[index].clear();
+    List<String> pathList = prefs.getStringList(headings[index].toString());
+    pathList = pathList == null ? [] : pathList;
+    print(pathList.length);
+    for (int i = 0; i < pathList.length; i++) {
+      photo[index].add(
+        Container(
+          child: Image.file(
+            File(
+              pathList[i],
+            ),
+          ),
+          height:30,
+          width:30,
+        ),
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -207,7 +281,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                     DataCell(TextFormField()),
                     DataCell(TextFormField()),
                     DataCell(TextFormField()),
-                    DataCell(TextFormField()),
+                    DataCell(
+                      photoPick(photo[index], headings[index].toString()),
+                    ),
                   ]));
                 });
               },

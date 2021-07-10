@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   collection:
+  camera:
   double_back_to_close_app: ^2.0.1
   firebase_analytics: null
   firebase_core: ^1.1.1

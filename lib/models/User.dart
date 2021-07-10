@@ -78,7 +78,7 @@ class User {
         userId: json["user_id"] == null ? null : json["user_id"],
         deviceToken: json["device_token"] == null ? null : json["device_token"],
         parentId: json["parent_id"] == null ? null : json["parent_id"],
-        name: json["name"] == null ? null : capNamer(json["name"]),
+        name: json["name"] == null ? null : json["name"],
         department: json["department"] == null ? null : json["department"],
         designation: json["designation"] == null ? null : json["designation"],
         officialEmail:
@@ -114,14 +114,6 @@ class User {
         addedOn: json["added_on"] == null ? null : json["added_on"],
       );
 
-  static capNamer(String name) {
-    // var arr = name.split(" ");
-    // List arr2 = [];
-    // arr.forEach((e) => arr2.add(e[0].toUpperCase() + e.substring(1)));
-    // var arr3 = arr2.join(" ");
-    // return arr3;
-    return name;
-  }
 
   Map<String, dynamic> toJson() => {
         "user_id": userId == null ? null : userId,
