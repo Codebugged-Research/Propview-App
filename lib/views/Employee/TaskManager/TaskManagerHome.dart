@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
-import 'package:propview/services/taskServices.dart';
+import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Employee/TaskManager/CalenderScreen.dart';

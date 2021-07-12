@@ -12,7 +12,7 @@ import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
-import 'package:propview/services/taskServices.dart';
+import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/snackBar.dart';
 
@@ -51,8 +51,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           '${DateTime.now().add(Duration(minutes: 10)).day.toString().padLeft(2, "0")}/${DateTime.now().add(Duration(minutes: 10)).month.toString().padLeft(2, "0")}/${DateTime.now().add(Duration(minutes: 10)).year}    ${DateTime.now().add(Duration(minutes: 10)).hour.toString().padLeft(2, "0")}:${DateTime.now().add(Duration(minutes: 10)).minute.toString().padLeft(2, "0")}');
   TextEditingController _taskStartDateTime2 =
       new TextEditingController(text: DateTime.now().toString());
-  TextEditingController _taskEndDateTime2 =
-      new TextEditingController(text: DateTime.now().add(Duration(minutes: 10)).toString());
+  TextEditingController _taskEndDateTime2 = new TextEditingController(
+      text: DateTime.now().add(Duration(minutes: 10)).toString());
 
   List<TaskCategory> taskCategories = [];
   List<PropertyElement> properties = [];
@@ -408,9 +408,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
                     inputDateTime("Enter Start Date and Time",
-                        _taskStartDateTime, _taskStartDateTime2,true),
+                        _taskStartDateTime, _taskStartDateTime2, true),
                     inputDateTime("Enter End Date and Time", _taskEndDateTime,
-                        _taskEndDateTime2,false),
+                        _taskEndDateTime2, false),
                     Padding(
                       padding: const EdgeInsets.only(
                         bottom: 8.0,
@@ -580,7 +580,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  inputDateTime(label, controller, controller2,isStart) {
+  inputDateTime(label, controller, controller2, isStart) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 8.0,
@@ -620,7 +620,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     controller2.text = date.toString();
                   });
                 },
-                currentTime: isStart? DateTime.now() : DateTime.now().add(Duration(minutes: 10)),
+                currentTime: isStart
+                    ? DateTime.now()
+                    : DateTime.now().add(Duration(minutes: 10)),
               );
             },
             child: Container(

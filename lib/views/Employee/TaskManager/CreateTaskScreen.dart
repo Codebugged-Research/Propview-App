@@ -11,7 +11,7 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
-import 'package:propview/services/taskServices.dart';
+import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/snackBar.dart';
 
