@@ -12,9 +12,6 @@ import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CameraScreen extends StatefulWidget {
-  final List<String> imageList;
-  final String name;
-  CameraScreen({this.name,this.imageList});
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
@@ -28,14 +25,12 @@ class _CameraScreenState extends State<CameraScreen>
   bool isFlashOn = false;
   Future<void> cameraValue;
   File croppedFile;
-  String name;
 
   @override
   void initState() {
     super.initState();
     initialiseCamera();
     WidgetsBinding.instance.addObserver(this);
-    name = widget.name;
   }
 
   initialiseCamera() async {
@@ -66,12 +61,7 @@ class _CameraScreenState extends State<CameraScreen>
       File convertedImage = await File(image.path).writeAsBytes(imageBytes);
       //Compressing Image
       var compressedImage = await compressImage(convertedImage);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String> pathList = prefs.getStringList(name);
-      pathList = pathList == null ? [] : pathList;
-      pathList.add(compressedImage.path);
-      prefs.setStringList(name, pathList);
-      print(pathList.length);
+
       WidgetsBinding.instance.removeObserver(this);
       cameraController.dispose();
       Navigator.of(context).pop();
@@ -90,12 +80,6 @@ class _CameraScreenState extends State<CameraScreen>
     );
     return compressedResult;
   }
-
-  // @override
-  // void dispose() {
-  //   cameraController.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {

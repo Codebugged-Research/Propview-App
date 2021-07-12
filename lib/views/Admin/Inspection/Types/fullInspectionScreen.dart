@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/formModels/tempFullInscpectionModel.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:propview/models/roomType.dart';
+import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/views/Admin/widgets/photoCaptureScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,35 +39,31 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     propertyElement = widget.propertyElement;
   }
 
+  RoomType roomTypes;
+
   bool loader = false;
   getData() async {
     setState(() {
       loader = true;
     });
+    roomTypes = await RoomTypeService.getRoomTypes();
     prefs = await SharedPreferences.getInstance();
     setState(() {
+      selectedRoom = roomTypes.data.propertyRoom[0];
       loader = false;
     });
   }
 
+  PropertyRoom selectedRoom;
+
+  getRoomName(id) {
+    PropertyRoom room = roomTypes.data.propertyRoom
+        .where((element) => element.roomId == id)
+        .first;
+    return room.roomName;
+  }
+
   SharedPreferences prefs;
-  List<Room> rooms = [
-    Room(roomId: 1, roomName: "Room1"),
-    Room(roomId: 2, roomName: "Room2"),
-    Room(roomId: 3, roomName: "Room3"),
-    Room(roomId: 4, roomName: "Room4"),
-    Room(roomId: 5, roomName: "Room5"),
-    Room(roomId: 6, roomName: "Room6"),
-  ];
-  List subRooms = [
-    SubRoom(roomId: 1, subRoomId: 1, subRoomName: "room1sub1"),
-    SubRoom(roomId: 1, subRoomId: 2, subRoomName: "room1sub2"),
-    SubRoom(roomId: 2, subRoomId: 1, subRoomName: "room2sub1"),
-    SubRoom(roomId: 3, subRoomId: 1, subRoomName: "room3sub1"),
-    SubRoom(roomId: 3, subRoomId: 2, subRoomName: "room3sub2"),
-    SubRoom(roomId: 4, subRoomId: 1, subRoomName: "room4sub1"),
-    SubRoom(roomId: 6, subRoomId: 1, subRoomName: "room6sub1")
-  ];
 
   List<List<DataRow>> rows = [[]];
   List headings = [];
@@ -73,12 +71,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return loader
-        ? CircularProgressIndicator()
-        : Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(),
-            body: LayoutBuilder(
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(),
+      body: loader
+          ? CircularProgressIndicator()
+          : LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Padding(
@@ -151,7 +149,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           InkWell(
                             child: Icon(Icons.add),
                             onTap: () {
-                              showPicker(context);
+                              showRoomSelect();
                             },
                           )
                         ],
@@ -165,7 +163,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                       ),
-                      // issueCard(constraints),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
                     ],
@@ -173,7 +170,67 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 ),
               ),
             ),
-          );
+    );
+  }
+
+  showRoomSelect() {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      backgroundColor: Color(0xFFFFFFFF),
+      builder: (BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Choose Room',
+                    style: Theme.of(context).primaryTextTheme.headline6,
+                  )),
+              Align(
+                  alignment: Alignment.center,
+                  child: Divider(
+                    color: Color(0xff314B8C),
+                    thickness: 2.5,
+                    indent: 100,
+                    endIndent: 100,
+                  )),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              DropdownButtonFormField(
+                decoration: new InputDecoration(
+                    icon: Icon(Icons.language)), //, color: Colors.white10
+                value: selectedRoom,
+                items: roomTypes.data.propertyRoom
+                    .map<DropdownMenuItem<PropertyRoom>>(
+                        (PropertyRoom country) {
+                  return DropdownMenuItem<PropertyRoom>(
+                    value: country,
+                    child: Text(country.roomName,
+                        style:
+                            TextStyle(color: Color.fromRGBO(58, 66, 46, .9))),
+                  );
+                }).toList(),
+
+                onChanged: (PropertyRoom newValue) {
+                  setState(() {
+                    selectedRoom = newValue;
+                    count++;
+                    headings.add(selectedRoom.roomName.toString());
+                  });
+                  print(newValue.roomName);
+                },
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   List<List<Widget>> photo = [[]];
@@ -190,10 +247,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           print(name);
           return index == list.length
               ? InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CameraScreen(name: name)));
-                  },
+                  onTap: () {},
                   child: Icon(Icons.add),
                 )
               : list[index];
@@ -215,8 +269,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               pathList[i],
             ),
           ),
-          height:30,
-          width:30,
+          height: 30,
+          width: 30,
         ),
       );
     }
@@ -312,53 +366,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  showPicker(BuildContext context) {
-    Picker picker = new Picker(
-        height: 180,
-        adapter: PickerDataAdapter<String>(
-            pickerdata: new JsonDecoder().convert(PickerData), isArray: false),
-        changeToFirst: true,
-        textAlign: TextAlign.left,
-        columnPadding: const EdgeInsets.all(8.0),
-        onConfirm: (Picker picker, List value) {
-          print(value.toString());
-          print(picker.getSelectedValues());
-          setState(() {
-            count++;
-            headings.add(picker.getSelectedValues().join(""));
-          });
-        });
-    picker.show(_scaffoldKey.currentState);
-  }
 
-  static const PickerData = '''
-[
-    {
-        "room1": [
-             "room1SubRoom1",
-             "room1SubRoom2",
-             "room1SubRoom3"
-        ]
-    },
-    {
-        "room2": [
-             "room2SubRoom1",
-             "room3SubRoom2",
-             "room4SubRoom3"
-        ]
-    },
-    {
-        "room3": [
-            "noSubRooms"
-        ]
-    },
-    {
-        "room4": [
-             "room4SubRoom1"
-        ]
-    }
-]
-    ''';
 
   Widget titleWidget(BuildContext context, String title) {
     return Text(

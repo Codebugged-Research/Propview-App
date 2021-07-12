@@ -11,15 +11,15 @@ class UserService extends AuthService {
   // ignore: missing_return
   static Future<User> getUser() async {
     var auth = await AuthService.getSavedAuth();
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/user/${auth['id']}',
-        method: 'GET');
-    if (response.statusCode == 200) {
-      User user = User.fromJson(json.decode(response.body));
-      return user;
-    } else {
-      print("DEBUG");
-    }
+    // http.Response response = await AuthService.makeAuthenticatedRequest(
+    //     AuthService.BASE_URI + 'api/user/${auth['id']}',
+    //     method: 'GET');
+    // if (response.statusCode == 200) {
+    //   User user = User.fromJson(json.decode(response.body));
+    //   return user;
+    // } else {
+    //   print("DEBUG");
+    // }
 
     var cacheData = APICacheManager();
     bool doesExist = await cacheData.isAPICacheKeyExist("getUser");
