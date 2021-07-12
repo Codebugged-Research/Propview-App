@@ -69,9 +69,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   List headings = [];
   int count = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool camSwitch = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return camSwitch ? CameraScreen() :Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(),
       body: loader
@@ -247,7 +250,11 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           print(name);
           return index == list.length
               ? InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      camSwitch = !camSwitch;
+                    });
+                  },
                   child: Icon(Icons.add),
                 )
               : list[index];
@@ -257,23 +264,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   issueCard(constraints, index) {
-    photo[index].clear();
-    List<String> pathList = prefs.getStringList(headings[index].toString());
-    pathList = pathList == null ? [] : pathList;
-    print(pathList.length);
-    for (int i = 0; i < pathList.length; i++) {
-      photo[index].add(
-        Container(
-          child: Image.file(
-            File(
-              pathList[i],
-            ),
-          ),
-          height: 30,
-          width: 30,
-        ),
-      );
-    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
