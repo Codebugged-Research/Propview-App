@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Task.dart';
 import 'package:propview/services/taskServices.dart';
+import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/TaskManager/CreateTaskScreen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -60,54 +61,59 @@ class _SoloCalendarState extends State<SoloCalendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:loading ? Center(child: CircularProgressIndicator(),) :  Padding(
-        padding: const EdgeInsets.only(top: 32.0),
-        child: SfCalendar(
-          onLongPress: (event) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CreateTaskScreen(),
+      body: loading
+          ? circularProgressWidget()
+          : Padding(
+              padding: const EdgeInsets.only(top: 32.0),
+              child: SfCalendar(
+                onLongPress: (event) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          MaterialButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => CreateTaskScreen(),
+                                ),
+                              );
+                            },
+                            child: Text("Create New Task"),
                           ),
-                        );
-                      },
-                      child: Text("Create New Task"),
+                        ],
+                      ),
                     ),
-                  ],
+                  );
+                },
+                showNavigationArrow: true,
+                dataSource: _getCalendarDataSource(task.data.task),
+                view: CalendarView.month,
+                showDatePickerButton: true,
+                appointmentTimeTextFormat: 'HH:mm',
+                allowedViews: [
+                  CalendarView.day,
+                  CalendarView.month,
+                  CalendarView.timelineDay,
+                  CalendarView.timelineMonth,
+                ],
+                monthViewSettings: MonthViewSettings(
+                  showAgenda: true,
+                  showTrailingAndLeadingDates: false,
+                  appointmentDisplayMode:
+                      MonthAppointmentDisplayMode.appointment,
+                  numberOfWeeksInView: 6,
                 ),
+                scheduleViewSettings:
+                    ScheduleViewSettings(hideEmptyScheduleWeek: false),
+                timeSlotViewSettings: TimeSlotViewSettings(
+                    timeInterval: Duration(minutes: 30),
+                    startHour: 7,
+                    endHour: 21),
               ),
-            );
-          },
-          showNavigationArrow: true,
-          dataSource: _getCalendarDataSource(task.data.task),
-          view: CalendarView.month,
-          showDatePickerButton: true,
-          appointmentTimeTextFormat: 'HH:mm',
-          allowedViews: [
-            CalendarView.day,
-            CalendarView.month,
-            CalendarView.timelineDay,
-            CalendarView.timelineMonth,
-          ],
-          monthViewSettings: MonthViewSettings(
-            showAgenda: true,
-            showTrailingAndLeadingDates: false,
-            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-            numberOfWeeksInView: 6,
-          ),
-          scheduleViewSettings:
-              ScheduleViewSettings(hideEmptyScheduleWeek: false),
-          timeSlotViewSettings: TimeSlotViewSettings(
-              timeInterval: Duration(minutes: 30), startHour: 7, endHour: 21),
-        ),
-      ),
+            ),
     );
   }
 }

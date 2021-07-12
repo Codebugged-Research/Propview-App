@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyService.dart';
@@ -13,9 +14,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  User user;
+  Property property;
+  bool loading = false;
+  bool loading2 = false;
+
+  int page = 0;
+  ScrollController _sc = new ScrollController();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
     _sc.addListener(() {
@@ -24,14 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
-  User user;
-  Property property;
-  bool loading = false;
-  bool loading2 = false;
-
-  int page = 0;
-  ScrollController _sc = new ScrollController();
 
   getData() async {
     setState(() {
@@ -74,22 +74,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                   child: ListTile(
-                    leading: Image.asset("assets/dummy.png"),
-                    title: Text(
-                      user.name,
-                      style: GoogleFonts.nunito(
-                        color: Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                    leading: ClipOval(
+                      child: FadeInImage.assetNetwork(
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                        placeholder: "assets/loader.gif",
+                        image: "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                        imageErrorBuilder: (BuildContext context,
+                            Object exception, StackTrace stackTrace) {
+                          return CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 80,
+                            backgroundImage: AssetImage(
+                              "assets/dummy.png",
+                            ),
+                          );
+                        },
                       ),
                     ),
+                    title: Text(
+                      user.name,
+                      style: Theme.of(context).primaryTextTheme.headline6.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
                     subtitle: Text(
-                      "Admin/Super_Admin",
-                      style: GoogleFonts.nunito(
-                        color: Color(0xffB2B2B2),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      "Admin/Super Admin",
+                      style: Theme.of(context).primaryTextTheme.subtitle2.copyWith(color: Colors.grey, fontWeight: FontWeight.bold),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -158,10 +168,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       return index == property.data.property.length
                           ? Center(
                               child: loading2
-                                  ? CircularProgressIndicator()
+                                  ? circularProgressWidget()
                                   : Container(
                                       padding: EdgeInsets.all(16),
-                                      child: Text("No more properties"),
+                                      child: Text("No more Properties"),
                                     ))
                           : PropertyCard(
                               propertyElement: property.data.property[index],

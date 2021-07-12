@@ -5,8 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:propview/config.dart';
 import 'package:propview/services/baseService.dart';
-import 'package:propview/utils/constants.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Manager/Home/homeScreen.dart';
@@ -119,7 +119,7 @@ class _LandingScreenState extends State<LandingScreen> {
   checkversion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
     var responseMap = jsonDecode(getVersion);
-    if (responseMap != APPVERISON) {
+    if (responseMap != Config.APP_VERISON) {
       versionErrorWiget(responseMap,context,
           "https://play.google.com/store/apps/details?id=com.propdial.propview");
     }

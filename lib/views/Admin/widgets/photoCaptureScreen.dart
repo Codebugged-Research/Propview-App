@@ -130,7 +130,7 @@ class _CameraScreenState extends State<CameraScreen>
               height: MediaQuery.of(context).size.height - 168,
               width: MediaQuery.of(context).size.width,
               child: !mounted
-                  ? Center(child: circularProgressWidget())
+                  ? circularProgressWidget()
                   : AspectRatio(
                       aspectRatio: cameraController.value.aspectRatio,
                       child: CameraPreview(cameraController))),

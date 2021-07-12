@@ -7,6 +7,8 @@ import 'package:propview/models/formModels/tempFullInscpectionModel.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/roomTypeService.dart';
+import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/widgets/photoCaptureScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -76,7 +78,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       key: _scaffoldKey,
       appBar: AppBar(),
       body: loader
-          ? CircularProgressIndicator()
+          ? circularProgressWidget()
           : LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -248,9 +250,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           print(name);
           return index == list.length
               ? InkWell(
-                  onTap: () {
-                    
-                  },
+                  onTap: () {},
                   child: Icon(Icons.add),
                 )
               : list[index];
@@ -351,8 +351,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       ],
     );
   }
-
-
 
   Widget titleWidget(BuildContext context, String title) {
     return Text(

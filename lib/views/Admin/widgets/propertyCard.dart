@@ -176,7 +176,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  optionCard("Inspection", "task", () {
+                  optionCard("Inspection", "inspection-asset", () {
                     Routing.makeRouting(context,
                         routeMethod: 'push', newWidget: InspectionHomeScreen());
                   }),
@@ -196,13 +196,6 @@ class _PropertyCardState extends State<PropertyCard> {
                 ],
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //     optionCard("Assign\nproperty", "owner", () {}),
-              //   ],
-              // ),
             ],
           ),
         ),

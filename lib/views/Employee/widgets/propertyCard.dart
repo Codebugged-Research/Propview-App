@@ -174,7 +174,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  optionCard("Inspection", "task", () {}),
+                  optionCard("Inspection", "inspection-asset", () {}),
                   optionCard("Edit\nProperty", "renovation", () {}),
                   optionCard("Property\nDetails", "house", () {
                     Navigator.of(context).push(

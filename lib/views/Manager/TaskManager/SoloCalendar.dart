@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Task.dart';
 import 'package:propview/services/taskServices.dart';
+import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/TaskManager/CreateTaskScreen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -60,7 +61,7 @@ class _SoloCalendarState extends State<SoloCalendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:loading ? Center(child: CircularProgressIndicator(),) :  Padding(
+      body:loading ? circularProgressWidget() :  Padding(
         padding: const EdgeInsets.only(top: 32.0),
         child: SfCalendar(
           onLongPress: (event) {

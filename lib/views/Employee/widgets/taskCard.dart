@@ -9,6 +9,7 @@ import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskServices.dart';
 import 'package:propview/services/userService.dart';
+import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Employee/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Employee/Property/PropertyOwnerDetailScreen.dart';
@@ -59,9 +60,7 @@ class _TaskCardState extends State<TaskCard> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
+        ? circularProgressWidget()
         : GestureDetector(
             onTap: () {
               taskDetailsWidget(context);

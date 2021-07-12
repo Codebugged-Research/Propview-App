@@ -1,24 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:api_cache_manager/utils/cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:propview/config.dart';
 
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/authService.dart';
 import 'package:propview/services/userService.dart';
-import 'package:propview/utils/constants.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/loginSceen.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -28,10 +27,13 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   User user;
   bool isLoading = false;
+  bool clearLoader = false;
   bool isNewVisible = true;
   bool isCurrentVisible = true;
 
   final formkey = new GlobalKey<FormState>();
+  final picker = ImagePicker();
+  var cacheData = APICacheManager();
 
   String currentPassword;
   String newPassword;
@@ -55,8 +57,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  final picker = ImagePicker();
-
   updatePasswordRequest() async {
     print(currentPasswordController.text +
         "_" +
@@ -70,11 +70,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       bool isUpdated = await UserService.updateUser(jsonEncode(user.toJson()));
       Routing.makeRouting(context, routeMethod: 'pop');
       if (isUpdated)
-        showInSnackBar(context, 'Password updated!', 4000);
+        showInSnackBar(context, 'Password Updated Successfully!', 4000);
       else
-        showInSnackBar(context, 'failed to update the password', 4000);
+        showInSnackBar(
+            context, 'Failed to update the password! Try again.', 4000);
     } else {
-      showInSnackBar(context, 'Current Password not matched!', 4000);
+      showInSnackBar(context, 'Current Password not matched! Try again.', 4000);
     }
   }
 
@@ -99,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future compress(img) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     final result = await FlutterImageCompress.compressAndGetFile(
-      img.path, 
+      img.path,
       path.join(dir, user.userId.toString() + ".jpeg"),
       format: CompressFormat.jpeg,
       quality: 40,
@@ -109,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    if (pickedFile != null) {      
+    if (pickedFile != null) {
       File img = await compress(pickedFile);
       showDialog(
         context: context,
@@ -126,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 MaterialButton(
                   onPressed: () async {
                     var request = http.MultipartRequest('POST',
-                        Uri.parse("http://68.183.247.233/api/upload/image"));
+                        Uri.parse(Config.UPLOAD_IMAGE_ENDPOINT));
                     request.files.add(
                         await http.MultipartFile.fromPath('upload', img.path));
                     var res = await request.send();
@@ -136,14 +137,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       getData();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Profile picture updated."),
+                          content: Text("Profile Picture updated successfully!!!"),
                         ),
                       );
                     } else {
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Profile picture not updated."),
+                          content: Text("Failed to update the Profile Picture! Try again."),
                         ),
                       );
                     }
@@ -159,10 +160,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('No image selected.');
     }
   }
-
-  
-  bool clearLoader = false;
-  var cacheData = APICacheManager();
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fit: BoxFit.cover,
                               placeholder: "assets/loader.gif",
                               image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
+                                  "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                               imageErrorBuilder: (BuildContext context,
                                   Object exception, StackTrace stackTrace) {
                                 return CircleAvatar(
@@ -239,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       color: Colors.white,
                                     ),
                                     Text(
-                                      'update Profile Picture',
+                                      'Update Profile Picture',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: Colors.white,
@@ -265,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
                       Icons.security,
                       () {}),
-                     profileInfo('Reset Cache', 'clear data', Icons.clear,
+                  profileInfo('Reset Cache', 'Clear the cache data', Icons.clear,
                       () async {
                     setState(() {
                       clearLoader = true;
@@ -275,7 +272,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       clearLoader = false;
                     });
                   }),
-                  profileInfo('Logout', '', Icons.exit_to_app_rounded, () async{
+                  profileInfo('Logout', '', Icons.exit_to_app_rounded,
+                      () async {
                     AuthService.clearAuth();
                     await cacheData.emptyCache();
                     Navigator.of(context).pushReplacement(
@@ -283,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }),
                   Padding(
                     padding: EdgeInsets.all(12),
-                    child: Center(child: Text(APPVERISON)),
+                    child: Center(child: Text(Config.APP_VERISON)),
                   ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),
