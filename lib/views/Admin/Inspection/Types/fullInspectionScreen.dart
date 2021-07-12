@@ -70,11 +70,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   int count = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  bool camSwitch = false;
-
   @override
   Widget build(BuildContext context) {
-    return camSwitch ? CameraScreen() :Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(),
       body: loader
@@ -251,9 +249,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           return index == list.length
               ? InkWell(
                   onTap: () {
-                    setState(() {
-                      camSwitch = !camSwitch;
-                    });
+                    
                   },
                   child: Icon(Icons.add),
                 )
