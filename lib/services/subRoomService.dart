@@ -24,25 +24,33 @@ class SubRoomService extends AuthService {
 
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      List<SubRoom> subRoom = responseMap["data"]
+      if (responseMap.length == 0) {
+        return [];
+      } else {
+        List<SubRoom> subRoom = responseMap
           .map<SubRoom>((subRoomMap) => SubRoom.fromJson(subRoomMap))
           .toList();
       return subRoom;
+      }
     } else
       print("Not Working");
   }
 
   static Future<List<SubRoom>> getSubRoomByPropertyId(String propertyId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'subroom/get/property/$propertyId',
+        AuthService.BASE_URI + 'api/subroom/get/property/$propertyId',
         method: 'GET');
-
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      List<SubRoom> subRoom = responseMap["data"]
+      if (responseMap.length == 0) {
+        return [];
+      } else {
+        List<SubRoom> subRoom = responseMap
           .map<SubRoom>((subRoomMap) => SubRoom.fromJson(subRoomMap))
           .toList();
       return subRoom;
+      }
+      
     } else
       print("Not Working");
   }

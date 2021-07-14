@@ -14,11 +14,19 @@ class PropertyCard extends StatefulWidget {
 }
 
 class _PropertyCardState extends State<PropertyCard> {
+  PropertyElement propertyElement;
+
+  @override
+  void initState() {
+    super.initState();
+    propertyElement = widget.propertyElement;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        propertyOptionWidget(context);
+        propertyOptionWidget(context, propertyElement);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -144,7 +152,7 @@ class _PropertyCardState extends State<PropertyCard> {
     );
   }
 
-  propertyOptionWidget(BuildContext context) {
+  propertyOptionWidget(BuildContext context, PropertyElement propertyElement) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -178,7 +186,9 @@ class _PropertyCardState extends State<PropertyCard> {
                 children: [
                   optionCard("Inspection", "inspection-asset", () {
                     Routing.makeRouting(context,
-                        routeMethod: 'push', newWidget: InspectionHomeScreen());
+                        routeMethod: 'push',
+                        newWidget: InspectionHomeScreen(
+                            propertyElement: propertyElement));
                   }),
                   optionCard("Assign\nproperty", "owner", () {}),
                   // optionCard("Edit\nProperty", "renovation", () {}),

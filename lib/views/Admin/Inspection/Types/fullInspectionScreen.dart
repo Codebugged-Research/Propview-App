@@ -1,16 +1,15 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:propview/models/Room.dart';
+import 'package:propview/models/Subroom.dart';
+import 'package:propview/services/roomService.dart';
+import 'package:propview/services/subRoomService.dart';
+import 'package:propview/views/Admin/widgets/alertWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:propview/models/Property.dart';
-import 'package:propview/models/formModels/tempFullInscpectionModel.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 import 'package:propview/models/RoomType.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/Admin/widgets/photoCaptureScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -34,6 +33,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   TextEditingController propertyTaxController = TextEditingController();
   TextEditingController anyOtherController = TextEditingController();
 
+  List<Room> rooms = [];
+  List<SubRoom> subRooms = [];
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +52,23 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     });
     roomTypes = await RoomTypeService.getRoomTypes();
     prefs = await SharedPreferences.getInstance();
+    rooms = await RoomService.getRoomByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
+    if (rooms.length == 0) {
+      showDialog(
+          context: context,
+          builder: (_) {
+            return AlertWidget(
+              title: 'Property Structre is not defined!',
+              body:
+                  'First you have to determine the property structure to begin with inspection.',
+            );
+          });
+    } else {
+      subRooms = await SubRoomService.getSubRoomByPropertyId(
+          propertyElement.tableproperty.propertyId.toString());
+    }
+
     setState(() {
       selectedRoom = roomTypes.data.propertyRoom[0];
       loader = false;
@@ -368,6 +387,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       child: TextField(
         controller: textEditingController,
         obscureText: false,
+        textCapitalization: TextCapitalization.words,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.grey[300],
