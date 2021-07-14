@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/formModels/tempFullInscpectionModel.dart';
 import 'package:flutter_picker/flutter_picker.dart';
-import 'package:propview/models/roomType.dart';
+import 'package:propview/models/RoomType.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
