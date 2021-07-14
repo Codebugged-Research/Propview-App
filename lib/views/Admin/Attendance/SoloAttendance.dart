@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
@@ -205,7 +206,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                               placeholder: "assets/loader.gif",
                               fit: BoxFit.cover,
                               image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
+                                  "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                               imageErrorBuilder: (BuildContext context,
                                   Object exception, StackTrace stackTrace) {
                                 return CircleAvatar(

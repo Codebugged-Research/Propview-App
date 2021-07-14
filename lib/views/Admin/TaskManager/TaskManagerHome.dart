@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
@@ -124,7 +125,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             fit: BoxFit.cover,
                             placeholder: "assets/loader.gif",
                             image:
-                                "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
+                                "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                             imageErrorBuilder: (BuildContext context,
                                 Object exception, StackTrace stackTrace) {
                               return CircleAvatar(

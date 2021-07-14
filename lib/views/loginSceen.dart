@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
         width: UIConstants.fitToWidth(360, context),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 48.0, left: 32.0, right: 32.0, bottom: 32.0),
+              top: 48.0, left: 32.0, right: 32.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/attd.dart';
@@ -53,8 +54,9 @@ class _AttendanceHomeState extends State<AttendanceHome>
     print(myAttendance.data.attendance.length);
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
-              .where(
-                  (element) => element.userId == userList[i].userId.toString()&& element.isPresent)
+              .where((element) =>
+                  element.userId == userList[i].userId.toString() &&
+                  element.isPresent)
               .length >
           0) {
         userList[i].present = true;
@@ -67,7 +69,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     String json = prefs.getString("punch");
     if (json != null) {
       Map decodedJson = jsonDecode(json);
-      if(decodedJson["out"] == "--/--/-- -- : --"){
+      if (decodedJson["out"] == "--/--/-- -- : --") {
         setState(() {
           label = "Punch Out";
         });
@@ -127,7 +129,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                   placeholder: "assets/loader.gif",
                                   fit: BoxFit.cover,
                                   image:
-                                      "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
+                                      "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                                   imageErrorBuilder: (BuildContext context,
                                       Object exception, StackTrace stackTrace) {
                                     return CircleAvatar(
@@ -149,19 +151,21 @@ class _AttendanceHomeState extends State<AttendanceHome>
                               children: [
                                 Text(
                                   user.name,
-                                  style: GoogleFonts.nunito(
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline5
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "Manager",
-                                  style: GoogleFonts.nunito(
-                                    color: Color(0xffB2B2B2),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle2
+                                      .copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -241,18 +245,19 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                 ),
                               )
                             : ListView.builder(
-                          padding: EdgeInsets.only(top: 0),
-                          itemCount: gg.entries.length,
-                          itemBuilder: (context, index) {
-                            return ExpansionTile(
-                              title: Text(
-                                  gg.entries.skip(index).first.key == ""
-                                      ? "Other"
-                                      : gg.entries.skip(index).first.key),
-                              children: _buildExpandableContent(gg.entries.skip(index).first.value),
-                            );
-                          },
-                        ),
+                                padding: EdgeInsets.only(top: 0),
+                                itemCount: gg.entries.length,
+                                itemBuilder: (context, index) {
+                                  return ExpansionTile(
+                                    title: Text(
+                                        gg.entries.skip(index).first.key == ""
+                                            ? "Other"
+                                            : gg.entries.skip(index).first.key),
+                                    children: _buildExpandableContent(
+                                        gg.entries.skip(index).first.value),
+                                  );
+                                },
+                              ),
                         attendance.count == 0
                             ? Center(
                                 child: Text(

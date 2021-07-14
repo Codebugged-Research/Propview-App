@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
@@ -89,7 +90,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             fit: BoxFit.cover,
                             placeholder: "assets/loader.gif",
                             image:
-                                "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
+                                "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                             imageErrorBuilder: (BuildContext context,
                                 Object exception, StackTrace stackTrace) {
                               return CircleAvatar(
@@ -105,19 +106,21 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       ),
                       title: Text(
                         user.name,
-                        style: GoogleFonts.nunito(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .headline5
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
                         "Employee",
-                        style: GoogleFonts.nunito(
-                          color: Color(0xffB2B2B2),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,

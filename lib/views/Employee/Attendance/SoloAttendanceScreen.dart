@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
@@ -206,7 +207,7 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
                         placeholder: "assets/loader.gif",
                         fit: BoxFit.cover,
                         image:
-                        "https://propview.sgp1.digitaloceanspaces.com/User/${user.userId}.jpeg",
+                        "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                         imageErrorBuilder: (BuildContext context,
                             Object exception, StackTrace stackTrace) {
                           return CircleAvatar(
@@ -228,19 +229,21 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
                     children: [
                       Text(
                         user.name,
-                        style: GoogleFonts.nunito(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline5
+                                  .copyWith(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "Employee",
-                        style: GoogleFonts.nunito(
-                          color: Color(0xffB2B2B2),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                         style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

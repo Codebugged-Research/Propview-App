@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 
 class LogCard extends StatefulWidget {
@@ -54,7 +55,7 @@ class _LogCardState extends State<LogCard> {
                               fit: BoxFit.cover,
                               placeholder: "assets/loader.gif",
                               image:
-                                  "https://propview.sgp1.digitaloceanspaces.com/User/${widget.attendanceElement.tblUsers.userId}.png",
+                                  "${Config.STORAGE_ENDPOINT}${widget.attendanceElement.tblUsers.userId}.png",
                               imageErrorBuilder: (BuildContext context,
                                   Object exception, StackTrace stackTrace) {
                                 return CircleAvatar(

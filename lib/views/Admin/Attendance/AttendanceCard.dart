@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/attd.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -52,7 +53,7 @@ class _AttendanceCardState extends State<AttendanceCard> {
                         fit: BoxFit.cover,
                         placeholder: "assets/loader.gif",
                         image:
-                            "https://propview.sgp1.digitaloceanspaces.com/User/${widget.attd.user.userId}.png",
+                            "${Config.STORAGE_ENDPOINT}${widget.attd.user.userId}.png",
                         imageErrorBuilder: (BuildContext context,
                             Object exception, StackTrace stackTrace) {
                           return CircleAvatar(
