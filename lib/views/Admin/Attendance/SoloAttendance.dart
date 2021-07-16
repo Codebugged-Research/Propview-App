@@ -89,10 +89,11 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     if (id != "-") {
       tempAttendance = await AttendanceService.getLogById(id);
       print(tempAttendance.toJson());
-      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : "-";
+      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
       tempAttendance.punchOut = endTime;
       tempAttendance.workHour =
-          endTime.difference(startTime).inHours.toString();
+          endTime.difference(startTime).inHours;
+          tempAttendance.diff_km = user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
     var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
@@ -116,10 +117,13 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       "parent_id": user.parentId,
       "punch_in": start,
       "punch_out": end,
-      "meter_in": user.bikeReading == 1 ? startMeter : "-",
-      "meter_out": user.bikeReading == 1 ? endMeter : "-",
+      "meter_in": user.bikeReading == 1 ? startMeter : 0,
+      "meter_out": user.bikeReading == 1 ? endMeter : 0,
       "work_hour": 0,
-      "date": dateFormatter()
+      "date": dateFormatter(),
+      "name": user.name,
+      "email": user.officialEmail,
+      "diff_km": 0,
     };
     var result = await AttendanceService.createLog(payload);
     if (result != false) {
@@ -143,8 +147,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
 
   String start = "--/--/-- -- : --";
   String end = "--/--/-- -- : --";
-  String startMeter = "-";
-  String endMeter = "-";
+  int startMeter = 0;
+  int endMeter = 0;
   String id = "-";
 
   TextEditingController _startMeterController = TextEditingController();
@@ -263,58 +267,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Padding(
-                          //   padding: EdgeInsets.symmetric(horizontal: 32.0),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       Container(),
-                          //       reset
-                          //           ? InkWell(
-                          //               onTap: () async {
-                          //                 setState(() {
-                          //                   start = "--/--/-- -- : --";
-                          //                   end = "--/--/-- -- : --";
-                          //                   startMeter = "-";
-                          //                   endMeter = "-";
-                          //                   id = "-";
-                          //                   reset = false;
-                          //                 });
-                          //                 SharedPreferences prefs =
-                          //                     await SharedPreferences
-                          //                         .getInstance();
-                          //                 prefs.setString(
-                          //                   "punch",
-                          //                   jsonEncode(
-                          //                     {
-                          //                       "in": start,
-                          //                       "out": end,
-                          //                       "inMeter": startMeter,
-                          //                       "outMeter": endMeter,
-                          //                       "reset": reset,
-                          //                       "id": id
-                          //                     },
-                          //                   ),
-                          //                 );
-                          //               },
-                          //               child: Container(
-                          //                 decoration: BoxDecoration(
-                          //                   color: Colors.white,
-                          //                   borderRadius:
-                          //                       BorderRadius.circular(12),
-                          //                 ),
-                          //                 child: Padding(
-                          //                   padding: const EdgeInsets.all(4.0),
-                          //                   child: Icon(
-                          //                     Icons.refresh,
-                          //                   ),
-                          //                 ),
-                          //               ),
-                          //             )
-                          //           : Container(),
-                          //     ],
-                          //   ),
-                          // ),
                           SizedBox(
                             height: 32,
                           ),
@@ -362,11 +314,11 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                         : Container(),
                                     user.bikeReading == 1
                                         ? Text(
-                                            startMeter,
+                                            startMeter.toString(),
                                             style: GoogleFonts.nunito(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
-                                              color: startMeter == "-"
+                                              color: startMeter == 0
                                                   ? Colors.red
                                                   : Colors.green,
                                             ),
@@ -413,11 +365,11 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                         : Container(),
                                     user.bikeReading == 1
                                         ? Text(
-                                            endMeter,
+                                            endMeter.toString(),
                                             style: GoogleFonts.nunito(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
-                                              color: endMeter == "-"
+                                              color: endMeter == 0
                                                   ? Colors.red
                                                   : Colors.green,
                                             ),
@@ -527,8 +479,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                           setState(() {
                                             start = "--/--/-- -- : --";
                                             end = "--/--/-- -- : --";
-                                            startMeter = "-";
-                                            endMeter = "-";
+                                            startMeter = 0;
+                                            endMeter = 0;
                                             id = "-";
                                             reset = false;
                                           });
@@ -568,8 +520,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                           setState(() {
                                             start = "--/--/-- -- : --";
                                             end = "--/--/-- -- : --";
-                                            startMeter = "-";
-                                            endMeter = "-";
+                                            startMeter = 0;
+                                            endMeter = 0;
                                             id = "-";
                                             reset = false;
                                           });
@@ -670,7 +622,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    endMeter = _endMeterController.text;
+                    endMeter = int.parse(_endMeterController.text);
                   });
                 },
                 controller: _endMeterController,
@@ -679,14 +631,12 @@ class _SoloAttendanceState extends State<SoloAttendance> {
             actions: [
               MaterialButton(
                 onPressed: _endMeterController.text.isNotEmpty &&
-                        (int.parse(startMeter) <= int.parse(endMeter))
+                        (startMeter <= endMeter)
                     ? () {
                         setState(
                           () {
                             end = DateTime.now().toString();
-                            endMeter = double.parse(_endMeterController.text)
-                                .toInt()
-                                .toString();
+                            endMeter = int.parse(_endMeterController.text);
                             reset = true;
                             savePunch();
                             updateLog();
@@ -696,7 +646,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                       }
                     : () {
                         setState(() {
-                          endMeter = "-";
+                          endMeter = 0;
                           reset = true;
                         });
                         Navigator.of(context).pop();
@@ -752,7 +702,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    startMeter = _startMeterController.text;
+                    startMeter = int.parse(_startMeterController.text);
                   });
                 },
                 controller: _startMeterController,
@@ -766,9 +716,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                           () {
                             start = DateTime.now().toString();
                             startMeter =
-                                double.parse(_startMeterController.text)
-                                    .toInt()
-                                    .toString();
+                                int.parse(_startMeterController.text);
                             createLog();
                             Navigator.of(context).pop();
                           },

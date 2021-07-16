@@ -8,7 +8,6 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Employee/Attendance/LogCard.dart';
 import 'package:propview/views/Employee/Attendance/SoloAttendanceScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -143,7 +142,7 @@ class _AttendanceHomeState extends State<AttendanceHome> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => SoloAttendanceScreen(),
+                                builder: (context) => SoloAttendance(),
                               ),
                             );
                           },

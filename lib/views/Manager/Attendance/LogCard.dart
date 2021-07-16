@@ -55,7 +55,7 @@ class _LogCardState extends State<LogCard> {
                     fit: BoxFit.cover,
                     placeholder: "assets/loader.gif",
                     image:
-                        "${Config.STORAGE_ENDPOINT}${widget.attendanceElement.tblUsers.userId}.png",
+                        "${Config.STORAGE_ENDPOINT}${widget.attendanceElement.tblUsers.userId}.jpeg",
                     imageErrorBuilder: (BuildContext context, Object exception,
                         StackTrace stackTrace) {
                       return CircleAvatar(
@@ -103,7 +103,7 @@ class _LogCardState extends State<LogCard> {
                       textWidget(
                         context,
                         "Meter In: ",
-                        widget.attendanceElement.meterIn,
+                        widget.attendanceElement.meterIn.toString(),
                       ),
                       SizedBox(
                         width: 16,
@@ -111,14 +111,14 @@ class _LogCardState extends State<LogCard> {
                       textWidget(
                         context,
                         "Meter Out: ",
-                        widget.attendanceElement.meterOut,
+                        widget.attendanceElement.meterOut.toString(),
                       ),
                     ],
                   ),
                   textWidget(
                     context,
                     "Work Hours: ",
-                    widget.attendanceElement.workHour,
+                    widget.attendanceElement.workHour.toString(),
                   ),
                 ],
               ),

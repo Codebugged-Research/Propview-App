@@ -9,18 +9,17 @@ import 'package:propview/services/attendanceService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/Employee/Attendance/LogCard.dart';
 import 'package:propview/views/Employee/landingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SoloAttendanceScreen extends StatefulWidget {
-  const SoloAttendanceScreen();
+class SoloAttendance extends StatefulWidget {
+  const SoloAttendance();
 
   @override
-  _SoloAttendanceScreenState createState() => _SoloAttendanceScreenState();
+  _SoloAttendanceState createState() => _SoloAttendanceState();
 }
 
-class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
+class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   void initState() {
     super.initState();
@@ -90,10 +89,11 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
     if (id != "-") {
       tempAttendance = await AttendanceService.getLogById(id);
       print(tempAttendance.toJson());
-      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : "-";
+      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
       tempAttendance.punchOut = endTime;
       tempAttendance.workHour =
-          endTime.difference(startTime).inHours.toString();
+          endTime.difference(startTime).inHours;
+          tempAttendance.diff_km = user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
     var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
@@ -117,10 +117,13 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
       "parent_id": user.parentId,
       "punch_in": start,
       "punch_out": end,
-      "meter_in": user.bikeReading == 1 ? startMeter : "-",
-      "meter_out": user.bikeReading == 1 ? endMeter : "-",
+      "meter_in": user.bikeReading == 1 ? startMeter : 0,
+      "meter_out": user.bikeReading == 1 ? endMeter : 0,
       "work_hour": 0,
-      "date": dateFormatter()
+      "date": dateFormatter(),
+      "name": user.name,
+      "email": user.officialEmail,
+      "diff_km": 0,
     };
     var result = await AttendanceService.createLog(payload);
     if (result != false) {
@@ -144,8 +147,8 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
 
   String start = "--/--/-- -- : --";
   String end = "--/--/-- -- : --";
-  String startMeter = "-";
-  String endMeter = "-";
+  int startMeter = 0;
+  int endMeter = 0;
   String id = "-";
 
   TextEditingController _startMeterController = TextEditingController();
@@ -170,470 +173,416 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
       body: loading
           ? circularProgressWidget()
           : Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
-              child: Row(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  InkWell(
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => LandingScreen(
-                            selectedIndex: 2,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
+                    child: Row(
+                      children: [
+                        InkWell(
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => LandingScreen(
+                                  selectedIndex: 2,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 30,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                              height: 60,
+                              width: 60,
+                              placeholder: "assets/loader.gif",
+                              fit: BoxFit.cover,
+                              image:
+                                  "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                              imageErrorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stackTrace) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  backgroundImage: AssetImage(
+                                    "assets/dummy.png",
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 30,
-                    child: ClipOval(
-                      child: FadeInImage.assetNetwork(
-                        height: 60,
-                        width: 60,
-                        placeholder: "assets/loader.gif",
-                        fit: BoxFit.cover,
-                        image:
-                        "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
-                        imageErrorBuilder: (BuildContext context,
-                            Object exception, StackTrace stackTrace) {
-                          return CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 30,
-                            backgroundImage: AssetImage(
-                              "assets/dummy.png",
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.name,
+                              style: GoogleFonts.nunito(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          );
-                        },
-                      ),
+                            Text(
+                              "Employee",
+                              style: GoogleFonts.nunito(
+                                color: Color(0xffB2B2B2),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    width: 16,
+                  Expanded(
+                    child: Image.asset("assets/attendance.png"),
+                    flex: 3,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.name,
-                        style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline5
-                                  .copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32),
+                        ),
                       ),
-                      Text(
-                        "Employee",
-                         style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Image.asset("assets/attendance.png"),
-              flex: 3,
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 32.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Container(),
-                    //       reset
-                    //           ? InkWell(
-                    //               onTap: () async {
-                    //                 setState(() {
-                    //                   start = "--/--/-- -- : --";
-                    //                   end = "--/--/-- -- : --";
-                    //                   startMeter = "-";
-                    //                   endMeter = "-";
-                    //                   id = "-";
-                    //                   reset = false;
-                    //                 });
-                    //                 SharedPreferences prefs =
-                    //                     await SharedPreferences
-                    //                         .getInstance();
-                    //                 prefs.setString(
-                    //                   "punch",
-                    //                   jsonEncode(
-                    //                     {
-                    //                       "in": start,
-                    //                       "out": end,
-                    //                       "inMeter": startMeter,
-                    //                       "outMeter": endMeter,
-                    //                       "reset": reset,
-                    //                       "id": id
-                    //                     },
-                    //                   ),
-                    //                 );
-                    //               },
-                    //               child: Container(
-                    //                 decoration: BoxDecoration(
-                    //                   color: Colors.white,
-                    //                   borderRadius:
-                    //                       BorderRadius.circular(12),
-                    //                 ),
-                    //                 child: Padding(
-                    //                   padding: const EdgeInsets.all(4.0),
-                    //                   child: Icon(
-                    //                     Icons.refresh,
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             )
-                    //           : Container(),
-                    //     ],
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 32,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 32.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "Punch In",
-                                style: GoogleFonts.nunito(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                          SizedBox(
+                            height: 32,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Punch In",
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      start == "--/--/-- -- : --"
+                                          ? start
+                                          : dateTimeFormatter(start),
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: start == "--/--/-- -- : --"
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            "Reading In",
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                        : Container(),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            startMeter.toString(),
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: startMeter == 0
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                start == "--/--/-- -- : --"
-                                    ? start
-                                    : dateTimeFormatter(start),
-                                style: GoogleFonts.nunito(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Punch Out",
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      end == "--/--/-- -- : --"
+                                          ? end
+                                          : dateTimeFormatter(end),
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: end == "--/--/-- -- : --"
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            "Reading Out",
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                        : Container(),
+                                    user.bikeReading == 1
+                                        ? Text(
+                                            endMeter.toString(),
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: endMeter == 0
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 32,
+                          ),
+                          end == "--/--/-- -- : --"
+                              ? MaterialButton(
+                                  onPressed: user.bikeReading == 1
+                                      ? () {
+                                          if (start == "--/--/-- -- : --") {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchInMeter,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch out now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch Out"),
+                                                    onPressed: punchOurMeter,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      : () {
+                                          if (start == "--/--/-- -- : --") {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchin,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch out now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch Out"),
+                                                    onPressed: punchout,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        },
                                   color: start == "--/--/-- -- : --"
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 16,
-                              ),
-                              user.bikeReading == 1
-                                  ? Text(
-                                "Reading In",
-                                style: GoogleFonts.nunito(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              )
-                                  : Container(),
-                              user.bikeReading == 1
-                                  ? Text(
-                                startMeter,
-                                style: GoogleFonts.nunito(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: startMeter == "-"
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                              )
-                                  : Container(),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "Punch Out",
-                                style: GoogleFonts.nunito(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Text(
-                                end == "--/--/-- -- : --"
-                                    ? end
-                                    : dateTimeFormatter(end),
-                                style: GoogleFonts.nunito(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: end == "--/--/-- -- : --"
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 16,
-                              ),
-                              user.bikeReading == 1
-                                  ? Text(
-                                "Reading Out",
-                                style: GoogleFonts.nunito(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              )
-                                  : Container(),
-                              user.bikeReading == 1
-                                  ? Text(
-                                endMeter,
-                                style: GoogleFonts.nunito(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: endMeter == "-"
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                              )
-                                  : Container(),
-                            ],
-                          ),
+                                      ? Colors.white
+                                      : Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 8),
+                                    child: Text(
+                                      start == "--/--/-- -- : --"
+                                          ? "Punch In"
+                                          : "Punch Out",
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: start == "--/--/-- -- : --"
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          reset
+                              ? MaterialButton(
+                                  onPressed: user.bikeReading == 1
+                                      ? () async {
+                                          setState(() {
+                                            start = "--/--/-- -- : --";
+                                            end = "--/--/-- -- : --";
+                                            startMeter = 0;
+                                            endMeter = 0;
+                                            id = "-";
+                                            reset = false;
+                                          });
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString(
+                                            "punch",
+                                            jsonEncode(
+                                              {
+                                                "in": start,
+                                                "out": end,
+                                                "inMeter": startMeter,
+                                                "outMeter": endMeter,
+                                                "reset": reset,
+                                                "id": id
+                                              },
+                                            ),
+                                          );
+                                          if (start == "--/--/-- -- : --") {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchInMeter,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      : () async {
+                                          setState(() {
+                                            start = "--/--/-- -- : --";
+                                            end = "--/--/-- -- : --";
+                                            startMeter = 0;
+                                            endMeter = 0;
+                                            id = "-";
+                                            reset = false;
+                                          });
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.setString(
+                                            "punch",
+                                            jsonEncode(
+                                              {
+                                                "in": start,
+                                                "out": end,
+                                                "inMeter": startMeter,
+                                                "outMeter": endMeter,
+                                                "reset": reset,
+                                                "id": id
+                                              },
+                                            ),
+                                          );
+                                          if (start == "--/--/-- -- : --") {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                content: Text(
+                                                    "Do you want to punch in now?"),
+                                                actions: [
+                                                  MaterialButton(
+                                                    child: Text("Punch In"),
+                                                    onPressed: punchin,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 8),
+                                    child: Text(
+                                      "Punch In",
+                                      style: GoogleFonts.nunito(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 32,
-                    ),
-                    end == "--/--/-- -- : --"
-                        ? MaterialButton(
-                      onPressed: user.bikeReading == 1
-                          ? () {
-                        if (start == "--/--/-- -- : --") {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                  "Do you want to punch in now?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Punch In"),
-                                  onPressed: punchInMeter,
-                                )
-                              ],
-                            ),
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                  "Do you want to punch out now?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Punch Out"),
-                                  onPressed: punchOurMeter,
-                                )
-                              ],
-                            ),
-                          );
-                        }
-                      }
-                          : () {
-                        if (start == "--/--/-- -- : --") {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                  "Do you want to punch in now?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Punch In"),
-                                  onPressed: punchin,
-                                )
-                              ],
-                            ),
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                  "Do you want to punch out now?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Punch Out"),
-                                  onPressed: punchout,
-                                )
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                      color: start == "--/--/-- -- : --"
-                          ? Colors.white
-                          : Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 8),
-                        child: Text(
-                          start == "--/--/-- -- : --"
-                              ? "Punch In"
-                              : "Punch Out",
-                          style: GoogleFonts.nunito(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: start == "--/--/-- -- : --"
-                                ? Colors.black
-                                : Colors.white,
-                          ),
-                        ),
-                      ),
-                    )
-                        : Container(),
-                    reset
-                        ? MaterialButton(
-                      onPressed: user.bikeReading == 1
-                          ? () async {
-                        setState(() {
-                          start = "--/--/-- -- : --";
-                          end = "--/--/-- -- : --";
-                          startMeter = "-";
-                          endMeter = "-";
-                          id = "-";
-                          reset = false;
-                        });
-                        SharedPreferences prefs =
-                        await SharedPreferences
-                            .getInstance();
-                        prefs.setString(
-                          "punch",
-                          jsonEncode(
-                            {
-                              "in": start,
-                              "out": end,
-                              "inMeter": startMeter,
-                              "outMeter": endMeter,
-                              "reset": reset,
-                              "id": id
-                            },
-                          ),
-                        );
-                        if (start == "--/--/-- -- : --") {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                  "Do you want to punch in now?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Punch In"),
-                                  onPressed: punchInMeter,
-                                )
-                              ],
-                            ),
-                          );
-                        }
-                      }
-                          : () async {
-                        setState(() {
-                          start = "--/--/-- -- : --";
-                          end = "--/--/-- -- : --";
-                          startMeter = "-";
-                          endMeter = "-";
-                          id = "-";
-                          reset = false;
-                        });
-                        SharedPreferences prefs =
-                        await SharedPreferences
-                            .getInstance();
-                        prefs.setString(
-                          "punch",
-                          jsonEncode(
-                            {
-                              "in": start,
-                              "out": end,
-                              "inMeter": startMeter,
-                              "outMeter": endMeter,
-                              "reset": reset,
-                              "id": id
-                            },
-                          ),
-                        );
-                        if (start == "--/--/-- -- : --") {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text(
-                                  "Do you want to punch in now?"),
-                              actions: [
-                                MaterialButton(
-                                  child: Text("Punch In"),
-                                  onPressed: punchin,
-                                )
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 8),
-                        child: Text(
-                          "Punch In",
-                          style: GoogleFonts.nunito(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
+                    flex: 3,
+                  )
+                ],
               ),
-              flex: 3,
-            )
-          ],
-        ),
-      ),
+            ),
     );
   }
 
@@ -673,7 +622,7 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    endMeter = _endMeterController.text;
+                    endMeter = int.parse(_endMeterController.text);
                   });
                 },
                 controller: _endMeterController,
@@ -682,30 +631,28 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
             actions: [
               MaterialButton(
                 onPressed: _endMeterController.text.isNotEmpty &&
-                    (int.parse(startMeter) <= int.parse(endMeter))
+                        (startMeter <= endMeter)
                     ? () {
-                  setState(
-                        () {
-                      end = DateTime.now().toString();
-                      endMeter = double.parse(_endMeterController.text)
-                          .toInt()
-                          .toString();
-                      reset = true;
-                      savePunch();
-                      updateLog();
-                      Navigator.of(context).pop();
-                    },
-                  );
-                }
+                        setState(
+                          () {
+                            end = DateTime.now().toString();
+                            endMeter = int.parse(_endMeterController.text);
+                            reset = true;
+                            savePunch();
+                            updateLog();
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      }
                     : () {
-                  setState(() {
-                    endMeter = "-";
-                    reset = true;
-                  });
-                  Navigator.of(context).pop();
-                  showInSnackBar(context,
-                      "Enter valid meter input to punch out", 1800);
-                },
+                        setState(() {
+                          endMeter = 0;
+                          reset = true;
+                        });
+                        Navigator.of(context).pop();
+                        showInSnackBar(context,
+                            "Enter valid meter input to punch out", 1800);
+                      },
                 child: Text(
                   "Punch Out",
                   style: GoogleFonts.nunito(
@@ -755,7 +702,7 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    startMeter = _startMeterController.text;
+                    startMeter = int.parse(_startMeterController.text);
                   });
                 },
                 controller: _startMeterController,
@@ -765,22 +712,20 @@ class _SoloAttendanceScreenState extends State<SoloAttendanceScreen> {
               MaterialButton(
                 onPressed: _startMeterController.text.isNotEmpty
                     ? () {
-                  setState(
-                        () {
-                      start = DateTime.now().toString();
-                      startMeter =
-                          double.parse(_startMeterController.text)
-                              .toInt()
-                              .toString();
-                      createLog();
-                      Navigator.of(context).pop();
-                    },
-                  );
-                }
+                        setState(
+                          () {
+                            start = DateTime.now().toString();
+                            startMeter =
+                                int.parse(_startMeterController.text);
+                            createLog();
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      }
                     : () {
-                  showInSnackBar(
-                      context, "Enter valid meter input to start", 1500);
-                },
+                        showInSnackBar(
+                            context, "Enter valid meter input to start", 1500);
+                      },
                 child: Text(
                   "Punch In",
                   style: GoogleFonts.nunito(
