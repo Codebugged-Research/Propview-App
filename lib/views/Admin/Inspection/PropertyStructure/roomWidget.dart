@@ -191,8 +191,7 @@ class _RoomWidgetState extends State<RoomWidget> {
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black)),
+                                              .copyWith(color: Colors.black)),
                                       onChanged: (bool value) {
                                         stateSetter(() {
                                           isBath = value;
@@ -205,8 +204,7 @@ class _RoomWidgetState extends State<RoomWidget> {
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black)),
+                                              .copyWith(color: Colors.black)),
                                       onChanged: (bool value) {
                                         stateSetter(() {
                                           isBalcony = value;
@@ -220,8 +218,7 @@ class _RoomWidgetState extends State<RoomWidget> {
                                         style: Theme.of(context)
                                             .primaryTextTheme
                                             .subtitle1
-                                            .copyWith(
-                                                color: Colors.black),
+                                            .copyWith(color: Colors.black),
                                       ),
                                       onChanged: (bool value) {
                                         stateSetter(() {
