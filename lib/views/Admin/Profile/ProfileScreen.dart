@@ -261,7 +261,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
                       Icons.security,
                       () {}),
-                  profileInfo('Reset Cache', 'Clear the cache data', Icons.clear,
+                  profileInfo(
+                      'Reset Cache', 'Clear the cache data', Icons.clear,
                       () async {
                     setState(() {
                       clearLoader = true;
@@ -354,9 +355,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       currentPassword = value;
                                     }, stateSetter),
                                     SizedBox(
-                                      height:
-                                          UIConstants.fitToHeight(18, context),
-                                    ),
+                                        height: UIConstants.fitToHeight(
+                                            18, context)),
                                     inputWidget(
                                         newPasswordController,
                                         "Please Enter your New Password",

@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Subroom.dart';
 
 class SubRoomWidget extends StatefulWidget {
   final List<SubRoom> subRooms;
-  SubRoomWidget({this.subRooms});
+  final List<Facility> facilities;
+  SubRoomWidget({this.subRooms, this.facilities});
   @override
   _SubRoomWidgetState createState() => _SubRoomWidgetState();
 }
 
 class _SubRoomWidgetState extends State<SubRoomWidget> {
+
   List<SubRoom> subRooms = [];
+  List<Facility> facilities = [];
 
   @override
   void initState() {
     super.initState();
     subRooms = widget.subRooms;
+    facilities = widget.facilities;
   }
 
   @override
@@ -23,7 +28,14 @@ class _SubRoomWidgetState extends State<SubRoomWidget> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: subRooms.length == 0 ? Center(child: Text('No Sub-Rooms are available!')): Text(),
+        child: subRooms.length == 0
+            ? Center(
+                child: Text('No Sub-Rooms are available!',
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black)))
+            : Text('Sub Rooms are there'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

@@ -37,6 +37,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
     super.initState();
     propertyElement = widget.propertyElement;
     tabController = TabController(length: 2, vsync: this);
+    loadData();
   }
 
   loadData() async {
@@ -44,6 +45,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
       isLoading = true;
     });
     facilities = await FacilityService.getFacilities();
+    print(facilities.length);
     rooms = await RoomService.getRoomByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
     if (rooms.length != 0) {
@@ -71,22 +73,24 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
           bottom: TabBar(
               controller: tabController,
               indicatorColor: Color(0xff314B8C),
-              labelStyle: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
-              unselectedLabelStyle: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+              labelStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+              unselectedLabelStyle: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
               tabs: [
-                Tab(
-                  text: 'Rooms',
-                ),
-                Tab(
-                  text: 'Sub Rooms',
-                ),
+                Tab(text: 'Rooms'),
+                Tab(text: 'Sub Rooms'),
               ]),
         ),
         body: isLoading
             ? circularProgressWidget()
             : TabBarView(controller: tabController, children: [
-                RoomWidget(rooms: rooms),
-                SubRoomWidget(subRooms: subRooms),
+                RoomWidget(rooms: rooms, facilities: facilities),
+                SubRoomWidget(subRooms: subRooms, facilities: facilities),
               ]));
   }
 }
