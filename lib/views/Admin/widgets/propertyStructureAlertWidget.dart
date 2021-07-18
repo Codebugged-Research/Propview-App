@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class AlertWidget extends StatelessWidget {
+class PropertyStructureAlertWidget extends StatelessWidget {
   final String title, body;
-  AlertWidget({this.title, this.body});
+  PropertyStructureAlertWidget({this.title, this.body});
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -18,14 +18,24 @@ class AlertWidget extends StatelessWidget {
               style: Theme.of(context)
                   .primaryTextTheme
                   .subtitle2
-                  .copyWith(fontWeight: FontWeight.w600, color: Colors.black)), 
+                  .copyWith(fontWeight: FontWeight.w600, color: Colors.black)),
           actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK',
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .button
+                      .copyWith(color: Colors.black)),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: Text('OK',
+              child: Text('Cancel',
                   style: Theme.of(context)
                       .primaryTextTheme
                       .button

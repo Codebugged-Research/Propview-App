@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:propview/models/Room.dart';
-import 'package:propview/models/Subroom.dart';
-import 'package:propview/services/roomService.dart';
-import 'package:propview/services/subRoomService.dart';
-import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/Room.dart';
 import 'package:propview/models/RoomType.dart';
+import 'package:propview/models/Subroom.dart';
+import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
+import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Admin/widgets/alertWidget.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -59,7 +59,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           context: context,
           builder: (_) {
             return AlertWidget(
-              title: 'Property Structre is not defined!',
+              title: 'Property Structure is not defined!',
               body:
                   'First you have to determine the property structure to begin with inspection.',
             );

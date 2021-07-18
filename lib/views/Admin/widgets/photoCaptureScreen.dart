@@ -7,9 +7,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CameraScreen extends StatefulWidget {
   @override
