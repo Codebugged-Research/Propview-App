@@ -20,6 +20,7 @@ class _RoomWidgetState extends State<RoomWidget> {
   List<Room> rooms = [];
   List<Facility> facilities = [];
   List<String> facilitiesName = [];
+  List<String> facilityTag = [];
   List<String> flooringType = [];
 
   final formkey = new GlobalKey<FormState>();
