@@ -281,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }),
                   Padding(
                     padding: EdgeInsets.all(12),
-                    child: Center(child: Text(Config.APP_VERISON)),
+                    child: Center(child: Text( "Version: " +Config.APP_VERISON)),
                   ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),
