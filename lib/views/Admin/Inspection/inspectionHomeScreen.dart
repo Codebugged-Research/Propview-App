@@ -58,7 +58,9 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
                         Routing.makeRouting(context,
                             routeMethod: 'push',
                             newWidget: PropertyStructureScreen(
-                                propertyElement: propertyElement));
+                              propertyElement: propertyElement,
+                              imageList: [],
+                            ));
                       }),
                       metricCard('full_inspection', 'Full Inspection',
                           onTap: () {

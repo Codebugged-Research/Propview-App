@@ -14,7 +14,8 @@ import 'package:propview/views/Admin/widgets/propertyStructureAlertWidget.dart';
 
 class PropertyStructureScreen extends StatefulWidget {
   final PropertyElement propertyElement;
-  PropertyStructureScreen({this.propertyElement});
+  final List<String> imageList;
+  PropertyStructureScreen({this.propertyElement, this.imageList});
   @override
   _PropertyStructureScreenState createState() =>
       _PropertyStructureScreenState();
@@ -89,8 +90,16 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
         body: isLoading
             ? circularProgressWidget()
             : TabBarView(controller: tabController, children: [
-                RoomWidget(rooms: rooms, facilities: facilities),
-                SubRoomWidget(subRooms: subRooms, facilities: facilities),
+                RoomWidget(
+                  rooms: rooms,
+                  facilities: facilities,
+                  imageList: widget.imageList,
+                ),
+                SubRoomWidget(
+                  subRooms: subRooms,
+                  facilities: facilities,
+                  imageList: widget.imageList,
+                ),
               ]));
   }
 }

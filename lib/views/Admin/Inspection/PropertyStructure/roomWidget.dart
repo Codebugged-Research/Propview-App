@@ -1,13 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Room.dart';
+import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/tagWidget.dart';
+import 'package:propview/views/Admin/widgets/CaptureScreen.dart';
 
 class RoomWidget extends StatefulWidget {
   final List<Room> rooms;
   final List<Facility> facilities;
-  RoomWidget({this.rooms, this.facilities});
+  final List<String> imageList;
+  RoomWidget({this.rooms, this.facilities, this.imageList});
   @override
   _RoomWidgetState createState() => _RoomWidgetState();
 }
@@ -17,11 +23,15 @@ class _RoomWidgetState extends State<RoomWidget> {
   bool isBalcony = false;
   bool isWardrobe = false;
 
+  String facilityDropDownValue;
+  String marbelTypeDropDownValue;
+
   List<Room> rooms = [];
   List<Facility> facilities = [];
   List<String> facilitiesName = [];
   List<String> facilityTag = [];
   List<String> flooringType = [];
+  List<String> imageList;
 
   final formkey = new GlobalKey<FormState>();
 
@@ -35,6 +45,21 @@ class _RoomWidgetState extends State<RoomWidget> {
     facilities = widget.facilities;
     facilitiesName = PropertyFunctions.getFacilityName(facilities);
     flooringType = PropertyFunctions.getFlooringType();
+    facilityDropDownValue = facilities[0].facilityName;
+    marbelTypeDropDownValue = flooringType[0];
+    imageList = widget.imageList;
+  }
+
+  addTag(String tag) {
+    setState(() {
+      facilityTag.add(tag);
+    });
+  }
+
+  removeTag(String tag) {
+    setState(() {
+      facilityTag.remove(tag);
+    });
   }
 
   @override
@@ -134,7 +159,7 @@ class _RoomWidgetState extends State<RoomWidget> {
                                     ),
                                     DropdownButton<String>(
                                       isExpanded: true,
-                                      value: facilitiesName[0],
+                                      value: facilityDropDownValue,
                                       elevation: 8,
                                       underline: Container(
                                         height: 2,
@@ -143,7 +168,10 @@ class _RoomWidgetState extends State<RoomWidget> {
                                         color: Color(0xff314B8C),
                                       ),
                                       onChanged: (value) {
-                                        print(value);
+                                        stateSetter(() {
+                                          addTag(value);
+                                          facilityDropDownValue = value;
+                                        });
                                       },
                                       items: facilitiesName
                                           .map<DropdownMenuItem<String>>(
@@ -154,6 +182,17 @@ class _RoomWidgetState extends State<RoomWidget> {
                                         );
                                       }).toList(),
                                     ),
+                                    Visibility(
+                                        visible: facilityTag.length > 0,
+                                        child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          height: 100,
+                                          width: 100,
+                                          child: TagWidget(
+                                            tagList: facilityTag,
+                                            stateSetter: stateSetter,
+                                          ),
+                                        )),
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text('Flooring Type',
@@ -166,7 +205,7 @@ class _RoomWidgetState extends State<RoomWidget> {
                                     ),
                                     DropdownButton<String>(
                                       isExpanded: true,
-                                      value: flooringType[0],
+                                      value: marbelTypeDropDownValue,
                                       elevation: 8,
                                       underline: Container(
                                         height: 2,
@@ -175,7 +214,9 @@ class _RoomWidgetState extends State<RoomWidget> {
                                         color: Color(0xff314B8C),
                                       ),
                                       onChanged: (value) {
-                                        print(value);
+                                        stateSetter(() {
+                                          marbelTypeDropDownValue = value;
+                                        });
                                       },
                                       items: flooringType
                                           .map<DropdownMenuItem<String>>(
@@ -227,6 +268,50 @@ class _RoomWidgetState extends State<RoomWidget> {
                                         });
                                       },
                                     ),
+                                    Text('Images',
+                                        style: Theme.of(context)
+                                            .primaryTextTheme
+                                            .subtitle1
+                                            .copyWith(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w400)),
+                                    Visibility(
+                                        visible: imageList.length != 3,
+                                        child: IconButton(
+                                            onPressed: () {
+                                              Routing.makeRouting(context,
+                                                  routeMethod: 'push',
+                                                  newWidget: CameraScreen(
+                                                      imageList: imageList));
+                                            },
+                                            icon: Icon(Icons.add_a_photo))),
+                                    Visibility(
+                                        visible: imageList.length <= 0,
+                                        child: Text('No Image is captured')),
+                                    Visibility(
+                                      visible: imageList.length > 0,
+                                      child: ListView.builder(
+                                          itemCount: imageList.length,
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          physics: BouncingScrollPhysics(),
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Image.file(
+                                                File(imageList[index]),
+                                                height: UIConstants.fitToHeight(
+                                                    100, context),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    SizedBox(
+                                        height: UIConstants.fitToHeight(
+                                            16, context)),
                                   ],
                                 ),
                               )),
@@ -238,8 +323,6 @@ class _RoomWidgetState extends State<RoomWidget> {
               ),
             ));
   }
-
-  
 
   Widget inputWidget(
       TextEditingController textEditingController,

@@ -7,8 +7,12 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/Types/propertyStructureScreen.dart';
 
 class CameraScreen extends StatefulWidget {
+  final List<String> imageList;
+  CameraScreen({this.imageList});
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
@@ -22,12 +26,14 @@ class _CameraScreenState extends State<CameraScreen>
   bool isFlashOn = false;
   Future<void> cameraValue;
   File croppedFile;
+  List<String> imageList;
 
   @override
   void initState() {
     super.initState();
     initialiseCamera();
     WidgetsBinding.instance.addObserver(this);
+    imageList = widget.imageList;
   }
 
   initialiseCamera() async {
@@ -58,10 +64,17 @@ class _CameraScreenState extends State<CameraScreen>
       File convertedImage = await File(image.path).writeAsBytes(imageBytes);
       //Compressing Image
       var compressedImage = await compressImage(convertedImage);
-
       WidgetsBinding.instance.removeObserver(this);
       cameraController.dispose();
-      Navigator.of(context).pop();
+      //Adding Images to List
+      setState(() {
+        imageList.add(compressedImage.path);
+      });
+      await Routing.makeRouting(context,
+          routeMethod: 'push',
+          newWidget: PropertyStructureScreen(
+            imageList: imageList,
+          ));
     } catch (e) {
       print(e);
     }

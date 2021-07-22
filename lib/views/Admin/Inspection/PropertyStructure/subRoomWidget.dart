@@ -5,21 +5,23 @@ import 'package:propview/models/Subroom.dart';
 class SubRoomWidget extends StatefulWidget {
   final List<SubRoom> subRooms;
   final List<Facility> facilities;
-  SubRoomWidget({this.subRooms, this.facilities});
+  final List<String> imageList;
+  SubRoomWidget({this.subRooms, this.facilities, this.imageList});
   @override
   _SubRoomWidgetState createState() => _SubRoomWidgetState();
 }
 
 class _SubRoomWidgetState extends State<SubRoomWidget> {
-
   List<SubRoom> subRooms = [];
   List<Facility> facilities = [];
+  List<String> imageList;
 
   @override
   void initState() {
     super.initState();
     subRooms = widget.subRooms;
     facilities = widget.facilities;
+    imageList = widget.imageList;
   }
 
   @override
