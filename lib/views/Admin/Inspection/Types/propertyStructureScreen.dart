@@ -8,14 +8,13 @@ import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/Inspection/PropertyStructure/roomWidget.dart';
-import 'package:propview/views/Admin/Inspection/PropertyStructure/subRoomWidget.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/roomWidget.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/subRoomWidget.dart';
 import 'package:propview/views/Admin/widgets/propertyStructureAlertWidget.dart';
 
 class PropertyStructureScreen extends StatefulWidget {
   final PropertyElement propertyElement;
-  final List<String> imageList;
-  PropertyStructureScreen({this.propertyElement, this.imageList});
+  PropertyStructureScreen({this.propertyElement});
   @override
   _PropertyStructureScreenState createState() =>
       _PropertyStructureScreenState();
@@ -93,12 +92,12 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
                 RoomWidget(
                   rooms: rooms,
                   facilities: facilities,
-                  imageList: widget.imageList,
+                  propertyElement: propertyElement,
                 ),
                 SubRoomWidget(
                   subRooms: subRooms,
                   facilities: facilities,
-                  imageList: widget.imageList,
+                  propertyElement: propertyElement,
                 ),
               ]));
   }

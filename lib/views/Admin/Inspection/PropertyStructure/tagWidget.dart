@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 
-class TagWidget extends StatelessWidget {
+class TagWidget extends StatefulWidget {
   final List<String> tagList;
-  final StateSetter stateSetter;
-  TagWidget({this.tagList, this.stateSetter});
+  TagWidget({this.tagList});
+
+  @override
+  _TagWidgetState createState() => _TagWidgetState();
+}
+
+class _TagWidgetState extends State<TagWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: tagList.length,
+        itemCount: widget.tagList.length,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
-          return InkWell(
+          return GestureDetector(
             onTap: () {
-              stateSetter(() {
-                tagList.removeAt(index);
+              setState(() {
+                widget.tagList.removeAt(index);
               });
             },
             child: Padding(
@@ -25,7 +30,7 @@ class TagWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  tagList[index],
+                  widget.tagList[index],
                   textAlign: TextAlign.center,
                   style: Theme.of(context).primaryTextTheme.caption.copyWith(
                       color: Colors.white, fontWeight: FontWeight.w700),

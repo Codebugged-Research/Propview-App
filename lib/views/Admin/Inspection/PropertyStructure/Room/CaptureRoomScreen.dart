@@ -6,18 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:propview/models/Facility.dart';
+import 'package:propview/models/Property.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/propertyStructureScreen.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/AddRoomScreen.dart';
 
-class CameraScreen extends StatefulWidget {
+class CaptureRoomScreen extends StatefulWidget {
+  final PropertyElement propertyElement;
+  final List<Facility> facilities;
   final List<String> imageList;
-  CameraScreen({this.imageList});
+  final List<String> facilitiesName;
+  final List<String> flooringType;
+  CaptureRoomScreen(
+      {this.propertyElement,
+      this.facilities,
+      this.imageList,
+      this.facilitiesName,
+      this.flooringType});
   @override
-  _CameraScreenState createState() => _CameraScreenState();
+  _CaptureRoomScreenState createState() => _CaptureRoomScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen>
+class _CaptureRoomScreenState extends State<CaptureRoomScreen>
     with WidgetsBindingObserver {
   CameraController cameraController;
   CameraDescription cameraDescription;
@@ -26,14 +37,18 @@ class _CameraScreenState extends State<CameraScreen>
   bool isFlashOn = false;
   Future<void> cameraValue;
   File croppedFile;
+
   List<String> imageList;
+  List<String> facilitiesName;
+  List<String> flooringType;
 
   @override
   void initState() {
     super.initState();
     initialiseCamera();
-    WidgetsBinding.instance.addObserver(this);
     imageList = widget.imageList;
+    facilitiesName = widget.facilitiesName;
+    flooringType = widget.flooringType;
   }
 
   initialiseCamera() async {
@@ -64,17 +79,18 @@ class _CameraScreenState extends State<CameraScreen>
       File convertedImage = await File(image.path).writeAsBytes(imageBytes);
       //Compressing Image
       var compressedImage = await compressImage(convertedImage);
-      WidgetsBinding.instance.removeObserver(this);
-      cameraController.dispose();
       //Adding Images to List
       setState(() {
         imageList.add(compressedImage.path);
       });
       await Routing.makeRouting(context,
           routeMethod: 'push',
-          newWidget: PropertyStructureScreen(
-            imageList: imageList,
-          ));
+          newWidget: AddRoomScreen(
+              propertyElement: widget.propertyElement,
+              facilities: widget.facilities,
+              imageList: imageList,
+              facilitiesName: facilitiesName,
+              flooringType: flooringType));
     } catch (e) {
       print(e);
     }
