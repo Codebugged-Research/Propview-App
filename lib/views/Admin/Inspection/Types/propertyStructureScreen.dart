@@ -32,7 +32,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
   List<PropertyRoom> roomTypes = [];
   List<PropertyRoom> subRoomTypes = [];
 
-  List<Room> rooms = [];
+  List<RoomsToPropertyModel> rooms = [];
   List<SubRoom> subRooms = [];
 
   RoomType roomType;

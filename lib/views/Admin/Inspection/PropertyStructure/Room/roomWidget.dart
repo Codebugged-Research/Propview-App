@@ -9,7 +9,7 @@ import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFuncti
 
 class RoomWidget extends StatefulWidget {
   final PropertyElement propertyElement;
-  final List<Room> rooms;
+  final List<RoomsToPropertyModel> rooms;
   final List<Facility> facilities;
   final List roomTypes;
   RoomWidget({this.rooms, this.facilities, this.propertyElement, this.roomTypes});
@@ -22,7 +22,7 @@ class _RoomWidgetState extends State<RoomWidget> {
   String facilityDropDownValue;
   String marbelTypeDropDownValue;
 
-  List<Room> rooms = [];
+  List<RoomsToPropertyModel> rooms = [];
   List<Facility> facilities = [];
   List<String> flooringType = [];
 
@@ -55,7 +55,7 @@ class _RoomWidgetState extends State<RoomWidget> {
                         .primaryTextTheme
                         .subtitle1
                         .copyWith(color: Colors.black)))
-            : Text('Rooms are there!'),
+            : Text('show room tile'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

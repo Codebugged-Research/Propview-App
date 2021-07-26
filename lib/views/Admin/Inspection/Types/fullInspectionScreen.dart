@@ -33,7 +33,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   TextEditingController propertyTaxController = TextEditingController();
   TextEditingController anyOtherController = TextEditingController();
 
-  List<Room> rooms = [];
+  List<RoomsToPropertyModel> rooms = [];
   List<SubRoom> subRooms = [];
 
   @override
