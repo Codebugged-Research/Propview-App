@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+
+import 'package:propview/config.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
@@ -14,10 +16,9 @@ import 'package:propview/models/roomType.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/CaptureSubRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/tagWidget.dart';
-
-import '../../../../../config.dart';
 
 class AddSubRoomScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -85,10 +86,9 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
     roomTypeDropDownValue = widget.roomTypeDropDownValue == null
         ? roomTypes[0]
         : widget.roomTypeDropDownValue;
-    subRoomTypeDropDownValue =
-        widget.subRoomTypeDropDownValue == null
-            ? subRoomTypes[0]
-            : widget.subRoomTypeDropDownValue;
+    subRoomTypeDropDownValue = widget.subRoomTypeDropDownValue == null
+        ? subRoomTypes[0]
+        : widget.subRoomTypeDropDownValue;
   }
 
   addTag(Facility tag) {
@@ -446,17 +446,10 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                 loader = false;
               });
               if (result) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("SubRoom added!"),
-                  ),
-                );
+                showInSnackBar(context, 'Sub-Room Added', 2500);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("SubRoom addition failed!"),
-                  ),
-                );
+                showInSnackBar(
+                    context, 'Sub-Room Addition request failed!', 2500);
               }
               Navigator.of(context).pop();
             },

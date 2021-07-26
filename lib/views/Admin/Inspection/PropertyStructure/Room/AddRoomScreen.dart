@@ -465,70 +465,73 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   Widget buttonWidget(BuildContext context) {
     return loader
         ? circularProgressWidget()
-        : MaterialButton(
-            minWidth: 360,
-            height: 55,
-            color: Color(0xff314B8C),
-            onPressed: () async {
-              String modelFacilty = "";
-              facilityTag.forEach((e) {
-                modelFacilty += e.facilityId.toString();
-                modelFacilty += ",";
-              });
-              modelFacilty = modelFacilty.substring(0, modelFacilty.length - 1);
-              String img1 = "";
-              String img2 = "";
-              String img3 = "";
-              if (imageList.length > 0) {
-                img1 = await upload(imageList[0],
-                    propertyElement.tableproperty.propertyId.toString());
-              } else if (imageList.length > 1) {
-                img2 = await upload(imageList[1],
-                    propertyElement.tableproperty.propertyId.toString());
-              } else if (imageList.length > 2) {
-                img3 = await upload(imageList[2],
-                    propertyElement.tableproperty.propertyId.toString());
-              }
-              RoomsToPropertyModel room = RoomsToPropertyModel(
-                propertyId: propertyElement.tableproperty.propertyId,
-                roomId: roomTypeDropDownValue.roomId, // create drop down for this
-                roomSize1: double.parse(roomSizeOneController.text),
-                roomSize2: double.parse(roomSizeTwoController.text),
-                bath: isBath == true ? 1 : 0,
-                balcony: isBath == true ? 1 : 0,
-                wardrobe: isWardrobe == true ? 1 : 0,
-                facility: modelFacilty,
-                flooring: marbelTypeDropDownValue,
-                image1: img1,
-                image2: img2,
-                image3: img3,
-              );
-              setState(() {
-                loader = true;
-              });
-              bool result = await RoomService.createRoomByPropertyId(
-                  jsonEncode(room.toJson()));
-              setState(() {
-                loader = false;
-              });
-              if (result) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Room added!"),
-                  ),
+        : Visibility(
+          visible: imageList.length >= 3,
+          child: MaterialButton(
+              minWidth: 360,
+              height: 55,
+              color: Color(0xff314B8C),
+              onPressed: () async {
+                String modelFacilty = "";
+                facilityTag.forEach((e) {
+                  modelFacilty += e.facilityId.toString();
+                  modelFacilty += ",";
+                });
+                modelFacilty = modelFacilty.substring(0, modelFacilty.length - 1);
+                String img1 = "";
+                String img2 = "";
+                String img3 = "";
+                if (imageList.length > 0) {
+                  img1 = await upload(imageList[0],
+                      propertyElement.tableproperty.propertyId.toString());
+                } else if (imageList.length > 1) {
+                  img2 = await upload(imageList[1],
+                      propertyElement.tableproperty.propertyId.toString());
+                } else if (imageList.length > 2) {
+                  img3 = await upload(imageList[2],
+                      propertyElement.tableproperty.propertyId.toString());
+                }
+                RoomsToPropertyModel room = RoomsToPropertyModel(
+                  propertyId: propertyElement.tableproperty.propertyId,
+                  roomId: roomTypeDropDownValue.roomId, // create drop down for this
+                  roomSize1: double.parse(roomSizeOneController.text),
+                  roomSize2: double.parse(roomSizeTwoController.text),
+                  bath: isBath == true ? 1 : 0,
+                  balcony: isBath == true ? 1 : 0,
+                  wardrobe: isWardrobe == true ? 1 : 0,
+                  facility: modelFacilty,
+                  flooring: marbelTypeDropDownValue,
+                  image1: img1,
+                  image2: img2,
+                  image3: img3,
                 );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Room addition failed!"),
-                  ),
-                );
-              }
-              Navigator.of(context).pop();
-            },
-            child: Text("Create Room",
-                style: Theme.of(context).primaryTextTheme.subtitle1),
-          );
+                setState(() {
+                  loader = true;
+                });
+                bool result = await RoomService.createRoomByPropertyId(
+                    jsonEncode(room.toJson()));
+                setState(() {
+                  loader = false;
+                });
+                if (result) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Room added!"),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Room addition failed!"),
+                    ),
+                  );
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text("Create Room",
+                  style: Theme.of(context).primaryTextTheme.subtitle1),
+            ),
+        );
   }
 
   Widget inputWidget(TextEditingController textEditingController,
