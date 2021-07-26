@@ -4,8 +4,10 @@ import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
+import 'package:propview/models/roomType.dart';
 import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/roomService.dart';
+import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/roomWidget.dart';
@@ -27,9 +29,13 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
   PropertyElement propertyElement;
   List<Facility> facilities = [];
 
+  List<PropertyRoom> roomTypes = [];
+  List<PropertyRoom> subRoomTypes = [];
+
   List<Room> rooms = [];
   List<SubRoom> subRooms = [];
 
+  RoomType roomType;
   TabController tabController;
 
   @override
@@ -60,6 +66,14 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
             );
           });
     }
+    roomType = await RoomTypeService.getRoomTypes();
+    roomType.data.propertyRoom.forEach((e) {
+      if (e.issub == 1) {
+        subRoomTypes.add(e);
+      } else {
+        roomTypes.add(e);
+      }
+    });
     setState(() {
       isLoading = false;
     });
@@ -68,37 +82,39 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Property Structure'),
-          bottom: TabBar(
+      appBar: AppBar(
+        title: Text('Property Structure'),
+        bottom: TabBar(
+            controller: tabController,
+            indicatorColor: Color(0xff314B8C),
+            labelStyle: TextStyle(
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+            unselectedLabelStyle: TextStyle(
+                color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+            tabs: [
+              Tab(text: 'Rooms'),
+              Tab(text: 'Sub Rooms'),
+            ]),
+      ),
+      body: isLoading
+          ? circularProgressWidget()
+          : TabBarView(
               controller: tabController,
-              indicatorColor: Color(0xff314B8C),
-              labelStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500),
-              unselectedLabelStyle: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500),
-              tabs: [
-                Tab(text: 'Rooms'),
-                Tab(text: 'Sub Rooms'),
-              ]),
-        ),
-        body: isLoading
-            ? circularProgressWidget()
-            : TabBarView(controller: tabController, children: [
+              children: [
                 RoomWidget(
                   rooms: rooms,
                   facilities: facilities,
                   propertyElement: propertyElement,
+                  roomTypes: roomTypes,
                 ),
                 SubRoomWidget(
                   subRooms: subRooms,
                   facilities: facilities,
                   propertyElement: propertyElement,
+                  roomTypes: roomType.data.propertyRoom,
                 ),
-              ]));
+              ],
+            ),
+    );
   }
 }

@@ -22,4 +22,20 @@ class RoomService extends AuthService {
       print("Not working!");
     }
   }
+
+  // ignore: missing_return
+  static Future createRoomByPropertyId(payload) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/rooms/create',
+        method: 'POST',
+        body: payload);
+    if (response.statusCode == 200) {
+      print(response.body);
+      return true;
+    } else {
+      print("Not working!");
+      print(response.body);
+      return false;
+    }
+  }
 }

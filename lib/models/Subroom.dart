@@ -63,8 +63,8 @@ class SubRoomElement {
     int propertyId;
     int roomId;
     int subRoomId;
-    int roomSize1;
-    int roomSize2;
+    double roomSize1;
+    double roomSize2;
     String facility;
     String image1;
     String image2;
@@ -84,7 +84,6 @@ class SubRoomElement {
     );
 
     Map<String, dynamic> toJson() => {
-        "property_sub_room_id": propertySubRoomId,
         "property_id": propertyId,
         "room_id": roomId,
         "sub_room_id": subRoomId,

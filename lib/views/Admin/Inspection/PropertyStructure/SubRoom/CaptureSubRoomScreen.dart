@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/roomType.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/AddSubRoomScreen.dart';
@@ -18,24 +19,30 @@ class CaptureSubRoomScreen extends StatefulWidget {
   final List<Facility> facilities;
   final List<String> imageList;
   final List<String> facilitiesName;
-  final List<String> flooringType;
-  CaptureSubRoomScreen(
-      {this.propertyElement,
-      this.facilities,
-      this.imageList,
-      this.facilitiesName,
-      this.flooringType});
+  final List<Facility> facilityTag;
+  final List<PropertyRoom> roomTypes;
+  final PropertyRoom roomTypeDropDownValue;
+  final PropertyRoom subRoomTypeDropDownValue;
+  final double roomSizeOne;
+  final double roomSizeTwo;
+  CaptureSubRoomScreen({
+    this.propertyElement,
+    this.facilities,
+    this.imageList,
+    this.roomTypes,
+    this.facilitiesName,
+    this.facilityTag,
+    this.roomSizeOne = 0.0,
+    this.roomSizeTwo = 0.0,
+    this.roomTypeDropDownValue,
+    this.subRoomTypeDropDownValue,
+  });
   @override
   _CaptureSubRoomScreenState createState() => _CaptureSubRoomScreenState();
 }
 
 class _CaptureSubRoomScreenState extends State<CaptureSubRoomScreen>
     with WidgetsBindingObserver {
-  PropertyElement propertyElement;
-  List<Facility> facilities;
-  List<String> imageList;
-  List<String> facilitiesName;
-  List<String> flooringType;
 
   CameraController cameraController;
   CameraDescription cameraDescription;
@@ -49,9 +56,6 @@ class _CaptureSubRoomScreenState extends State<CaptureSubRoomScreen>
   void initState() {
     super.initState();
     initialiseCamera();
-    imageList = widget.imageList;
-    facilitiesName = widget.facilitiesName;
-    flooringType = widget.flooringType;
   }
 
   initialiseCamera() async {
@@ -77,15 +81,21 @@ class _CaptureSubRoomScreenState extends State<CaptureSubRoomScreen>
       var compressedImage = await compressImage(convertedImage);
       //Adding Images to List
       setState(() {
-        imageList.add(compressedImage.path);
+        widget.imageList.add(compressedImage.path);
       });
       await Routing.makeRouting(context,
-          routeMethod: 'push',
+          routeMethod: 'pushReplacement',
           newWidget: AddSubRoomScreen(
-              propertyElement: widget.propertyElement,
-              facilities: widget.facilities,
-              imageList: imageList,
-              facilitiesName: facilitiesName));
+            propertyElement: widget.propertyElement,
+            facilities: widget.facilities,
+            facilityTag: widget.facilityTag,
+            imageList: widget.imageList,
+            roomTypes: widget.roomTypes,
+            roomTypeDropDownValue: widget.roomTypeDropDownValue,
+            subRoomTypeDropDownValue: widget.subRoomTypeDropDownValue,
+            roomSizeOne: widget.roomSizeOne,
+            roomSizeTwo: widget.roomSizeTwo,
+          ));
     } catch (e) {
       print(e);
     }

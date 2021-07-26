@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
-import 'package:propview/models/RoomType.dart';
+import 'package:propview/models/roomType.dart';
 import 'package:propview/models/Subroom.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';

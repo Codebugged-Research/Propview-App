@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:api_cache_manager/models/cache_db_model.dart';
 import 'package:api_cache_manager/utils/cache_manager.dart';
 import 'package:http/http.dart' as http;
-import 'package:propview/models/RoomType.dart';
+import 'package:propview/models/roomType.dart';
 
 import 'authService.dart';
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:propview/models/Facility.dart';
 
 class TagWidget extends StatefulWidget {
-  final List<String> tagList;
+  final List<Facility> tagList;
   TagWidget({this.tagList});
 
   @override
@@ -30,7 +31,7 @@ class _TagWidgetState extends State<TagWidget> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  widget.tagList[index],
+                  widget.tagList[index].facilityName,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).primaryTextTheme.caption.copyWith(
                       color: Colors.white, fontWeight: FontWeight.w700),

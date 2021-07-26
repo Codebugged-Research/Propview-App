@@ -11,22 +11,19 @@ class RoomWidget extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<Room> rooms;
   final List<Facility> facilities;
-  RoomWidget({this.rooms, this.facilities, this.propertyElement});
+  final List roomTypes;
+  RoomWidget({this.rooms, this.facilities, this.propertyElement, this.roomTypes});
   @override
   _RoomWidgetState createState() => _RoomWidgetState();
 }
 
 class _RoomWidgetState extends State<RoomWidget> {
-  bool isBath = false;
-  bool isBalcony = false;
-  bool isWardrobe = false;
 
   String facilityDropDownValue;
   String marbelTypeDropDownValue;
 
   List<Room> rooms = [];
   List<Facility> facilities = [];
-  List<String> facilitiesName = [];
   List<String> flooringType = [];
 
   PropertyElement propertyElement;
@@ -42,7 +39,6 @@ class _RoomWidgetState extends State<RoomWidget> {
     rooms = widget.rooms;
     facilities = widget.facilities;
     propertyElement = widget.propertyElement;
-    facilitiesName = PropertyFunctions.getFacilityName(facilities);
     flooringType = PropertyFunctions.getFlooringType();
   }
 
@@ -69,8 +65,8 @@ class _RoomWidgetState extends State<RoomWidget> {
                 propertyElement: propertyElement,
                 facilities: facilities,
                 imageList: [],
-                facilitiesName: facilitiesName,
                 flooringType: flooringType,
+                roomList: widget.roomTypes,
               ));
         },
         child: Icon(Icons.add),

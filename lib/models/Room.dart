@@ -65,8 +65,8 @@ class RoomsToPropertyModel {
   int propertyRoomId;
   int propertyId;
   int roomId;
-  int roomSize1;
-  int roomSize2;
+  double roomSize1;
+  double roomSize2;
   int bath;
   String flooring;
   int balcony;
@@ -93,7 +93,7 @@ class RoomsToPropertyModel {
   );
 
   Map<String, dynamic> toJson() => {
-    "property_room_id": propertyRoomId,
+    // "property_room_id": propertyRoomId,
     "property_id": propertyId,
     "room_id": roomId,
     "room_size1": roomSize1,

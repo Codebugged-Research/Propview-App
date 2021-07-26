@@ -7,10 +7,11 @@ import 'package:propview/services/authService.dart';
 class SubRoomService extends AuthService {
   static Future<bool> createSubRoom(var payload) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'subroom/create',
+        AuthService.BASE_URI + 'api/subroom/create',
         method: 'POST',
         body: payload);
 
+    print(response.body);
     if (response.statusCode == 200)
       return true;
     else
@@ -19,7 +20,7 @@ class SubRoomService extends AuthService {
 
   static Future<List<SubRoom>> getAllSubRooms() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'subroom/get',
+        AuthService.BASE_URI + 'api/subroom/get',
         method: 'GET');
 
     if (response.statusCode == 200) {
@@ -28,9 +29,9 @@ class SubRoomService extends AuthService {
         return [];
       } else {
         List<SubRoom> subRoom = responseMap
-          .map<SubRoom>((subRoomMap) => SubRoom.fromJson(subRoomMap))
-          .toList();
-      return subRoom;
+            .map<SubRoom>((subRoomMap) => SubRoom.fromJson(subRoomMap))
+            .toList();
+        return subRoom;
       }
     } else
       print("Not Working");
@@ -46,18 +47,17 @@ class SubRoomService extends AuthService {
         return [];
       } else {
         List<SubRoom> subRoom = responseMap
-          .map<SubRoom>((subRoomMap) => SubRoom.fromJson(subRoomMap))
-          .toList();
-      return subRoom;
+            .map<SubRoom>((subRoomMap) => SubRoom.fromJson(subRoomMap))
+            .toList();
+        return subRoom;
       }
-      
     } else
       print("Not Working");
   }
 
   static Future<bool> updateSubRoom(var payload, String subRoomId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + '/subroom/update/$subRoomId',
+        AuthService.BASE_URI + 'api/subroom/update/$subRoomId',
         method: 'PUT',
         body: payload);
     if (response.statusCode == 200)
@@ -68,7 +68,7 @@ class SubRoomService extends AuthService {
 
   static Future<bool> deleteSubRoom(String subRoomId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + '/subroom/delete/$subRoomId',
+        AuthService.BASE_URI + 'api/subroom/delete/$subRoomId',
         method: 'DELETE');
     if (response.statusCode == 200)
       return true;

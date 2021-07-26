@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Subroom.dart';
+import 'package:propview/models/roomType.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/AddSubRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
@@ -10,7 +11,8 @@ class SubRoomWidget extends StatefulWidget {
   final List<SubRoom> subRooms;
   final List<Facility> facilities;
   final PropertyElement propertyElement;
-  SubRoomWidget({this.subRooms, this.facilities, this.propertyElement});
+  final List<PropertyRoom> roomTypes;
+  SubRoomWidget({this.subRooms, this.facilities, this.propertyElement, this.roomTypes});
   @override
   _SubRoomWidgetState createState() => _SubRoomWidgetState();
 }
@@ -20,7 +22,6 @@ class _SubRoomWidgetState extends State<SubRoomWidget> {
   List<SubRoom> subRooms = [];
   List<Facility> facilities = [];
   List<String> facilitiesName = [];
-
   PropertyElement propertyElement;
 
   @override
@@ -54,7 +55,7 @@ class _SubRoomWidgetState extends State<SubRoomWidget> {
                 propertyElement: propertyElement,
                 facilities: facilities,
                 imageList: [],
-                facilitiesName: facilitiesName,
+                roomTypes: widget.roomTypes,
               ));
         },
         child: Icon(Icons.add),
