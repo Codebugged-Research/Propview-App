@@ -33,7 +33,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
   List<PropertyRoom> subRoomTypes = [];
 
   List<RoomsToPropertyModel> rooms = [];
-  List<SubRoom> subRooms = [];
+  List<SubRoomElement> subRooms = [];
 
   RoomType roomType;
   TabController tabController;

@@ -34,7 +34,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   TextEditingController anyOtherController = TextEditingController();
 
   List<RoomsToPropertyModel> rooms = [];
-  List<SubRoom> subRooms = [];
+  List<SubRoomElement> subRooms = [];
 
   @override
   void initState() {
@@ -67,6 +67,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     } else {
       subRooms = await SubRoomService.getSubRoomByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
+      for (var i = 0; i < rooms.length; i++) {
+        print(getRoomName(rooms[i].roomId));
+      }
+      for (var i = 0; i < subRooms.length; i++) {
+        print(getRoomName(subRooms[i].roomId));
+      }
     }
 
     setState(() {
@@ -257,7 +263,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
 
   List<List<Widget>> photo = [[]];
 
-  photoPick(list, name) {
+  Widget photoPick(list, name) {
     return Container(
       width: 100,
       height: 50,
@@ -278,7 +284,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  issueCard(constraints, index) {
+  Widget issueCard(constraints, index) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,

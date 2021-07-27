@@ -8,7 +8,7 @@ import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/AddSub
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
 
 class SubRoomWidget extends StatefulWidget {
-  final List<SubRoom> subRooms;
+  final List<SubRoomElement> subRooms;
   final List<Facility> facilities;
   final PropertyElement propertyElement;
   final List<PropertyRoom> roomTypes;
@@ -19,7 +19,7 @@ class SubRoomWidget extends StatefulWidget {
 
 class _SubRoomWidgetState extends State<SubRoomWidget> {
   
-  List<SubRoom> subRooms = [];
+  List<SubRoomElement> subRooms = [];
   List<Facility> facilities = [];
   List<String> facilitiesName = [];
   PropertyElement propertyElement;
