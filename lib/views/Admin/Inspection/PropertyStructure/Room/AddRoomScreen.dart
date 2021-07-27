@@ -4,11 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:propview/constants/uiContants.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
+import 'package:propview/config.dart';
+import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
@@ -18,8 +19,6 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/CaptureRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/tagWidget.dart';
-
-import '../../../../../config.dart';
 
 class AddRoomScreen extends StatefulWidget {
   final PropertyElement propertyElement;

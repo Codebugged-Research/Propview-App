@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/Tenant.dart';
+import 'package:propview/models/TenantFamily.dart';
+import 'package:propview/services/tenantFamilyService.dart';
+import 'package:propview/services/tenantService.dart';
+import 'package:propview/views/Admin/widgets/tenantFamilyWidget.dart';
+import 'package:propview/views/Admin/widgets/tenantWidget.dart';
 
 class MoveOutInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -10,7 +16,11 @@ class MoveOutInspectionScreen extends StatefulWidget {
 }
 
 class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
+  bool isLoading = false;
+
   PropertyElement propertyElement;
+  List<Tenant> tenants = [];
+  List<TenantFamily> tenantFamily = [];
 
   TextEditingController maintainanceController = TextEditingController();
   TextEditingController commonAreaController = TextEditingController();
@@ -28,6 +38,49 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   void initState() {
     super.initState();
     propertyElement = widget.propertyElement;
+    loadDataForScreen();
+  }
+
+  loadDataForScreen() async {
+    setState(() {
+      isLoading = true;
+    });
+    //Getting Tenant IDs by Property ID
+    List<String> tenantList =
+        propertyElement.tableproperty.tenantId.split(",").toList();
+
+    //Getting Tenant by Fetching from the Tenant Table
+    for (var tenantId in tenantList) {
+      Tenant tenant = await TenantService.getTenant(tenantId);
+      setState(() {
+        //Adding all the Tenants to the List
+        tenants.add(tenant);
+      });
+    }
+    print(tenants);
+
+    if (tenants.length == 1) {
+      await getTenantFamilyInSingleTenant();
+    } else {
+      getTenantFamilyByMultipleTenant();
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  getTenantFamilyInSingleTenant() async {
+    tenantFamily =
+        await TenantFamilyService.getTenantFamily(tenants[0].tenantId);
+    print(tenantFamily);
+  }
+
+  getTenantFamilyByMultipleTenant() async {
+    //Get All the TenantFamilies by Tenant IDs
+    for (var i = 0; i < tenants.length; i++) {
+      //TODO: Fetch Multiple Tenants at a time
+      print('Yo');
+    }
   }
 
   @override
@@ -90,6 +143,45 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                 titleWidget(context, 'Any other'),
                 inputWidget(anyOtherController),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                subHeadingWidget(context, 'Tenant Details'),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                tenants.length == 0
+                    ? Center(
+                        child: Text('No Tenant is found!',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle2
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600)),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: tenants.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return TenantWidget(tenant: tenants[index], index: index);
+                        }),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                subHeadingWidget(context, 'Tenant FamilyDetails'),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                tenantFamily.length == 0
+                    ? Center(
+                        child: Text('No Family is found!',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle2
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600)),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: tenants.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return TenantFamilyWidget(
+                              tenantFamily: tenantFamily[index], index: index);
+                        }),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               ],
             ),
           ),
@@ -104,6 +196,16 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
       style: Theme.of(context)
           .primaryTextTheme
           .subtitle1
+          .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+    );
+  }
+
+  Widget subHeadingWidget(BuildContext context, String title) {
+    return Text(
+      title,
+      style: Theme.of(context)
+          .primaryTextTheme
+          .headline6
           .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
     );
   }

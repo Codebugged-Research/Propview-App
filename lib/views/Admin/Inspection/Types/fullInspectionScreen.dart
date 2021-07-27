@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:propview/models/Property.dart';
@@ -19,6 +21,8 @@ class FullInspectionScreen extends StatefulWidget {
 }
 
 class _FullInspectionScreenState extends State<FullInspectionScreen> {
+  String roomName;
+
   PropertyElement propertyElement;
 
   TextEditingController maintainanceController = TextEditingController();
@@ -35,6 +39,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
 
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
+  List<String> roomsAvailable = [];
+
+  List<String> imageList;
 
   @override
   void initState() {
@@ -68,20 +75,22 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       subRooms = await SubRoomService.getSubRoomByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
       for (var i = 0; i < rooms.length; i++) {
-        print(getRoomName(rooms[i].roomId));
+        setState(() {
+          roomsAvailable.add(getRoomName(rooms[i].roomId));
+        });
       }
       for (var i = 0; i < subRooms.length; i++) {
-        print(getRoomName(subRooms[i].roomId));
+        setState(() {
+          roomsAvailable.add(getRoomName(subRooms[i].roomId));
+        });
       }
+      roomName = roomsAvailable[0];
     }
 
     setState(() {
-      selectedRoom = roomTypes.data.propertyRoom[0];
       loader = false;
     });
   }
-
-  PropertyRoom selectedRoom;
 
   getRoomName(id) {
     PropertyRoom room = roomTypes.data.propertyRoom
@@ -232,25 +241,21 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               DropdownButtonFormField(
                 decoration: new InputDecoration(
                     icon: Icon(Icons.language)), //, color: Colors.white10
-                value: selectedRoom,
-                items: roomTypes.data.propertyRoom
-                    .map<DropdownMenuItem<PropertyRoom>>(
-                        (PropertyRoom country) {
-                  return DropdownMenuItem<PropertyRoom>(
-                    value: country,
-                    child: Text(country.roomName,
-                        style:
-                            TextStyle(color: Color.fromRGBO(58, 66, 46, .9))),
+                value: roomName,
+                items: roomsAvailable
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
                   );
                 }).toList(),
-
-                onChanged: (PropertyRoom newValue) {
+                onChanged: (var newValue) {
                   setState(() {
-                    selectedRoom = newValue;
+                    roomName = newValue;
                     count++;
-                    headings.add(selectedRoom.roomName.toString());
+                    headings.add(roomName.toString());
+                    Routing.makeRouting(context, routeMethod: 'pop');
                   });
-                  print(newValue.roomName);
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -272,10 +277,15 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         scrollDirection: Axis.horizontal,
         itemCount: list.length + 1,
         itemBuilder: (context, index) {
-          print(name);
           return index == list.length
               ? InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Routing.makeRouting(context,
+                        routeMethod: 'push',
+                        newWidget: CaptureFullInspectionScreen(
+                          imageList: imageList,
+                        ));
+                  },
                   child: Icon(Icons.add),
                 )
               : list[index];

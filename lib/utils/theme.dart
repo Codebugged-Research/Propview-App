@@ -44,10 +44,7 @@ class ThemeClass {
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.normal),
               subtitle1: GoogleFonts.nunitoSans(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.normal),
+                  color: Colors.white, fontStyle: FontStyle.normal),
               subtitle2: GoogleFonts.nunitoSans(
                 color: Colors.black,
                 fontWeight: FontWeight.w500,
