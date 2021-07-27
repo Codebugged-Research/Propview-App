@@ -27,7 +27,7 @@ class TenantWidget extends StatelessWidget {
   tenantDetailsModalSheet(BuildContext context) {
     return showModalBottomSheet<void>(
         context: context,
-        isScrollControlled: true,
+        // isScrollControlled: true,
         backgroundColor: Color(0xFFFFFFFF),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
@@ -62,8 +62,25 @@ class TenantWidget extends StatelessWidget {
                           )),
                       SizedBox(height: UIConstants.fitToHeight(16, context)),
                       detailsWidget(context, 'Name', '${tenant.name}'),
-                      detailsWidget(context, 'Primary Email', '${tenant.pemail}'),
-                      detailsWidget(context, 'Primary Mobile', '${tenant.pmobile}'),
+                      detailsWidget(
+                          context, 'Primary Email', '${tenant.pemail}'),
+                      detailsWidget(
+                          context, 'Secondary Email', '${tenant.semail}'),
+                      detailsWidget(
+                          context, 'Primary Mobile', '${tenant.pmobile}'),
+                      detailsWidget(
+                          context, 'Secondary Mobile', '${tenant.smobile}'),
+                      detailsWidget(
+                          context, 'Primary Address', '${tenant.paddress}'),
+                      detailsWidget(context, 'City', '${tenant.city}'),
+                      detailsWidget(context, 'State', '${tenant.state}'),
+                      detailsWidget(context, 'Pan Number', '${tenant.pan}'),
+                      detailsWidget(
+                          context, 'Aadhar Number', '${tenant.aadhar}'),
+                      detailsWidget(
+                          context, 'Citizen', '${tenant.citizenship}'),
+                      detailsWidget(
+                          context, 'Total Members', '${tenant.totalmembers}'),
                       SizedBox(height: UIConstants.fitToHeight(24, context)),
                     ],
                   ),
@@ -74,8 +91,22 @@ class TenantWidget extends StatelessWidget {
 
   Widget detailsWidget(BuildContext context, String title, String subtitle) {
     return ListTile(
-      title: Text(title),
-      subtitle: Text(subtitle),
+      title: title == ' '
+          ? Text('Not there!',
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .subtitle1
+                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600))
+          : Text(title,
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .subtitle1
+                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
+      subtitle: Text(subtitle,
+          style: Theme.of(context)
+              .primaryTextTheme
+              .subtitle2
+              .copyWith(color: Colors.black)),
     );
   }
 }

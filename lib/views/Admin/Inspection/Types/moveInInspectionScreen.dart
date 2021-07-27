@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Tenant.dart';
 import 'package:propview/models/TenantFamily.dart';
@@ -6,6 +7,9 @@ import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/tenantFamilyService.dart';
 import 'package:propview/services/tenantService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/addTenantFamilyScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/addTenantScreen.dart';
 import 'package:propview/views/Admin/widgets/tenantWidget.dart';
 
 class MoveInInspectionScreen extends StatefulWidget {
@@ -57,30 +61,9 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
         tenants.add(tenant);
       });
     }
-    print(tenants);
-
-    if (tenants.length == 1) {
-      await getTenantFamilyInSingleTenant();
-    } else {
-      getTenantFamilyByMultipleTenant();
-    }
     setState(() {
       isLoading = false;
     });
-  }
-
-  getTenantFamilyInSingleTenant() async {
-    tenantFamily =
-        await TenantFamilyService.getTenantFamily(tenants[0].tenantId);
-    print(tenantFamily);
-  }
-
-  getTenantFamilyByMultipleTenant() async {
-    //Get All the TenantFamilies by Tenant IDs
-    for (var i = 0; i < tenants.length; i++) {
-      //TODO: Fetch Multiple Tenants at a time
-      print('Yo');
-    }
   }
 
   @override
@@ -159,15 +142,25 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                       subHeadingWidget(context, 'Tenant Details'),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: tenants.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return TenantWidget();
-                          }),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
-                      subHeadingWidget(context, 'Tenant FamilyDetails'),
+                      tenants.length == 0
+                          ? Center(
+                              child: Text('No Tenant is found!',
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle2
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600)),
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: tenants.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return TenantWidget(
+                                  tenant: tenants[index],
+                                  index: index,
+                                );
+                              }),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.04),
                     ],
@@ -175,6 +168,43 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                 ),
               ),
             ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.add_event,
+        visible: true,
+        curve: Curves.bounceIn,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.group, color: Colors.white),
+              backgroundColor: Color(0xff314B8C),
+              onTap: () {
+                Routing.makeRouting(context,
+                    routeMethod: 'push',
+                    newWidget: AddTenantFamilyScreen(
+                        propertyElement: propertyElement));
+              },
+              label: 'Tenant Family',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Color(0xff314B8C)),
+          SpeedDialChild(
+              child: Icon(Icons.person, color: Colors.white),
+              backgroundColor: Color(0xff314B8C),
+              onTap: () {
+                Routing.makeRouting(context,
+                    routeMethod: 'push',
+                    newWidget:
+                        AddTenantScreen(propertyElement: propertyElement));
+              },
+              label: 'Tenant',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Color(0xff314B8C)),
+        ],
+      ),
     );
   }
 

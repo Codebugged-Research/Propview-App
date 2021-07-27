@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Tenant.dart';
 import 'package:propview/models/TenantFamily.dart';
@@ -159,33 +160,61 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                         shrinkWrap: true,
                         itemCount: tenants.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return TenantWidget(tenant: tenants[index], index: index);
+                          return TenantWidget(
+                              tenant: tenants[index], index: index);
                         }),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                subHeadingWidget(context, 'Tenant FamilyDetails'),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                tenantFamily.length == 0
-                    ? Center(
-                        child: Text('No Family is found!',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600)),
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: tenants.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return TenantFamilyWidget(
-                              tenantFamily: tenantFamily[index], index: index);
-                        }),
+                // subHeadingWidget(context, 'Tenant FamilyDetails'),
+                // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                // tenantFamily.length == 0
+                //     ? Center(
+                //         child: Text('No Family is found!',
+                //             style: Theme.of(context)
+                //                 .primaryTextTheme
+                //                 .subtitle2
+                //                 .copyWith(
+                //                     color: Colors.black,
+                //                     fontWeight: FontWeight.w600)),
+                //       )
+                //     : ListView.builder(
+                //         shrinkWrap: true,
+                //         itemCount: tenants.length,
+                //         itemBuilder: (BuildContext context, int index) {
+                //           return TenantFamilyWidget(
+                //               tenantFamily: tenantFamily[index], index: index);
+                //         }),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               ],
             ),
           ),
         ),
+      ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.add_event,
+        visible: true,
+        curve: Curves.bounceIn,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.group, color: Colors.white),
+              backgroundColor: Color(0xff314B8C),
+              onTap: () {},
+              label: 'Tenant Family',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Color(0xff314B8C)),
+          SpeedDialChild(
+              child: Icon(Icons.person, color: Colors.white),
+              backgroundColor: Color(0xff314B8C),
+              onTap: () {},
+              label: 'Tenant',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Color(0xff314B8C)),
+        ],
       ),
     );
   }
