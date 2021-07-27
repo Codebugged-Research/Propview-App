@@ -13,7 +13,8 @@ import 'package:propview/views/Admin/landingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SoloAttendance extends StatefulWidget {
-  const SoloAttendance();
+  final AttendanceElement attendanceElement;
+  const SoloAttendance({this.attendanceElement});
 
   @override
   _SoloAttendanceState createState() => _SoloAttendanceState();
@@ -28,12 +29,16 @@ class _SoloAttendanceState extends State<SoloAttendance> {
 
   bool loading = false;
   User user;
+  AttendanceElement attendanceElement;
 
   getData() async {
     setState(() {
       loading = true;
     });
     user = await UserService.getUser();
+    if(widget.attendanceElement != null) {
+      attendanceElement = await AttendanceService.getLogById(widget.attendanceElement.attendanceId);
+    }
     getPunch();
     setState(() {
       loading = false;
@@ -44,45 +49,28 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     setState(() {
       loading = true;
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String json = prefs.getString("punch");
-    if (json != null) {
-      Map decodedJson = jsonDecode(json);
+    if (widget.attendanceElement != null) {
       setState(() {
-        start = decodedJson["in"];
-        end = decodedJson["out"];
-        startMeter = decodedJson["inMeter"];
-        endMeter = decodedJson["outMeter"];
-        reset = decodedJson["reset"];
-        id = decodedJson["id"] == null ? "-" : decodedJson["id"];
+        start = attendanceElement.punchIn.toString();
+        end = attendanceElement.punchOut == Config.dummyTime
+            ? "--/--/-- -- : --"
+            : attendanceElement.punchOut;
+        startMeter = attendanceElement.meterIn;
+        endMeter = attendanceElement.punchOut == Config.dummyTime
+            ? 0
+            : attendanceElement.meterOut;
+        reset = attendanceElement.punchOut == Config.dummyTime
+            ? false
+            : true;
+        id = attendanceElement.attendanceId.toString();
       });
     }
-    print(id);
     setState(() {
       loading = false;
     });
   }
 
-  savePunch() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(
-      "punch",
-      jsonEncode(
-        {
-          "in": start,
-          "out": end,
-          "inMeter": startMeter,
-          "outMeter": endMeter,
-          "reset": reset,
-          "id": id
-        },
-      ),
-    );
-  }
-
   updateLog() async {
-    print(start);
-    print(end);
     DateTime startTime = DateTime.parse(start);
     DateTime endTime = DateTime.parse(end);
     AttendanceElement tempAttendance;
@@ -91,9 +79,9 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       print(tempAttendance.toJson());
       tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
       tempAttendance.punchOut = endTime;
-      tempAttendance.workHour =
-          endTime.difference(startTime).inHours;
-          tempAttendance.diff_km = user.bikeReading == 1 ? endMeter - startMeter : 0;
+      tempAttendance.workHour = endTime.difference(startTime).inHours;
+      tempAttendance.diff_km =
+          user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
     var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
@@ -130,7 +118,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       setState(() {
         id = result.toString();
       });
-      savePunch();
       showInSnackBar(
         context,
         "Attendance added successfully",
@@ -638,7 +625,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                             end = DateTime.now().toString();
                             endMeter = int.parse(_endMeterController.text);
                             reset = true;
-                            savePunch();
                             updateLog();
                             Navigator.of(context).pop();
                           },
@@ -715,8 +701,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                         setState(
                           () {
                             start = DateTime.now().toString();
-                            startMeter =
-                                int.parse(_startMeterController.text);
+                            startMeter = int.parse(_startMeterController.text);
                             createLog();
                             Navigator.of(context).pop();
                           },
@@ -752,7 +737,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       end = DateTime.now().toString();
       reset = true;
     });
-    savePunch();
     updateLog();
     Navigator.of(context).pop();
   }

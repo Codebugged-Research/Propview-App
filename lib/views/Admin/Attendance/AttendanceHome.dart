@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
-import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
@@ -13,7 +12,6 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Admin/Attendance/LogCard.dart';
 import 'package:propview/views/Admin/Attendance/SoloAttendance.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -39,6 +37,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
   List bools = [];
   Map gg;
 
+  AttendanceElement myAttendance;
+
   getData() async {
     setState(() {
       loading = true;
@@ -61,19 +61,20 @@ class _AttendanceHomeState extends State<AttendanceHome>
     }
     gg = genGrouping();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
-    setState(() {
-      loading = false;
-    });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String json = prefs.getString("punch");
-    if (json != null) {
-      Map decodedJson = jsonDecode(json);
-      if (decodedJson["out"] == "--/--/-- -- : --") {
+    var today = attendanceToday.data.attendance
+        .where((element) => element.userId == user.userId.toString())
+        .toList();
+    if (today.length > 0) {
+      myAttendance = today.last;
+      if (myAttendance.punchOut == Config.dummyTime) {
         setState(() {
           label = "Punch Out";
         });
       }
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   genGrouping() {
@@ -177,11 +178,19 @@ class _AttendanceHomeState extends State<AttendanceHome>
                             ],
                           ),
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => SoloAttendance(),
-                              ),
-                            );
+                            if (myAttendance !=null ) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SoloAttendance(attendanceElement: myAttendance,),
+                                ),
+                              );
+                            }else{
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SoloAttendance(),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],

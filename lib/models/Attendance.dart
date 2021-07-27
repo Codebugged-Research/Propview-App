@@ -95,7 +95,7 @@ class AttendanceElement {
         punchIn:
             json["punch_in"] == null ? null : DateTime.parse(json["punch_in"]),
         punchOut: json["punch_out"] == "--/--/-- -- : --"
-            ? DateTime.now()
+            ? DateTime(1,1,1,1,1,1,1,1,)
             : DateTime.parse(json["punch_out"]),
         isPresent: json["punch_out"] == "--/--/-- -- : --" ? true : false,
         meterIn: json["meter_in"] == null ? null : json["meter_in"],
