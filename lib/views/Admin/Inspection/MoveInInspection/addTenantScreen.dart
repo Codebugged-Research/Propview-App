@@ -13,8 +13,33 @@ class _AddTenantScreenState extends State<AddTenantScreen> {
   PropertyElement propertyElement;
 
   final formkey = new GlobalKey<FormState>();
+
   TextEditingController nameController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+  TextEditingController pemailController = new TextEditingController();
+  TextEditingController semailController = new TextEditingController();
+  TextEditingController pmobileController = new TextEditingController();
+  TextEditingController smobileController = new TextEditingController();
+  TextEditingController hphoneController = new TextEditingController();
+  TextEditingController ophoneController = new TextEditingController();
+  TextEditingController isFamilyController = new TextEditingController();
+  TextEditingController paddressController = new TextEditingController();
+  TextEditingController cityController = new TextEditingController();
+  TextEditingController stateController = new TextEditingController();
+  TextEditingController panController = new TextEditingController();
+  TextEditingController aadharController = new TextEditingController();
+  TextEditingController citizenshipController = new TextEditingController();
+  TextEditingController companyController = new TextEditingController();
+  TextEditingController caddressController = new TextEditingController();
+  TextEditingController desginationController = new TextEditingController();
+  TextEditingController totalMembersController = new TextEditingController();
+  TextEditingController planlordController = new TextEditingController();
+  TextEditingController planlordNumberController = new TextEditingController();
+  TextEditingController spouseNameController = new TextEditingController();
+  TextEditingController spouseEmailController = new TextEditingController();
+  TextEditingController spouseNumberController = new TextEditingController();
+  TextEditingController statusController = new TextEditingController();
+  TextEditingController billingController = new TextEditingController();
 
   @override
   void initState() {
@@ -33,7 +58,12 @@ class _AddTenantScreenState extends State<AddTenantScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SingleChildScrollView(
               child: Column(
-                children: [headerWidget(context)],
+                children: [
+                  headerWidget(context),
+                  formWidget(context),
+                  SizedBox(height: UIConstants.fitToHeight(16, context)),
+                  buttonWidget(context)
+                ],
               ),
             ),
           ),
@@ -72,5 +102,54 @@ class _AddTenantScreenState extends State<AddTenantScreen> {
     );
   }
 
+  Widget formWidget(BuildContext context) {
+    return Container(
+      child: Form(
+        key: formkey,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              inputWidget(nameController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+            ]),
+      ),
+    );
+  }
 
+  Widget inputWidget(TextEditingController textEditingController) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: TextField(
+        controller: textEditingController,
+        obscureText: false,
+        textCapitalization: TextCapitalization.words,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.grey[300],
+          labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(12.0)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(12.0)),
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(12.0)),
+        ),
+      ),
+    );
+  }
+
+  Widget buttonWidget(BuildContext context) {
+    return MaterialButton(
+      minWidth: 360,
+      height: 55,
+      color: Color(0xff314B8C),
+      onPressed: () async {},
+      child: Text("Login", style: Theme.of(context).primaryTextTheme.subtitle1),
+    );
+  }
 }

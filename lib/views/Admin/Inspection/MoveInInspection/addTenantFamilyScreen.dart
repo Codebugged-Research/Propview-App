@@ -15,6 +15,15 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
   PropertyElement propertyElement;
   List<Tenant> tenants;
 
+  final formkey = new GlobalKey<FormState>();
+
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController sexController = new TextEditingController();
+  TextEditingController ageController = new TextEditingController();
+  TextEditingController phoneController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController relationshipController = new TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +42,12 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SingleChildScrollView(
               child: Column(
-                children: [headerWidget(context)],
+                children: [
+                  headerWidget(context),
+                  formWidget(context),
+                  SizedBox(height: UIConstants.fitToHeight(16, context)),
+                  buttonWidget(context)
+                ],
               ),
             ),
           ),
@@ -69,6 +83,67 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
       'assets/tenant/tenant.png',
       height: UIConstants.fitToHeight(75, context),
       width: UIConstants.fitToWidth(75, context),
+    );
+  }
+
+  Widget formWidget(BuildContext context) {
+    return Container(
+      child: Form(
+        key: formkey,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              inputWidget(nameController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              inputWidget(sexController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              inputWidget(ageController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              inputWidget(phoneController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              inputWidget(emailController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              inputWidget(relationshipController),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+            ]),
+      ),
+    );
+  }
+
+  Widget inputWidget(TextEditingController textEditingController) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: TextField(
+        controller: textEditingController,
+        obscureText: false,
+        textCapitalization: TextCapitalization.words,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.grey[300],
+          labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(12.0)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(12.0)),
+          border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(12.0)),
+        ),
+      ),
+    );
+  }
+
+  Widget buttonWidget(BuildContext context) {
+    return MaterialButton(
+      minWidth: 360,
+      height: 55,
+      color: Color(0xff314B8C),
+      onPressed: () async {},
+      child: Text("Login", style: Theme.of(context).primaryTextTheme.subtitle1),
     );
   }
 }
