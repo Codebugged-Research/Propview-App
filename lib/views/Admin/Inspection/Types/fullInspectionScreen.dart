@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:propview/models/Inspection.dart';
+import 'package:propview/models/Issue.dart';
+import 'package:propview/models/customRoomSubRoom.dart';
+import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'dart:io';
 
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
@@ -15,52 +20,114 @@ import 'package:propview/views/Admin/widgets/alertWidget.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
-  FullInspectionScreen({this.propertyElement});
+  final List<List<Issue>> rows;
+  final List<IssueTableData> issueTableList;
+  final List<String> imageList;
+  final int index1;
+  final int index2;
+  final Inspection inspection;
+  FullInspectionScreen({
+    this.inspection,
+    this.propertyElement,
+    this.rows,
+    this.issueTableList,
+    this.index1,
+    this.index2,
+    this.imageList,
+  });
   @override
   _FullInspectionScreenState createState() => _FullInspectionScreenState();
 }
 
 class _FullInspectionScreenState extends State<FullInspectionScreen> {
-  String roomName;
+  Inspection inspection;
+
+  TextEditingController maintainanceController;
+  TextEditingController commonAreaController;
+  TextEditingController electricitySocietyController;
+  TextEditingController electricityAuthorityController;
+  TextEditingController powerController;
+  TextEditingController pngController;
+  TextEditingController clubController;
+  TextEditingController waterController;
+  TextEditingController propertyTaxController;
+  TextEditingController anyOtherController;
 
   PropertyElement propertyElement;
-
-  TextEditingController maintainanceController = TextEditingController();
-  TextEditingController commonAreaController = TextEditingController();
-  TextEditingController electricitySocietyController = TextEditingController();
-  TextEditingController electricityAuthorityController =
-      TextEditingController();
-  TextEditingController powerController = TextEditingController();
-  TextEditingController pngController = TextEditingController();
-  TextEditingController clubController = TextEditingController();
-  TextEditingController waterController = TextEditingController();
-  TextEditingController propertyTaxController = TextEditingController();
-  TextEditingController anyOtherController = TextEditingController();
-
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
-  List<String> roomsAvailable = [];
+  List<CustomRoomSubRoom> roomsAvailable = [];
+  CustomRoomSubRoom selectedRoomSubRoom;
+  List<List<Issue>> rows = [];
+  List<IssueTableData> issueTableList = [];
+  List<List<String>> photoList = [];
 
-  List<String> imageList;
+  RoomType roomTypes;
+  bool loader = false;
 
   @override
   void initState() {
     super.initState();
     getData();
-    propertyElement = widget.propertyElement;
   }
 
-  RoomType roomTypes;
+  String dummyDouble = (0.0).toString();
 
-  bool loader = false;
   getData() async {
     setState(() {
       loader = true;
+      propertyElement = widget.propertyElement;
     });
+    maintainanceController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.maintenanceCharges.toString()
+            : dummyDouble);
+    commonAreaController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.commonAreaElectricity.toString()
+            : dummyDouble);
+    electricitySocietyController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.electricityAuthority.toString()
+            : dummyDouble);
+    electricityAuthorityController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.electricityAuthority.toString()
+            : dummyDouble);
+    powerController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.powerBackup.toString()
+            : dummyDouble);
+    pngController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.pngLgp.toString()
+            : dummyDouble);
+    clubController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.club.toString()
+            : dummyDouble);
+    waterController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.water.toString()
+            : dummyDouble);
+    propertyTaxController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.propertyTax.toString()
+            : dummyDouble);
+    anyOtherController = TextEditingController(
+        text: widget.inspection != null
+            ? widget.inspection.anyOther.toString()
+            : dummyDouble);
+    if (widget.index1 != null) {
+      rows = widget.rows != null ? widget.rows : [[]];
+      issueTableList =
+          widget.issueTableList != null ? widget.issueTableList : [];
+      rows[widget.index1][widget.index2].photo = widget.imageList;
+    }
     roomTypes = await RoomTypeService.getRoomTypes();
-    prefs = await SharedPreferences.getInstance();
     rooms = await RoomService.getRoomByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
+      propertyElement.tableproperty.propertyId.toString(),
+    );
     if (rooms.length == 0) {
       showDialog(
           context: context,
@@ -76,18 +143,27 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           propertyElement.tableproperty.propertyId.toString());
       for (var i = 0; i < rooms.length; i++) {
         setState(() {
-          roomsAvailable.add(getRoomName(rooms[i].roomId));
+          roomsAvailable.add(CustomRoomSubRoom(
+            isSubroom: false,
+            propertyRoomSubRoomId: rooms[i].propertyRoomId,
+            roomSubRoomName: getRoomName(rooms[i].roomId),
+          ));
         });
       }
       for (var i = 0; i < subRooms.length; i++) {
         setState(() {
-          roomsAvailable.add(getRoomName(subRooms[i].roomId));
+          roomsAvailable.add(CustomRoomSubRoom(
+            isSubroom: true,
+            propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
+            roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
+                "-" +
+                getRoomName(rooms[i].roomId),
+          ));
         });
       }
-      roomName = roomsAvailable[0];
     }
-
     setState(() {
+      selectedRoomSubRoom = roomsAvailable[0];
       loader = false;
     });
   }
@@ -99,11 +175,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     return room.roomName;
   }
 
-  SharedPreferences prefs;
-
-  List<List<DataRow>> rows = [[]];
-  List headings = [];
-  int count = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -194,9 +265,10 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
-                        itemBuilder: (context, index) =>
-                            issueCard(constraints, index),
-                        itemCount: count,
+                        itemBuilder: (context, index) {
+                          return issueCard(constraints, index);
+                        },
+                        itemCount: issueTableList.length,
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                       ),
@@ -241,21 +313,29 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               DropdownButtonFormField(
                 decoration: new InputDecoration(
                     icon: Icon(Icons.language)), //, color: Colors.white10
-                value: roomName,
+                value: selectedRoomSubRoom,
                 items: roomsAvailable
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
+                    .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                  return DropdownMenuItem(
                     value: value,
-                    child: Text(value),
+                    child: Text(value.roomSubRoomName),
                   );
                 }).toList(),
-                onChanged: (var newValue) {
+                onChanged: (newValue) {
                   setState(() {
-                    roomName = newValue;
-                    count++;
-                    headings.add(roomName.toString());
-                    Routing.makeRouting(context, routeMethod: 'pop');
+                    selectedRoomSubRoom = newValue;
+                    issueTableList.add(IssueTableData(
+                      roomsubroomId: newValue.propertyRoomSubRoomId,
+                      roomsubroomName: newValue.roomSubRoomName,
+                      issub: newValue.isSubroom == true ? 1 : 0,
+                      issueRowId: "",
+                      propertyId:
+                          widget.propertyElement.tableproperty.propertyId,
+                    ));
+                    rows.add([]);
+                    photoList.add([]);
                   });
+                  Routing.makeRouting(context, routeMethod: 'pop');
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -266,82 +346,87 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  List<List<Widget>> photo = [[]];
-
-  Widget photoPick(list, name) {
-    return Container(
-      width: 100,
-      height: 50,
-      child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemCount: list.length + 1,
-        itemBuilder: (context, index) {
-          return index == list.length
-              ? InkWell(
-                  onTap: () {
-                    Routing.makeRouting(context,
-                        routeMethod: 'push',
-                        newWidget: CaptureFullInspectionScreen(
-                          imageList: imageList,
-                        ));
-                  },
-                  child: Icon(Icons.add),
-                )
-              : list[index];
-        },
-      ),
-    );
-  }
-
-  Widget issueCard(constraints, index) {
+  Widget issueCard(constraints, int index) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        titleWidget(context, headings[index].toString()),
+        titleWidget(context, issueTableList[index].roomsubroomName),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: ConstrainedBox(
             constraints: BoxConstraints(minWidth: constraints.minWidth),
             child: DataTable(
-                dataRowHeight: 50,
-                dividerThickness: 2,
-                columns: [
-                  DataColumn(
-                      label: Text("Item/Issue Name",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Status",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Remarks",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Photos",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                ],
-                rows: rows[index]),
+              dataRowHeight: 80,
+              dividerThickness: 2,
+              columns: [
+                DataColumn(
+                    label: Text("Item/Issue Name",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Status",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Remarks",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Photos",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+              ],
+              rows: rows[index]
+                  .asMap()
+                  .entries
+                  .map((e) => DataRow(cells: [
+                        DataCell(TextFormField(
+                          initialValue: e.value.issueName,
+                          onChanged: (value) {
+                            setState(() {
+                              e.value.issueName = value;
+                            });
+                          },
+                        )),
+                        DataCell(TextFormField(
+                          initialValue: e.value.status,
+                          onChanged: (value) {
+                            setState(() {
+                              e.value.status = value;
+                            });
+                          },
+                        )),
+                        DataCell(TextFormField(
+                          initialValue: e.value.remarks,
+                          onChanged: (value) {
+                            setState(() {
+                              e.value.remarks = value;
+                            });
+                          },
+                        )),
+                        DataCell(
+                          photoPick(e.value.photo, index, e.key),
+                        ),
+                      ]))
+                  .toList(),
+            ),
           ),
         ),
         Row(
@@ -352,14 +437,15 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               icon: Icon(Icons.add),
               onPressed: () {
                 setState(() {
-                  rows[index].add(DataRow(cells: [
-                    DataCell(TextFormField()),
-                    DataCell(TextFormField()),
-                    DataCell(TextFormField()),
-                    DataCell(
-                      photoPick(photo[index], headings[index].toString()),
+                  photoList.add([]);
+                  rows[index].add(
+                    Issue(
+                      issueName: "",
+                      status: "",
+                      remarks: "",
+                      photo: photoList[index],
                     ),
-                  ]));
+                  );
                 });
               },
             ),
@@ -369,6 +455,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               onPressed: () {
                 setState(() {
                   rows[index].removeLast();
+                  photoList[index].removeLast();
                 });
               },
             ),
@@ -378,12 +465,74 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               onPressed: () {
                 setState(() {
                   rows[index].clear();
+                  photoList[index].clear();
                 });
               },
             ),
           ],
         )
       ],
+    );
+  }
+
+  Widget photoPick(List<String> list, int index1, int index2) {
+    return Container(
+      width: 300,
+      height: 50,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: list.length + 1,
+        itemBuilder: (context, index) {
+          return index == list.length
+              ? InkWell(
+                  onTap: () {
+                    inspection = Inspection(
+                      inspectType: "Full Inspection",
+                      maintenanceCharges:
+                          double.parse(maintainanceController.text),
+                      commonAreaElectricity:
+                          double.parse(commonAreaController.text),
+                      electricitySociety:
+                          double.parse(electricitySocietyController.text),
+                      electricityAuthority:
+                          double.parse(electricityAuthorityController.text),
+                      powerBackup: double.parse(powerController.text),
+                      pngLgp: double.parse(pngController.text),
+                      club: double.parse(clubController.text),
+                      water: double.parse(waterController.text),
+                      propertyTax: double.parse(propertyTaxController.text),
+                      anyOther: double.parse(anyOtherController.text),
+                    );
+                    Routing.makeRouting(
+                      context,
+                      routeMethod: 'pushReplacement',
+                      newWidget: CaptureFullInspectionScreen(
+                        imageList: list,
+                        index1: index1,
+                        index2: index2,
+                        inspection: inspection,
+                        propertyElement: widget.propertyElement,
+                        rows: rows,
+                        issueTableList: issueTableList,
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.add),
+                )
+              : InkWell(
+                  child: Image.file(
+                    File(list[index]),
+                    height: 60,
+                    width: 60,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      list.removeAt(index);
+                    });
+                  },
+                );
+        },
+      ),
     );
   }
 
@@ -403,6 +552,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       child: TextField(
         controller: textEditingController,
         obscureText: false,
+        keyboardType: TextInputType.number,
         textCapitalization: TextCapitalization.words,
         decoration: InputDecoration(
           filled: true,

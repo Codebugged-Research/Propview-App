@@ -196,7 +196,7 @@ class Tableproperty {
     int bathrooms;
     int balcony;
     String bhkAdd;
-    int superArea;
+    double superArea;
     String superPrefix;
     double carpetArea;
     String carpetPrefix;
@@ -279,7 +279,7 @@ class Tableproperty {
         bathrooms: json["bathrooms"] == null ? null : json["bathrooms"],
         balcony: json["balcony"] == null ? null : json["balcony"],
         bhkAdd: json["bhk_add"] == null ? null : json["bhk_add"],
-        superArea: json["super_area"] == null ? null : json["super_area"],
+        superArea: json["super_area"] == null ? 0.0 : double.parse(json["super_area"].toString()),
         superPrefix: json["super_prefix"] == null ? null : json["super_prefix"],
         carpetArea: json["carpet_area"] == null ? null : double.parse(json["carpet_area"].toString()),
         carpetPrefix: json["carpet_prefix"] == null ? null : json["carpet_prefix"],

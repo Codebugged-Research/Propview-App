@@ -53,7 +53,7 @@ class _AttendanceCardState extends State<AttendanceCard> {
                         fit: BoxFit.cover,
                         placeholder: "assets/loader.gif",
                         image:
-                            "${Config.STORAGE_ENDPOINT}${widget.attd.user.userId}.png",
+                            "${Config.STORAGE_ENDPOINT}${widget.attd.user.userId}.jpeg",
                         imageErrorBuilder: (BuildContext context,
                             Object exception, StackTrace stackTrace) {
                           return CircleAvatar(

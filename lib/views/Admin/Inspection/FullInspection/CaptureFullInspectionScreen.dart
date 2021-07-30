@@ -6,12 +6,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:propview/models/Inspection.dart';
+import 'package:propview/models/Issue.dart';
+import 'package:propview/models/Property.dart';
+import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
 
 class CaptureFullInspectionScreen extends StatefulWidget {
   final List<String> imageList;
-  CaptureFullInspectionScreen({this.imageList});
+  final int index1;
+  final int index2;
+  final PropertyElement propertyElement;
+  final List<List<Issue>> rows;
+  final List<IssueTableData> issueTableList;
+  final Inspection inspection;
+  CaptureFullInspectionScreen({
+    this.imageList,
+    this.propertyElement,
+    this.index1,
+    this.index2,
+    this.inspection,
+    this.rows,
+    this.issueTableList,
+  });
   @override
   _CaptureFullInspectionScreenState createState() =>
       _CaptureFullInspectionScreenState();
@@ -68,7 +87,19 @@ class _CaptureFullInspectionScreenState
       setState(() {
         imageList.add(compressedImage.path);
       });
-      Routing.makeRouting(context, routeMethod: 'pop');
+      await Routing.makeRouting(
+        context,
+        routeMethod: 'pushReplacement',
+        newWidget: FullInspectionScreen(
+          imageList: imageList,
+          index1: widget.index1,
+          index2: widget.index2,
+          inspection: widget.inspection,
+          propertyElement: widget.propertyElement,
+          rows: widget.rows,
+          issueTableList: widget.issueTableList,
+        ),
+      );
     } catch (e) {
       print(e);
     }
@@ -154,7 +185,9 @@ class _CaptureFullInspectionScreenState
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.white),
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],

@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Object exception, StackTrace stackTrace) {
                           return CircleAvatar(
                             backgroundColor: Colors.white,
-                            radius: 80,
+                            radius: 30,
                             backgroundImage: AssetImage(
                               "assets/dummy.png",
                             ),
