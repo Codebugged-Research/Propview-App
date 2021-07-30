@@ -127,7 +127,8 @@ class _AddTenantScreenState extends State<AddTenantScreen> {
           "status": 1,
           "billing": 0
         });
-        bool isCreated = await TenantService.createTenant(payload);
+        bool isCreated = await TenantService.createTenant(
+            payload, propertyElement.tableproperty.propertyId);
         if (isCreated) {
           setState(() {
             isRequested = false;

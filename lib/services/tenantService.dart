@@ -5,9 +5,9 @@ import 'package:propview/models/Tenant.dart';
 import 'package:propview/services/authService.dart';
 
 class TenantService extends AuthService {
-  static Future<bool> createTenant(var payload) async {
+  static Future<bool> createTenant(var payload, var propertyId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/tenant/create',
+        AuthService.BASE_URI + 'api/tenant/create/$propertyId',
         method: 'POST',
         body: payload);
     if (response.statusCode == 200)
