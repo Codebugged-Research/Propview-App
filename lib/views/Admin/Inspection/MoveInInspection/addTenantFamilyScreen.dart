@@ -1,7 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Tenant.dart';
+import 'package:propview/services/tenantFamilyService.dart';
+import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/landingPage.dart';
 
 class AddTenantFamilyScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -12,9 +20,13 @@ class AddTenantFamilyScreen extends StatefulWidget {
 }
 
 class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
-  PropertyElement propertyElement;
-  List<Tenant> tenants;
+  bool isLoading = false;
+  String genderValue = 'Male';
 
+  PropertyElement propertyElement;
+  Tenant selectedTenant;
+  List<Tenant> tenants;
+  List<String> genderList = ['Male', 'Female'];
   final formkey = new GlobalKey<FormState>();
 
   TextEditingController nameController = new TextEditingController();
@@ -29,6 +41,66 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
     super.initState();
     propertyElement = widget.propertyElement;
     tenants = widget.tenants;
+    selectedTenant = tenants[0];
+  }
+
+  checkFields() {
+    final form = formkey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    setState(() {
+      isLoading = false;
+    });
+    return false;
+  }
+
+  createTenantFamilyRequest() async {
+    try {
+      if (checkFields()) {
+        setState(() {
+          isLoading = true;
+        });
+        var payload = json.encode({
+          "tenant_id": selectedTenant.tenantId,
+          "name": nameController.text,
+          "sex": sexController.text,
+          "age": ageController.text,
+          "mobile": phoneController.text,
+          "email": emailController.text,
+          "relationship": relationshipController.text,
+        });
+        bool isCreated = await TenantFamilyService.createTenantFamily(payload);
+        if (isCreated) {
+          setState(() {
+            isLoading = false;
+          });
+          showInSnackBar(context, 'Tenant-Family added successfully!', 2500);
+          Timer(Duration(milliseconds: 2510), () {
+            Routing.makeRouting(context,
+                routeMethod: 'pushAndRemoveUntil',
+                newWidget: LandingScreen(selectedIndex: 0));
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          showInSnackBar(
+              context, 'Failed to create a Family Member! Try again.', 2500);
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showInSnackBar(context, 'Fill all the details! Try again.', 2500);
+      }
+    } catch (err) {
+      setState(() {
+        isLoading = false;
+      });
+      showInSnackBar(context, 'Check your Network! Try again.', 2500);
+    }
   }
 
   @override
@@ -44,9 +116,11 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
               child: Column(
                 children: [
                   headerWidget(context),
+                  SizedBox(height: UIConstants.fitToHeight(12, context)),
                   formWidget(context),
                   SizedBox(height: UIConstants.fitToHeight(16, context)),
-                  buttonWidget(context)
+                  buttonWidget(context),
+                  SizedBox(height: UIConstants.fitToHeight(36, context)),
                 ],
               ),
             ),
@@ -86,24 +160,88 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
     );
   }
 
+  Widget titleWidget(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0),
+      child: Text(
+        title,
+        style: Theme.of(context)
+            .primaryTextTheme
+            .subtitle1
+            .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+      ),
+    );
+  }
+
   Widget formWidget(BuildContext context) {
     return Container(
       child: Form(
         key: formkey,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              titleWidget(context, 'Select Tenant:'),
+              DropdownButton(
+                isExpanded: true,
+                value: selectedTenant,
+                elevation: 8,
+                underline: Container(
+                  height: 2,
+                  width: MediaQuery.of(context).size.width,
+                  color: Color(0xff314B8C),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    selectedTenant = value;
+                  });
+                },
+                items: tenants.map<DropdownMenuItem>((value) {
+                  return DropdownMenuItem(
+                    value: value,
+                    child: Text(value.name),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: UIConstants.fitToHeight(12, context)),
+              titleWidget(context, 'Name'),
               inputWidget(nameController),
               SizedBox(height: UIConstants.fitToHeight(12, context)),
-              inputWidget(sexController),
+              titleWidget(context, 'Sex'),
+              DropdownButton(
+                isExpanded: true,
+                value: genderValue,
+                elevation: 8,
+                underline: Container(
+                  height: 2,
+                  width: MediaQuery.of(context).size.width,
+                  color: Color(0xff314B8C),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    genderValue = value;
+                    sexController.text = genderValue;
+                  });
+                },
+                items: genderList.map<DropdownMenuItem>((value) {
+                  return DropdownMenuItem(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
               SizedBox(height: UIConstants.fitToHeight(12, context)),
+              titleWidget(context, 'Age'),
               inputWidget(ageController),
               SizedBox(height: UIConstants.fitToHeight(12, context)),
+              titleWidget(context, 'Phone Number'),
               inputWidget(phoneController),
               SizedBox(height: UIConstants.fitToHeight(12, context)),
+              titleWidget(context, 'Email'),
               inputWidget(emailController),
               SizedBox(height: UIConstants.fitToHeight(12, context)),
+              titleWidget(context, 'Relationship'),
               inputWidget(relationshipController),
               SizedBox(height: UIConstants.fitToHeight(12, context)),
             ]),
@@ -138,12 +276,17 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
   }
 
   Widget buttonWidget(BuildContext context) {
-    return MaterialButton(
-      minWidth: 360,
-      height: 55,
-      color: Color(0xff314B8C),
-      onPressed: () async {},
-      child: Text("Login", style: Theme.of(context).primaryTextTheme.subtitle1),
-    );
+    return isLoading
+        ? circularProgressWidget()
+        : MaterialButton(
+            minWidth: 360,
+            height: 55,
+            color: Color(0xff314B8C),
+            onPressed: () async {
+              await createTenantFamilyRequest();
+            },
+            child: Text("Create Tenant-Family",
+                style: Theme.of(context).primaryTextTheme.subtitle1),
+          );
   }
 }

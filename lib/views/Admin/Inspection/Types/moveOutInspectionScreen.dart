@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Tenant.dart';
 import 'package:propview/models/TenantFamily.dart';
-import 'package:propview/services/tenantFamilyService.dart';
+import 'package:propview/services/inspectionService.dart';
+import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/tenantService.dart';
-import 'package:propview/views/Admin/widgets/tenantFamilyWidget.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/widgets/tenantWidget.dart';
 
 class MoveOutInspectionScreen extends StatefulWidget {
@@ -18,6 +21,7 @@ class MoveOutInspectionScreen extends StatefulWidget {
 
 class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   bool isLoading = false;
+  bool isRequested = false;
 
   PropertyElement propertyElement;
   List<Tenant> tenants = [];
@@ -59,28 +63,73 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
       });
     }
     print(tenants);
-
-    if (tenants.length == 1) {
-      await getTenantFamilyInSingleTenant();
-    } else {
-      getTenantFamilyByMultipleTenant();
-    }
     setState(() {
       isLoading = false;
     });
   }
 
-  getTenantFamilyInSingleTenant() async {
-    tenantFamily =
-        await TenantFamilyService.getTenantFamily(tenants[0].tenantId);
-    print(tenantFamily);
+  moveOutRequest() async {
+    try {
+      setState(() {
+        isRequested = true;
+      });
+      var payload = json.encode({
+        "inspect_type": "Move out Inspection",
+        "maintenance_charges": "",
+        "common_area_electricity": "",
+        "electricity_society": "",
+        "electricity_authority": "",
+        "power_backup": "",
+        "png_lgp": "",
+        "club": "",
+        "water": "",
+        "property_tax": "",
+        "any_other": "",
+        "property_id": "",
+        "employeed_id": "",
+        "issue_id_list": "",
+        "createdAt": DateTime.now().toString(),
+        "updatedAt": DateTime.now().toString(),
+      });
+      print(payload);
+      bool isCreated = await InspectionService.createInspection(payload);
+      if (isCreated) {
+        setState(() {
+          isRequested = false;
+        });
+        showInSnackBar(
+            context, 'Move Out Inspection created Successfully!', 2500);
+      } else {
+        setState(() {
+          isRequested = false;
+        });
+        showInSnackBar(context, 'Move Out Inspection failed! Try again.', 2500);
+      }
+    } catch (err) {
+      setState(() {
+        isRequested = false;
+      });
+      showInSnackBar(context, 'Something went wrong! Try again.', 2500);
+    }
   }
 
-  getTenantFamilyByMultipleTenant() async {
-    //Get All the TenantFamilies by Tenant IDs
-    for (var i = 0; i < tenants.length; i++) {
-      //TODO: Fetch Multiple Tenants at a time
-      print('Yo');
+  removeTenantFromProperty(String tenantId) async {
+    try {
+      List<String> tenantList =
+          propertyElement.tableproperty.tenantId.split(",").toList();
+      tenantList.remove(tenantId);
+      propertyElement.tableproperty.tenantId = tenantList.join(",");
+      var payload = json.encode(propertyElement.toJson());
+      bool isUpdated = await PropertyService.updateProperty(
+          payload, propertyElement.tableproperty.propertyId);
+      if (isUpdated) {
+        showInSnackBar(context, 'Tenant removed successfully!', 2500);
+        Routing.makeRouting(context, routeMethod: 'pop');
+      } else {
+        showInSnackBar(context, 'Tenant deletion failed! Try again.', 2500);
+      }
+    } catch (err) {
+      showInSnackBar(context, 'Something went wrong! Try again.', 2500);
     }
   }
 
@@ -160,61 +209,20 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                         shrinkWrap: true,
                         itemCount: tenants.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return TenantWidget(
-                              tenant: tenants[index], index: index);
+                          return GestureDetector(
+                            onLongPress: () async {
+                              await removeTenantFromProperty(
+                                  tenants[index].tenantId.toString());
+                            },
+                            child: TenantWidget(
+                                tenant: tenants[index], index: index),
+                          );
                         }),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                // subHeadingWidget(context, 'Tenant FamilyDetails'),
-                // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                // tenantFamily.length == 0
-                //     ? Center(
-                //         child: Text('No Family is found!',
-                //             style: Theme.of(context)
-                //                 .primaryTextTheme
-                //                 .subtitle2
-                //                 .copyWith(
-                //                     color: Colors.black,
-                //                     fontWeight: FontWeight.w600)),
-                //       )
-                //     : ListView.builder(
-                //         shrinkWrap: true,
-                //         itemCount: tenants.length,
-                //         itemBuilder: (BuildContext context, int index) {
-                //           return TenantFamilyWidget(
-                //               tenantFamily: tenantFamily[index], index: index);
-                //         }),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               ],
             ),
           ),
         ),
-      ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.add_event,
-        visible: true,
-        curve: Curves.bounceIn,
-        children: [
-          SpeedDialChild(
-              child: Icon(Icons.group, color: Colors.white),
-              backgroundColor: Color(0xff314B8C),
-              onTap: () {},
-              label: 'Tenant Family',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Color(0xff314B8C)),
-          SpeedDialChild(
-              child: Icon(Icons.person, color: Colors.white),
-              backgroundColor: Color(0xff314B8C),
-              onTap: () {},
-              label: 'Tenant',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Color(0xff314B8C)),
-        ],
       ),
     );
   }

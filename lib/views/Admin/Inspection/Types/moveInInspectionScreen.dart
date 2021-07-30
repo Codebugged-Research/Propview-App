@@ -180,7 +180,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                 Routing.makeRouting(context,
                     routeMethod: 'push',
                     newWidget: AddTenantFamilyScreen(
-                        propertyElement: propertyElement));
+                        propertyElement: propertyElement, tenants: tenants));
               },
               label: 'Tenant Family',
               labelStyle: TextStyle(
