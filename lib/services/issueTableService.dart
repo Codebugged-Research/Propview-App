@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:propview/models/Issue.dart';
 import 'package:propview/services/authService.dart';
 
-class IssueService extends AuthService {
-  static Future<String> createIssue(var payload) async {
+class IssueTableService extends AuthService {
+  static Future<String> createIssueTable(var payload) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/issue/create',
+        AuthService.BASE_URI + 'api/issue/table/create',
         method: 'POST',
         body: payload);
     var responseMap = jsonDecode(response.body);
@@ -18,24 +18,9 @@ class IssueService extends AuthService {
     }
   }
 
-  static Future<List<Issue>> getAllIssue() async {
+  static Future<Issue> getIssueTableById(var issueId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/issue/get',
-        method: 'GET');
-    if (response.statusCode == 200) {
-      var responseMap = json.decode(response.body);
-      List<Issue> issue = responseMap["data"]
-          .map<Issue>((issueMap) => Issue.fromJson(issueMap))
-          .toList();
-      return issue;
-    } else {
-      print("Not working!");
-    }
-  }
-
-  static Future<Issue> getIssueById(var issueId) async {
-    http.Response response = await AuthService.makeAuthenticatedRequest(
-      AuthService.BASE_URI + 'api/issue/get/$issueId',
+      AuthService.BASE_URI + 'api/issue/table/get/$issueId',
       method: 'GET',
     );
     if (response.statusCode == 200) {
@@ -47,9 +32,9 @@ class IssueService extends AuthService {
     }
   }
 
-  static Future<bool> updateIssue(var issueId, var payload) async {
+  static Future<bool> updateIssueTable(var issueId, var payload) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/issue/update/$issueId',
+        AuthService.BASE_URI + 'api/issue/table/update/$issueId',
         method: 'PUT',
         body: payload);
     if (response.statusCode == 200) {
@@ -59,9 +44,9 @@ class IssueService extends AuthService {
     }
   }
 
-  static Future<bool> deleteIssue(var issueId) async {
+  static Future<bool> deleteIssueTable(var issueId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-        AuthService.BASE_URI + 'api/issue/delete/$issueId',
+        AuthService.BASE_URI + 'api/issue/table/delete/$issueId',
         method: 'DELETE');
     if (response.statusCode == 200) {
       return true;
