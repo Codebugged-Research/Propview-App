@@ -84,6 +84,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text('Property Structure'),
+        elevation: 4.0,
         bottom: TabBar(
             controller: tabController,
             indicatorColor: Color(0xff314B8C),
