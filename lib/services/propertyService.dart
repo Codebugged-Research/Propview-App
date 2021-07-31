@@ -233,4 +233,17 @@ class PropertyService extends AuthService {
       return "error";
     }
   }
+
+  static Future<bool> updateProperty(var payload, var propertyId) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/property/update/$propertyId',
+        method: 'PUT',
+        body: payload);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

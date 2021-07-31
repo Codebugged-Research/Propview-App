@@ -6,19 +6,20 @@ import 'package:propview/models/roomType.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/AddSubRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
+import 'package:propview/views/Admin/widgets/subRoomCard.dart';
 
 class SubRoomWidget extends StatefulWidget {
   final List<SubRoomElement> subRooms;
   final List<Facility> facilities;
   final PropertyElement propertyElement;
   final List<PropertyRoom> roomTypes;
-  SubRoomWidget({this.subRooms, this.facilities, this.propertyElement, this.roomTypes});
+  SubRoomWidget(
+      {this.subRooms, this.facilities, this.propertyElement, this.roomTypes});
   @override
   _SubRoomWidgetState createState() => _SubRoomWidgetState();
 }
 
 class _SubRoomWidgetState extends State<SubRoomWidget> {
-  
   List<SubRoomElement> subRooms = [];
   List<Facility> facilities = [];
   List<String> facilitiesName = [];
@@ -46,12 +47,20 @@ class _SubRoomWidgetState extends State<SubRoomWidget> {
                         .primaryTextTheme
                         .subtitle1
                         .copyWith(color: Colors.black)))
-            : Text('show sub room tile'),
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: subRooms.length,
+                itemBuilder: (context, int index) {
+                  return SubRoomCard(
+                      subRoom: subRooms[index],
+                      propertyElement: propertyElement);
+                }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Routing.makeRouting(context,
-              routeMethod: 'push', newWidget: AddSubRoomScreen(
+              routeMethod: 'push',
+              newWidget: AddSubRoomScreen(
                 propertyElement: propertyElement,
                 facilities: facilities,
                 imageList: [],

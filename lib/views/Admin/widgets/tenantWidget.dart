@@ -70,6 +70,11 @@ class TenantWidget extends StatelessWidget {
                           context, 'Primary Mobile', '${tenant.pmobile}'),
                       detailsWidget(
                           context, 'Secondary Mobile', '${tenant.smobile}'),
+                      detailsWidget(context, 'Home Mobile', '${tenant.hphone}'),
+                      detailsWidget(
+                          context, 'office Mobile', '${tenant.ophone}'),
+                      detailsWidget(context, 'Family',
+                          tenant.isfamily == 1 ? 'Yes' : 'No'),
                       detailsWidget(
                           context, 'Primary Address', '${tenant.paddress}'),
                       detailsWidget(context, 'City', '${tenant.city}'),
@@ -91,22 +96,22 @@ class TenantWidget extends StatelessWidget {
 
   Widget detailsWidget(BuildContext context, String title, String subtitle) {
     return ListTile(
-      title: title == ' '
-          ? Text('Not there!',
-              style: Theme.of(context)
-                  .primaryTextTheme
-                  .subtitle1
-                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600))
-          : Text(title,
-              style: Theme.of(context)
-                  .primaryTextTheme
-                  .subtitle1
-                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
-      subtitle: Text(subtitle,
+      title: Text(title,
           style: Theme.of(context)
               .primaryTextTheme
-              .subtitle2
-              .copyWith(color: Colors.black)),
+              .subtitle1
+              .copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
+      subtitle: subtitle == ' '
+          ? Text(subtitle,
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .subtitle2
+                  .copyWith(color: Colors.black))
+          : Text('Not there!',
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .subtitle2
+                  .copyWith(color: Colors.black)),
     );
   }
 }

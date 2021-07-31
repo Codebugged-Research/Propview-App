@@ -101,7 +101,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Room'),
+        title: Text('Add Sub-Room'),
       ),
       body: Container(
           height: MediaQuery.of(context).size.height,
@@ -132,8 +132,6 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text('Room Type',
@@ -142,7 +140,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                     .subtitle1
                                     .copyWith(
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w400)),
+                                        fontWeight: FontWeight.w700)),
                           ),
                           DropdownButton(
                             isExpanded: true,
@@ -167,8 +165,6 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                           ),
                           SizedBox(
                               height: UIConstants.fitToHeight(16, context)),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text('SubRoom Type',
@@ -177,7 +173,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                     .subtitle1
                                     .copyWith(
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w400)),
+                                        fontWeight: FontWeight.w700)),
                           ),
                           DropdownButton(
                             isExpanded: true,
@@ -202,6 +198,17 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                           ),
                           SizedBox(
                               height: UIConstants.fitToHeight(16, context)),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Room Size 1',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700)),
+                          ),
+                          SizedBox(height: UIConstants.fitToHeight(4, context)),
                           inputWidget(
                               roomSizeOneController,
                               'Please enter Room Size One.',
@@ -211,6 +218,17 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                             print(value);
                           }),
                           SizedBox(height: UIConstants.fitToHeight(8, context)),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Room Size 2',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700)),
+                          ),
+                          SizedBox(height: UIConstants.fitToHeight(4, context)),
                           inputWidget(
                               roomSizeTwoController,
                               'Please enter Room Size Two.',
@@ -229,7 +247,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                     .subtitle1
                                     .copyWith(
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w400)),
+                                        fontWeight: FontWeight.w700)),
                           ),
                           DropdownButton(
                             isExpanded: true,
@@ -273,7 +291,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                   .subtitle1
                                   .copyWith(
                                     color: Colors.black,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w800,
                                   ),
                             ),
                           ),
@@ -289,7 +307,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                       .subtitle2
                                       .copyWith(
                                           color: Colors.black,
-                                          fontWeight: FontWeight.w600),
+                                          fontWeight: FontWeight.w700),
                                 ),
                               ),
                             ),
@@ -329,7 +347,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                               height: UIConstants.fitToHeight(24, context)),
                           buttonWidget(context),
                           SizedBox(
-                              height: UIConstants.fitToHeight(24, context)),
+                              height: UIConstants.fitToHeight(32, context)),
                         ],
                       ),
                     ),

@@ -6,19 +6,20 @@ import 'package:propview/models/Room.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/AddRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
+import 'package:propview/views/Admin/widgets/roomCard.dart';
 
 class RoomWidget extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<RoomsToPropertyModel> rooms;
   final List<Facility> facilities;
   final List roomTypes;
-  RoomWidget({this.rooms, this.facilities, this.propertyElement, this.roomTypes});
+  RoomWidget(
+      {this.rooms, this.facilities, this.propertyElement, this.roomTypes});
   @override
   _RoomWidgetState createState() => _RoomWidgetState();
 }
 
 class _RoomWidgetState extends State<RoomWidget> {
-
   String facilityDropDownValue;
   String marbelTypeDropDownValue;
 
@@ -46,17 +47,22 @@ class _RoomWidgetState extends State<RoomWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: rooms.length == 0
-            ? Center(
-                child: Text('No Rooms are available!',
-                    style: Theme.of(context)
-                        .primaryTextTheme
-                        .subtitle1
-                        .copyWith(color: Colors.black)))
-            : Text('show room tile'),
-      ),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: rooms.length == 0
+              ? Center(
+                  child: Text('No Rooms are available!',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black)))
+              : ListView.builder(
+                shrinkWrap: true,
+                itemCount: rooms.length,
+                itemBuilder: (context, int index) {
+                  return RoomCard(
+                      room: rooms[index], propertyElement: propertyElement);
+                })),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Routing.makeRouting(context,
