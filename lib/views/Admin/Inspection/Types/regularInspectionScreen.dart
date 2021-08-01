@@ -17,6 +17,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     super.initState();
     propertyElement = widget.propertyElement;
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
