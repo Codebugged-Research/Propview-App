@@ -1,32 +1,31 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
+import 'package:propview/models/Property.dart';
+import 'package:propview/models/Room.dart';
+import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
+import 'package:propview/models/roomType.dart';
 import 'package:propview/services/inspectionService.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
-import 'package:propview/services/userService.dart';
-import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
-
-import 'package:path/path.dart' as path;
-import 'dart:io';
-import 'package:http/http.dart' as http;
-
-import 'package:propview/models/Property.dart';
-import 'package:propview/models/Room.dart';
-import 'package:propview/models/roomType.dart';
-import 'package:propview/models/Subroom.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
+import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 
 import '../../../../config.dart';
