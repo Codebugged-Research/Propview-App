@@ -4,11 +4,13 @@ import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/models/RegularInspectionRow.dart';
 import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
+import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
+import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
@@ -145,17 +147,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                     ],
                   ),
                 ),
-                Text(
-                  "RoomWise Inspection",
-                  style: Theme.of(context).primaryTextTheme.headline4.copyWith(
-                      fontWeight: FontWeight.w700, color: Colors.black),
-                ),
                 ListView.builder(
-                    itemCount: count,
+                    itemCount: regularInspectionRowList.length,
                     shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return inspectionCard(index);
-                    })
+                    }),
+                buttonWidget(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               ],
             ),
           ),
@@ -165,35 +165,40 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   }
 
   inspectionCard(index) {
-    return Container(
+    return SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        titleWidget(context, regularInspectionRowList[index].roomsubroomName),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-        titleWidget(context, 'Bill Dues'),
-        inputWidget(object),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-        titleWidget(context, 'Termite Check'),
-        inputWidget(object),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-        titleWidget(context, 'See-Page Check'),
-        inputWidget(object),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-        titleWidget(context, 'General Clealiness'),
-        inputWidget(object),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.02,
-        ),
-        titleWidget(context, 'Other Issues'),
-        inputWidget(object),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-        buttonWidget(context),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-      ],
-    ));
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            Text(
+              regularInspectionRowList[index].roomsubroomName,
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .headline4
+                  .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            titleWidget(context, 'Bill Dues'),
+            inputWidget(regularInspectionRowList[index].billDues),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            titleWidget(context, 'Termite Check'),
+            inputWidget(regularInspectionRowList[index].termiteCheck),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            titleWidget(context, 'See-Page Check'),
+            inputWidget(regularInspectionRowList[index].seepageCheck),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            titleWidget(context, 'General Clealiness'),
+            inputWidget(regularInspectionRowList[index].generalCleanliness),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+            titleWidget(context, 'Other Issues'),
+            inputWidget(regularInspectionRowList[index].otherIssue),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+          ],
+        ));
   }
 
   showRoomSelect() {
@@ -238,7 +243,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 onChanged: (newValue) {
                   setState(() {
                     selectedRoomSubRoom = newValue;
-                    count++;
                     regularInspectionRowList.add(RegularInspectionRow(
                       id: 0,
                       billDues: "",
@@ -246,6 +250,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       seepageCheck: "",
                       generalCleanliness: "",
                       otherIssue: "",
+                      issub: selectedRoomSubRoom.isSubroom == true ? 1 : 0,
                       roomsubroomId: selectedRoomSubRoom.propertyRoomSubRoomId,
                       roomsubroomName: selectedRoomSubRoom.roomSubRoomName,
                       createdAt: DateTime.now(),
@@ -315,90 +320,41 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               setState(() {
                 loading = true;
               });
-              // User user = await UserService.getUser();
-              // inspection = Inspection(
-              //   inspectionId: 0,
-              //   inspectType: "Full Inspection",
-              //   maintenanceCharges: double.parse(maintainanceController.text),
-              //   commonAreaElectricity: double.parse(commonAreaController.text),
-              //   electricitySociety:
-              //       double.parse(electricitySocietyController.text),
-              //   electricityAuthority:
-              //       double.parse(electricityAuthorityController.text),
-              //   powerBackup: double.parse(powerController.text),
-              //   pngLgp: double.parse(pngController.text),
-              //   club: double.parse(clubController.text),
-              //   water: double.parse(waterController.text),
-              //   propertyTax: double.parse(propertyTaxController.text),
-              //   anyOther: double.parse(anyOtherController.text),
-              //   propertyId: widget.propertyElement.tableproperty.propertyId,
-              //   employeeId: user.userId,
-              //   createdAt: DateTime.now(),
-              //   updatedAt: DateTime.now(),
-              // );
-              // // print(inspection.toJson());
-              // List tempIssueTableList = [];
-              // for (int i = 0; i < rows.length; i++) {
-              //   List issueRowList = [];
-              //   for (int j = 0; j < rows[i].length; j++) {
-              //     List<String> finalPhotoList = [];
-              //     for (int k = 0; k < rows[i][j].photo.length; k++) {
-              //       String tempUrl = await upload(
-              //           rows[i][j].photo[k],
-              //           widget.propertyElement.tableproperty.propertyId
-              //               .toString());
-              //       finalPhotoList.add(tempUrl);
-              //     }
-              //     var payload = {
-              //       "issue_id": 0,
-              //       "issue_name": rows[i][j].issueName,
-              //       "status": rows[i][j].status,
-              //       "remarks": rows[i][j].remarks,
-              //       "photo": finalPhotoList.join(","),
-              //       "createdAt": DateTime.now().toString(),
-              //       "updatedAt": DateTime.now().toString(),
-              //     };
-              //     // print(payload);
-              //     var result =
-              //         await IssueService.createIssue(jsonEncode(payload));
-              //     issueRowList.add(result);
-              //   }
-              //   var payload1 = {
-              //     "id": 0,
-              //     "roomsubroom_id": issueTableList[i].roomsubroomId,
-              //     "roomsubroom_name": issueTableList[i].roomsubroomName,
-              //     "issub": issueTableList[i].issub,
-              //     "issue_row_id": issueRowList.join(","),
-              //     "property_id":
-              //         widget.propertyElement.tableproperty.propertyId,
-              //     "created_at": DateTime.now().toString(),
-              //     "updated_at": DateTime.now().toString(),
-              //   };
-              //   var result = await IssueTableService.createIssueTable(
-              //       jsonEncode(payload1));
-              //   tempIssueTableList.add(result);
-              // }
-              // inspection.issueIdList = tempIssueTableList.join(",");
-              // print(inspection.toJson());
-              // bool result = await InspectionService.createInspection(
-              //     jsonEncode(inspection.toJson(),),);
+              User user = await UserService.getUser();
+              RegularInspection regularInspection = RegularInspection(
+                id: 0,
+                rowList: "",
+                propertyId: widget.propertyElement.tableproperty.propertyId,
+                employeeId: user.userId,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
+              List rowIdist = [];
+              for (int i = 0; i < regularInspectionRowList.length; i++) {
+                print(regularInspectionRowList[i].toJson());
+                //TODO: regularInspectionRowList[i] createapi for regularInspectionRow and get the id of the
+                // rowIdist.add(id);
+              }
+              regularInspection.rowList = rowIdist.join(",");
+              // TODO: regularInspection create api and return boolean bellow
+              bool result = true;
               setState(() {
                 loading = false;
               });
-              // if (result) {
-              //   Navigator.of(context).pop();
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(
-              //       content: Text("Full Inspection added"),
-              //     ),
-              //   );
-              // } else {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(
-              //       content: Text("Full Inspection addition failed!"),
-              //     ),
-              //   );
-              // }
+              if (result) {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Full Inspection added"),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Full Inspection addition failed!"),
+                  ),
+                );
+              }
             },
             child: Text(
               "Add Regular Inspection",

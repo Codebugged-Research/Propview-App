@@ -16,6 +16,7 @@ class RegularInspectionRow {
     this.seepageCheck,
     this.generalCleanliness,
     this.otherIssue,
+    this.issub,
     this.roomsubroomId,
     this.roomsubroomName,
     this.createdAt,
@@ -27,6 +28,7 @@ class RegularInspectionRow {
   String seepageCheck;
   String generalCleanliness;
   String otherIssue;
+  int issub;
   int roomsubroomId;
   String roomsubroomName;
   DateTime createdAt;
@@ -38,6 +40,7 @@ class RegularInspectionRow {
     seepageCheck: json["seepage_check"] == null ? null : json["seepage_check"],
     generalCleanliness: json["general_cleanliness"] == null ? null : json["general_cleanliness"],
     otherIssue: json["other_issue"] == null ? null : json["other_issue"],
+    issub: json["issub"] == null ? null : json["issub"],
     roomsubroomId: json["roomsubroom_id"] == null ? null : json["roomsubroom_id"],
     roomsubroomName: json["roomsubroom_name"] == null ? null : json["roomsubroom_name"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
@@ -50,6 +53,7 @@ class RegularInspectionRow {
     "seepage_check": seepageCheck == null ? null : seepageCheck,
     "general_cleanliness": generalCleanliness == null ? null : generalCleanliness,
     "other_issue": otherIssue == null ? null : otherIssue,
+    "issub": issub == null ? null : issub,
     "roomsubroom_id": roomsubroomId == null ? null : roomsubroomId,
     "roomsubroom_name": roomsubroomName == null ? null : roomsubroomName,
     "created_at": createdAt == null ? null : createdAt.toIso8601String(),
