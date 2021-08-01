@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/RegularInspection.dart';
@@ -156,7 +158,9 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                     itemBuilder: (context, index) {
                       return inspectionCard(index);
                     }),
-                buttonWidget(context),
+                regularInspectionRowList.length > 0
+                    ? buttonWidget(context)
+                    : Container(),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               ],
             ),
@@ -333,16 +337,18 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               );
               List rowIdist = [];
               for (int i = 0; i < regularInspectionRowList.length; i++) {
-                print(regularInspectionRowList[i].toJson());
                 String id =
                     await RegularInspectionRowService.createRegularInspection(
-                        regularInspectionRowList[i].toJson());
+                  jsonEncode(
+                    regularInspectionRowList[i].toJson(),
+                  ),
+                );
                 rowIdist.add(id);
               }
               regularInspection.rowList = rowIdist.join(",");
               bool result =
                   await RegularInspectionService.createRegularInspection(
-                      regularInspection.toJson());
+                      jsonEncode(regularInspection.toJson()));
               setState(() {
                 loading = false;
               });
@@ -350,13 +356,13 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text("Full Inspection added successfully!"),
+                    content: Text("Regular Inspection added successfully!"),
                   ),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text("Full Inspection addition failed!"),
+                    content: Text("Regular Inspection addition failed!"),
                   ),
                 );
               }

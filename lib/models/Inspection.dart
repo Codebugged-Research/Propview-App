@@ -128,23 +128,23 @@ class Inspection {
       );
 
   Map<String, dynamic> toJson() => {
-        "inspection_id": inspectionId == null ? null : inspectionId,
+        "inspection_id": inspectionId == null ? 0 : inspectionId,
         "inspect_type": inspectType == null ? null : inspectType,
         "maintenance_charges":
-            maintenanceCharges == null ? null : maintenanceCharges,
+            maintenanceCharges == null ? 0.0 : maintenanceCharges,
         "common_area_electricity":
-            commonAreaElectricity == null ? null : commonAreaElectricity,
+            commonAreaElectricity == null ? 0.0 : commonAreaElectricity,
         "electricity_society":
-            electricitySociety == null ? null : electricitySociety,
+            electricitySociety == null ? 0.0 : electricitySociety,
         "electricity_authority":
-            electricityAuthority == null ? null : electricityAuthority,
-        "power_backup": powerBackup == null ? null : powerBackup,
-        "png_lgp": pngLgp == null ? null : pngLgp,
-        "club": club == null ? null : club,
-        "water": water == null ? null : water,
-        "property_tax": propertyTax == null ? null : propertyTax,
+            electricityAuthority == null ? 0.0 : electricityAuthority,
+        "power_backup": powerBackup == null ? 0.0 : powerBackup,
+        "png_lgp": pngLgp == null ? 0.0 : pngLgp,
+        "club": club == null ? 0.0 : club,
+        "water": water == null ? 0.0 : water,
+        "property_tax": propertyTax == null ? 0.0 : propertyTax,
         "employee_id": employeeId == null ? null : employeeId,
-        "any_other": anyOther == null ? null : anyOther,
+        "any_other": anyOther == null ? 0.0 : anyOther,
         "property_id": propertyId == null ? null : propertyId,
         "issue_id_list": issueIdList == null ? null : issueIdList,
         "createdAt": createdAt == null ? null : createdAt.toIso8601String(),
