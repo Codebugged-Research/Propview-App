@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/RegularInspection.dart';
+import 'package:propview/models/RegularInspectionRow.dart';
 import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
@@ -8,6 +10,7 @@ import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 
 class RegularInspectionScreen extends StatefulWidget {
@@ -45,30 +48,12 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     loadDataForScreen();
   }
 
+  List<RegularInspectionRow> regularInspectionRowList = [];
+
   loadDataForScreen() async {
     setState(() {
       loader = true;
     });
-    // billDuesController = TextEditingController(
-    //     text: widget.inspection != null
-    //         ? widget.inspection.maintenanceCharges.toString()
-    //         : dummyDouble);
-    // termiteCheckController = TextEditingController(
-    //     text: widget.inspection != null
-    //         ? widget.inspection.commonAreaElectricity.toString()
-    //         : dummyDouble);
-    // seePageController = TextEditingController(
-    //     text: widget.inspection != null
-    //         ? widget.inspection.electricityAuthority.toString()
-    //         : dummyDouble);
-    // generalCleanlinessController = TextEditingController(
-    //     text: widget.inspection != null
-    //         ? widget.inspection.electricityAuthority.toString()
-    //         : dummyDouble);
-    // otherIssueController = TextEditingController(
-    //     text: widget.inspection != null
-    //         ? widget.inspection.powerBackup.toString()
-    //         : dummyDouble);
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
       propertyElement.tableproperty.propertyId.toString(),
@@ -124,6 +109,12 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showRoomSelect();
+        },
+        child: Icon(Icons.add),
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -154,55 +145,117 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                     ],
                   ),
                 ),
+                Text(
+                  "RoomWise Inspection",
+                  style: Theme.of(context).primaryTextTheme.headline4.copyWith(
+                      fontWeight: FontWeight.w700, color: Colors.black),
+                ),
                 ListView.builder(
                     itemCount: count,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return Container(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'Bill Dues'),
-                          inputWidget(object),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'Termite Check'),
-                          inputWidget(object),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'See-Page Check'),
-                          inputWidget(object),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'General Clealiness'),
-                          inputWidget(object),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
-                          titleWidget(context, 'Other Issues'),
-                          inputWidget(object),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.04),
-                          buttonWidget(context),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.04),
-                        ],
-                      ));
+                      return inspectionCard(index);
                     })
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  inspectionCard(index) {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        titleWidget(context, regularInspectionRowList[index].roomsubroomName),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+        titleWidget(context, 'Bill Dues'),
+        inputWidget(object),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+        titleWidget(context, 'Termite Check'),
+        inputWidget(object),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+        titleWidget(context, 'See-Page Check'),
+        inputWidget(object),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+        titleWidget(context, 'General Clealiness'),
+        inputWidget(object),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.02,
+        ),
+        titleWidget(context, 'Other Issues'),
+        inputWidget(object),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+        buttonWidget(context),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+      ],
+    ));
+  }
+
+  showRoomSelect() {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      backgroundColor: Color(0xFFFFFFFF),
+      builder: (BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Choose Room',
+                    style: Theme.of(context).primaryTextTheme.headline6,
+                  )),
+              Align(
+                  alignment: Alignment.center,
+                  child: Divider(
+                    color: Color(0xff314B8C),
+                    thickness: 2.5,
+                    indent: 100,
+                    endIndent: 100,
+                  )),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              DropdownButtonFormField(
+                decoration: new InputDecoration(
+                    icon: Icon(Icons.language)), //, color: Colors.white10
+                value: selectedRoomSubRoom,
+                items: roomsAvailable
+                    .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                  return DropdownMenuItem(
+                    value: value,
+                    child: Text(value.roomSubRoomName),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedRoomSubRoom = newValue;
+                    count++;
+                    regularInspectionRowList.add(RegularInspectionRow(
+                      id: 0,
+                      billDues: "",
+                      termiteCheck: "",
+                      seepageCheck: "",
+                      generalCleanliness: "",
+                      otherIssue: "",
+                      roomsubroomId: selectedRoomSubRoom.propertyRoomSubRoomId,
+                      roomsubroomName: selectedRoomSubRoom.roomSubRoomName,
+                      createdAt: DateTime.now(),
+                    ));
+                  });
+                  Routing.makeRouting(context, routeMethod: 'pop');
+                },
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            ],
           ),
         ),
       ),
