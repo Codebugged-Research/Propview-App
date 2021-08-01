@@ -312,13 +312,13 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Full Inspection added"),
+              content: Text("Issue Based Inspection added"),
             ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Full Inspection addition failed!"),
+              content: Text("Issue Based addition failed!"),
             ),
           );
         }

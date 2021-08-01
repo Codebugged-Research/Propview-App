@@ -87,10 +87,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     users = await UserService.getAllUserUnderManger(widget.user.userId);
     users.add(widget.user);
     _selectedUser = widget.user;
-    //getting manager property list
     propertyList =
         await PropertyService.getAllPropertiesByUserId(widget.user.userId);
-    print(propertyList.count);
     //get list of all peroperties assigned to his employees and merge
     for (int i = 0; i < users.length; i++) {
       var tempPropertyList =
@@ -98,7 +96,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       propertyList.count += tempPropertyList.count;
       propertyList.data.property.addAll(tempPropertyList.data.property);
     }
-    // propertyList = await PropertyService.getAllPropertiesByUserId(72);
     taskCategories = await TaskCategoryService.getTaskCategories();
     for (int i = 0; i < taskCategories.length; i++) {
       _taskCategoryDropdownList.add(
