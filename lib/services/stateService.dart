@@ -20,4 +20,17 @@ class StateService extends AuthService {
       print('Not Working!');
     }
   }
+
+  static Future<CStates> getStateById(var id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/state/$id',
+        method: 'GET');
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      CStates cstate = CStates.fromJson(responseMap);
+      return cstate;
+    } else {
+      print('Not Working!');
+    }
+  }
 }

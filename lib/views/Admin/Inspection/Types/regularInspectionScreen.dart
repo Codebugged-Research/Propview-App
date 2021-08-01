@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/Room.dart';
+import 'package:propview/models/Subroom.dart';
+import 'package:propview/models/customRoomSubRoom.dart';
+import 'package:propview/models/roomType.dart';
+import 'package:propview/services/roomService.dart';
+import 'package:propview/services/roomTypeService.dart';
+import 'package:propview/services/subRoomService.dart';
+import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Admin/widgets/alertWidget.dart';
 
 class RegularInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -11,15 +20,105 @@ class RegularInspectionScreen extends StatefulWidget {
 
 class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   PropertyElement propertyElement;
+  RoomType roomTypes;
+
+  bool loader = false;
+  String object = "";
+  int count = 0;
+  String dummyDouble = (0.0).toString();
+
+  List<RoomsToPropertyModel> rooms = [];
+  List<SubRoomElement> subRooms = [];
+  List<CustomRoomSubRoom> roomsAvailable = [];
+  CustomRoomSubRoom selectedRoomSubRoom;
+
+  TextEditingController billDuesController;
+  TextEditingController termiteCheckController;
+  TextEditingController seePageController;
+  TextEditingController generalCleanlinessController;
+  TextEditingController otherIssueController;
 
   @override
   void initState() {
     super.initState();
     propertyElement = widget.propertyElement;
+    loadDataForScreen();
   }
 
-  String object = "";
-  int count = 0;
+  loadDataForScreen() async {
+    setState(() {
+      loader = true;
+    });
+    // billDuesController = TextEditingController(
+    //     text: widget.inspection != null
+    //         ? widget.inspection.maintenanceCharges.toString()
+    //         : dummyDouble);
+    // termiteCheckController = TextEditingController(
+    //     text: widget.inspection != null
+    //         ? widget.inspection.commonAreaElectricity.toString()
+    //         : dummyDouble);
+    // seePageController = TextEditingController(
+    //     text: widget.inspection != null
+    //         ? widget.inspection.electricityAuthority.toString()
+    //         : dummyDouble);
+    // generalCleanlinessController = TextEditingController(
+    //     text: widget.inspection != null
+    //         ? widget.inspection.electricityAuthority.toString()
+    //         : dummyDouble);
+    // otherIssueController = TextEditingController(
+    //     text: widget.inspection != null
+    //         ? widget.inspection.powerBackup.toString()
+    //         : dummyDouble);
+    roomTypes = await RoomTypeService.getRoomTypes();
+    rooms = await RoomService.getRoomByPropertyId(
+      propertyElement.tableproperty.propertyId.toString(),
+    );
+    if (rooms.length == 0) {
+      showDialog(
+          context: context,
+          builder: (_) {
+            return AlertWidget(
+              title: 'Property Structure is not defined!',
+              body:
+                  'First you have to determine the property structure to begin with inspection.',
+            );
+          });
+    } else {
+      subRooms = await SubRoomService.getSubRoomByPropertyId(
+          propertyElement.tableproperty.propertyId.toString());
+      for (var i = 0; i < rooms.length; i++) {
+        setState(() {
+          roomsAvailable.add(CustomRoomSubRoom(
+            isSubroom: false,
+            propertyRoomSubRoomId: rooms[i].propertyRoomId,
+            roomSubRoomName: getRoomName(rooms[i].roomId),
+          ));
+        });
+      }
+      for (var i = 0; i < subRooms.length; i++) {
+        setState(() {
+          roomsAvailable.add(CustomRoomSubRoom(
+            isSubroom: true,
+            propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
+            roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
+                "-" +
+                getRoomName(rooms[i].roomId),
+          ));
+        });
+      }
+    }
+    selectedRoomSubRoom = roomsAvailable[0];
+    setState(() {
+      loader = false;
+    });
+  }
+
+  getRoomName(id) {
+    PropertyRoom room = roomTypes.data.propertyRoom
+        .where((element) => element.roomId == id)
+        .first;
+    return room.roomName;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +160,13 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                     itemBuilder: (context, index) {
                       return Container(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'Maintenance Charges or CAM'),
+                          titleWidget(context, 'Bill Dues'),
                           inputWidget(object),
                           SizedBox(
                               height:
@@ -75,26 +174,30 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'Maintenance Charges or CAM'),
+                          titleWidget(context, 'Termite Check'),
                           inputWidget(object),
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'Maintenance Charges or CAM'),
+                          titleWidget(context, 'See-Page Check'),
                           inputWidget(object),
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),
-                          titleWidget(context, 'Maintenance Charges or CAM'),
+                          titleWidget(context, 'General Clealiness'),
                           inputWidget(object),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
-                          titleWidget(context, 'Maintenance Charges or CAM'),
+                          titleWidget(context, 'Other Issues'),
                           inputWidget(object),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
+                              height:
+                                  MediaQuery.of(context).size.height * 0.04),
+                          buttonWidget(context),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.04),
                         ],
                       ));
                     })
@@ -145,5 +248,109 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
         ),
       ),
     );
+  }
+
+  bool loading = false;
+  Widget buttonWidget(BuildContext context) {
+    return loading
+        ? circularProgressWidget()
+        : MaterialButton(
+            minWidth: 360,
+            height: 55,
+            color: Color(0xff314B8C),
+            onPressed: () async {
+              setState(() {
+                loading = true;
+              });
+              // User user = await UserService.getUser();
+              // inspection = Inspection(
+              //   inspectionId: 0,
+              //   inspectType: "Full Inspection",
+              //   maintenanceCharges: double.parse(maintainanceController.text),
+              //   commonAreaElectricity: double.parse(commonAreaController.text),
+              //   electricitySociety:
+              //       double.parse(electricitySocietyController.text),
+              //   electricityAuthority:
+              //       double.parse(electricityAuthorityController.text),
+              //   powerBackup: double.parse(powerController.text),
+              //   pngLgp: double.parse(pngController.text),
+              //   club: double.parse(clubController.text),
+              //   water: double.parse(waterController.text),
+              //   propertyTax: double.parse(propertyTaxController.text),
+              //   anyOther: double.parse(anyOtherController.text),
+              //   propertyId: widget.propertyElement.tableproperty.propertyId,
+              //   employeeId: user.userId,
+              //   createdAt: DateTime.now(),
+              //   updatedAt: DateTime.now(),
+              // );
+              // // print(inspection.toJson());
+              // List tempIssueTableList = [];
+              // for (int i = 0; i < rows.length; i++) {
+              //   List issueRowList = [];
+              //   for (int j = 0; j < rows[i].length; j++) {
+              //     List<String> finalPhotoList = [];
+              //     for (int k = 0; k < rows[i][j].photo.length; k++) {
+              //       String tempUrl = await upload(
+              //           rows[i][j].photo[k],
+              //           widget.propertyElement.tableproperty.propertyId
+              //               .toString());
+              //       finalPhotoList.add(tempUrl);
+              //     }
+              //     var payload = {
+              //       "issue_id": 0,
+              //       "issue_name": rows[i][j].issueName,
+              //       "status": rows[i][j].status,
+              //       "remarks": rows[i][j].remarks,
+              //       "photo": finalPhotoList.join(","),
+              //       "createdAt": DateTime.now().toString(),
+              //       "updatedAt": DateTime.now().toString(),
+              //     };
+              //     // print(payload);
+              //     var result =
+              //         await IssueService.createIssue(jsonEncode(payload));
+              //     issueRowList.add(result);
+              //   }
+              //   var payload1 = {
+              //     "id": 0,
+              //     "roomsubroom_id": issueTableList[i].roomsubroomId,
+              //     "roomsubroom_name": issueTableList[i].roomsubroomName,
+              //     "issub": issueTableList[i].issub,
+              //     "issue_row_id": issueRowList.join(","),
+              //     "property_id":
+              //         widget.propertyElement.tableproperty.propertyId,
+              //     "created_at": DateTime.now().toString(),
+              //     "updated_at": DateTime.now().toString(),
+              //   };
+              //   var result = await IssueTableService.createIssueTable(
+              //       jsonEncode(payload1));
+              //   tempIssueTableList.add(result);
+              // }
+              // inspection.issueIdList = tempIssueTableList.join(",");
+              // print(inspection.toJson());
+              // bool result = await InspectionService.createInspection(
+              //     jsonEncode(inspection.toJson(),),);
+              setState(() {
+                loading = false;
+              });
+              // if (result) {
+              //   Navigator.of(context).pop();
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //       content: Text("Full Inspection added"),
+              //     ),
+              //   );
+              // } else {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //       content: Text("Full Inspection addition failed!"),
+              //     ),
+              //   );
+              // }
+            },
+            child: Text(
+              "Add Regular Inspection",
+              style: Theme.of(context).primaryTextTheme.subtitle1,
+            ),
+          );
   }
 }
