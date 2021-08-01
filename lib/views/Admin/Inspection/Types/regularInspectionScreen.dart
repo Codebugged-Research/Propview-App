@@ -7,6 +7,8 @@ import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/roomType.dart';
+import 'package:propview/services/regulationInspectionRowService.dart';
+import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
@@ -332,12 +334,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               List rowIdist = [];
               for (int i = 0; i < regularInspectionRowList.length; i++) {
                 print(regularInspectionRowList[i].toJson());
-                //TODO: regularInspectionRowList[i] createapi for regularInspectionRow and get the id of the
-                // rowIdist.add(id);
+                String id =
+                    await RegularInspectionRowService.createRegularInspection(
+                        regularInspectionRowList[i].toJson());
+                rowIdist.add(id);
               }
               regularInspection.rowList = rowIdist.join(",");
-              // TODO: regularInspection create api and return boolean bellow
-              bool result = true;
+              bool result =
+                  await RegularInspectionService.createRegularInspection(
+                      regularInspection.toJson());
               setState(() {
                 loading = false;
               });
@@ -345,7 +350,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text("Full Inspection added"),
+                    content: Text("Full Inspection added successfully!"),
                   ),
                 );
               } else {

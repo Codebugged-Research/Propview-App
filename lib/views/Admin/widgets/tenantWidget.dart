@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Tenant.dart';
+import 'package:propview/services/cityService.dart';
+import 'package:propview/services/stateService.dart';
 
 class TenantWidget extends StatelessWidget {
   final Tenant tenant;
@@ -9,8 +11,11 @@ class TenantWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        tenantDetailsModalSheet(context);
+      onTap: () async {
+        tenantDetailsModalSheet(
+            context,
+            await StateService.getStateById(tenant.state),
+            await CityService.getCityById(tenant.city));
       },
       child: Container(
         child: Text(
@@ -24,7 +29,8 @@ class TenantWidget extends StatelessWidget {
     );
   }
 
-  tenantDetailsModalSheet(BuildContext context) {
+  tenantDetailsModalSheet(
+      BuildContext context, String stateName, String cityName) {
     return showModalBottomSheet<void>(
         context: context,
         // isScrollControlled: true,
@@ -77,8 +83,8 @@ class TenantWidget extends StatelessWidget {
                           tenant.isfamily == 1 ? 'Yes' : 'No'),
                       detailsWidget(
                           context, 'Primary Address', '${tenant.paddress}'),
-                      detailsWidget(context, 'City', '${tenant.city}'),
-                      detailsWidget(context, 'State', '${tenant.state}'),
+                      detailsWidget(context, 'City', '${cityName}'),
+                      detailsWidget(context, 'State', '${stateName}'),
                       detailsWidget(context, 'Pan Number', '${tenant.pan}'),
                       detailsWidget(
                           context, 'Aadhar Number', '${tenant.aadhar}'),

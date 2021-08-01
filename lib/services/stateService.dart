@@ -21,14 +21,15 @@ class StateService extends AuthService {
     }
   }
 
-  static Future<CStates> getStateById(var id) async {
+  // ignore: missing_return
+  static Future<String> getStateById(var id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/state/$id',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       CStates cstate = CStates.fromJson(responseMap);
-      return cstate;
+      return cstate.sname.toString();
     } else {
       print('Not Working!');
     }

@@ -20,14 +20,15 @@ class CityService extends AuthService {
     }
   }
 
-  static Future<City> getCityById(var id) async {
+  // ignore: missing_return
+  static Future<String> getCityById(var id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/city/$id',
         method: 'GET');
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       City city = City.fromJson(responseMap);
-      return city;
+      return city.ccname.toString();
     } else {
       print('Not Working!');
     }
