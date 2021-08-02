@@ -6,18 +6,19 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/widgets/inspectionCard.dart';
 
 class InspectionHistoryScreen extends StatefulWidget {
-  final PropertyElement propertyElement;
   InspectionHistoryScreen({this.propertyElement});
+
+  final PropertyElement propertyElement;
+
   @override
   _InspectionHistoryScreenState createState() =>
       _InspectionHistoryScreenState();
 }
 
 class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
-  bool isLoading = false;
-
-  PropertyElement propertyElement;
   List<Inspection> inspections = [];
+  bool isLoading = false;
+  PropertyElement propertyElement;
 
   @override
   void initState() {
@@ -52,7 +53,9 @@ class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
                     shrinkWrap: true,
                     itemCount: inspections.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return InspectionCard();
+                      return InspectionCard(
+                        inspection: inspections[index],
+                      );
                     })));
   }
 }

@@ -36,47 +36,43 @@ class InspectionCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      // Text('Inspection ID: ',
-                      //     style: Theme.of(context)
-                      //         .primaryTextTheme
-                      //         .subtitle1
-                      //         .copyWith(
-                      //             color: Colors.black,
-                      //             fontWeight: FontWeight.w800)),
-                      // Text(
-                      //     '${roomTypes.where((element) {
-                      //           return element.roomId.toString() ==
-                      //               room.roomId.toString();
-                      //         }).first.roomName}',
-                      //     style: Theme.of(context)
-                      //         .primaryTextTheme
-                      //         .subtitle1
-                      //         .copyWith(
-                      //             color: Colors.black,
-                      //             fontWeight: FontWeight.w500))
+                      Text('Inspection ID: ',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w800)),
+                      Text('${inspection.inspectionId}',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500))
                     ],
                   ),
                   SizedBox(
                     height: UIConstants.fitToHeight(16, context),
                   ),
-                  // Row(
-                  //   children: [
-                  //     Text('Property ID: ',
-                  //         style: Theme.of(context)
-                  //             .primaryTextTheme
-                  //             .subtitle1
-                  //             .copyWith(
-                  //                 color: Colors.black,
-                  //                 fontWeight: FontWeight.w800)),
-                  //     Text('${room.propertyId}',
-                  //         style: Theme.of(context)
-                  //             .primaryTextTheme
-                  //             .subtitle1
-                  //             .copyWith(
-                  //                 color: Colors.black,
-                  //                 fontWeight: FontWeight.w500))
-                  //   ],
-                  // ),
+                  Row(
+                    children: [
+                      Text('Inspection Type: ',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w800)),
+                      Text('${inspection.inspectType}',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500))
+                    ],
+                  ),
                 ],
               ),
               Column(
