@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
+import 'package:propview/models/roomType.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/AddRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
@@ -12,7 +13,7 @@ class RoomWidget extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<RoomsToPropertyModel> rooms;
   final List<Facility> facilities;
-  final List roomTypes;
+  final List<PropertyRoom> roomTypes;
   RoomWidget(
       {this.rooms, this.facilities, this.propertyElement, this.roomTypes});
   @override
@@ -26,6 +27,7 @@ class _RoomWidgetState extends State<RoomWidget> {
   List<RoomsToPropertyModel> rooms = [];
   List<Facility> facilities = [];
   List<String> flooringType = [];
+   List<PropertyRoom> roomTypes = [];
 
   PropertyElement propertyElement;
 
@@ -41,6 +43,7 @@ class _RoomWidgetState extends State<RoomWidget> {
     facilities = widget.facilities;
     propertyElement = widget.propertyElement;
     flooringType = PropertyFunctions.getFlooringType();
+    roomTypes = widget.roomTypes;
   }
 
   @override
@@ -57,12 +60,12 @@ class _RoomWidgetState extends State<RoomWidget> {
                           .subtitle1
                           .copyWith(color: Colors.black)))
               : ListView.builder(
-                shrinkWrap: true,
-                itemCount: rooms.length,
-                itemBuilder: (context, int index) {
-                  return RoomCard(
-                      room: rooms[index], propertyElement: propertyElement);
-                })),
+                  shrinkWrap: true,
+                  itemCount: rooms.length,
+                  itemBuilder: (context, int index) {
+                    return RoomCard(
+                        room: rooms[index], propertyElement: propertyElement, roomTypes: roomTypes,);
+                  })),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Routing.makeRouting(context,

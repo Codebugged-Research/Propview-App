@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
+import 'package:propview/models/roomType.dart';
 
 class RoomCard extends StatelessWidget {
   final RoomsToPropertyModel room;
   final PropertyElement propertyElement;
-  RoomCard({this.room, this.propertyElement});
+  final List<PropertyRoom> roomTypes;
+  RoomCard({this.room, this.propertyElement, this.roomTypes});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -45,7 +47,11 @@ class RoomCard extends StatelessWidget {
                               .copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w800)),
-                      Text('${room.roomId}',
+                      Text(
+                          '${roomTypes.where((element) {
+                                return element.roomId.toString() ==
+                                    room.roomId.toString();
+                              }).first.roomName}',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -83,7 +89,7 @@ class RoomCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text('Room Size 1: ',
+                      Text('Size 1: ',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -101,7 +107,7 @@ class RoomCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text('Room Size 2: ',
+                      Text('Size 2: ',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1

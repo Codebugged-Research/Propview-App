@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Subroom.dart';
+import 'package:propview/models/roomType.dart';
 
 class SubRoomCard extends StatelessWidget {
   final SubRoomElement subRoom;
   final PropertyElement propertyElement;
-  SubRoomCard({this.subRoom, this.propertyElement});
+  final List<PropertyRoom> roomTypes;
+  SubRoomCard({this.subRoom, this.propertyElement, this.roomTypes});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -45,7 +47,11 @@ class SubRoomCard extends StatelessWidget {
                               .copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w800)),
-                      Text('${subRoom.subRoomId}',
+                      Text(
+                          '${roomTypes.where((element) {
+                                return element.roomId.toString() ==
+                                    subRoom.subRoomId.toString();
+                              }).first.roomName}',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -63,7 +69,11 @@ class SubRoomCard extends StatelessWidget {
                               .copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w800)),
-                      Text('${subRoom.roomId}',
+                      Text(
+                          '${roomTypes.where((element) {
+                                return element.roomId.toString() ==
+                                    subRoom.roomId.toString();
+                              }).first.roomName}',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -99,7 +109,7 @@ class SubRoomCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text('Room Size 1: ',
+                      Text('Size 1: ',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -117,7 +127,7 @@ class SubRoomCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text('Room Size 2: ',
+                      Text('Size 2: ',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
