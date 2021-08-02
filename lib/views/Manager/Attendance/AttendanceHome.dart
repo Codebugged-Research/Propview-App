@@ -5,12 +5,14 @@ import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
+import 'package:propview/models/City.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/attd.dart';
 import 'package:propview/services/attendanceService.dart';
+import 'package:propview/services/cityService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Manager/Attendance/AttendanceCard.dart';
+import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Manager/Attendance/LogCard.dart';
 import 'package:propview/views/Manager/Attendance/SoloAttendance.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +39,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
   Attendance attendance;
   Attendance attendanceToday;
   List bools = [];
+  List<City> cities = [];
   Map gg;
 
   AttendanceElement myAttendance;
@@ -45,6 +48,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     setState(() {
       loading = true;
     });
+    cities = await CityService.getCities();
     user = await UserService.getUser();
     userList = await UserService.getAllUser();
     attendance = await AttendanceService.getAllWithoutDate(0, 1000);
@@ -296,6 +300,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     List<Widget> columnContent = [];
     for (int i = 0; i < users.length; i++)
       columnContent.add(AttendanceCard(
+        cities: cities,
         attd: Attd(
           isPresent: users[i].present,
           user: users[i],

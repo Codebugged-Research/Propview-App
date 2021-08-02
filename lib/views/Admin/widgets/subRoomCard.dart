@@ -72,7 +72,7 @@ class SubRoomCard extends StatelessWidget {
                                   fontWeight: FontWeight.w500))
                     ],
                   ),
-                  SizedBox(height: UIConstants.fitToHeight(32, context)),
+                  SizedBox(height: UIConstants.fitToHeight(16, context)),
                   Row(
                     children: [
                       Text('Property ID: ',

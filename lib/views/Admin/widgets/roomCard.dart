@@ -55,7 +55,7 @@ class RoomCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: UIConstants.fitToHeight(49, context),
+                    height: UIConstants.fitToHeight(16, context),
                   ),
                   Row(
                     children: [

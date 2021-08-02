@@ -4,9 +4,11 @@ import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
+import 'package:propview/models/City.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/attd.dart';
 import 'package:propview/services/attendanceService.dart';
+import 'package:propview/services/cityService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
@@ -35,6 +37,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
   Attendance attendance;
   Attendance attendanceToday;
   List bools = [];
+  List<City> cities = [];
   Map gg;
 
   AttendanceElement myAttendance;
@@ -47,6 +50,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     userList = await UserService.getAllUser();
     attendance = await AttendanceService.getAllWithoutDate(0, 1000);
     attendanceToday = await AttendanceService.getAllWithDate(dateFormatter());
+    cities = await CityService.getCities();
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
               .where((element) =>
@@ -294,6 +298,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     List<Widget> columnContent = [];
     for (int i = 0; i < users.length; i++)
       columnContent.add(AttendanceCard(
+        cities: cities,
         attd: Attd(
           isPresent: users[i].present,
           user: users[i],
