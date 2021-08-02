@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
+import 'package:propview/models/City.dart';
+import 'package:propview/models/State.dart';
 import 'package:propview/models/Tenant.dart';
-import 'package:propview/services/cityService.dart';
-import 'package:propview/services/stateService.dart';
 
 class TenantWidget extends StatelessWidget {
   final Tenant tenant;
   final int index;
-  TenantWidget({this.tenant, this.index});
+  final List<CStates> cstates;
+  final List<City> cities;
+  TenantWidget({this.tenant, this.index, this.cstates, this.cities});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        tenantDetailsModalSheet(
-            context,
-            await StateService.getStateById(tenant.state),
-            await CityService.getCityById(tenant.city));
+        tenantDetailsModalSheet(context);
       },
       child: Container(
         child: Text(
@@ -29,8 +28,7 @@ class TenantWidget extends StatelessWidget {
     );
   }
 
-  tenantDetailsModalSheet(
-      BuildContext context, String stateName, String cityName) {
+  tenantDetailsModalSheet(BuildContext context) {
     return showModalBottomSheet<void>(
         context: context,
         // isScrollControlled: true,
@@ -83,8 +81,18 @@ class TenantWidget extends StatelessWidget {
                           tenant.isfamily == 1 ? 'Yes' : 'No'),
                       detailsWidget(
                           context, 'Primary Address', '${tenant.paddress}'),
-                      detailsWidget(context, 'City', '${cityName}'),
-                      detailsWidget(context, 'State', '${stateName}'),
+                      detailsWidget(
+                          context,
+                          'City',
+                          '${cities.where((element) {
+                                return element.ccid == tenant.city;
+                              }).first.ccname}'),
+                      detailsWidget(
+                          context,
+                          'State',
+                          '${cstates.where((element) {
+                                return element.sid == tenant.state;
+                              }).first.sname}'),
                       detailsWidget(context, 'Pan Number', '${tenant.pan}'),
                       detailsWidget(
                           context, 'Aadhar Number', '${tenant.aadhar}'),
@@ -107,7 +115,7 @@ class TenantWidget extends StatelessWidget {
               .primaryTextTheme
               .subtitle1
               .copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
-      subtitle: subtitle == ' '
+      subtitle: subtitle != ''
           ? Text(subtitle,
               style: Theme.of(context)
                   .primaryTextTheme

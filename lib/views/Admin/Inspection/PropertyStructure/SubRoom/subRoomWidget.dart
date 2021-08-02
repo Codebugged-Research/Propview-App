@@ -52,8 +52,10 @@ class _SubRoomWidgetState extends State<SubRoomWidget> {
                 itemCount: subRooms.length,
                 itemBuilder: (context, int index) {
                   return SubRoomCard(
-                      subRoom: subRooms[index],
-                      propertyElement: propertyElement);
+                    subRoom: subRooms[index],
+                    propertyElement: propertyElement,
+                    roomTypes: widget.roomTypes,
+                  );
                 }),
       ),
       floatingActionButton: FloatingActionButton(

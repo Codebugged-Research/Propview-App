@@ -9,10 +9,12 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:propview/config.dart';
+import 'package:propview/models/City.dart';
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
+import 'package:propview/models/State.dart';
 import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/Tenant.dart';
 import 'package:propview/models/TenantFamily.dart';
@@ -20,11 +22,13 @@ import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/models/roomType.dart';
+import 'package:propview/services/cityService.dart';
 import 'package:propview/services/inspectionService.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
+import 'package:propview/services/stateService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/services/tenantService.dart';
 import 'package:propview/services/userService.dart';
@@ -65,6 +69,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
   PropertyElement propertyElement;
   RoomType roomTypes;
 
+  List<CStates> cstates = [];
+  List<City> cities = [];
   List<Tenant> tenants = [];
   List<TenantFamily> tenantFamily = [];
   List<RoomsToPropertyModel> rooms = [];
@@ -98,6 +104,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
     setState(() {
       isLoading = true;
     });
+    cstates = await StateService.getStates();
+    cities = await CityService.getCities();
     maintainanceController = TextEditingController(
         text: widget.inspection != null
             ? widget.inspection.maintenanceCharges.toString()
@@ -332,6 +340,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                                   return TenantWidget(
                                     tenant: tenants[index],
                                     index: index,
+                                    cstates: cstates,
+                                    cities: cities,
                                   );
                                 }),
                         SizedBox(
@@ -407,7 +417,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
               labelBackgroundColor: Color(0xff314B8C)),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
