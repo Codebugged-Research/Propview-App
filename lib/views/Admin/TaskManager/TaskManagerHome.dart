@@ -60,7 +60,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     _tabController22 = TabController(length: 3, vsync: this, initialIndex: 0);
     taskData = await TaskService.getAllTask();
     for (int i = 0; i < taskData.data.task.length; i++) {
-      if (taskData.data.task[i].taskStatus == "Pending") {
+      if (taskData.data.task[i].taskStatus == "Pending" ||
+          taskData.data.task[i].taskStatus == "Rejected") {
         if (taskData.data.task[i].assignedTo == user.userId.toString()) {
           pendingTaskList.add(taskData.data.task[i]);
         } else {
@@ -339,7 +340,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     pendingTaskList[index],
                                                 currentUser: user,
                                                 isSelf: true,
-                                                change:
+                                                change1:
                                                     (TaskElement taskElement) {
                                                   setState(() {
                                                     pendingTaskList.removeWhere(
@@ -376,7 +377,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     unApprovedTaskList[index],
                                                 currentUser: user,
                                                 isSelf: true,
-                                                change:
+                                                change1:
                                                     (TaskElement taskElement) {
                                                   setState(() {
                                                     unApprovedTaskList
@@ -387,6 +388,20 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                                 taskElement
                                                                     .taskId);
                                                     completedTaskList
+                                                        .add(taskElement);
+                                                  });
+                                                },
+                                                change2:
+                                                    (TaskElement taskElement) {
+                                                  setState(() {
+                                                    unApprovedTaskList
+                                                        .removeWhere(
+                                                            (element) =>
+                                                                element
+                                                                    .taskId ==
+                                                                taskElement
+                                                                    .taskId);
+                                                    pendingTaskList
                                                         .add(taskElement);
                                                   });
                                                 },
@@ -415,7 +430,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     completedTaskList[index],
                                                 currentUser: user,
                                                 isSelf: true,
-                                                change: (TaskElement
+                                                change1: (TaskElement
                                                     taskElement) {},
                                               );
                                             },
@@ -514,8 +529,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                   i < userTask.data.task.length;
                                                   i++) {
                                                 if (userTask.data.task[i]
-                                                        .taskStatus ==
-                                                    "Pending") {
+                                                            .taskStatus ==
+                                                        "Pending" ||
+                                                    userTask.data.task[i]
+                                                            .taskStatus ==
+                                                        "Rejected") {
                                                   pendingTaskList3.add(
                                                       userTask.data.task[i]);
                                                 } else if (userTask.data.task[i]
@@ -554,6 +572,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                     onTap: () {
                                       setState(() {
                                         tempUser = user;
+                                        _searchController.clear();
                                       });
                                     },
                                   ),
@@ -730,6 +749,33 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                                   index],
                                                           currentUser: user,
                                                           isSelf: false,
+                                                          change1: (TaskElement
+                                                              taskElement) {
+                                                            setState(() {
+                                                              unApprovedTaskList
+                                                                  .removeWhere((element) =>
+                                                                      element
+                                                                          .taskId ==
+                                                                      taskElement
+                                                                          .taskId);
+                                                              completedTaskList
+                                                                  .add(
+                                                                      taskElement);
+                                                            });
+                                                          },
+                                                          change2: (TaskElement
+                                                              taskElement) {
+                                                            setState(() {
+                                                              unApprovedTaskList
+                                                                  .removeWhere((element) =>
+                                                                      element
+                                                                          .taskId ==
+                                                                      taskElement
+                                                                          .taskId);
+                                                              pendingTaskList.add(
+                                                                  taskElement);
+                                                            });
+                                                          },
                                                         );
                                                       },
                                                     )
@@ -768,6 +814,33 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                                   index],
                                                           currentUser: user,
                                                           isSelf: false,
+                                                          change1: (TaskElement
+                                                              taskElement) {
+                                                            setState(() {
+                                                              unApprovedTaskList
+                                                                  .removeWhere((element) =>
+                                                                      element
+                                                                          .taskId ==
+                                                                      taskElement
+                                                                          .taskId);
+                                                              completedTaskList
+                                                                  .add(
+                                                                      taskElement);
+                                                            });
+                                                          },
+                                                          change2: (TaskElement
+                                                              taskElement) {
+                                                            setState(() {
+                                                              unApprovedTaskList
+                                                                  .removeWhere((element) =>
+                                                                      element
+                                                                          .taskId ==
+                                                                      taskElement
+                                                                          .taskId);
+                                                              pendingTaskList.add(
+                                                                  taskElement);
+                                                            });
+                                                          },
                                                         );
                                                       },
                                                     ),
