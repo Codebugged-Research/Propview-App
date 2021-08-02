@@ -17,7 +17,7 @@ class InspectionService extends AuthService {
     }
   }
 
-  static Future<void> getAllInspection() async {
+  static Future<List<Inspection>> getAllInspection() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/inspection/get',
         method: 'GET');
@@ -33,7 +33,7 @@ class InspectionService extends AuthService {
     }
   }
 
-  static Future<void> getInspectionById(String inspectionId) async {
+  static Future<List<Inspection>> getInspectionById(String inspectionId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/inspection/get/$inspectionId',
         method: 'GET');
@@ -49,7 +49,8 @@ class InspectionService extends AuthService {
     }
   }
 
-  static Future<void> getInspectionByPropertyId(String propertyId) async {
+  static Future<List<Inspection>> getInspectionByPropertyId(
+      String propertyId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/inspection/get/property/$propertyId',
         method: 'GET');

@@ -8,6 +8,7 @@ import 'package:propview/views/Admin/Inspection/Types/moveInInspectionScreen.dar
 import 'package:propview/views/Admin/Inspection/Types/moveOutInspectionScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/propertyStructureScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/regularInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/inspectionHistoryScreen.dart';
 
 class InspectionHomeScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -28,7 +29,22 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Inspection Type'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Routing.makeRouting(context,
+                    routeMethod: 'push',
+                    newWidget: InspectionHistoryScreen(
+                        propertyElement: propertyElement));
+              },
+              icon: Icon(
+                Icons.history,
+                color: Color(0xff314B8C),
+              ))
+        ],
+      ),
       body: CustomPaint(
         painter: CurvePainter(),
         child: Container(
@@ -39,11 +55,6 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Inspection Type',
-                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.w700),
-                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.06),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
