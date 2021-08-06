@@ -484,9 +484,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 },
                                 onSuggestionSelected: (suggestion) {
                                   this._user.text = suggestion.name.toString();
-                                  //  +
-                                  //     "\n" +
-                                  //     suggestion.designation.toString();
                                   setState(() {
                                     _selectedUser = suggestion;
                                   });

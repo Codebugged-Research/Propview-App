@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User user;
-  Property property;
+  Property property = Property(count:  0, data: Data(property:  []));
   bool loading = false;
   bool loading2 = false;
 

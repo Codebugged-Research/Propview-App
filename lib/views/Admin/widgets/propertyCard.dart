@@ -48,7 +48,6 @@ class _PropertyCardState extends State<PropertyCard> {
                   spreadRadius: 0.0,
                 ),
               ]),
-          height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -64,8 +63,24 @@ class _PropertyCardState extends State<PropertyCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      textWidget(context, "Property Name: ",
-                          '${widget.propertyElement.tblSociety.socname} ,  ${widget.propertyElement.tableproperty.unitNo}'),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.propertyElement.propertyOwner.ownerName,
+                            style: GoogleFonts.nunito(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textWidget(
+                          context,
+                          "${widget.propertyElement.tblSociety.socname} ,  ${widget.propertyElement.tableproperty.unitNo}",
+                          '${widget.propertyElement.tblState.sname} ,  ${widget.propertyElement.tblCity.ccname}'),
                     ],
                   ),
                 ),
@@ -86,8 +101,8 @@ class _PropertyCardState extends State<PropertyCard> {
           label,
           style: GoogleFonts.nunito(
             color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            fontWeight: FontWeight.normal,
           ),
         ),
         Text(
@@ -96,7 +111,7 @@ class _PropertyCardState extends State<PropertyCard> {
           // overflow: TextOverflow.ellipsis,
           style: GoogleFonts.nunito(
             color: Colors.black,
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.normal,
           ),
         ),

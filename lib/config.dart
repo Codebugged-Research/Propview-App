@@ -1,5 +1,5 @@
 class Config {
-  static const String APP_VERISON = "1.0.8+9";
+  static const String APP_VERISON = "1.0.9+10";
   static DateTime dummyTime = DateTime(1,1,1,1,1,1,1,1,);
   static const String UPLOAD_IMAGE_ENDPOINT =
       "http://68.183.247.233/api/upload/image";

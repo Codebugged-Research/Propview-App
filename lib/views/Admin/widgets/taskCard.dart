@@ -412,24 +412,35 @@ class _TaskCardState extends State<TaskCard> {
                                                               .tblUsers
                                                               .parentId !=
                                                           "") {
-                                                    var managerToken =
-                                                        await UserService
-                                                            .getDeviceToken(
-                                                                widget
-                                                                    .taskElement
-                                                                    .tblUsers
-                                                                    .parentId);
-                                                    NotificationService
-                                                        .sendPushToOne(
-                                                      "Task Submitted",
-                                                      "Task " +
-                                                          widget.taskElement
-                                                              .taskName +
-                                                          " is submitted by " +
-                                                          widget.taskElement
-                                                              .tblUsers.name,
-                                                      managerToken,
-                                                    );
+                                                    for (int i = 0;
+                                                    i <
+                                                        widget
+                                                            .taskElement
+                                                            .tblUsers
+                                                            .parentId
+                                                            .split(",")
+                                                            .length;
+                                                    i++) {
+                                                      var managerToken =
+                                                      await UserService
+                                                          .getDeviceToken(
+                                                          widget
+                                                              .taskElement
+                                                              .tblUsers
+                                                              .parentId
+                                                              .split(",")[i]);
+                                                      NotificationService
+                                                          .sendPushToOne(
+                                                        "Task Submitted",
+                                                        "Task " +
+                                                            widget.taskElement
+                                                                .taskName +
+                                                            " is submitted by " +
+                                                            widget.taskElement
+                                                                .tblUsers.name,
+                                                        managerToken,
+                                                      );
+                                                    }
                                                   }
 
                                                   widget.change1(
@@ -484,10 +495,10 @@ class _TaskCardState extends State<TaskCard> {
                               )
                             : Container()
                         : Container(),
-                    widget.currentUser.parentId.toString() != "" &&
-                                widget.currentUser.userId.toString() ==
-                                    widget.taskElement.tblUsers.parentId
-                                        .toString() ||
+                    // widget.currentUser.parentId.toString() != "" &&
+                    //             widget.currentUser.userId.toString() ==
+                    //                 widget.taskElement.tblUsers.parentId
+                    //                     .toString() ||
                             widget.currentUser.userType == "admin" ||
                             widget.currentUser.userType == "super_admin"
                         ? widget.taskElement.taskStatus == "Unapproved"

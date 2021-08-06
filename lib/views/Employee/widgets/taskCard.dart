@@ -206,7 +206,7 @@ class _TaskCardState extends State<TaskCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        InkWell(
+                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : InkWell(
                           child: Card(
                             elevation: 2,
                             child: Padding(
@@ -240,9 +240,9 @@ class _TaskCardState extends State<TaskCard> {
                             );
                           },
                         ),
-                        SizedBox(
+                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : SizedBox(
                             width: MediaQuery.of(context).size.width * 0.02),
-                        InkWell(
+                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : InkWell(
                           child: Card(
                             elevation: 2,
                             child: Padding(
@@ -277,7 +277,7 @@ class _TaskCardState extends State<TaskCard> {
                             );
                           },
                         ),
-                        SizedBox(
+                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : SizedBox(
                             width: MediaQuery.of(context).size.width * 0.02),
                         InkWell(
                           child: Card(
@@ -319,7 +319,7 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.currentUser.userId.toString() ==
                             widget.taskElement.assignedTo
-                        ? widget.taskElement.taskStatus == "Pending"
+                        ? widget.taskElement.taskStatus == "Pending" || widget.taskElement.taskStatus == "Rejected"
                             ? Align(
                                 alignment: Alignment.center,
                                 child: MaterialButton(
@@ -393,24 +393,35 @@ class _TaskCardState extends State<TaskCard> {
                                                               .tblUsers
                                                               .parentId !=
                                                           "") {
-                                                    var managerToken =
-                                                        await UserService
-                                                            .getDeviceToken(
-                                                                widget
-                                                                    .taskElement
-                                                                    .tblUsers
-                                                                    .parentId);
-                                                    NotificationService
-                                                        .sendPushToOne(
-                                                      "Task Submitted",
-                                                      "Task " +
-                                                          widget.taskElement
-                                                              .taskName +
-                                                          " is submitted by " +
-                                                          widget.taskElement
-                                                              .tblUsers.name,
-                                                      managerToken,
-                                                    );
+                                                    for (int i = 0;
+                                                    i <
+                                                        widget
+                                                            .taskElement
+                                                            .tblUsers
+                                                            .parentId
+                                                            .split(",")
+                                                            .length;
+                                                    i++) {
+                                                      var managerToken =
+                                                      await UserService
+                                                          .getDeviceToken(
+                                                          widget
+                                                              .taskElement
+                                                              .tblUsers
+                                                              .parentId
+                                                              .split(",")[i]);
+                                                      NotificationService
+                                                          .sendPushToOne(
+                                                        "Task Submitted",
+                                                        "Task " +
+                                                            widget.taskElement
+                                                                .taskName +
+                                                            " is submitted by " +
+                                                            widget.taskElement
+                                                                .tblUsers.name,
+                                                        managerToken,
+                                                      );
+                                                    }
                                                   }
 
                                                   widget.change(

@@ -237,40 +237,43 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       ),
                     ),
                   ),
-                  Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TabBar(
-                          isScrollable: true,
-                          controller: _tabController,
-                          indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                                color: Color(0xff314B8C), width: 4.0),
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TabBar(
+                            isScrollable: true,
+                            controller: _tabController,
+                            indicator: UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                  color: Color(0xff314B8C), width: 4.0),
+                            ),
+                            labelStyle: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff314B8C),
+                            ),
+                            unselectedLabelStyle: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                            unselectedLabelColor: Colors.black.withOpacity(0.4),
+                            labelColor: Color(0xff314B8C),
+                            tabs: [
+                              Tab(text: "Self"),
+                              Tab(text: "Team"),
+                            ],
+                            onTap: (value) {
+                              _tabController.animateTo(
+                                value,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 600),
+                              );
+                            },
                           ),
-                          labelStyle: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff314B8C),
-                          ),
-                          unselectedLabelStyle: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                          unselectedLabelColor: Colors.black.withOpacity(0.4),
-                          labelColor: Color(0xff314B8C),
-                          tabs: [
-                            Tab(text: "Self"),
-                            Tab(text: "Team"),
-                          ],
-                          onTap: (value) {
-                            _tabController.animateTo(
-                              value,
-                              curve: Curves.easeIn,
-                              duration: Duration(milliseconds: 600),
-                            );
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                    flex: 1,
                   ),
                   Expanded(
                     child: Container(
@@ -318,6 +321,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   physics: NeverScrollableScrollPhysics(),
                                   controller: _tabController21,
                                   children: <Widget>[
+                                    //self Pending
                                     pendingTaskList.length == 0
                                         ? Center(
                                             child: Text(
@@ -354,6 +358,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                               );
                                             },
                                           ),
+                                    //self unaprroved
                                     unApprovedTaskList.length == 0
                                         ? Center(
                                             child: Text(
@@ -408,6 +413,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                               );
                                             },
                                           ),
+                                    //self completed
                                     completedTaskList.length == 0
                                         ? Center(
                                             child: Text(
@@ -617,6 +623,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   physics: NeverScrollableScrollPhysics(),
                                   controller: _tabController22,
                                   children: <Widget>[
+                                    //team pending
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -705,6 +712,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                         )
                                       ],
                                     ),
+                                    //team unaprroved
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -847,6 +855,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                         )
                                       ],
                                     ),
+                                    //team completed
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,

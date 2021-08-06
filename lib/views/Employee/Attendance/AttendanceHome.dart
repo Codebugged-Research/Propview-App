@@ -51,7 +51,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
     cities = await CityService.getCities();
     user = await UserService.getUser();
     userList = await UserService.getAllUser();
-    attendance = await AttendanceService.getAllWithoutDate(0, 1000);
+    attendance = await AttendanceService.getAllUserIdWithoutDate(user.userId);
     attendanceToday = await AttendanceService.getAllWithDate(dateFormatter());
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance

@@ -220,7 +220,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         ],
                       ),
                     ),
-                    Padding(
+                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() :Padding(
                       padding: const EdgeInsets.only(
                         bottom: 8.0,
                       ),
@@ -332,12 +332,12 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         ],
                       ),
                     ),
-                    propertySelectBox
+                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() :propertySelectBox
                         ? SizedBox(
                             height: 8,
                           )
                         : Container(),
-                    propertySelectBox
+                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() : propertySelectBox
                         ? Align(
                             alignment: Alignment.topLeft,
                             child: Text(
@@ -352,7 +352,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     SizedBox(
                       height: 8,
                     ),
-                    propertySelectBox
+                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() :propertySelectBox
                         ? Align(
                             alignment: Alignment.topLeft,
                             child: Container(
@@ -430,7 +430,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             ),
                           )
                         : Container(),
-                    propertySelectBox
+                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() :propertySelectBox
                         ? SizedBox(
                             height: 8,
                           )
@@ -554,14 +554,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             "task_name": _taskName.text,
                             "task_desc": _taskDescription.text,
                             "task_status": "Pending",
-                            "property_name": _property.text,
+                            "property_name": _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? "No Property" : _property.text,
                             "start_dateTime": _taskStartDateTime2.text,
                             "end_dateTime": _taskEndDateTime2.text,
                             "assigned_to": _selectedUser.userId.toString(),
-                            "property_ref": _selectedProperty.toString(),
+                            "property_ref": _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? 0 : _selectedProperty.toString(),
                             "created_at": DateTime.now().toString(),
                             "updated_at": DateTime.now().toString(),
-                            "property_owner_ref": _selectedPropertyOwner,
+                            "property_owner_ref": _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? 0 : _selectedPropertyOwner,
                           });
                           bool response = await TaskService.createTask(payload);
                           setState(() {

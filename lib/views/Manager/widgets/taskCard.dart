@@ -19,14 +19,16 @@ import 'package:propview/views/Manager/TaskManager/SoloCalendar.dart';
 // ignore: must_be_immutable
 class TaskCard extends StatefulWidget {
   final TaskElement taskElement;
-  Function change;
+  Function change1;
+  Function change2;
   final User currentUser;
   final bool isSelf;
   TaskCard({
     this.taskElement,
     this.currentUser,
     this.isSelf,
-    this.change,
+    this.change1,
+    this.change2,
   });
 
   @override
@@ -217,79 +219,102 @@ class _TaskCardState extends State<TaskCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/house.png",
-                                    height: 35,
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : InkWell(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          "assets/house.png",
+                                          height: 35,
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "Property\ndetails",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Property\ndetails",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PropertyDetailScreen(
-                                  propertyId: widget.taskElement.propertyRef,
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PropertyDetailScreen(
+                                        propertyId:
+                                            widget.taskElement.propertyRef,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
-                        InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/owner.png",
-                                    height: 35,
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : InkWell(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          "assets/owner.png",
+                                          height: 35,
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "Property\nOwner details",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Property\nOwner details",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PropertyOwnerDetailScreen(
-                                  propertyOwnerId:
-                                      widget.taskElement.propertyOwnerRef,
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PropertyOwnerDetailScreen(
+                                        propertyOwnerId:
+                                            widget.taskElement.propertyOwnerRef,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
                         InkWell(
                           child: Card(
                             elevation: 2,
@@ -330,7 +355,8 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.currentUser.userId.toString() ==
                             widget.taskElement.assignedTo
-                        ? widget.taskElement.taskStatus == "Pending"
+                        ? widget.taskElement.taskStatus == "Pending" ||
+                                widget.taskElement.taskStatus == "Rejected"
                             ? Align(
                                 alignment: Alignment.center,
                                 child: MaterialButton(
@@ -404,27 +430,37 @@ class _TaskCardState extends State<TaskCard> {
                                                               .tblUsers
                                                               .parentId !=
                                                           "") {
-                                                    var managerToken =
-                                                        await UserService
-                                                            .getDeviceToken(
-                                                                widget
-                                                                    .taskElement
-                                                                    .tblUsers
-                                                                    .parentId);
-                                                    NotificationService
-                                                        .sendPushToOne(
-                                                      "Task Submitted",
-                                                      "Task " +
-                                                          widget.taskElement
-                                                              .taskName +
-                                                          " is submitted by " +
-                                                          widget.taskElement
-                                                              .tblUsers.name,
-                                                      managerToken,
-                                                    );
+                                                    for (int i = 0;
+                                                        i <
+                                                            widget
+                                                                .taskElement
+                                                                .tblUsers
+                                                                .parentId
+                                                                .split(",")
+                                                                .length;
+                                                        i++) {
+                                                      var managerToken =
+                                                          await UserService
+                                                              .getDeviceToken(widget
+                                                                  .taskElement
+                                                                  .tblUsers
+                                                                  .parentId
+                                                                  .split(
+                                                                      ",")[i]);
+                                                      NotificationService
+                                                          .sendPushToOne(
+                                                        "Task Submitted",
+                                                        "Task " +
+                                                            widget.taskElement
+                                                                .taskName +
+                                                            " is submitted by " +
+                                                            widget.taskElement
+                                                                .tblUsers.name,
+                                                        managerToken,
+                                                      );
+                                                    }
                                                   }
-
-                                                  widget.change(
+                                                  widget.change1(
                                                       widget.taskElement);
                                                   Navigator.of(context).pop();
                                                   Navigator.of(context).pop();
@@ -476,105 +512,260 @@ class _TaskCardState extends State<TaskCard> {
                               )
                             : Container()
                         : Container(),
-                    widget.currentUser.userId.toString() ==
-                                widget.taskElement.tblUsers.parentId
-                                    .toString() ||
-                            widget.currentUser.userType == "admin" ||
-                            widget.currentUser.userType == "super_admin"
+                    widget.taskElement.tblUsers.parentId
+                            .split(",")
+                            .contains(widget.currentUser.userId.toString())
+                        // ||
+                        //     widget.currentUser.userType == "admin" ||
+                        //     widget.currentUser.userType == "super_admin"
                         ? widget.taskElement.taskStatus == "Unapproved"
-                            ? Align(
-                                alignment: Alignment.center,
-                                child: MaterialButton(
-                                  child: Text(
-                                    "Approve Task",
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle2
-                                        .copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600),
-                                  ),
-                                  color: Color(0xff314B8C),
-                                  onPressed: () async {
-                                    await showDialog(
-                                      builder: (context) => AlertDialog(
-                                        title: Text(
-                                          "Alert !",
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .headline5
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                        content: Text(
-                                          "Do you want to approve the assignment of task ?",
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                        actions: [
-                                          MaterialButton(
-                                            onPressed: () async {
-                                              setState(() {
-                                                widget.taskElement.taskStatus =
-                                                    "Completed";
-                                              });
-                                              NotificationService.sendPushToOne(
-                                                "Task Approved",
-                                                "Task " +
-                                                    widget
-                                                        .taskElement.taskName +
-                                                    " is approved",
-                                                widget.taskElement.tblUsers
-                                                    .deviceToken,
-                                              );
-                                              var response =
-                                                  await TaskService.updateTask(
-                                                      widget.taskElement.taskId,
-                                                      jsonEncode(widget
-                                                          .taskElement
-                                                          .toJson()));
-                                              print(response);
-                                              Navigator.of(context).pop();
-
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                              "Yes",
-                                              style: Theme.of(context)
-                                                  .primaryTextTheme
-                                                  .subtitle2
-                                                  .copyWith(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                            ),
-                                          ),
-                                          MaterialButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                              "No",
-                                              style: Theme.of(context)
-                                                  .primaryTextTheme
-                                                  .subtitle2
-                                                  .copyWith(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                            ),
-                                          ),
-                                        ],
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: MaterialButton(
+                                      child: Text(
+                                        "Approve Task",
+                                        style: Theme.of(context)
+                                            .primaryTextTheme
+                                            .subtitle2
+                                            .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600),
                                       ),
-                                      context: context,
-                                    );
-                                  },
-                                ),
+                                      color: Color(0xff314B8C),
+                                      onPressed: () async {
+                                        await showDialog(
+                                          builder: (context) => AlertDialog(
+                                            title: Text(
+                                              "Alert !",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .headline5
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                            content: Text(
+                                              "Do you want to approve the assignment of task ?",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                            actions: [
+                                              MaterialButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    widget.taskElement
+                                                            .taskStatus =
+                                                        "Completed";
+                                                  });
+                                                  var response =
+                                                      await TaskService
+                                                          .updateTask(
+                                                              widget.taskElement
+                                                                  .taskId,
+                                                              jsonEncode(widget
+                                                                  .taskElement
+                                                                  .toJson()));
+                                                  if (response) {
+                                                    if (widget
+                                                            .taskElement
+                                                            .tblUsers
+                                                            .deviceToken !=
+                                                        "") {
+                                                      NotificationService
+                                                          .sendPushToOne(
+                                                        "Task Submitted",
+                                                        "Task " +
+                                                            widget.taskElement
+                                                                .taskName +
+                                                            " is approved ",
+                                                        widget
+                                                            .taskElement
+                                                            .tblUsers
+                                                            .deviceToken,
+                                                      );
+                                                    }
+                                                    widget.change1(
+                                                        widget.taskElement);
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).pop();
+                                                    showInSnackBar(
+                                                        context,
+                                                        "Task Updation successfull ",
+                                                        1500);
+                                                  } else {
+                                                    showInSnackBar(
+                                                        context,
+                                                        "Task Updation failed try agin later",
+                                                        800);
+                                                    Navigator.of(context).pop();
+                                                  }
+                                                },
+                                                child: Text(
+                                                  "Yes",
+                                                  style: Theme.of(context)
+                                                      .primaryTextTheme
+                                                      .subtitle2
+                                                      .copyWith(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                ),
+                                              ),
+                                              MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  "No",
+                                                  style: Theme.of(context)
+                                                      .primaryTextTheme
+                                                      .subtitle2
+                                                      .copyWith(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          context: context,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: MaterialButton(
+                                      child: Text(
+                                        "Reject Task",
+                                        style: Theme.of(context)
+                                            .primaryTextTheme
+                                            .subtitle2
+                                            .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600),
+                                      ),
+                                      color: Color(0xff314B8C),
+                                      onPressed: () async {
+                                        await showDialog(
+                                          builder: (context) => AlertDialog(
+                                            title: Text(
+                                              "Alert !",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .headline5
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                            content: Text(
+                                              "Do you want to reject the assignment of task ?",
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
+                                            actions: [
+                                              MaterialButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    widget.taskElement
+                                                            .taskStatus =
+                                                        "Rejected";
+                                                  });
+                                                  var response =
+                                                      await TaskService
+                                                          .updateTask(
+                                                              widget.taskElement
+                                                                  .taskId,
+                                                              jsonEncode(widget
+                                                                  .taskElement
+                                                                  .toJson()));
+                                                  if (response) {
+                                                    if (widget
+                                                            .taskElement
+                                                            .tblUsers
+                                                            .deviceToken !=
+                                                        "") {
+                                                      NotificationService
+                                                          .sendPushToOne(
+                                                        "Task Rejected",
+                                                        "Task " +
+                                                            widget.taskElement
+                                                                .taskName +
+                                                            " is Rejected ",
+                                                        widget
+                                                            .taskElement
+                                                            .tblUsers
+                                                            .deviceToken,
+                                                      );
+                                                    }
+                                                    widget.change2(
+                                                        widget.taskElement);
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).pop();
+                                                    showInSnackBar(
+                                                        context,
+                                                        "Task Rejection successful ",
+                                                        1500);
+                                                  } else {
+                                                    showInSnackBar(
+                                                        context,
+                                                        "Task Rejection failed try again later",
+                                                        800);
+                                                    Navigator.of(context).pop();
+                                                  }
+                                                },
+                                                child: Text(
+                                                  "Yes",
+                                                  style: Theme.of(context)
+                                                      .primaryTextTheme
+                                                      .subtitle2
+                                                      .copyWith(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                ),
+                                              ),
+                                              MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  "No",
+                                                  style: Theme.of(context)
+                                                      .primaryTextTheme
+                                                      .subtitle2
+                                                      .copyWith(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          context: context,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               )
                             : Container()
                         : Container(),

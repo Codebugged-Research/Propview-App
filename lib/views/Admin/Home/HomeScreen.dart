@@ -159,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.topLeft,
                   ),
                 ),
+                //TODO: Add search bar
                 Expanded(
                   child: ListView.builder(
                     controller: _sc,
