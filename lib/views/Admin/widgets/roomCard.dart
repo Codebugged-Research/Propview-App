@@ -89,7 +89,7 @@ class RoomCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text('Size 1: ',
+                      Text('Length: ',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -107,7 +107,7 @@ class RoomCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text('Size 2: ',
+                      Text('Width: ',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1

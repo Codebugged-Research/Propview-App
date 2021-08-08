@@ -68,7 +68,7 @@ scheduleOutgoing(
   await _flutterLocalNotificationsPlugin.schedule(
       0,
       "Scheduled Task",
-      "Your scehduled task will about to end within 15 minutes",
+      "Your scheduled task will about to end within 15 minutes",
       scheduledNotificationEndTime,
       platform);
 }

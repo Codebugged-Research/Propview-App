@@ -67,14 +67,14 @@ class _PropertyCardState extends State<PropertyCard> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            widget.propertyElement.propertyOwner.ownerName,
-                            style: GoogleFonts.nunito(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          // Text(
+                          //   widget.propertyElement.propertyOwner.ownerName,
+                          //   style: GoogleFonts.nunito(
+                          //     color: Colors.black,
+                          //     fontSize: 16,
+                          //     fontWeight: FontWeight.bold,
+                          //   ),
+                          // ),
                         ],
                       ),
                       textWidget(

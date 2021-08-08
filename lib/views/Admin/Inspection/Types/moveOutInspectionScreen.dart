@@ -8,6 +8,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:propview/config.dart';
+import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
@@ -19,6 +20,7 @@ import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/models/roomType.dart';
+import 'package:propview/services/billPropertyService.dart';
 import 'package:propview/services/inspectionService.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
@@ -33,6 +35,7 @@ import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Inspection/MoveOutInspection/captureScreenMoveOut.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
+import 'package:propview/views/Admin/widgets/moveOutInspectionCard.dart';
 import 'package:propview/views/Admin/widgets/tenantWidget.dart';
 
 class MoveOutInspectionScreen extends StatefulWidget {
@@ -76,6 +79,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   List<Tenant> tenants = [];
   List<TenantFamily> tenantFamily = [];
 
+  List<BillToProperty> bills = [];
+
   TextEditingController maintainanceController = TextEditingController();
   TextEditingController commonAreaController = TextEditingController();
   TextEditingController electricitySocietyController = TextEditingController();
@@ -99,6 +104,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     setState(() {
       isLoading = true;
     });
+    bills = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     maintainanceController = TextEditingController(
         text: widget.inspection != null
             ? widget.inspection.maintenanceCharges.toString()
@@ -336,35 +343,53 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                                 .copyWith(fontWeight: FontWeight.normal))
                       ])),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Maintenance Charges or CAM'),
-                  inputWidget(maintainanceController),
+                  titleWidget(context, 'Inspection'),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Common Area Electricity (CAE)'),
-                  inputWidget(commonAreaController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Electricity (Society)'),
-                  inputWidget(electricitySocietyController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Electricity (Authority)'),
-                  inputWidget(electricityAuthorityController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Power Back-Up'),
-                  inputWidget(powerController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'PNG/LPG'),
-                  inputWidget(pngController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Club'),
-                  inputWidget(clubController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Water'),
-                  inputWidget(waterController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Property Tax'),
-                  inputWidget(propertyTaxController),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  titleWidget(context, 'Any other'),
-                  inputWidget(anyOtherController),
+                  bills.length == 0
+                      ? Center(
+                          child: Text(
+                            'Nothing to Inspect!!',
+                            style: Theme.of(context).primaryTextTheme.subtitle2,
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: bills.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return MoveOutInspectionCard(
+                              propertyElement: propertyElement,
+                              billToProperty: bills[index],
+                            );
+                          }),
+                  // titleWidget(context, 'Maintenance Charges or CAM'),
+                  // inputWidget(maintainanceController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Common Area Electricity (CAE)'),
+                  // inputWidget(commonAreaController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Electricity (Society)'),
+                  // inputWidget(electricitySocietyController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Electricity (Authority)'),
+                  // inputWidget(electricityAuthorityController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Power Back-Up'),
+                  // inputWidget(powerController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'PNG/LPG'),
+                  // inputWidget(pngController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Club'),
+                  // inputWidget(clubController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Water'),
+                  // inputWidget(waterController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Property Tax'),
+                  // inputWidget(propertyTaxController),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // titleWidget(context, 'Any other'),
+                  // inputWidget(anyOtherController),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                   subHeadingWidget(context, 'Tenant Details'),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),

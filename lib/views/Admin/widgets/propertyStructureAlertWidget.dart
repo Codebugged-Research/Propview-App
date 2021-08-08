@@ -24,7 +24,7 @@ class PropertyStructureAlertWidget extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK',
+              child: Text('Yes',
                   style: Theme.of(context)
                       .primaryTextTheme
                       .button
