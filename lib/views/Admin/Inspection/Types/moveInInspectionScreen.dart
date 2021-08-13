@@ -51,8 +51,10 @@ class MoveInInspectionScreen extends StatefulWidget {
   final int index1;
   final int index2;
   final Inspection inspection;
-  const MoveInInspectionScreen({
+  List<BillToProperty> bills;
+  MoveInInspectionScreen({
     this.inspection,
+    this.bills,
     this.propertyElement,
     this.rows,
     this.issueTableList,
@@ -86,18 +88,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
 
   List<BillToProperty> bills = [];
 
-  TextEditingController maintainanceController = TextEditingController();
-  TextEditingController commonAreaController = TextEditingController();
-  TextEditingController electricitySocietyController = TextEditingController();
-  TextEditingController electricityAuthorityController =
-      TextEditingController();
-  TextEditingController powerController = TextEditingController();
-  TextEditingController pngController = TextEditingController();
-  TextEditingController clubController = TextEditingController();
-  TextEditingController waterController = TextEditingController();
-  TextEditingController propertyTaxController = TextEditingController();
-  TextEditingController anyOtherController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -109,6 +99,12 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
     setState(() {
       isLoading = true;
     });
+    if (widget.bills != null) {
+      bills = widget.bills;
+    } else {
+      bills = await BillPropertyService.getBillsByPropertyId(
+          propertyElement.tableproperty.propertyId.toString());
+    }
     cstates = await StateService.getStates();
     cities = await CityService.getCities();
     bills = await BillPropertyService.getBillsByPropertyId(
@@ -268,44 +264,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                                     billToProperty: bills[index],
                                   );
                                 }),
-                        // titleWidget(context, 'Maintenance Charges or CAM'),
-                        // inputWidget(maintainanceController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Common Area Electricity (CAE)'),
-                        // inputWidget(commonAreaController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Electricity (Society)'),
-                        // inputWidget(electricitySocietyController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Electricity (Authority)'),
-                        // inputWidget(electricityAuthorityController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Power Back-Up'),
-                        // inputWidget(powerController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'PNG/LPG'),
-                        // inputWidget(pngController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Club'),
-                        // inputWidget(clubController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Water'),
-                        // inputWidget(waterController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Property Tax'),
-                        // inputWidget(propertyTaxController),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.02),
-                        // titleWidget(context, 'Any other'),
-                        // inputWidget(anyOtherController),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.04),
                         subHeadingWidget(context, 'Tenant Details'),
@@ -668,6 +626,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                         imageList: list,
                         index1: index1,
                         index2: index2,
+                        bills: bills,
                         inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
@@ -764,6 +723,11 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                   inspection.toJson(),
                 ),
               );
+              for (int i = 0; i < bills.length; i++) {
+                // ignore: unused_local_variable
+                bool res = await BillPropertyService.updateBillProperty(
+                    bills[i].id.toString(), jsonEncode(bills[i].toJson()));
+              }
               setState(() {
                 loading = false;
               });

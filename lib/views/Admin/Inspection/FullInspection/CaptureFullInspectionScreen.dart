@@ -21,7 +21,7 @@ class CaptureFullInspectionScreen extends StatefulWidget {
   final int index2;
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
-  List<BillToProperty> bills = [];
+  List<BillToProperty> bills;
   final List<IssueTableData> issueTableList;
   final Inspection inspection;
   CaptureFullInspectionScreen({

@@ -1,79 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/services/billTypeService.dart';
+import 'package:propview/utils/progressBar.dart';
 
-class MoveOutInspectionCard extends StatelessWidget {
+class MoveOutInspectionCard extends StatefulWidget {
   final PropertyElement propertyElement;
   final BillToProperty billToProperty;
   MoveOutInspectionCard({this.propertyElement, this.billToProperty});
 
+  @override
+  _MoveOutInspectionCardState createState() => _MoveOutInspectionCardState();
+}
+
+class _MoveOutInspectionCardState extends State<MoveOutInspectionCard> {
   TextEditingController amountController;
+  List ss = [];
+  bool loading = false;
+  String type = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      loading = true;
+    });
+    ss = await BillTypeService.getAllBillTypes();
+    type = ss
+        .firstWhere(
+            (element) => element.billTypeId == widget.billToProperty.billTypeId)
+        .billName;
+    amountController =
+        TextEditingController(text: widget.billToProperty.amount.toString());
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Bil Type:  ',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                'Maintenance',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black),
-              )
-              // Text('${BillTypeService.getBillTypeById(billToProperty.billTypeId.toString())}')
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-          Row(
-            children: [
-              Text(
-                'Property ID:  ',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                '14',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black),
-              )
-              // Text(
-              //   '${propertyElement.tableproperty.propertyId.toString()}',
-              //   style: Theme.of(context)
-              //       .primaryTextTheme
-              //       .subtitle1
-              //       .copyWith(color: Colors.black),
-              // )
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.008),
-          Text(
-            'Amount',
-            style: Theme.of(context)
-                .primaryTextTheme
-                .subtitle1
-                .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-          inputWidget(amountController),
-        ],
-      ),
-    );
+    return loading
+        ? circularProgressWidget()
+        : Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Bill Type:  ',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      type,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black),
+                    ),
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                Row(
+                  children: [
+                    Text(
+                      'Property Name:  ',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      widget.propertyElement.propertyOwner.ownerName,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black),
+                    )
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                Row(
+                  children: [
+                    Text(
+                      'Last Updated:  ',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      widget.billToProperty.lastUpdate.toLocal().toString(),
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black),
+                    )
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                Text(
+                  'Amount',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                inputWidget(amountController),
+              ],
+            ),
+          );
   }
 
   Widget inputWidget(TextEditingController textEditingController) {

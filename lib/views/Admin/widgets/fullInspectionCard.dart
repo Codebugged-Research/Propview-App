@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/services/billTypeService.dart';
+import 'package:propview/utils/progressBar.dart';
 
 // ignore: must_be_immutable
 class FullInspectionCard extends StatefulWidget {
@@ -14,16 +15,17 @@ class FullInspectionCard extends StatefulWidget {
 }
 
 class _FullInspectionCardState extends State<FullInspectionCard> {
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
 
   TextEditingController amountController;
   List ss = [];
   bool loading = false;
   String type = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   getData() async {
     setState(() {
@@ -44,9 +46,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
+        ? circularProgressWidget()
         : Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -55,7 +55,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                 Row(
                   children: [
                     Text(
-                      'Bil Type:  ',
+                      'Bill Type:  ',
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle1

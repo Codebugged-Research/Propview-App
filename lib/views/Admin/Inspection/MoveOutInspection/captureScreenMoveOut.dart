@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
@@ -22,11 +23,13 @@ class CaptureScreenMoveOut extends StatefulWidget {
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
   final Inspection inspection;
+  List<BillToProperty> bills;
   CaptureScreenMoveOut({
     this.imageList,
     this.propertyElement,
     this.index1,
     this.index2,
+    this.bills,
     this.inspection,
     this.rows,
     this.issueTableList,
@@ -93,6 +96,7 @@ class _CaptureScreenMoveOutState extends State<CaptureScreenMoveOut>
           imageList: imageList,
           index1: widget.index1,
           index2: widget.index2,
+          bills: widget.bills,
           inspection: widget.inspection,
           propertyElement: widget.propertyElement,
           rows: widget.rows,

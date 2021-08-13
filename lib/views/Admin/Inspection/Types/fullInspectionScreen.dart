@@ -31,7 +31,7 @@ import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspec
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 
-import '../../../../config.dart';
+import 'package:propview/config.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -41,7 +41,7 @@ class FullInspectionScreen extends StatefulWidget {
   final int index1;
   final int index2;
   final Inspection inspection;
-  List<BillToProperty> bills = [];
+  List<BillToProperty> bills;
   FullInspectionScreen({
     this.inspection,
     this.bills,
@@ -347,10 +347,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 ),
               );
               for (int i = 0; i < bills.length; i++) {
-                print(bills[i].toJson());
+                // ignore: unused_local_variable
                 bool res = await BillPropertyService.updateBillProperty(
                     bills[i].id.toString(), jsonEncode(bills[i].toJson()));
-                    print(res);
               }
               setState(() {
                 loading = false;

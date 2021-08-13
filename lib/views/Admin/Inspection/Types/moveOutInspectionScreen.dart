@@ -46,8 +46,10 @@ class MoveOutInspectionScreen extends StatefulWidget {
   final int index1;
   final int index2;
   final Inspection inspection;
-  const MoveOutInspectionScreen({
+  List<BillToProperty> bills;
+  MoveOutInspectionScreen({
     this.inspection,
+    this.bills,
     this.propertyElement,
     this.rows,
     this.issueTableList,
@@ -81,18 +83,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
 
   List<BillToProperty> bills = [];
 
-  TextEditingController maintainanceController = TextEditingController();
-  TextEditingController commonAreaController = TextEditingController();
-  TextEditingController electricitySocietyController = TextEditingController();
-  TextEditingController electricityAuthorityController =
-      TextEditingController();
-  TextEditingController powerController = TextEditingController();
-  TextEditingController pngController = TextEditingController();
-  TextEditingController clubController = TextEditingController();
-  TextEditingController waterController = TextEditingController();
-  TextEditingController propertyTaxController = TextEditingController();
-  TextEditingController anyOtherController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -104,6 +94,12 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     setState(() {
       isLoading = true;
     });
+    if (widget.bills != null) {
+      bills = widget.bills;
+    } else {
+      bills = await BillPropertyService.getBillsByPropertyId(
+          propertyElement.tableproperty.propertyId.toString());
+    }
     bills = await BillPropertyService.getBillsByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
     if (widget.index1 != null) {
@@ -174,51 +170,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
         .where((element) => element.roomId == id)
         .first;
     return room.roomName;
-  }
-
-  moveOutRequest() async {
-    try {
-      setState(() {
-        isRequested = true;
-      });
-      var payload = json.encode({
-        "inspect_type": "Move out Inspection",
-        "maintenance_charges": "",
-        "common_area_electricity": "",
-        "electricity_society": "",
-        "electricity_authority": "",
-        "power_backup": "",
-        "png_lgp": "",
-        "club": "",
-        "water": "",
-        "property_tax": "",
-        "any_other": "",
-        "property_id": "",
-        "employeed_id": "",
-        "issue_id_list": "",
-        "createdAt": DateTime.now().toString(),
-        "updatedAt": DateTime.now().toString(),
-      });
-      print(payload);
-      bool isCreated = await InspectionService.createInspection(payload);
-      if (isCreated) {
-        setState(() {
-          isRequested = false;
-        });
-        showInSnackBar(
-            context, 'Move Out Inspection created Successfully!', 2500);
-      } else {
-        setState(() {
-          isRequested = false;
-        });
-        showInSnackBar(context, 'Move Out Inspection failed! Try again.', 2500);
-      }
-    } catch (err) {
-      setState(() {
-        isRequested = false;
-      });
-      showInSnackBar(context, 'Something went wrong! Try again.', 2500);
-    }
   }
 
   removeTenantFromProperty(String tenantId) async {
@@ -321,35 +272,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               billToProperty: bills[index],
                             );
                           }),
-                  // titleWidget(context, 'Maintenance Charges or CAM'),
-                  // inputWidget(maintainanceController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Common Area Electricity (CAE)'),
-                  // inputWidget(commonAreaController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Electricity (Society)'),
-                  // inputWidget(electricitySocietyController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Electricity (Authority)'),
-                  // inputWidget(electricityAuthorityController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Power Back-Up'),
-                  // inputWidget(powerController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'PNG/LPG'),
-                  // inputWidget(pngController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Club'),
-                  // inputWidget(clubController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Water'),
-                  // inputWidget(waterController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Property Tax'),
-                  // inputWidget(propertyTaxController),
-                  // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  // titleWidget(context, 'Any other'),
-                  // inputWidget(anyOtherController),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                   subHeadingWidget(context, 'Tenant Details'),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -672,6 +594,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                         imageList: list,
                         index1: index1,
                         index2: index2,
+                        bills: bills,
                         inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
@@ -768,6 +691,11 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                   inspection.toJson(),
                 ),
               );
+              for (int i = 0; i < bills.length; i++) {
+                // ignore: unused_local_variable
+                bool res = await BillPropertyService.updateBillProperty(
+                    bills[i].id.toString(), jsonEncode(bills[i].toJson()));
+              }
               setState(() {
                 loading = false;
               });
