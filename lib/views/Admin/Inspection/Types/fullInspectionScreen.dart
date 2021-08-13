@@ -6,7 +6,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:propview/models/BIllType.dart';
 import 'package:propview/models/BillToProperty.dart';
 
 import 'package:propview/models/Inspection.dart';
@@ -19,7 +18,6 @@ import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/billPropertyService.dart';
-import 'package:propview/services/billTypeService.dart';
 import 'package:propview/services/inspectionService.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
@@ -43,8 +41,10 @@ class FullInspectionScreen extends StatefulWidget {
   final int index1;
   final int index2;
   final Inspection inspection;
+  List<BillToProperty> bills = [];
   FullInspectionScreen({
     this.inspection,
+    this.bills,
     this.propertyElement,
     this.rows,
     this.issueTableList,
@@ -59,16 +59,7 @@ class FullInspectionScreen extends StatefulWidget {
 class _FullInspectionScreenState extends State<FullInspectionScreen> {
   Inspection inspection;
 
-  TextEditingController maintainanceController;
-  TextEditingController commonAreaController;
-  TextEditingController electricitySocietyController;
-  TextEditingController electricityAuthorityController;
-  TextEditingController powerController;
-  TextEditingController pngController;
-  TextEditingController clubController;
-  TextEditingController waterController;
-  TextEditingController propertyTaxController;
-  TextEditingController anyOtherController;
+  // TextEditingController maintainanceController;
 
   PropertyElement propertyElement;
   List<RoomsToPropertyModel> rooms = [];
@@ -97,49 +88,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       loader = true;
       propertyElement = widget.propertyElement;
     });
-    bills = await BillPropertyService.getBillsByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
-    print(bills.length);
-    maintainanceController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.maintenanceCharges.toString()
-            : dummyDouble);
-    commonAreaController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.commonAreaElectricity.toString()
-            : dummyDouble);
-    electricitySocietyController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.electricityAuthority.toString()
-            : dummyDouble);
-    electricityAuthorityController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.electricityAuthority.toString()
-            : dummyDouble);
-    powerController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.powerBackup.toString()
-            : dummyDouble);
-    pngController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.pngLgp.toString()
-            : dummyDouble);
-    clubController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.club.toString()
-            : dummyDouble);
-    waterController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.water.toString()
-            : dummyDouble);
-    propertyTaxController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.propertyTax.toString()
-            : dummyDouble);
-    anyOtherController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.anyOther.toString()
-            : dummyDouble);
+    if (widget.bills != null) {
+      bills = widget.bills;
+    } else {
+      bills = await BillPropertyService.getBillsByPropertyId(
+          propertyElement.tableproperty.propertyId.toString());
+    }
     if (widget.index1 != null) {
       rows = widget.rows != null ? widget.rows : [[]];
       issueTableList =
@@ -235,21 +189,24 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       titleWidget(context, 'Inspection'),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      // bills.length == 0
-                      //     ? Center(
-                      //         child: Text('Nothing to Inspect!!', style: Theme.of(context).primaryTextTheme.subtitle2,),
-                      //       )
-                      //     :
-                      ListView.builder(
-                          shrinkWrap: true,
-                          // itemCount: bills.length,
-                          itemCount: 1,
-                          itemBuilder: (BuildContext context, int index) {
-                            return FullInspectionCard(
-                              // propertyElement: propertyElement,
-                              // billToProperty: bills[index],
-                            );
-                          }),
+                      bills.length == 0
+                          ? Center(
+                              child: Text(
+                                'Nothing to Inspect!!',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle2,
+                              ),
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: bills.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return FullInspectionCard(
+                                  propertyElement: propertyElement,
+                                  billToProperty: bills[index],
+                                );
+                              }),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.04),
                       Row(
@@ -336,24 +293,11 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               inspection = Inspection(
                 inspectionId: 0,
                 inspectType: "Full Inspection",
-                maintenanceCharges: double.parse(maintainanceController.text),
-                commonAreaElectricity: double.parse(commonAreaController.text),
-                electricitySociety:
-                    double.parse(electricitySocietyController.text),
-                electricityAuthority:
-                    double.parse(electricityAuthorityController.text),
-                powerBackup: double.parse(powerController.text),
-                pngLgp: double.parse(pngController.text),
-                club: double.parse(clubController.text),
-                water: double.parse(waterController.text),
-                propertyTax: double.parse(propertyTaxController.text),
-                anyOther: double.parse(anyOtherController.text),
                 propertyId: widget.propertyElement.tableproperty.propertyId,
                 employeeId: user.userId,
                 createdAt: DateTime.now(),
                 updatedAt: DateTime.now(),
               );
-              // print(inspection.toJson());
               List tempIssueTableList = [];
               for (int i = 0; i < rows.length; i++) {
                 List issueRowList = [];
@@ -402,6 +346,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                   inspection.toJson(),
                 ),
               );
+              for (int i = 0; i < bills.length; i++) {
+                print(bills[i].toJson());
+                bool res = await BillPropertyService.updateBillProperty(
+                    bills[i].id.toString(), jsonEncode(bills[i].toJson()));
+                    print(res);
+              }
               setState(() {
                 loading = false;
               });
@@ -637,22 +587,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           return index == list.length
               ? InkWell(
                   onTap: () {
+                    // print(bills[0].amount);
                     inspection = Inspection(
                       inspectType: "Full Inspection",
-                      maintenanceCharges:
-                          double.parse(maintainanceController.text),
-                      commonAreaElectricity:
-                          double.parse(commonAreaController.text),
-                      electricitySociety:
-                          double.parse(electricitySocietyController.text),
-                      electricityAuthority:
-                          double.parse(electricityAuthorityController.text),
-                      powerBackup: double.parse(powerController.text),
-                      pngLgp: double.parse(pngController.text),
-                      club: double.parse(clubController.text),
-                      water: double.parse(waterController.text),
-                      propertyTax: double.parse(propertyTaxController.text),
-                      anyOther: double.parse(anyOtherController.text),
                     );
                     Routing.makeRouting(
                       context,
@@ -661,6 +598,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         imageList: list,
                         index1: index1,
                         index2: index2,
+                        bills: bills,
                         inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,

@@ -26,7 +26,7 @@ class BillToProperty {
     int billTypeId;
     String authorityName;
     String billId;
-    int amount;
+    double amount;
     DateTime lastUpdate;
     int addedBy;
     DateTime dateAdded;
@@ -37,7 +37,7 @@ class BillToProperty {
         billTypeId: json["bill_type_id"] == null ? null : json["bill_type_id"],
         authorityName: json["authority_name"] == null ? null : json["authority_name"],
         billId: json["bill_id"] == null ? null : json["bill_id"],
-        amount: json["amount"] == null ? null : json["amount"],
+        amount: json["amount"] == null ? null : double.parse(json["amount"].toString()),
         lastUpdate: json["last_update"] == null ? null : DateTime.parse(json["last_update"]),
         addedBy: json["added_by"] == null ? null : json["added_by"],
         dateAdded: json["date_added"] == null ? null : DateTime.parse(json["date_added"]),

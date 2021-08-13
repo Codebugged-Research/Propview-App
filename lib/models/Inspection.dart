@@ -53,16 +53,6 @@ class Inspection {
   Inspection({
     this.inspectionId,
     this.inspectType,
-    this.maintenanceCharges,
-    this.commonAreaElectricity,
-    this.electricitySociety,
-    this.electricityAuthority,
-    this.powerBackup,
-    this.pngLgp,
-    this.club,
-    this.water,
-    this.propertyTax,
-    this.anyOther,
     this.propertyId,
     this.employeeId,
     this.issueIdList,
@@ -72,16 +62,6 @@ class Inspection {
 
   int inspectionId;
   String inspectType;
-  double maintenanceCharges;
-  double commonAreaElectricity;
-  double electricitySociety;
-  double electricityAuthority;
-  double powerBackup;
-  double pngLgp;
-  double club;
-  double water;
-  double propertyTax;
-  double anyOther;
   int propertyId;
   int employeeId;
   String issueIdList;
@@ -92,29 +72,6 @@ class Inspection {
         inspectionId:
             json["inspection_id"] == null ? null : json["inspection_id"],
         inspectType: json["inspect_type"] == null ? null : json["inspect_type"],
-        maintenanceCharges: json["maintenance_charges"] == null
-            ? null
-            : json["maintenance_charges"].toDouble(),
-        commonAreaElectricity: json["common_area_electricity"] == null
-            ? null
-            : json["common_area_electricity"].toDouble(),
-        electricitySociety: json["electricity_society"] == null
-            ? null
-            : json["electricity_society"].toDouble(),
-        electricityAuthority: json["electricity_authority"] == null
-            ? null
-            : json["electricity_authority"].toDouble(),
-        powerBackup: json["power_backup"] == null
-            ? null
-            : json["power_backup"].toDouble(),
-        pngLgp: json["png_lgp"] == null ? null : json["png_lgp"].toDouble(),
-        club: json["club"] == null ? null : json["club"].toDouble(),
-        water: json["water"] == null ? null : json["water"].toDouble(),
-        propertyTax: json["property_tax"] == null
-            ? null
-            : json["property_tax"].toDouble(),
-        anyOther:
-            json["any_other"] == null ? null : json["any_other"].toDouble(),
         propertyId: json["property_id"] == null ? null : json["property_id"],
         employeeId: json["employee_id"] == null ? null : json["employee_id"],
         issueIdList:
@@ -130,23 +87,9 @@ class Inspection {
   Map<String, dynamic> toJson() => {
         "inspection_id": inspectionId == null ? 0 : inspectionId,
         "inspect_type": inspectType == null ? null : inspectType,
-        "maintenance_charges":
-            maintenanceCharges == null ? 0.0 : maintenanceCharges,
-        "common_area_electricity":
-            commonAreaElectricity == null ? 0.0 : commonAreaElectricity,
-        "electricity_society":
-            electricitySociety == null ? 0.0 : electricitySociety,
-        "electricity_authority":
-            electricityAuthority == null ? 0.0 : electricityAuthority,
-        "power_backup": powerBackup == null ? 0.0 : powerBackup,
-        "png_lgp": pngLgp == null ? 0.0 : pngLgp,
-        "club": club == null ? 0.0 : club,
-        "water": water == null ? 0.0 : water,
-        "property_tax": propertyTax == null ? 0.0 : propertyTax,
-        "employee_id": employeeId == null ? null : employeeId,
-        "any_other": anyOther == null ? 0.0 : anyOther,
         "property_id": propertyId == null ? null : propertyId,
         "issue_id_list": issueIdList == null ? null : issueIdList,
+        "employee_id": employeeId == null ? null : employeeId,
         "createdAt": createdAt == null ? null : createdAt.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt.toIso8601String(),
       };

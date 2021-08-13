@@ -113,46 +113,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
     cities = await CityService.getCities();
     bills = await BillPropertyService.getBillsByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
-    maintainanceController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.maintenanceCharges.toString()
-            : dummyDouble);
-    commonAreaController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.commonAreaElectricity.toString()
-            : dummyDouble);
-    electricitySocietyController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.electricityAuthority.toString()
-            : dummyDouble);
-    electricityAuthorityController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.electricityAuthority.toString()
-            : dummyDouble);
-    powerController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.powerBackup.toString()
-            : dummyDouble);
-    pngController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.pngLgp.toString()
-            : dummyDouble);
-    clubController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.club.toString()
-            : dummyDouble);
-    waterController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.water.toString()
-            : dummyDouble);
-    propertyTaxController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.propertyTax.toString()
-            : dummyDouble);
-    anyOtherController = TextEditingController(
-        text: widget.inspection != null
-            ? widget.inspection.anyOther.toString()
-            : dummyDouble);
     if (widget.index1 != null) {
       rows = widget.rows != null ? widget.rows : [[]];
       issueTableList =
@@ -700,20 +660,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                   onTap: () {
                     inspection = Inspection(
                       inspectType: "Move out Inspection",
-                      maintenanceCharges:
-                          double.parse(maintainanceController.text),
-                      commonAreaElectricity:
-                          double.parse(commonAreaController.text),
-                      electricitySociety:
-                          double.parse(electricitySocietyController.text),
-                      electricityAuthority:
-                          double.parse(electricityAuthorityController.text),
-                      powerBackup: double.parse(powerController.text),
-                      pngLgp: double.parse(pngController.text),
-                      club: double.parse(clubController.text),
-                      water: double.parse(waterController.text),
-                      propertyTax: double.parse(propertyTaxController.text),
-                      anyOther: double.parse(anyOtherController.text),
                     );
                     Routing.makeRouting(
                       context,
@@ -764,18 +710,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
               inspection = Inspection(
                 inspectionId: 0,
                 inspectType: "Move in Inspection",
-                maintenanceCharges: double.parse(maintainanceController.text),
-                commonAreaElectricity: double.parse(commonAreaController.text),
-                electricitySociety:
-                    double.parse(electricitySocietyController.text),
-                electricityAuthority:
-                    double.parse(electricityAuthorityController.text),
-                powerBackup: double.parse(powerController.text),
-                pngLgp: double.parse(pngController.text),
-                club: double.parse(clubController.text),
-                water: double.parse(waterController.text),
-                propertyTax: double.parse(propertyTaxController.text),
-                anyOther: double.parse(anyOtherController.text),
                 propertyId: widget.propertyElement.tableproperty.propertyId,
                 employeeId: user.userId,
                 createdAt: DateTime.now(),

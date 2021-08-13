@@ -3,78 +3,124 @@ import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/services/billTypeService.dart';
 
-class FullInspectionCard extends StatelessWidget {
+// ignore: must_be_immutable
+class FullInspectionCard extends StatefulWidget {
   final PropertyElement propertyElement;
   final BillToProperty billToProperty;
   FullInspectionCard({this.propertyElement, this.billToProperty});
 
+  @override
+  _FullInspectionCardState createState() => _FullInspectionCardState();
+}
+
+class _FullInspectionCardState extends State<FullInspectionCard> {
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
   TextEditingController amountController;
+  List ss = [];
+  bool loading = false;
+  String type = "";
+
+  getData() async {
+    setState(() {
+      loading = true;
+    });
+    ss = await BillTypeService.getAllBillTypes();
+    type = ss
+        .firstWhere(
+            (element) => element.billTypeId == widget.billToProperty.billTypeId)
+        .billName;
+    amountController =
+        TextEditingController(text: widget.billToProperty.amount.toString());
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Bil Type:  ',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                'Maintenance',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black),
-              )
-              // Text('${BillTypeService.getBillTypeById(billToProperty.billTypeId.toString())}')
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-          Row(
-            children: [
-              Text(
-                'Property ID:  ',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                '14',
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .subtitle1
-                    .copyWith(color: Colors.black),
-              )
-              // Text(
-              //   '${propertyElement.tableproperty.propertyId.toString()}',
-              //   style: Theme.of(context)
-              //       .primaryTextTheme
-              //       .subtitle1
-              //       .copyWith(color: Colors.black),
-              // )
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.008),
-          Text(
-            'Amount',
-            style: Theme.of(context)
-                .primaryTextTheme
-                .subtitle1
-                .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-          inputWidget(amountController),
-        ],
-      ),
-    );
+    return loading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Bil Type:  ',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      type,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black),
+                    ),
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                Row(
+                  children: [
+                    Text(
+                      'Property Name:  ',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      widget.propertyElement.propertyOwner.ownerName,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black),
+                    )
+                  ],
+                ), SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                Row(
+                  children: [
+                    Text(
+                      'Last Updated:  ',
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      widget.billToProperty.lastUpdate.toLocal().toString(),
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle1
+                          .copyWith(color: Colors.black),
+                    )
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                Text(
+                  'Amount',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                inputWidget(amountController),
+              ],
+            ),
+          );
   }
 
   Widget inputWidget(TextEditingController textEditingController) {
@@ -82,6 +128,12 @@ class FullInspectionCard extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0),
       child: TextField(
         controller: textEditingController,
+        onChanged: (val) {
+          setState(() {
+            widget.billToProperty.amount =
+                double.parse(textEditingController.text);
+          });
+        },
         obscureText: false,
         keyboardType: TextInputType.number,
         textCapitalization: TextCapitalization.words,
