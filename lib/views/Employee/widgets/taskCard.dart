@@ -22,6 +22,7 @@ class TaskCard extends StatefulWidget {
   Function change;
   final User currentUser;
   final bool isSelf;
+
   TaskCard({
     this.taskElement,
     this.currentUser,
@@ -206,79 +207,102 @@ class _TaskCardState extends State<TaskCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/house.png",
-                                    height: 35,
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : InkWell(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          "assets/house.png",
+                                          height: 35,
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "Property\ndetails",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Property\ndetails",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PropertyDetailScreen(
-                                  propertyId: widget.taskElement.propertyRef,
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PropertyDetailScreen(
+                                        propertyId:
+                                            widget.taskElement.propertyRef,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/owner.png",
-                                    height: 35,
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : InkWell(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          "assets/owner.png",
+                                          height: 35,
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "Property\nOwner details",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Property\nOwner details",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PropertyOwnerDetailScreen(
-                                  propertyOwnerId:
-                                      widget.taskElement.propertyOwnerRef,
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PropertyOwnerDetailScreen(
+                                        propertyOwnerId:
+                                            widget.taskElement.propertyOwnerRef,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
                         InkWell(
                           child: Card(
                             elevation: 2,
@@ -319,7 +343,8 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.currentUser.userId.toString() ==
                             widget.taskElement.assignedTo
-                        ? widget.taskElement.taskStatus == "Pending" || widget.taskElement.taskStatus == "Rejected"
+                        ? widget.taskElement.taskStatus == "Pending" ||
+                                widget.taskElement.taskStatus == "Rejected"
                             ? Align(
                                 alignment: Alignment.center,
                                 child: MaterialButton(
@@ -394,22 +419,22 @@ class _TaskCardState extends State<TaskCard> {
                                                               .parentId !=
                                                           "") {
                                                     for (int i = 0;
-                                                    i <
-                                                        widget
-                                                            .taskElement
-                                                            .tblUsers
-                                                            .parentId
-                                                            .split(",")
-                                                            .length;
-                                                    i++) {
+                                                        i <
+                                                            widget
+                                                                .taskElement
+                                                                .tblUsers
+                                                                .parentId
+                                                                .split(",")
+                                                                .length;
+                                                        i++) {
                                                       var managerToken =
-                                                      await UserService
-                                                          .getDeviceToken(
-                                                          widget
-                                                              .taskElement
-                                                              .tblUsers
-                                                              .parentId
-                                                              .split(",")[i]);
+                                                          await UserService
+                                                              .getDeviceToken(widget
+                                                                  .taskElement
+                                                                  .tblUsers
+                                                                  .parentId
+                                                                  .split(
+                                                                      ",")[i]);
                                                       NotificationService
                                                           .sendPushToOne(
                                                         "Task Submitted",

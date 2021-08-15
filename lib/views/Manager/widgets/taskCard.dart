@@ -23,6 +23,7 @@ class TaskCard extends StatefulWidget {
   Function change2;
   final User currentUser;
   final bool isSelf;
+
   TaskCard({
     this.taskElement,
     this.currentUser,

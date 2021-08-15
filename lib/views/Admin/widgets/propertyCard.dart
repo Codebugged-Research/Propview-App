@@ -7,6 +7,7 @@ import 'package:propview/views/Admin/Property/PropertyDetailScreen.dart';
 
 class PropertyCard extends StatefulWidget {
   final PropertyElement propertyElement;
+
   const PropertyCard({this.propertyElement});
 
   @override
@@ -68,7 +69,10 @@ class _PropertyCardState extends State<PropertyCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.propertyElement.propertyOwner == null ? "No Name" : widget.propertyElement.propertyOwner.ownerName,
+                            widget.propertyElement.propertyOwner == null
+                                ? "No Name"
+                                : widget
+                                    .propertyElement.propertyOwner.ownerName,
                             style: GoogleFonts.nunito(
                               color: Colors.black,
                               fontSize: 16,

@@ -6,6 +6,7 @@ import 'package:propview/utils/progressBar.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final String propertyId;
+
   const PropertyDetailScreen({Key key, this.propertyId}) : super(key: key);
 
   @override

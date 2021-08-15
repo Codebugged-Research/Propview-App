@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
-import 'package:propview/models/PropertyOwner.dart';
+
 import 'package:propview/models/User.dart';
-import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+
 class AssignedPersonDetailScreen extends StatefulWidget {
   final String assignedTo;
+
   const AssignedPersonDetailScreen({Key key, this.assignedTo})
       : super(key: key);
 
@@ -48,38 +49,38 @@ class _AssignedPersonDetailScreenState
       body: loading
           ? circularProgressWidget()
           : Container(
-        height: UIConstants.fitToHeight(640, context),
-        width: UIConstants.fitToWidth(360, context),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                headerWidget(context),
-                SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05),
-                profileSectionWidget(
-                    context, 'Name', '${assignedTo.name}', Icons.home),
-                profileSectionWidget(context, 'Designation',
-                    '${assignedTo.designation}', Icons.home),
-                profileSectionWidget(context, 'Number',
-                    '${assignedTo.officialNumber}', Icons.home),
-                profileSectionWidget(context, 'Official Email',
-                    '${assignedTo.officialEmail}', Icons.home),
-                profileSectionWidget(context, 'Personal Email',
-                    '${assignedTo.personalEmail}', Icons.home),
-                profileSectionWidget(context, 'Local Address',
-                    '${assignedTo.localAddress}', Icons.home),
-                profileSectionWidget(context, 'Permanent Address',
-                    '${assignedTo.permanentAddress}', Icons.home),
-              ],
+              height: UIConstants.fitToHeight(640, context),
+              width: UIConstants.fitToWidth(360, context),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      headerWidget(context),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05),
+                      profileSectionWidget(
+                          context, 'Name', '${assignedTo.name}', Icons.home),
+                      profileSectionWidget(context, 'Designation',
+                          '${assignedTo.designation}', Icons.home),
+                      profileSectionWidget(context, 'Number',
+                          '${assignedTo.officialNumber}', Icons.home),
+                      profileSectionWidget(context, 'Official Email',
+                          '${assignedTo.officialEmail}', Icons.home),
+                      profileSectionWidget(context, 'Personal Email',
+                          '${assignedTo.personalEmail}', Icons.home),
+                      profileSectionWidget(context, 'Local Address',
+                          '${assignedTo.localAddress}', Icons.home),
+                      profileSectionWidget(context, 'Permanent Address',
+                          '${assignedTo.permanentAddress}', Icons.home),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -98,13 +99,13 @@ class _AssignedPersonDetailScreenState
                 .headline3
                 .copyWith(fontSize: 42, fontWeight: FontWeight.bold),
             children: [
-              TextSpan(
-                  text: 'To',
-                  style: Theme.of(context)
-                      .primaryTextTheme
-                      .headline5
-                      .copyWith(fontWeight: FontWeight.normal))
-            ]));
+          TextSpan(
+              text: 'To',
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .headline5
+                  .copyWith(fontWeight: FontWeight.normal))
+        ]));
   }
 
   Widget imageWidget(BuildContext context) {
@@ -138,8 +139,8 @@ class _AssignedPersonDetailScreenState
                           .primaryTextTheme
                           .subtitle1
                           .copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600)),
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600)),
                   Container(
                       width: UIConstants.fitToHeight(210, context),
                       child: Text(

@@ -5,6 +5,7 @@ import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 
 class PropertyCard extends StatefulWidget {
   final PropertyElement propertyElement;
+
   const PropertyCard({this.propertyElement});
 
   @override
