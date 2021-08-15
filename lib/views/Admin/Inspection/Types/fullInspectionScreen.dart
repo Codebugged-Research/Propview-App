@@ -319,7 +319,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                     "createdAt": DateTime.now().toString(),
                     "updatedAt": DateTime.now().toString(),
                   };
-                  // print(payload);
                   var result =
                       await IssueService.createIssue(jsonEncode(payload));
                   issueRowList.add(result);

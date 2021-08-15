@@ -11,7 +11,6 @@ String regularInspectionRowToJson(List<RegularInspectionRow> data) => json.encod
 class RegularInspectionRow {
   RegularInspectionRow({
     this.id,
-    this.billDues,
     this.termiteCheck,
     this.seepageCheck,
     this.generalCleanliness,
@@ -23,7 +22,6 @@ class RegularInspectionRow {
   });
 
   int id;
-  String billDues;
   String termiteCheck;
   String seepageCheck;
   String generalCleanliness;
@@ -35,7 +33,6 @@ class RegularInspectionRow {
 
   factory RegularInspectionRow.fromJson(Map<String, dynamic> json) => RegularInspectionRow(
     id: json["id"] == null ? null : json["id"],
-    billDues: json["bill_dues"] == null ? null : json["bill_dues"],
     termiteCheck: json["termite_check"] == null ? null : json["termite_check"],
     seepageCheck: json["seepage_check"] == null ? null : json["seepage_check"],
     generalCleanliness: json["general_cleanliness"] == null ? null : json["general_cleanliness"],
@@ -48,7 +45,6 @@ class RegularInspectionRow {
 
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
-    "bill_dues": billDues == null ? null : billDues,
     "termite_check": termiteCheck == null ? null : termiteCheck,
     "seepage_check": seepageCheck == null ? null : seepageCheck,
     "general_cleanliness": generalCleanliness == null ? null : generalCleanliness,
