@@ -13,9 +13,10 @@ class RoomTypeService extends AuthService {
     var cacheData = APICacheManager();
     bool doesExist = await cacheData.isAPICacheKeyExist("getRoomTypes");
     if (doesExist) {
-      APICacheDBModel responseBody = await cacheData.getCacheData("getRoomTypes");
+      APICacheDBModel responseBody =
+          await cacheData.getCacheData("getRoomTypes");
       DateTime lastCache =
-      DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
       if (DateTime.now().difference(lastCache).inDays > 30) {
         cacheData.deleteCache("getRoomTypes");
         http.Response response = await AuthService.makeAuthenticatedRequest(
@@ -60,6 +61,4 @@ class RoomTypeService extends AuthService {
       }
     }
   }
-
-
 }

@@ -10,67 +10,68 @@ SubRoom subRoomFromJson(String str) => SubRoom.fromJson(json.decode(str));
 String subRoomToJson(SubRoom data) => json.encode(data.toJson());
 
 class SubRoom {
-    SubRoom({
-        @required this.success,
-        @required this.data,
-    });
+  SubRoom({
+    @required this.success,
+    @required this.data,
+  });
 
-    bool success;
-    Data data;
+  bool success;
+  Data data;
 
-    factory SubRoom.fromJson(Map<String, dynamic> json) => SubRoom(
+  factory SubRoom.fromJson(Map<String, dynamic> json) => SubRoom(
         success: json["success"],
         data: Data.fromJson(json["data"]),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "success": success,
         "data": data.toJson(),
-    };
+      };
 }
 
 class Data {
-    Data({
-        @required this.subRoom,
-    });
+  Data({
+    @required this.subRoom,
+  });
 
-    List<SubRoomElement> subRoom;
+  List<SubRoomElement> subRoom;
 
-    factory Data.fromJson(Map<String, dynamic> json) => Data(
-        subRoom: List<SubRoomElement>.from(json["subRoom"].map((x) => SubRoomElement.fromJson(x))),
-    );
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        subRoom: List<SubRoomElement>.from(
+            json["subRoom"].map((x) => SubRoomElement.fromJson(x))),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "subRoom": List<dynamic>.from(subRoom.map((x) => x.toJson())),
-    };
+      };
 }
 
 class SubRoomElement {
-    SubRoomElement({
-        @required this.propertySubRoomId,
-        @required this.propertyId,
-        @required this.roomId,
-        @required this.subRoomId,
-        @required this.roomSize1,
-        @required this.roomSize2,
-        @required this.facility,
-        @required this.image1,
-        @required this.image2,
-        @required this.image3,
-    });
+  SubRoomElement({
+    @required this.propertySubRoomId,
+    @required this.propertyId,
+    @required this.roomId,
+    @required this.subRoomId,
+    @required this.roomSize1,
+    @required this.roomSize2,
+    @required this.facility,
+    @required this.image1,
+    @required this.image2,
+    @required this.image3,
+  });
 
-    int propertySubRoomId;
-    int propertyId;
-    int roomId;
-    int subRoomId;
-    double roomSize1;
-    double roomSize2;
-    String facility;
-    String image1;
-    String image2;
-    String image3;
+  int propertySubRoomId;
+  int propertyId;
+  int roomId;
+  int subRoomId;
+  double roomSize1;
+  double roomSize2;
+  String facility;
+  String image1;
+  String image2;
+  String image3;
 
-    factory SubRoomElement.fromJson(Map<String, dynamic> json) => SubRoomElement(
+  factory SubRoomElement.fromJson(Map<String, dynamic> json) => SubRoomElement(
         propertySubRoomId: json["property_sub_room_id"],
         propertyId: json["property_id"],
         roomId: json["room_id"],
@@ -81,9 +82,9 @@ class SubRoomElement {
         image1: json["image1"],
         image2: json["image2"],
         image3: json["image3"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "property_id": propertyId,
         "room_id": roomId,
         "sub_room_id": subRoomId,
@@ -93,5 +94,5 @@ class SubRoomElement {
         "image1": image1,
         "image2": image2,
         "image3": image3,
-    };
+      };
 }

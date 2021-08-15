@@ -19,14 +19,14 @@ class Room {
   Data data;
 
   factory Room.fromJson(Map<String, dynamic> json) => Room(
-    success: json["success"],
-    data: Data.fromJson(json["data"]),
-  );
+        success: json["success"],
+        data: Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "data": data.toJson(),
-  };
+        "success": success,
+        "data": data.toJson(),
+      };
 }
 
 class Data {
@@ -37,12 +37,15 @@ class Data {
   List<RoomsToPropertyModel> roomsToPropertyModel;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    roomsToPropertyModel: List<RoomsToPropertyModel>.from(json["roomsToPropertyModel"].map((x) => RoomsToPropertyModel.fromJson(x))),
-  );
+        roomsToPropertyModel: List<RoomsToPropertyModel>.from(
+            json["roomsToPropertyModel"]
+                .map((x) => RoomsToPropertyModel.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "roomsToPropertyModel": List<dynamic>.from(roomsToPropertyModel.map((x) => x.toJson())),
-  };
+        "roomsToPropertyModel":
+            List<dynamic>.from(roomsToPropertyModel.map((x) => x.toJson())),
+      };
 }
 
 class RoomsToPropertyModel {
@@ -76,35 +79,36 @@ class RoomsToPropertyModel {
   String image2;
   String image3;
 
-  factory RoomsToPropertyModel.fromJson(Map<String, dynamic> json) => RoomsToPropertyModel(
-    propertyRoomId: json["property_room_id"],
-    propertyId: json["property_id"],
-    roomId: json["room_id"],
-    roomSize1: json["room_size1"],
-    roomSize2: json["room_size2"],
-    bath: json["bath"],
-    flooring: json["flooring"],
-    balcony: json["balcony"],
-    wardrobe: json["wardrobe"],
-    facility: json["facility"],
-    image1: json["image1"],
-    image2: json["image2"],
-    image3: json["image3"],
-  );
+  factory RoomsToPropertyModel.fromJson(Map<String, dynamic> json) =>
+      RoomsToPropertyModel(
+        propertyRoomId: json["property_room_id"],
+        propertyId: json["property_id"],
+        roomId: json["room_id"],
+        roomSize1: json["room_size1"],
+        roomSize2: json["room_size2"],
+        bath: json["bath"],
+        flooring: json["flooring"],
+        balcony: json["balcony"],
+        wardrobe: json["wardrobe"],
+        facility: json["facility"],
+        image1: json["image1"],
+        image2: json["image2"],
+        image3: json["image3"],
+      );
 
   Map<String, dynamic> toJson() => {
-    // "property_room_id": propertyRoomId,
-    "property_id": propertyId,
-    "room_id": roomId,
-    "room_size1": roomSize1,
-    "room_size2": roomSize2,
-    "bath": bath,
-    "flooring": flooring,
-    "balcony": balcony,
-    "wardrobe": wardrobe,
-    "facility": facility,
-    "image1": image1,
-    "image2": image2,
-    "image3": image3,
-  };
+        // "property_room_id": propertyRoomId,
+        "property_id": propertyId,
+        "room_id": roomId,
+        "room_size1": roomSize1,
+        "room_size2": roomSize2,
+        "bath": bath,
+        "flooring": flooring,
+        "balcony": balcony,
+        "wardrobe": wardrobe,
+        "facility": facility,
+        "image1": image1,
+        "image2": image2,
+        "image3": image3,
+      };
 }

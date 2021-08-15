@@ -24,6 +24,7 @@ class CaptureFullInspectionScreen extends StatefulWidget {
   List<BillToProperty> bills;
   final List<IssueTableData> issueTableList;
   final Inspection inspection;
+
   CaptureFullInspectionScreen({
     this.imageList,
     this.propertyElement,
@@ -34,6 +35,7 @@ class CaptureFullInspectionScreen extends StatefulWidget {
     this.rows,
     this.issueTableList,
   });
+
   @override
   _CaptureFullInspectionScreenState createState() =>
       _CaptureFullInspectionScreenState();

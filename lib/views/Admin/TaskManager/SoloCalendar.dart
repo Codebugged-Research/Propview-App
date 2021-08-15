@@ -7,6 +7,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class SoloCalendar extends StatefulWidget {
   final String id;
+
   const SoloCalendar({this.id});
 
   @override

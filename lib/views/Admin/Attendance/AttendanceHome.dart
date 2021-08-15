@@ -182,13 +182,15 @@ class _AttendanceHomeState extends State<AttendanceHome>
                             ],
                           ),
                           onTap: () {
-                            if (myAttendance !=null ) {
+                            if (myAttendance != null) {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => SoloAttendance(attendanceElement: myAttendance,),
+                                  builder: (context) => SoloAttendance(
+                                    attendanceElement: myAttendance,
+                                  ),
                                 ),
                               );
-                            }else{
+                            } else {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => SoloAttendance(),

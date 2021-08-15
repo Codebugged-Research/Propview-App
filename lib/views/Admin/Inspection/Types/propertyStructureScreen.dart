@@ -16,7 +16,9 @@ import 'package:propview/views/Admin/widgets/propertyStructureAlertWidget.dart';
 
 class PropertyStructureScreen extends StatefulWidget {
   final PropertyElement propertyElement;
+
   PropertyStructureScreen({this.propertyElement});
+
   @override
   _PropertyStructureScreenState createState() =>
       _PropertyStructureScreenState();

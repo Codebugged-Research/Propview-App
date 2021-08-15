@@ -37,6 +37,7 @@ class IssueInspectionScreen extends StatefulWidget {
   final int index1;
   final int index2;
   final Inspection inspection;
+
   IssueInspectionScreen({
     this.inspection,
     this.propertyElement,
@@ -46,6 +47,7 @@ class IssueInspectionScreen extends StatefulWidget {
     this.index2,
     this.imageList,
   });
+
   @override
   _IssueInspectionScreenState createState() => _IssueInspectionScreenState();
 }
@@ -81,7 +83,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
     if (widget.index1 != null) {
       rows = widget.rows != null ? widget.rows : [[]];
       issueTableList =
-      widget.issueTableList != null ? widget.issueTableList : [];
+          widget.issueTableList != null ? widget.issueTableList : [];
       rows[widget.index1][widget.index2].photo = widget.imageList;
     }
     roomTypes = await RoomTypeService.getRoomTypes();
@@ -95,7 +97,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
             return AlertWidget(
               title: 'Property Structure is not defined!',
               body:
-              'First you have to determine the property structure to begin with inspection.',
+                  'First you have to determine the property structure to begin with inspection.',
             );
           });
     } else {
@@ -145,65 +147,67 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
       body: loader
           ? circularProgressWidget()
           : LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RichText(
-                    text: TextSpan(
-                        text: "Issue Based\n",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .headline4
-                            .copyWith(fontWeight: FontWeight.bold),
-                        children: [
-                          TextSpan(
-                              text: "Inspection",
+              builder: (context, constraints) => SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      RichText(
+                          text: TextSpan(
+                              text: "Issue Based\n",
                               style: Theme.of(context)
                                   .primaryTextTheme
-                                  .headline3
-                                  .copyWith(fontWeight: FontWeight.normal))
-                        ])),
-                SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.04),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    titleWidget(context, 'Issues'),
-                    InkWell(
-                      child: Icon(Icons.add),
-                      onTap: () {
-                        showRoomSelect();
-                      },
-                    )
-                  ],
+                                  .headline4
+                                  .copyWith(fontWeight: FontWeight.bold),
+                              children: [
+                            TextSpan(
+                                text: "Inspection",
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .headline3
+                                    .copyWith(fontWeight: FontWeight.normal))
+                          ])),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          titleWidget(context, 'Issues'),
+                          InkWell(
+                            child: Icon(Icons.add),
+                            onTap: () {
+                              showRoomSelect();
+                            },
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      ListView.builder(
+                        itemBuilder: (context, index) {
+                          return issueCard(constraints, index);
+                        },
+                        itemCount: issueTableList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      issueTableList.length > 0
+                          ? buttonWidget(context)
+                          : Container(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02),
-                ListView.builder(
-                  itemBuilder: (context, index) {
-                    return issueCard(constraints, index);
-                  },
-                  itemCount: issueTableList.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                issueTableList.length >0 ? buttonWidget(context):Container(),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -239,95 +243,99 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   }
 
   bool loading = false;
+
   Widget buttonWidget(BuildContext context) {
     return loading
         ? circularProgressWidget()
         : MaterialButton(
-      minWidth: 360,
-      height: 55,
-      color: Color(0xff314B8C),
-      onPressed: () async {
-        setState(() {
-          loading = true;
-        });
-        User user = await UserService.getUser();
-        inspection = Inspection(
-          inspectionId: 0,
-          inspectType: "Issue Based Inspection",
-          propertyId: widget.propertyElement.tableproperty.propertyId,
-          employeeId: user.userId,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-        // print(inspection.toJson());
-        List tempIssueTableList = [];
-        for (int i = 0; i < rows.length; i++) {
-          List issueRowList = [];
-          for (int j = 0; j < rows[i].length; j++) {
-            List<String> finalPhotoList = [];
-            for (int k = 0; k < rows[i][j].photo.length; k++) {
-              String tempUrl = await upload(
-                  rows[i][j].photo[k],
-                  widget.propertyElement.tableproperty.propertyId
-                      .toString());
-              finalPhotoList.add(tempUrl);
-            }
-            var payload = {
-              "issue_id": 0,
-              "issue_name": rows[i][j].issueName,
-              "status": rows[i][j].status,
-              "remarks": rows[i][j].remarks,
-              "photo": finalPhotoList.join(","),
-              "createdAt": DateTime.now().toString(),
-              "updatedAt": DateTime.now().toString(),
-            };
-            // print(payload);
-            var result =
-            await IssueService.createIssue(jsonEncode(payload));
-            issueRowList.add(result);
-          }
-          var payload1 = {
-            "id": 0,
-            "roomsubroom_id": issueTableList[i].roomsubroomId,
-            "roomsubroom_name": issueTableList[i].roomsubroomName,
-            "issub": issueTableList[i].issub,
-            "issue_row_id": issueRowList.join(","),
-            "property_id":
-            widget.propertyElement.tableproperty.propertyId,
-            "created_at": DateTime.now().toString(),
-            "updated_at": DateTime.now().toString(),
-          };
-          var result = await IssueTableService.createIssueTable(
-              jsonEncode(payload1));
-          tempIssueTableList.add(result);
-        }
-        inspection.issueIdList = tempIssueTableList.join(",");
-        print(inspection.toJson());
-        bool result = await InspectionService.createInspection(
-          jsonEncode(inspection.toJson(),),);
-        setState(() {
-          loading = false;
-        });
-        if (result) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Issue Based Inspection added"),
+            minWidth: 360,
+            height: 55,
+            color: Color(0xff314B8C),
+            onPressed: () async {
+              setState(() {
+                loading = true;
+              });
+              User user = await UserService.getUser();
+              inspection = Inspection(
+                inspectionId: 0,
+                inspectType: "Issue Based Inspection",
+                propertyId: widget.propertyElement.tableproperty.propertyId,
+                employeeId: user.userId,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
+              // print(inspection.toJson());
+              List tempIssueTableList = [];
+              for (int i = 0; i < rows.length; i++) {
+                List issueRowList = [];
+                for (int j = 0; j < rows[i].length; j++) {
+                  List<String> finalPhotoList = [];
+                  for (int k = 0; k < rows[i][j].photo.length; k++) {
+                    String tempUrl = await upload(
+                        rows[i][j].photo[k],
+                        widget.propertyElement.tableproperty.propertyId
+                            .toString());
+                    finalPhotoList.add(tempUrl);
+                  }
+                  var payload = {
+                    "issue_id": 0,
+                    "issue_name": rows[i][j].issueName,
+                    "status": rows[i][j].status,
+                    "remarks": rows[i][j].remarks,
+                    "photo": finalPhotoList.join(","),
+                    "createdAt": DateTime.now().toString(),
+                    "updatedAt": DateTime.now().toString(),
+                  };
+                  // print(payload);
+                  var result =
+                      await IssueService.createIssue(jsonEncode(payload));
+                  issueRowList.add(result);
+                }
+                var payload1 = {
+                  "id": 0,
+                  "roomsubroom_id": issueTableList[i].roomsubroomId,
+                  "roomsubroom_name": issueTableList[i].roomsubroomName,
+                  "issub": issueTableList[i].issub,
+                  "issue_row_id": issueRowList.join(","),
+                  "property_id":
+                      widget.propertyElement.tableproperty.propertyId,
+                  "created_at": DateTime.now().toString(),
+                  "updated_at": DateTime.now().toString(),
+                };
+                var result = await IssueTableService.createIssueTable(
+                    jsonEncode(payload1));
+                tempIssueTableList.add(result);
+              }
+              inspection.issueIdList = tempIssueTableList.join(",");
+              print(inspection.toJson());
+              bool result = await InspectionService.createInspection(
+                jsonEncode(
+                  inspection.toJson(),
+                ),
+              );
+              setState(() {
+                loading = false;
+              });
+              if (result) {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Issue Based Inspection added"),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Issue Based addition failed!"),
+                  ),
+                );
+              }
+            },
+            child: Text(
+              "Add Inspection",
+              style: Theme.of(context).primaryTextTheme.subtitle1,
             ),
           );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Issue Based addition failed!"),
-            ),
-          );
-        }
-      },
-      child: Text(
-        "Add Inspection",
-        style: Theme.of(context).primaryTextTheme.subtitle1,
-      ),
-    );
   }
 
   showRoomSelect() {
@@ -378,7 +386,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       issub: newValue.isSubroom == true ? 1 : 0,
                       issueRowId: "",
                       propertyId:
-                      widget.propertyElement.tableproperty.propertyId,
+                          widget.propertyElement.tableproperty.propertyId,
                     ));
                     rows.add([]);
                     photoList.add([]);
@@ -414,71 +422,71 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                             .primaryTextTheme
                             .subtitle2
                             .copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black))),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
                 DataColumn(
                     label: Text("Status",
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle2
                             .copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black))),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
                 DataColumn(
                     label: Text("Remarks",
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle2
                             .copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black))),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
                 DataColumn(
                     label: Text("Photos",
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle2
                             .copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black))),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
               ],
               rows: rows[index]
                   .asMap()
                   .entries
                   .map(
                     (e) => DataRow(
-                  cells: [
-                    DataCell(TextFormField(
-                      initialValue: e.value.issueName,
-                      onChanged: (value) {
-                        setState(() {
-                          e.value.issueName = value;
-                        });
-                      },
-                    )),
-                    DataCell(TextFormField(
-                      initialValue: e.value.status,
-                      onChanged: (value) {
-                        setState(() {
-                          e.value.status = value;
-                        });
-                      },
-                    )),
-                    DataCell(
-                      TextFormField(
-                        initialValue: e.value.remarks,
-                        onChanged: (value) {
-                          setState(() {
-                            e.value.remarks = value;
-                          });
-                        },
-                      ),
+                      cells: [
+                        DataCell(TextFormField(
+                          initialValue: e.value.issueName,
+                          onChanged: (value) {
+                            setState(() {
+                              e.value.issueName = value;
+                            });
+                          },
+                        )),
+                        DataCell(TextFormField(
+                          initialValue: e.value.status,
+                          onChanged: (value) {
+                            setState(() {
+                              e.value.status = value;
+                            });
+                          },
+                        )),
+                        DataCell(
+                          TextFormField(
+                            initialValue: e.value.remarks,
+                            onChanged: (value) {
+                              setState(() {
+                                e.value.remarks = value;
+                              });
+                            },
+                          ),
+                        ),
+                        DataCell(
+                          photoPick(e.value.photo, index, e.key),
+                        ),
+                      ],
                     ),
-                    DataCell(
-                      photoPick(e.value.photo, index, e.key),
-                    ),
-                  ],
-                ),
-              )
+                  )
                   .toList(),
             ),
           ),
@@ -539,38 +547,38 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
         itemBuilder: (context, index) {
           return index == list.length
               ? InkWell(
-            onTap: () {
-              inspection = Inspection(
-                inspectType: "Full Inspection",
-              );
-              Routing.makeRouting(
-                context,
-                routeMethod: 'pushReplacement',
-                newWidget: CaptureIssueBasesInspectionScreen(
-                  imageList: list,
-                  index1: index1,
-                  index2: index2,
-                  inspection: inspection,
-                  propertyElement: widget.propertyElement,
-                  rows: rows,
-                  issueTableList: issueTableList,
-                ),
-              );
-            },
-            child: Icon(Icons.add),
-          )
+                  onTap: () {
+                    inspection = Inspection(
+                      inspectType: "Full Inspection",
+                    );
+                    Routing.makeRouting(
+                      context,
+                      routeMethod: 'pushReplacement',
+                      newWidget: CaptureIssueBasesInspectionScreen(
+                        imageList: list,
+                        index1: index1,
+                        index2: index2,
+                        inspection: inspection,
+                        propertyElement: widget.propertyElement,
+                        rows: rows,
+                        issueTableList: issueTableList,
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.add),
+                )
               : InkWell(
-            child: Image.file(
-              File(list[index]),
-              height: 60,
-              width: 60,
-            ),
-            onTap: () {
-              setState(() {
-                list.removeAt(index);
-              });
-            },
-          );
+                  child: Image.file(
+                    File(list[index]),
+                    height: 60,
+                    width: 60,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      list.removeAt(index);
+                    });
+                  },
+                );
         },
       ),
     );

@@ -34,6 +34,7 @@ class AddRoomScreen extends StatefulWidget {
   final bool isBalcony;
   final bool isWardrobe;
   PropertyRoom roomTypeDropDownValue;
+
   AddRoomScreen({
     this.propertyElement,
     this.facilities,
@@ -49,6 +50,7 @@ class AddRoomScreen extends StatefulWidget {
     this.roomList,
     this.roomTypeDropDownValue,
   });
+
   @override
   _AddRoomScreenState createState() => _AddRoomScreenState();
 }
@@ -187,7 +189,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                           color: Colors.black,
                                           fontWeight: FontWeight.w700))),
                           SizedBox(height: UIConstants.fitToHeight(4, context)),
-
                           inputWidget(
                               roomSizeOneController,
                               'Please enter Room Size One.',
@@ -207,7 +208,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                           color: Colors.black,
                                           fontWeight: FontWeight.w700))),
                           SizedBox(height: UIConstants.fitToHeight(4, context)),
-
                           inputWidget(
                               roomSizeTwoController,
                               'Please enter Room Size Two.',
@@ -500,8 +500,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 }
                 RoomsToPropertyModel room = RoomsToPropertyModel(
                   propertyId: propertyElement.tableproperty.propertyId,
-                  roomId:
-                      roomTypeDropDownValue.roomId, // create drop down for this
+                  roomId: roomTypeDropDownValue.roomId,
+                  // create drop down for this
                   roomSize1: double.parse(roomSizeOneController.text),
                   roomSize2: double.parse(roomSizeTwoController.text),
                   bath: isBath == true ? 1 : 0,

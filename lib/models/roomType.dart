@@ -19,14 +19,14 @@ class RoomType {
   Data data;
 
   factory RoomType.fromJson(Map<String, dynamic> json) => RoomType(
-    count: json["count"],
-    data: Data.fromJson(json["data"]),
-  );
+        count: json["count"],
+        data: Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "count": count,
-    "data": data.toJson(),
-  };
+        "count": count,
+        "data": data.toJson(),
+      };
 }
 
 class Data {
@@ -37,12 +37,13 @@ class Data {
   List<PropertyRoom> propertyRoom;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    propertyRoom: List<PropertyRoom>.from(json["propertyRoom"].map((x) => PropertyRoom.fromJson(x))),
-  );
+        propertyRoom: List<PropertyRoom>.from(
+            json["propertyRoom"].map((x) => PropertyRoom.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "propertyRoom": List<dynamic>.from(propertyRoom.map((x) => x.toJson())),
-  };
+        "propertyRoom": List<dynamic>.from(propertyRoom.map((x) => x.toJson())),
+      };
 }
 
 class PropertyRoom {
@@ -59,16 +60,16 @@ class PropertyRoom {
   int status;
 
   factory PropertyRoom.fromJson(Map<String, dynamic> json) => PropertyRoom(
-    roomId: json["room_id"],
-    issub: json["issub"],
-    roomName: json["room_name"],
-    status: json["status"],
-  );
+        roomId: json["room_id"],
+        issub: json["issub"],
+        roomName: json["room_name"],
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "room_id": roomId,
-    "issub": issub,
-    "room_name": roomName,
-    "status": status,
-  };
+        "room_id": roomId,
+        "issub": issub,
+        "room_name": roomName,
+        "status": status,
+      };
 }

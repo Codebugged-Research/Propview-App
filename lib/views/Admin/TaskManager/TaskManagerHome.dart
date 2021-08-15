@@ -43,6 +43,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   List<TaskElement> completedTaskList3 = [];
   List<TaskElement> unApprovedTaskList3 = [];
   User tempUser;
+
   getData() async {
     pendingTaskList.clear();
     completedTaskList.clear();

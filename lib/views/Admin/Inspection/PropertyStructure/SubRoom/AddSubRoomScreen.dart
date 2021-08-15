@@ -30,6 +30,7 @@ class AddSubRoomScreen extends StatefulWidget {
   final PropertyRoom subRoomTypeDropDownValue;
   final double roomSizeOne;
   final double roomSizeTwo;
+
   AddSubRoomScreen({
     this.propertyElement,
     this.facilities,
@@ -41,6 +42,7 @@ class AddSubRoomScreen extends StatefulWidget {
     this.roomTypeDropDownValue,
     this.subRoomTypeDropDownValue,
   });
+
   @override
   _AddSubRoomScreenState createState() => _AddSubRoomScreenState();
 }

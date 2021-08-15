@@ -9,6 +9,7 @@ class AuthService extends BaseService {
   static const BASE_URI = "http://68.183.247.233/";
   static Map<String, dynamic> _authDetails;
   static const String authNamespace = "auth";
+
   // ignore: missing_return
   static Future<http.Response> makeAuthenticatedRequest(String url,
       {String method = 'POST',
@@ -72,7 +73,7 @@ class AuthService extends BaseService {
     http.Response response = await BaseService.makeUnauthenticatedRequest(
         BaseService.BASE_URI + 'api/signin',
         body: payload);
-      Map<String, dynamic> responseMap = json.decode(response.body);
+    Map<String, dynamic> responseMap = json.decode(response.body);
     if (response.statusCode == 200 && responseMap['user']['status'] == 1) {
       String token = responseMap['token'];
       String id = responseMap['user']['user_id'].toString();

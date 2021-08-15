@@ -29,7 +29,8 @@ class SubRoomService extends AuthService {
         return [];
       } else {
         List<SubRoomElement> subRoom = responseMap
-            .map<SubRoomElement>((subRoomMap) => SubRoomElement.fromJson(subRoomMap))
+            .map<SubRoomElement>(
+                (subRoomMap) => SubRoomElement.fromJson(subRoomMap))
             .toList();
         return subRoom;
       }
@@ -37,7 +38,8 @@ class SubRoomService extends AuthService {
       print("Not Working");
   }
 
-  static Future<List<SubRoomElement>> getSubRoomByPropertyId(String propertyId) async {
+  static Future<List<SubRoomElement>> getSubRoomByPropertyId(
+      String propertyId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/subroom/get/property/$propertyId',
         method: 'GET');
@@ -47,7 +49,8 @@ class SubRoomService extends AuthService {
         return [];
       } else {
         List<SubRoomElement> subRoom = responseMap
-            .map<SubRoomElement>((subRoomMap) => SubRoomElement.fromJson(subRoomMap))
+            .map<SubRoomElement>(
+                (subRoomMap) => SubRoomElement.fromJson(subRoomMap))
             .toList();
         return subRoom;
       }

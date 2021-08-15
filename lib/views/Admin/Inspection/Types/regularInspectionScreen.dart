@@ -25,7 +25,9 @@ import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 
 class RegularInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
+
   const RegularInspectionScreen({this.propertyElement});
+
   @override
   _RegularInspectionScreenState createState() =>
       _RegularInspectionScreenState();
@@ -272,7 +274,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                   rows: rows[index]
                       .asMap()
                       .entries
-                      .map( 
+                      .map(
                         (e) => DataRow(
                           cells: [
                             DataCell(TextFormField(
@@ -470,6 +472,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   }
 
   bool loading = false;
+
   Widget buttonWidget(BuildContext context) {
     return loading
         ? circularProgressWidget()

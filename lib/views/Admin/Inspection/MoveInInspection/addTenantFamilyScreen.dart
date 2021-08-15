@@ -14,7 +14,9 @@ import 'package:propview/views/Admin/landingPage.dart';
 class AddTenantFamilyScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<Tenant> tenants;
+
   AddTenantFamilyScreen({this.propertyElement, this.tenants});
+
   @override
   _AddTenantFamilyScreenState createState() => _AddTenantFamilyScreenState();
 }

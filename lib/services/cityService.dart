@@ -28,7 +28,7 @@ class CityService extends AuthService {
     if (doesExist) {
       APICacheDBModel responseBody = await cacheData.getCacheData("getCities");
       DateTime lastCache =
-      DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
+          DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
       if (DateTime.now().difference(lastCache).inDays > 30) {
         cacheData.deleteCache("getCities");
         http.Response response = await AuthService.makeAuthenticatedRequest(
@@ -43,8 +43,9 @@ class CityService extends AuthService {
             ),
           );
           var responseMap = json.decode(response.body);
-          List<City> city =
-          responseMap.map<City>((cityMap) => City.fromJson(cityMap)).toList();
+          List<City> city = responseMap
+              .map<City>((cityMap) => City.fromJson(cityMap))
+              .toList();
           return city;
         } else {
           print("DEBUG");
@@ -52,7 +53,7 @@ class CityService extends AuthService {
       } else {
         var responseMap = json.decode(responseBody.syncData);
         List<City> city =
-        responseMap.map<City>((cityMap) => City.fromJson(cityMap)).toList();
+            responseMap.map<City>((cityMap) => City.fromJson(cityMap)).toList();
         return city;
       }
     } else {
@@ -69,7 +70,7 @@ class CityService extends AuthService {
         );
         var responseMap = json.decode(response.body);
         List<City> city =
-        responseMap.map<City>((cityMap) => City.fromJson(cityMap)).toList();
+            responseMap.map<City>((cityMap) => City.fromJson(cityMap)).toList();
         return city;
       } else {
         print("DEBUG");

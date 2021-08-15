@@ -24,6 +24,7 @@ import 'package:propview/utils/progressBar.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   final User user;
+
   const CreateTaskScreen({this.user});
 
   @override
@@ -59,6 +60,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   List<User> users = [];
   PropertyOwner propertyOwner;
   bool loading = false;
+
   void initState() {
     getData();
     super.initState();
@@ -191,220 +193,241 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         ],
                       ),
                     ),
-                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() : Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Select Property Owner: ",
-                              style: GoogleFonts.nunito(
-                                  color: Color(0xff314B8C),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                    _selectedTaskCategory == "Propdial Office Work" ||
+                            _selectedTaskCategory == "Other Executive Work"
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 8.0,
                             ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color(0xff314B8C).withOpacity(0.12),
-                              ),
-                              child: TypeAheadFormField(
-                                textFieldConfiguration: TextFieldConfiguration(
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    "Select Property Owner: ",
+                                    style: GoogleFonts.nunito(
+                                        color: Color(0xff314B8C),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  controller: this._propertyOwner,
                                 ),
-                                suggestionsCallback: (pattern) {
-                                  List<PropertyOwnerElement> matches = [];
-                                  matches
-                                      .addAll(propertyOwner.data.propertyOwner);
-                                  print(matches.length);
-                                  matches.retainWhere((s) => s.ownerName
-                                      .toLowerCase()
-                                      .contains(pattern.toLowerCase()));
-                                  print(matches.length);
-                                  return matches;
-                                },
-                                itemBuilder:
-                                    (context, PropertyOwnerElement suggestion) {
-                                  return ListTile(
-                                    title:
-                                        Text(suggestion.ownerName + "/" + "In"),
-                                    subtitle: Text(suggestion.ownerEmail),
-                                  );
-                                },
-                                noItemsFoundBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Type to find Owner !',
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).disabledColor,
-                                            fontSize: 18.0),
-                                      ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color:
+                                          Color(0xff314B8C).withOpacity(0.12),
                                     ),
-                                  );
-                                },
-                                transitionBuilder:
-                                    (context, suggestionsBox, controller) {
-                                  return suggestionsBox;
-                                },
-                                onSuggestionSelected: (suggestion) async {
-                                  propertySelectBox = false;
-                                  this._propertyOwner.text =
-                                      suggestion.ownerName.toString();
-                                  setState(() {
-                                    _selectedPropertyOwner = suggestion.ownerId;
-                                  });
-                                  var response = await PropertyService
-                                      .getAllPropertiesByOwnerId(
-                                          _selectedPropertyOwner);
-                                  if (response == null) {
-                                    showInSnackBar(
-                                        context,
-                                        "No property found in database !",
-                                        2500);
-                                  } else {
-                                    showInSnackBar(
-                                        context,
-                                        "${response.count} property found in database !",
-                                        2500);
-                                    setState(() {
-                                      properties.clear();
-                                      properties = response.data.property;
-                                    });
-                                    propertySelectBox = true;
-                                  }
-                                },
-                                validator: (value) => value.isEmpty
-                                    ? 'Please select an Owner Name'
-                                    : null,
-                              ),
+                                    child: TypeAheadFormField(
+                                      textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        controller: this._propertyOwner,
+                                      ),
+                                      suggestionsCallback: (pattern) {
+                                        List<PropertyOwnerElement> matches = [];
+                                        matches.addAll(
+                                            propertyOwner.data.propertyOwner);
+                                        print(matches.length);
+                                        matches.retainWhere((s) => s.ownerName
+                                            .toLowerCase()
+                                            .contains(pattern.toLowerCase()));
+                                        print(matches.length);
+                                        return matches;
+                                      },
+                                      itemBuilder: (context,
+                                          PropertyOwnerElement suggestion) {
+                                        return ListTile(
+                                          title: Text(suggestion.ownerName +
+                                              "/" +
+                                              "In"),
+                                          subtitle: Text(suggestion.ownerEmail),
+                                        );
+                                      },
+                                      noItemsFoundBuilder: (context) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Type to find Owner !',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .disabledColor,
+                                                  fontSize: 18.0),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      transitionBuilder: (context,
+                                          suggestionsBox, controller) {
+                                        return suggestionsBox;
+                                      },
+                                      onSuggestionSelected: (suggestion) async {
+                                        propertySelectBox = false;
+                                        this._propertyOwner.text =
+                                            suggestion.ownerName.toString();
+                                        setState(() {
+                                          _selectedPropertyOwner =
+                                              suggestion.ownerId;
+                                        });
+                                        var response = await PropertyService
+                                            .getAllPropertiesByOwnerId(
+                                                _selectedPropertyOwner);
+                                        if (response == null) {
+                                          showInSnackBar(
+                                              context,
+                                              "No property found in database !",
+                                              2500);
+                                        } else {
+                                          showInSnackBar(
+                                              context,
+                                              "${response.count} property found in database !",
+                                              2500);
+                                          setState(() {
+                                            properties.clear();
+                                            properties = response.data.property;
+                                          });
+                                          propertySelectBox = true;
+                                        }
+                                      },
+                                      validator: (value) => value.isEmpty
+                                          ? 'Please select an Owner Name'
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() : propertySelectBox
-                        ? SizedBox(
-                            height: 8,
-                          )
-                        : Container(),
-                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() : propertySelectBox
-                        ? Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Select Property of the Owner: ",
-                              style: GoogleFonts.nunito(
-                                  color: Color(0xff314B8C),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : Container(),
+                    _selectedTaskCategory == "Propdial Office Work" ||
+                            _selectedTaskCategory == "Other Executive Work"
+                        ? Container()
+                        : propertySelectBox
+                            ? SizedBox(
+                                height: 8,
+                              )
+                            : Container(),
+                    _selectedTaskCategory == "Propdial Office Work" ||
+                            _selectedTaskCategory == "Other Executive Work"
+                        ? Container()
+                        : propertySelectBox
+                            ? Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "Select Property of the Owner: ",
+                                  style: GoogleFonts.nunito(
+                                      color: Color(0xff314B8C),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : Container(),
                     SizedBox(
                       height: 8,
                     ),
-                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() : propertySelectBox
-                        ? Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color(0xff314B8C).withOpacity(0.12),
-                              ),
-                              child: TypeAheadFormField(
-                                textFieldConfiguration: TextFieldConfiguration(
-                                  textCapitalization: TextCapitalization.words,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
+                    _selectedTaskCategory == "Propdial Office Work" ||
+                            _selectedTaskCategory == "Other Executive Work"
+                        ? Container()
+                        : propertySelectBox
+                            ? Align(
+                                alignment: Alignment.topLeft,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Color(0xff314B8C).withOpacity(0.12),
                                   ),
-                                  controller: this._property,
-                                ),
-                                suggestionsCallback: (pattern) {
-                                  List<PropertyElement> matches = [];
-                                  matches.addAll(properties);
-                                  matches.retainWhere((s) => s
-                                      .tableproperty.unitNo
-                                      .toLowerCase()
-                                      .contains(pattern != null
-                                          ? pattern.toLowerCase()
-                                          : ""));
-                                  return matches;
-                                },
-                                itemBuilder:
-                                    (context, PropertyElement suggestion) {
-                                  return ListTile(
-                                    title: Text(
-                                      suggestion.tblSociety.socname +
-                                          ", " +
-                                          suggestion.tableproperty.unitNo
-                                              .toString(),
-                                    ),
-                                  );
-                                },
-                                noItemsFoundBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Type to find property!',
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).disabledColor,
-                                            fontSize: 18.0),
+                                  child: TypeAheadFormField(
+                                    textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
                                       ),
+                                      controller: this._property,
                                     ),
-                                  );
-                                },
-                                transitionBuilder:
-                                    (context, suggestionsBox, controller) {
-                                  return suggestionsBox;
-                                },
-                                onSuggestionSelected: (suggestion) {
-                                  this._property.text =
-                                      suggestion.tblSociety.socname +
-                                          ", " +
-                                          suggestion.tableproperty.unitNo
-                                              .toString();
-                                  setState(() {
-                                    _selectedProperty =
-                                        suggestion.tableproperty.propertyId;
-                                  });
-                                },
-                                validator: (value) => value.isEmpty
-                                    ? 'Please select a property'
-                                    : null,
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work" ? Container() : propertySelectBox
-                        ? SizedBox(
-                            height: 8,
-                          )
-                        : Container(),
+                                    suggestionsCallback: (pattern) {
+                                      List<PropertyElement> matches = [];
+                                      matches.addAll(properties);
+                                      matches.retainWhere((s) => s
+                                          .tableproperty.unitNo
+                                          .toLowerCase()
+                                          .contains(pattern != null
+                                              ? pattern.toLowerCase()
+                                              : ""));
+                                      return matches;
+                                    },
+                                    itemBuilder:
+                                        (context, PropertyElement suggestion) {
+                                      return ListTile(
+                                        title: Text(
+                                          suggestion.tblSociety.socname +
+                                              ", " +
+                                              suggestion.tableproperty.unitNo
+                                                  .toString(),
+                                        ),
+                                      );
+                                    },
+                                    noItemsFoundBuilder: (context) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Type to find property!',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .disabledColor,
+                                                fontSize: 18.0),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected: (suggestion) {
+                                      this._property.text =
+                                          suggestion.tblSociety.socname +
+                                              ", " +
+                                              suggestion.tableproperty.unitNo
+                                                  .toString();
+                                      setState(() {
+                                        _selectedProperty =
+                                            suggestion.tableproperty.propertyId;
+                                      });
+                                    },
+                                    validator: (value) => value.isEmpty
+                                        ? 'Please select a property'
+                                        : null,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                    _selectedTaskCategory == "Propdial Office Work" ||
+                            _selectedTaskCategory == "Other Executive Work"
+                        ? Container()
+                        : propertySelectBox
+                            ? SizedBox(
+                                height: 8,
+                              )
+                            : Container(),
                     inputField("Enter Task Name", _taskName, 1),
                     inputField("Enter Task Description", _taskDescription, 5),
                     inputDateTime("Enter Start Date and Time",
@@ -518,16 +541,31 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           var payload = jsonEncode({
                             "category": _selectedTaskCategory,
                             "task_name": _taskName.text.trim(),
-                            "property_name": _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work"  ? "noproperty" : _property.text.trim(),
+                            "property_name": _selectedTaskCategory ==
+                                        "Propdial Office Work" ||
+                                    _selectedTaskCategory ==
+                                        "Other Executive Work"
+                                ? "noproperty"
+                                : _property.text.trim(),
                             "task_desc": _taskDescription.text,
                             "task_status": "Pending",
                             "start_dateTime": _taskStartDateTime2.text,
                             "end_dateTime": _taskEndDateTime2.text,
                             "assigned_to": _selectedUser.userId.toString(),
-                            "property_ref":  _selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work"  ? 0 :_selectedProperty.toString(),
+                            "property_ref": _selectedTaskCategory ==
+                                        "Propdial Office Work" ||
+                                    _selectedTaskCategory ==
+                                        "Other Executive Work"
+                                ? 0
+                                : _selectedProperty.toString(),
                             "created_at": DateTime.now().toString(),
                             "updated_at": DateTime.now().toString(),
-                            "property_owner_ref":_selectedTaskCategory == "Propdial Office Work" || _selectedTaskCategory == "Other Executive Work"  ? 0 :  _selectedPropertyOwner,
+                            "property_owner_ref": _selectedTaskCategory ==
+                                        "Propdial Office Work" ||
+                                    _selectedTaskCategory ==
+                                        "Other Executive Work"
+                                ? 0
+                                : _selectedPropertyOwner,
                           });
                           bool response = await TaskService.createTask(payload);
                           setState(() {

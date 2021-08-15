@@ -42,6 +42,7 @@ class FullInspectionScreen extends StatefulWidget {
   final int index2;
   final Inspection inspection;
   List<BillToProperty> bills;
+
   FullInspectionScreen({
     this.inspection,
     this.bills,
@@ -52,6 +53,7 @@ class FullInspectionScreen extends StatefulWidget {
     this.index2,
     this.imageList,
   });
+
   @override
   _FullInspectionScreenState createState() => _FullInspectionScreenState();
 }
@@ -278,6 +280,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   bool loading = false;
+
   Widget buttonWidget(BuildContext context) {
     return loading
         ? circularProgressWidget()
