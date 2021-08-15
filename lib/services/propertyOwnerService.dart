@@ -31,7 +31,7 @@ class PropertyOwnerService extends AuthService {
           await cacheData.getCacheData("getAllPropertyOwner");
       DateTime lastCache =
           DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
-      if (DateTime.now().difference(lastCache).inDays > 7) {        
+      if (DateTime.now().difference(lastCache).inDays > 7) {
         cacheData.deleteCache("getAllPropertyOwner");
         http.Response response = await AuthService.makeAuthenticatedRequest(
             AuthService.BASE_URI + 'api/propertyOwner',

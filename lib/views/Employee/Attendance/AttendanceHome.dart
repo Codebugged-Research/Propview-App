@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
-import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/City.dart';
@@ -15,7 +12,6 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Employee/Attendance/LogCard.dart';
 import 'package:propview/views/Employee/Attendance/SoloAttendanceScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -55,10 +51,10 @@ class _AttendanceHomeState extends State<AttendanceHome>
     attendanceToday = await AttendanceService.getAllWithDate(dateFormatter());
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
-          .where((element) =>
-      element.userId == userList[i].userId.toString() &&
-          element.isPresent)
-          .length >
+              .where((element) =>
+                  element.userId == userList[i].userId.toString() &&
+                  element.isPresent)
+              .length >
           0) {
         userList[i].present = true;
       } else {
@@ -104,195 +100,197 @@ class _AttendanceHomeState extends State<AttendanceHome>
       body: loading
           ? circularProgressWidget()
           : Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 25,
-                        child: ClipOval(
-                          child: FadeInImage.assetNetwork(
-                            height: 50,
-                            width: 50,
-                            placeholder: "assets/loader.gif",
-                            fit: BoxFit.cover,
-                            image:
-                            "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
-                            imageErrorBuilder: (BuildContext context,
-                                Object exception, StackTrace stackTrace) {
-                              return CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 25,
-                                backgroundImage: AssetImage(
-                                  "assets/dummy.png",
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 25,
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                  height: 50,
+                                  width: 50,
+                                  placeholder: "assets/loader.gif",
+                                  fit: BoxFit.cover,
+                                  image:
+                                      "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                                  imageErrorBuilder: (BuildContext context,
+                                      Object exception, StackTrace stackTrace) {
+                                    return CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: 25,
+                                      backgroundImage: AssetImage(
+                                        "assets/dummy.png",
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline5
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Employee",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle2
+                                      .copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                "assets/immigration.png",
+                                height: 50,
+                              ),
+                              Text(
+                                label,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          onTap: () {
+                            if (myAttendance != null) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SoloAttendance(
+                                    attendanceElement: myAttendance,
+                                  ),
                                 ),
                               );
-                            },
-                          ),
+                            } else {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SoloAttendance(),
+                                ),
+                              );
+                            }
+                          },
                         ),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.name,
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .headline5
-                                .copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Employee",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  InkWell(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          "assets/immigration.png",
-                          height: 50,
-                        ),
-                        Text(
-                          label,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
                       ],
                     ),
-                    onTap: () {
-                      if (myAttendance !=null ) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SoloAttendance(attendanceElement: myAttendance,),
-                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TabBar(
+                      isScrollable: true,
+                      controller: _tabController,
+                      indicator: UnderlineTabIndicator(
+                        borderSide:
+                            BorderSide(color: Color(0xff314B8C), width: 4.0),
+                      ),
+                      labelStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff314B8C),
+                      ),
+                      unselectedLabelStyle:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      unselectedLabelColor: Colors.black.withOpacity(0.4),
+                      labelColor: Color(0xff314B8C),
+                      tabs: [
+                        Tab(text: "Attendance"),
+                        Tab(text: "Logs"),
+                      ],
+                      onTap: (value) {
+                        _tabController.animateTo(
+                          value,
+                          curve: Curves.easeIn,
+                          duration: Duration(milliseconds: 600),
                         );
-                      }else{
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SoloAttendance(),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TabBar(
-                isScrollable: true,
-                controller: _tabController,
-                indicator: UnderlineTabIndicator(
-                  borderSide:
-                  BorderSide(color: Color(0xff314B8C), width: 4.0),
-                ),
-                labelStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xff314B8C),
-                ),
-                unselectedLabelStyle:
-                TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                unselectedLabelColor: Colors.black.withOpacity(0.4),
-                labelColor: Color(0xff314B8C),
-                tabs: [
-                  Tab(text: "Attendance"),
-                  Tab(text: "Logs"),
-                ],
-                onTap: (value) {
-                  _tabController.animateTo(
-                    value,
-                    curve: Curves.easeIn,
-                    duration: Duration(milliseconds: 600),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                physics: NeverScrollableScrollPhysics(),
-                controller: _tabController,
-                children: <Widget>[
-                  userList.length == 0
-                      ? Center(
-                    child: Text(
-                      'No Employees!',
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(
-                          color: Color(0xff314B8C),
-                          fontWeight: FontWeight.bold),
+                      },
                     ),
-                  )
-                      : ListView.builder(
-                    padding: EdgeInsets.only(top: 0),
-                    itemCount: gg.entries.length,
-                    itemBuilder: (context, index) {
-                      return ExpansionTile(
-                        title: Text(
-                          gg.entries.skip(index).first.key == ""
-                              ? "Other"
-                              : gg.entries.skip(index).first.key,
-                        ),
-                        children: _buildExpandableContent(
-                            gg.entries.skip(index).first.value),
-                      );
-                    },
                   ),
-                  attendance.count == 0
-                      ? Center(
-                    child: Text(
-                      'No Logs!',
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(
-                          color: Color(0xff314B8C),
-                          fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _tabController,
+                      children: <Widget>[
+                        userList.length == 0
+                            ? Center(
+                                child: Text(
+                                  'No Employees!',
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle1
+                                      .copyWith(
+                                          color: Color(0xff314B8C),
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: EdgeInsets.only(top: 0),
+                                itemCount: gg.entries.length,
+                                itemBuilder: (context, index) {
+                                  return ExpansionTile(
+                                    title: Text(
+                                      gg.entries.skip(index).first.key == ""
+                                          ? "Other"
+                                          : gg.entries.skip(index).first.key,
+                                    ),
+                                    children: _buildExpandableContent(
+                                        gg.entries.skip(index).first.value),
+                                  );
+                                },
+                              ),
+                        attendance.count == 0
+                            ? Center(
+                                child: Text(
+                                  'No Logs!',
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle1
+                                      .copyWith(
+                                          color: Color(0xff314B8C),
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: EdgeInsets.only(top: 0),
+                                itemCount: attendance.count,
+                                itemBuilder: (context, index) {
+                                  return LogCard(
+                                    attendanceElement:
+                                        attendance.data.attendance[index],
+                                  );
+                                },
+                              ),
+                      ],
                     ),
-                  )
-                      : ListView.builder(
-                    padding: EdgeInsets.only(top: 0),
-                    itemCount: attendance.count,
-                    itemBuilder: (context, index) {
-                      return LogCard(
-                        attendanceElement:
-                        attendance.data.attendance[index],
-                      );
-                    },
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 

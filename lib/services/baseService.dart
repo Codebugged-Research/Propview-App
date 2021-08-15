@@ -6,8 +6,9 @@ class BaseService {
   static final Map<String, String> headers = {
     "Content-Type": "application/json"
   };
-  static Future getAppCurrentVersion() async{
-     http.Response response =
+
+  static Future getAppCurrentVersion() async {
+    http.Response response =
         await http.get(Uri.parse("http://68.183.247.233/version"));
     return response.body;
   }
@@ -15,13 +16,13 @@ class BaseService {
   // ignore: missing_return
   static Future<http.Response> makeUnauthenticatedRequest(String url,
       {String method = 'POST',
-        body,
-        mergeDefaultHeader = true,
-        Map<String, String> extraHeaders}) async {
+      body,
+      mergeDefaultHeader = true,
+      Map<String, String> extraHeaders}) async {
     try {
       extraHeaders ??= {};
       var sentHeaders =
-      mergeDefaultHeader ? {...headers, ...extraHeaders} : extraHeaders;
+          mergeDefaultHeader ? {...headers, ...extraHeaders} : extraHeaders;
 
       switch (method) {
         case 'POST':

@@ -14,8 +14,10 @@ class RoomWidget extends StatefulWidget {
   final List<RoomsToPropertyModel> rooms;
   final List<Facility> facilities;
   final List<PropertyRoom> roomTypes;
+
   RoomWidget(
       {this.rooms, this.facilities, this.propertyElement, this.roomTypes});
+
   @override
   _RoomWidgetState createState() => _RoomWidgetState();
 }
@@ -27,7 +29,7 @@ class _RoomWidgetState extends State<RoomWidget> {
   List<RoomsToPropertyModel> rooms = [];
   List<Facility> facilities = [];
   List<String> flooringType = [];
-   List<PropertyRoom> roomTypes = [];
+  List<PropertyRoom> roomTypes = [];
 
   PropertyElement propertyElement;
 
@@ -64,7 +66,10 @@ class _RoomWidgetState extends State<RoomWidget> {
                   itemCount: rooms.length,
                   itemBuilder: (context, int index) {
                     return RoomCard(
-                        room: rooms[index], propertyElement: propertyElement, roomTypes: roomTypes,);
+                      room: rooms[index],
+                      propertyElement: propertyElement,
+                      roomTypes: roomTypes,
+                    );
                   })),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

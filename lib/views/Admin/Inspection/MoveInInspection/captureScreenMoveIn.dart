@@ -24,6 +24,7 @@ class CaptureScreenMoveIn extends StatefulWidget {
   List<BillToProperty> bills = [];
   final List<IssueTableData> issueTableList;
   final Inspection inspection;
+
   CaptureScreenMoveIn({
     this.imageList,
     this.propertyElement,
@@ -34,6 +35,7 @@ class CaptureScreenMoveIn extends StatefulWidget {
     this.rows,
     this.issueTableList,
   });
+
   @override
   _CaptureScreenMoveInState createState() => _CaptureScreenMoveInState();
 }

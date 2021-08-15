@@ -126,8 +126,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               actions: [
                 MaterialButton(
                   onPressed: () async {
-                    var request = http.MultipartRequest('POST',
-                        Uri.parse(Config.UPLOAD_IMAGE_ENDPOINT));
+                    var request = http.MultipartRequest(
+                        'POST', Uri.parse(Config.UPLOAD_IMAGE_ENDPOINT));
                     request.files.add(
                         await http.MultipartFile.fromPath('upload', img.path));
                     var res = await request.send();
@@ -137,14 +137,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       getData();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Profile Picture updated successfully!!!"),
+                          content:
+                              Text("Profile Picture updated successfully!!!"),
                         ),
                       );
                     } else {
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Failed to update the Profile Picture! Try again."),
+                          content: Text(
+                              "Failed to update the Profile Picture! Try again."),
                         ),
                       );
                     }
@@ -262,7 +264,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
                       Icons.security,
                       () {}),
-                  profileInfo('Reset Cache', 'Clear the cache data', Icons.clear,
+                  profileInfo(
+                      'Reset Cache', 'Clear the cache data', Icons.clear,
                       () async {
                     setState(() {
                       clearLoader = true;
@@ -281,7 +284,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }),
                   Padding(
                     padding: EdgeInsets.all(12),
-                    child: Center(child: Text( "Version: " +Config.APP_VERISON)),
+                    child:
+                        Center(child: Text("Version: " + Config.APP_VERISON)),
                   ),
                   updatePasswordButton(context),
                   SizedBox(height: UIConstants.fitToHeight(24, context)),

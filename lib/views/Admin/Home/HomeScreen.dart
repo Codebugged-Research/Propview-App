@@ -95,11 +95,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     title: Text(
                       user.name,
-                      style: Theme.of(context).primaryTextTheme.headline5.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .headline5
+                          .copyWith(
+                              color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       "Admin/Super Admin",
-                      style: Theme.of(context).primaryTextTheme.subtitle2.copyWith(color: Colors.grey, fontWeight: FontWeight.bold),
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .subtitle2
+                          .copyWith(
+                              color: Colors.grey, fontWeight: FontWeight.bold),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

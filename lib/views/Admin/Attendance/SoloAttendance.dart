@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SoloAttendance extends StatefulWidget {
   final AttendanceElement attendanceElement;
+
   const SoloAttendance({this.attendanceElement});
 
   @override
@@ -36,8 +37,9 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       loading = true;
     });
     user = await UserService.getUser();
-    if(widget.attendanceElement != null) {
-      attendanceElement = await AttendanceService.getLogById(widget.attendanceElement.attendanceId);
+    if (widget.attendanceElement != null) {
+      attendanceElement = await AttendanceService.getLogById(
+          widget.attendanceElement.attendanceId);
     }
     getPunch();
     setState(() {
@@ -59,9 +61,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         endMeter = attendanceElement.punchOut == Config.dummyTime
             ? 0
             : attendanceElement.meterOut;
-        reset = attendanceElement.punchOut == Config.dummyTime
-            ? false
-            : true;
+        reset = attendanceElement.punchOut == Config.dummyTime ? false : true;
         id = attendanceElement.attendanceId.toString();
       });
     }

@@ -91,7 +91,8 @@ class TaskElement {
         category: json["category"] == null ? null : json["category"],
         taskName: json["task_name"] == null ? null : json["task_name"],
         taskDesc: json["task_desc"] == null ? null : json["task_desc"],
-        propertyName: json["property_name"] == null ? null : json["property_name"],
+        propertyName:
+            json["property_name"] == null ? null : json["property_name"],
         startDateTime: json["start_dateTime"] == null
             ? null
             : DateTime.parse(json["start_dateTime"]),

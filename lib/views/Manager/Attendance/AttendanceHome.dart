@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:collection/collection.dart';
 import "package:flutter/material.dart";
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/City.dart';
@@ -15,7 +13,6 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Manager/Attendance/LogCard.dart';
 import 'package:propview/views/Manager/Attendance/SoloAttendance.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();

@@ -6,6 +6,7 @@ import 'package:propview/utils/progressBar.dart';
 
 class AssignedPersonDetailScreen extends StatefulWidget {
   final String assignedTo;
+
   const AssignedPersonDetailScreen({Key key, this.assignedTo})
       : super(key: key);
 

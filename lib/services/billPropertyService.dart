@@ -28,6 +28,7 @@ class BillPropertyService extends AuthService {
         AuthService.BASE_URI + 'api/bill/property/update/$billId',
         method: 'PUT',
         body: payload);
+    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {

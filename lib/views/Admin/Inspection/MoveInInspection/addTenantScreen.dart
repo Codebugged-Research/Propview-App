@@ -16,7 +16,9 @@ import 'package:propview/views/Admin/landingPage.dart';
 
 class AddTenantScreen extends StatefulWidget {
   final PropertyElement propertyElement;
+
   AddTenantScreen({this.propertyElement});
+
   @override
   _AddTenantScreenState createState() => _AddTenantScreenState();
 }

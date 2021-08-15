@@ -6,6 +6,7 @@ import 'package:propview/utils/progressBar.dart';
 
 class PropertyOwnerDetailScreen extends StatefulWidget {
   final String propertyOwnerId;
+
   const PropertyOwnerDetailScreen({Key key, this.propertyOwnerId})
       : super(key: key);
 

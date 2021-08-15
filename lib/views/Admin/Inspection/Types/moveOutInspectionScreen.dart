@@ -47,6 +47,7 @@ class MoveOutInspectionScreen extends StatefulWidget {
   final int index2;
   final Inspection inspection;
   List<BillToProperty> bills;
+
   MoveOutInspectionScreen({
     this.inspection,
     this.bills,
@@ -57,6 +58,7 @@ class MoveOutInspectionScreen extends StatefulWidget {
     this.index2,
     this.imageList,
   });
+
   @override
   _MoveOutInspectionScreenState createState() =>
       _MoveOutInspectionScreenState();
@@ -622,6 +624,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   }
 
   bool loading = false;
+
   Widget buttonWidget(BuildContext context) {
     return loading
         ? circularProgressWidget()

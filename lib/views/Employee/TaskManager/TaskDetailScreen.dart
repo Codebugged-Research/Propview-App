@@ -4,6 +4,7 @@ import 'package:propview/models/Task.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   final TaskElement taskElement;
+
   TaskDetailScreen({this.taskElement});
 
   @override

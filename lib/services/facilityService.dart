@@ -10,13 +10,17 @@ class FacilityService extends AuthService {
       AuthService.BASE_URI + 'api/property/facility/get',
       method: 'GET',
     );
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      List<Facility> facility =
-            responseMap.map<Facility>((facilityMap) => Facility.fromJson(facilityMap)).toList();
-        return facility;
+      List<Facility> facility = responseMap
+          .map<Facility>((facilityMap) => Facility.fromJson(facilityMap))
+          .toList();
+      return facility;
     } else {
-      print('Error: ' + response.statusCode.toString() + ' Body: ' + response.body);
+      print('Error: ' +
+          response.statusCode.toString() +
+          ' Body: ' +
+          response.body);
     }
   }
 }

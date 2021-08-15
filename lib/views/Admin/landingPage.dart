@@ -15,7 +15,9 @@ import 'package:propview/views/Admin/Attendance/AttendanceHome.dart';
 
 class LandingScreen extends StatefulWidget {
   final int selectedIndex;
+
   LandingScreen({this.selectedIndex});
+
   @override
   _LandingScreenState createState() => _LandingScreenState();
 }
@@ -24,6 +26,7 @@ class _LandingScreenState extends State<LandingScreen> {
   int _selectedIndex = 0;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +51,8 @@ class _LandingScreenState extends State<LandingScreen> {
     var getVersion = await BaseService.getAppCurrentVersion();
     var responseMap = jsonDecode(getVersion);
     if (responseMap != Config.APP_VERISON) {
-      versionErrorWiget(responseMap,context, "https://play.google.com/store/apps/details?id=com.propdial.propview");
+      versionErrorWiget(responseMap, context,
+          "https://play.google.com/store/apps/details?id=com.propdial.propview");
     }
   }
 

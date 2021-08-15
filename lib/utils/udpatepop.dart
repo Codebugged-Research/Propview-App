@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-versionErrorWiget(String version,BuildContext context,String uri) {
+versionErrorWiget(String version, BuildContext context, String uri) {
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -11,7 +11,10 @@ versionErrorWiget(String version,BuildContext context,String uri) {
       content: Text("Please update the app!!!"),
       actions: [
         MaterialButton(
-          child: Text("Update",style: TextStyle(fontWeight: FontWeight.bold),),
+          child: Text(
+            "Update",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           onPressed: () async {
             if (await canLaunch(uri)) {
               await launch(uri);

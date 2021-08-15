@@ -52,6 +52,7 @@ class MoveInInspectionScreen extends StatefulWidget {
   final int index2;
   final Inspection inspection;
   List<BillToProperty> bills;
+
   MoveInInspectionScreen({
     this.inspection,
     this.bills,
@@ -62,6 +63,7 @@ class MoveInInspectionScreen extends StatefulWidget {
     this.index2,
     this.imageList,
   });
+
   @override
   _MoveInInspectionScreenState createState() => _MoveInInspectionScreenState();
 }
@@ -654,6 +656,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
   }
 
   bool loading = false;
+
   Widget buttonWidget(BuildContext context) {
     return loading
         ? circularProgressWidget()

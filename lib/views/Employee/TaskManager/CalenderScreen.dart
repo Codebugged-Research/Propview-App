@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Task.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import 'CreateTaskScreen.dart';
 
 class CalenderScreen extends StatefulWidget {
   final List<TaskElement> taskList;
+
   const CalenderScreen({Key key, this.taskList}) : super(key: key);
 
   @override

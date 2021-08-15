@@ -5,6 +5,7 @@ import 'package:propview/models/Attendance.dart';
 
 class LogCard extends StatefulWidget {
   final AttendanceElement attendanceElement;
+
   const LogCard({this.attendanceElement});
 
   @override
@@ -45,30 +46,30 @@ class _LogCardState extends State<LogCard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-               CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 15,
-                          child: ClipOval(
-                            child: FadeInImage.assetNetwork(
-                              height: 30,
-                              width: 30,
-                              fit: BoxFit.cover,
-                              placeholder: "assets/loader.gif",
-                              image:
-                                  "${Config.STORAGE_ENDPOINT}${widget.attendanceElement.tblUsers.userId}.jpeg",
-                              imageErrorBuilder: (BuildContext context,
-                                  Object exception, StackTrace stackTrace) {
-                                return CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 15,
-                                  backgroundImage: AssetImage(
-                                    "assets/dummy.png",
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+              CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 15,
+                child: ClipOval(
+                  child: FadeInImage.assetNetwork(
+                    height: 30,
+                    width: 30,
+                    fit: BoxFit.cover,
+                    placeholder: "assets/loader.gif",
+                    image:
+                        "${Config.STORAGE_ENDPOINT}${widget.attendanceElement.tblUsers.userId}.jpeg",
+                    imageErrorBuilder: (BuildContext context, Object exception,
+                        StackTrace stackTrace) {
+                      return CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 15,
+                        backgroundImage: AssetImage(
+                          "assets/dummy.png",
                         ),
+                      );
+                    },
+                  ),
+                ),
+              ),
               SizedBox(
                 width: 16,
               ),

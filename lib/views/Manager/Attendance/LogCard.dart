@@ -5,6 +5,7 @@ import 'package:propview/models/Attendance.dart';
 
 class LogCard extends StatefulWidget {
   final AttendanceElement attendanceElement;
+
   const LogCard({this.attendanceElement});
 
   @override

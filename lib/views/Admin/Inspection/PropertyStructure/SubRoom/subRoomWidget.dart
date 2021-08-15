@@ -13,8 +13,10 @@ class SubRoomWidget extends StatefulWidget {
   final List<Facility> facilities;
   final PropertyElement propertyElement;
   final List<PropertyRoom> roomTypes;
+
   SubRoomWidget(
       {this.subRooms, this.facilities, this.propertyElement, this.roomTypes});
+
   @override
   _SubRoomWidgetState createState() => _SubRoomWidgetState();
 }

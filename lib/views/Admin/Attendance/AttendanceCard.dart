@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 class AttendanceCard extends StatefulWidget {
   final Attd attd;
   final List<City> cities;
+
   const AttendanceCard({this.attd, this.cities});
 
   @override
@@ -22,6 +23,7 @@ class _AttendanceCardState extends State<AttendanceCard> {
   }
 
   List<String> cityList = [];
+
   getCityName() {
     cityList.clear();
     if (widget.attd.user.department == "Operations") {
@@ -106,17 +108,19 @@ class _AttendanceCardState extends State<AttendanceCard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        widget.attd.user.department == "Operations" ? Flexible(
-                          child: Text(
-                            cityList.join(","),
-                            softWrap: true,
-                            style: GoogleFonts.nunito(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ):Container(),
+                        widget.attd.user.department == "Operations"
+                            ? Flexible(
+                                child: Text(
+                                  cityList.join(","),
+                                  softWrap: true,
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),

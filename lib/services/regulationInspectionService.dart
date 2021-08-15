@@ -5,7 +5,6 @@ import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/services/authService.dart';
 
 class RegularInspectionService extends AuthService {
-
   static Future<bool> createRegularInspection(var payload) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/inspection/regular/create/',

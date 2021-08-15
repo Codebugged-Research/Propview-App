@@ -3,6 +3,7 @@ import 'package:propview/models/Facility.dart';
 
 class TagWidget extends StatefulWidget {
   final List<Facility> tagList;
+
   TagWidget({this.tagList});
 
   @override

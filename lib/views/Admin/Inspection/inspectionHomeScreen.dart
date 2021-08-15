@@ -12,7 +12,9 @@ import 'package:propview/views/Admin/Inspection/inspectionHistoryScreen.dart';
 
 class InspectionHomeScreen extends StatefulWidget {
   final PropertyElement propertyElement;
+
   const InspectionHomeScreen({this.propertyElement});
+
   @override
   _InspectionHomeScreenState createState() => _InspectionHomeScreenState();
 }

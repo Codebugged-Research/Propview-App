@@ -27,6 +27,7 @@ class CaptureRoomScreen extends StatefulWidget {
   final List<Facility> facilityTag;
   final List<PropertyRoom> roomTypes;
   PropertyRoom roomTypeDropDownValue;
+
   CaptureRoomScreen({
     this.propertyElement,
     this.facilities,
@@ -42,6 +43,7 @@ class CaptureRoomScreen extends StatefulWidget {
     this.isWardrobe = false,
     this.roomTypeDropDownValue,
   });
+
   @override
   _CaptureRoomScreenState createState() => _CaptureRoomScreenState();
 }

@@ -47,12 +47,12 @@ class AttendanceService extends AuthService {
       return false;
     }
   }
-  static Future getAllWithoutDate(offset,limit) async {
+
+  static Future getAllWithoutDate(offset, limit) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-      AuthService.BASE_URI + 'api/attendance/',
-      method: 'POST',
-      body: jsonEncode({"offset": offset,"limit":limit})
-    );
+        AuthService.BASE_URI + 'api/attendance/',
+        method: 'POST',
+        body: jsonEncode({"offset": offset, "limit": limit}));
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       Attendance attendance = Attendance.fromJson(responseMap);

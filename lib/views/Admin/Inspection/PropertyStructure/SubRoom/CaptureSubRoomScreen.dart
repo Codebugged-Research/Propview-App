@@ -25,6 +25,7 @@ class CaptureSubRoomScreen extends StatefulWidget {
   final PropertyRoom subRoomTypeDropDownValue;
   final double roomSizeOne;
   final double roomSizeTwo;
+
   CaptureSubRoomScreen({
     this.propertyElement,
     this.facilities,
@@ -37,13 +38,13 @@ class CaptureSubRoomScreen extends StatefulWidget {
     this.roomTypeDropDownValue,
     this.subRoomTypeDropDownValue,
   });
+
   @override
   _CaptureSubRoomScreenState createState() => _CaptureSubRoomScreenState();
 }
 
 class _CaptureSubRoomScreenState extends State<CaptureSubRoomScreen>
     with WidgetsBindingObserver {
-
   CameraController cameraController;
   CameraDescription cameraDescription;
   int selectedCamera = 0;
