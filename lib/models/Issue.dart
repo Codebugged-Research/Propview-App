@@ -30,7 +30,7 @@ class Issue {
         issueName: json["issue_name"] == null ? null : json["issue_name"],
         status: json["status"] == null ? null : json["status"],
         remarks: json["remarks"] == null ? null : json["remarks"],
-        photo: json["photo"] == null ? null : json["photo"],
+        photo: json["photo"] == null ? null : json["photo"].split(","),
       );
 
   Map<String, dynamic> toJson() => {

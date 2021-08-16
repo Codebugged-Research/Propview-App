@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:propview/models/Issue.dart';
 import 'package:propview/services/authService.dart';
@@ -40,8 +41,10 @@ class IssueService extends AuthService {
     );
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      Issue issue = responseMap["data"];
-      return issue;
+      List<Issue> issue = responseMap["data"]
+          .map<Issue>((issueMap) => Issue.fromJson(issueMap))
+          .toList();
+      return issue.first;
     } else {
       print("Not working!");
     }

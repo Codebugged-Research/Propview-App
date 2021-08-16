@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Inspection.dart';
+import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/issueTable.dart';
+import 'package:propview/services/issueService.dart';
+import 'package:propview/services/issueTableService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/utils/progressBar.dart';
 
@@ -20,6 +24,8 @@ class _InspectionHistoryDetailsScreenState
 
   Inspection inspection;
   PropertyElement propertyElement;
+  IssueTable issueTable;
+  Issue issues;
 
   @override
   void initState() {
@@ -34,6 +40,18 @@ class _InspectionHistoryDetailsScreenState
     });
     propertyElement =
         await PropertyService.getPropertyById(inspection.propertyId.toString());
+
+    var issueIdList = inspection.issueIdList.split(",").toList();
+
+    for (int i = 0; i < issueIdList.length; i++) {
+      issueTable = await IssueTableService.getIssueTableById(issueIdList[i]);
+    }
+
+    for (int i = 0; i < issueIdList.length; i++) {
+      issues =
+          await IssueService.getIssueById(issueTable.data.first.issueRowId);
+    }
+
     setState(() {
       isLoading = false;
     });
