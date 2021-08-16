@@ -17,7 +17,7 @@ class Config {
   static const String UPLOAD_INSPECTION_ENDPOINT =
       "http://68.183.247.233/api/upload/inspection";
   static const String STORAGE_ENDPOINT =
-      "https://propview.sgp1.digitaloceanspaces.com/User/";
+      "https://propview.ap-south-1.linodeobjects.com/User/";
   static const String PROPPERTY_STORAGE_ENDPOINT =
-      "https://propview.sgp1.digitaloceanspaces.com/Property/";
+      "https://propview.ap-south-1.linodeobjects.com/Property/";
 }
