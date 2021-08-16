@@ -42,14 +42,14 @@ class _InspectionHistoryDetailsScreenState
     propertyElement =
         await PropertyService.getPropertyById(inspection.propertyId.toString());
 
-    var issueIdList = inspection.issueIdList.split(",").toList();
-    if (issueIdList.length > 0) {
+    List issueIdList = inspection.issueIdList.split(",").toList();
+    if (inspection.issueIdList != "") {
       for (int i = 0; i < issueIdList.length; i++) {
         issues.add([]);
         issueTables
             .add(await IssueTableService.getIssueTableById(issueIdList[i]));
         List tempRowList = issueTables[i].data.first.issueRowId.split(",");
-        if (tempRowList.length > 0) {
+        if (issueTables[i].data.first.issueRowId != "") {
           for (int j = 0; j < tempRowList.length; j++) {
             issues[i].add(await IssueService.getIssueById(tempRowList[j]));
           }
