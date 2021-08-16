@@ -35,7 +35,7 @@ class PropertyStructureAlertWidget extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel',
+              child: Text('No',
                   style: Theme.of(context)
                       .primaryTextTheme
                       .button

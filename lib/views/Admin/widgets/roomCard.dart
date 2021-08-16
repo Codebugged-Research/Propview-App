@@ -96,7 +96,7 @@ class RoomCard extends StatelessWidget {
                               .copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w800)),
-                      Text('${room.roomSize1}',
+                      Text('${room.roomSize1} ft',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
@@ -114,7 +114,7 @@ class RoomCard extends StatelessWidget {
                               .copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w800)),
-                      Text('${room.roomSize2}',
+                      Text('${room.roomSize2} ft',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .subtitle1
