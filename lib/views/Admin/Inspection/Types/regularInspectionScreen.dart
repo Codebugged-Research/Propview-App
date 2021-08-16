@@ -121,8 +121,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     return room.roomName;
   }
 
-  List<List<RegularInspectionRow>> rows = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,152 +214,108 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
 
   inspectionCard(constraints, index) {
     return SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            Text(
-              regularInspectionRowList[index].roomsubroomName,
-              style: Theme.of(context)
-                  .primaryTextTheme
-                  .headline5
-                  .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: constraints.minWidth),
-                child: DataTable(
-                  dataRowHeight: 80,
-                  dividerThickness: 2,
-                  columns: [
-                    DataColumn(
-                        label: Text("Termite Issue",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                    DataColumn(
-                        label: Text("Seepage Check",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                    DataColumn(
-                        label: Text("General Cleanliness",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                    DataColumn(
-                        label: Text("Other Issues",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                  ],
-                  rows: rows[index]
-                      .asMap()
-                      .entries
-                      .map(
-                        (e) => DataRow(
-                          cells: [
-                            DataCell(TextFormField(
-                              initialValue: e.value.termiteCheck,
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          Text(
+            regularInspectionRowList[index].roomsubroomName,
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.minWidth),
+              child: DataTable(
+                dataRowHeight: 80,
+                dividerThickness: 2,
+                columns: [
+                  DataColumn(
+                      label: Text("Termite Issue",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Seepage Check",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("General Cleanliness",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Other Issues",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                ],
+                rows: 
+                    [DataRow(
+                        cells: [
+                          DataCell(TextFormField(
+                            initialValue: regularInspectionRowList[index].termiteCheck,
+                            onChanged: (value) {
+                              setState(() {
+                                regularInspectionRowList[index].termiteCheck = value;
+                              });
+                            },
+                          )),
+                          DataCell(TextFormField(
+                            initialValue: regularInspectionRowList[index].seepageCheck,
+                            onChanged: (value) {
+                              setState(() {
+                                regularInspectionRowList[index].seepageCheck = value;
+                              });
+                            },
+                          )),
+                          DataCell(
+                            TextFormField(
+                              initialValue: regularInspectionRowList[index].generalCleanliness,
                               onChanged: (value) {
                                 setState(() {
-                                  e.value.termiteCheck = value;
+                                  regularInspectionRowList[index].generalCleanliness = value;
                                 });
                               },
-                            )),
-                            DataCell(TextFormField(
-                              initialValue: e.value.seepageCheck,
+                            ),
+                          ),
+                          DataCell(
+                            TextFormField(
+                              initialValue: regularInspectionRowList[index].otherIssue,
                               onChanged: (value) {
                                 setState(() {
-                                  e.value.seepageCheck = value;
+                                  regularInspectionRowList[index].otherIssue = value;
                                 });
                               },
-                            )),
-                            DataCell(
-                              TextFormField(
-                                initialValue: e.value.generalCleanliness,
-                                onChanged: (value) {
-                                  setState(() {
-                                    e.value.generalCleanliness = value;
-                                  });
-                                },
-                              ),
                             ),
-                            DataCell(
-                              TextFormField(
-                                initialValue: e.value.otherIssue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    e.value.otherIssue = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList(),
-                ),
+                          ),
+                        ],
+                      )]
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  color: Colors.blueAccent,
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      // photoList.add([]);
-                      rows[index].add(
-                        RegularInspectionRow(
-                          termiteCheck: "",
-                          seepageCheck: "",
-                          generalCleanliness: "",
-                          otherIssue: "",
-                        ),
-                      );
-                    });
-                  },
-                ),
-                IconButton(
-                  color: Colors.redAccent,
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    setState(() {
-                      rows[index].removeLast();
-                    });
-                  },
-                ),
-                IconButton(
-                  color: Colors.green,
-                  icon: Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {
-                      rows[index].clear();
-                    });
-                  },
-                ),
-              ],
-            )
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   showRoomSelect() {
@@ -417,7 +371,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       roomsubroomName: selectedRoomSubRoom.roomSubRoomName,
                       createdAt: DateTime.now(),
                     ));
-                    rows.add([]);
                   });
                   Routing.makeRouting(context, routeMethod: 'pop');
                 },
@@ -440,36 +393,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     );
   }
 
-  Widget inputWidget(object) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            object = value;
-          });
-        },
-        obscureText: false,
-        keyboardType: TextInputType.number,
-        textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[300],
-          labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-        ),
-      ),
-    );
-  }
 
   bool loading = false;
 
