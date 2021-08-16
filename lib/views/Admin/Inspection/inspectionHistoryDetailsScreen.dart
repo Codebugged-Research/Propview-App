@@ -24,8 +24,8 @@ class _InspectionHistoryDetailsScreenState
 
   Inspection inspection;
   PropertyElement propertyElement;
-  IssueTable issueTable;
-  Issue issues;
+  List<IssueTable> issueTables = [];
+  List<List<Issue>> issues = [];
 
   @override
   void initState() {
@@ -38,18 +38,22 @@ class _InspectionHistoryDetailsScreenState
     setState(() {
       isLoading = true;
     });
+    //todo: remove this its already in previous screen
     propertyElement =
         await PropertyService.getPropertyById(inspection.propertyId.toString());
 
     var issueIdList = inspection.issueIdList.split(",").toList();
 
     for (int i = 0; i < issueIdList.length; i++) {
-      issueTable = await IssueTableService.getIssueTableById(issueIdList[i]);
-    }
-
-    for (int i = 0; i < issueIdList.length; i++) {
-      issues =
-          await IssueService.getIssueById(issueTable.data.first.issueRowId);
+      issues.add([]);
+      issueTables
+          .add(await IssueTableService.getIssueTableById(issueIdList[i]));
+      print(issueTables.last.data.first.id.toString() + "--issue table");
+      List tempRowList = issueTables[i].data.first.issueRowId.split(",");
+      for (int j = 0; j < tempRowList.length; j++) {
+        issues[i].add(await IssueService.getIssueById(tempRowList[j]));
+        print(issues[i].last.issueId.toString() + "--issue row");
+      }
     }
 
     setState(() {
