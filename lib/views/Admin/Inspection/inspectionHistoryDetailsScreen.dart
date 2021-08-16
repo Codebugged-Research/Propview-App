@@ -43,17 +43,22 @@ class _InspectionHistoryDetailsScreenState
         await PropertyService.getPropertyById(inspection.propertyId.toString());
 
     var issueIdList = inspection.issueIdList.split(",").toList();
-
-    for (int i = 0; i < issueIdList.length; i++) {
-      issues.add([]);
-      issueTables
-          .add(await IssueTableService.getIssueTableById(issueIdList[i]));
-      print(issueTables.last.data.first.id.toString() + "--issue table");
-      List tempRowList = issueTables[i].data.first.issueRowId.split(",");
-      for (int j = 0; j < tempRowList.length; j++) {
-        issues[i].add(await IssueService.getIssueById(tempRowList[j]));
-        print(issues[i].last.issueId.toString() + "--issue row");
+    if (issueIdList.length > 0) {
+      for (int i = 0; i < issueIdList.length; i++) {
+        issues.add([]);
+        issueTables
+            .add(await IssueTableService.getIssueTableById(issueIdList[i]));
+        List tempRowList = issueTables[i].data.first.issueRowId.split(",");
+        if (tempRowList.length > 0) {
+          for (int j = 0; j < tempRowList.length; j++) {
+            issues[i].add(await IssueService.getIssueById(tempRowList[j]));
+          }
+        } else {
+          issues[i] = [];
+        }
       }
+    } else {
+      issueTables = [];
     }
 
     setState(() {
