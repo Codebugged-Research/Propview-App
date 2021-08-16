@@ -8,6 +8,7 @@ import 'package:propview/views/Admin/Inspection/Types/moveInInspectionScreen.dar
 import 'package:propview/views/Admin/Inspection/Types/moveOutInspectionScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/propertyStructureScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/regularInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/historyScreen.dart';
 import 'package:propview/views/Admin/Inspection/inspectionHistoryScreen.dart';
 
 class InspectionHomeScreen extends StatefulWidget {
@@ -38,8 +39,7 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
               onPressed: () {
                 Routing.makeRouting(context,
                     routeMethod: 'push',
-                    newWidget: InspectionHistoryScreen(
-                        propertyElement: propertyElement));
+                    newWidget: HistoryScreen(propertyElement: propertyElement));
               },
               icon: Icon(
                 Icons.history,

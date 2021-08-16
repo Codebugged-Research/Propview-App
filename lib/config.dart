@@ -20,6 +20,7 @@ class Config {
       "https://propview.ap-south-1.linodeobjects.com/User/";
   static const String PROPPERTY_STORAGE_ENDPOINT =
       "https://propview.ap-south-1.linodeobjects.com/Property/";
-  static const String INSPECTION_STORAGE_ENDPOINT = "https://propview.sgp1.digitaloceanspaces.com/Inspection/";
-      // "https://propview.ap-south-1.linodeobjects.com/Inspection/";
+  static const String INSPECTION_STORAGE_ENDPOINT =
+      "https://propview.sgp1.digitaloceanspaces.com/Inspection/";
+// "https://propview.ap-south-1.linodeobjects.com/Inspection/";
 }

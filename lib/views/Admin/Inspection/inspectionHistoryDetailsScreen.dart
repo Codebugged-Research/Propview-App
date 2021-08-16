@@ -5,10 +5,12 @@ import 'package:propview/config.dart';
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/User.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
 import 'package:propview/services/propertyService.dart';
+import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 
 class InspectionHistoryDetailsScreen extends StatefulWidget {
@@ -25,6 +27,7 @@ class _InspectionHistoryDetailsScreenState
     extends State<InspectionHistoryDetailsScreen> {
   bool isLoading = false;
 
+  User user;
   Inspection inspection;
   PropertyElement propertyElement;
   List<IssueTable> issueTables = [];
@@ -41,7 +44,7 @@ class _InspectionHistoryDetailsScreenState
     setState(() {
       isLoading = true;
     });
-    //todo: remove this its already in previous screen
+    user = await UserService.getUserById(inspection.employeeId.toString());
     propertyElement =
         await PropertyService.getPropertyById(inspection.propertyId.toString());
 
@@ -121,6 +124,11 @@ class _InspectionHistoryDetailsScreenState
                             titleWidget(context, 'Property Name'),
                             subHeadingWidget(context,
                                 '${propertyElement.tblSociety.socname} ,  ${propertyElement.tableproperty.unitNo}'),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            titleWidget(context, 'Created By'),
+                            subHeadingWidget(context, '${user.name}'),
                             SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.02),

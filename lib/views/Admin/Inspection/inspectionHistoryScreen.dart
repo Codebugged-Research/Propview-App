@@ -41,21 +41,30 @@ class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Inspection History'),
-        ),
         body: isLoading
             ? circularProgressWidget()
             : Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: inspections.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return InspectionCard(
-                        inspection: inspections[index],
-                      );
-                    })));
+                child: inspections.isEmpty
+                    ? Center(
+                      child: Text(
+                          'No Inspection Found!!',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700),
+                        ),
+                    )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: inspections.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return InspectionCard(
+                            inspection: inspections[index],
+                          );
+                        })));
   }
 }
