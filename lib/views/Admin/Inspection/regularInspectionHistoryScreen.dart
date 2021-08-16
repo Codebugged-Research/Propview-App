@@ -67,6 +67,7 @@ class _RegularInspectionHistoryScreenState
                       itemBuilder: (BuildContext context, int index) {
                         return RegularInspectionCard(
                           regularInspection: regularInspection[index],
+                          propertyElement: propertyElement,
                         );
                       })),
     );

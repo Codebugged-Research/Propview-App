@@ -76,9 +76,9 @@ class Inspection {
         employeeId: json["employee_id"] == null ? null : json["employee_id"],
         issueIdList:
             json["issue_id_list"] == null ? null : json["issue_id_list"],
-        createdAt: json["created_at"] == null
+        createdAt: json["createdAt"] == null
             ? null
-            : DateTime.parse(json["created_at"]),
+            : DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),

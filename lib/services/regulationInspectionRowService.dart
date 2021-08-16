@@ -18,7 +18,7 @@ class RegularInspectionRowService extends AuthService {
   }
 
   // ignore: missing_return
-  static Future<List<RegularInspectionRow>> getRegularInspectionRowById(
+  static Future<RegularInspectionRow> getRegularInspectionRowById(
       var id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/inspection/regular/row/$id',
@@ -29,7 +29,7 @@ class RegularInspectionRowService extends AuthService {
           .map<RegularInspectionRow>((regularInspectionMap) =>
               RegularInspectionRow.fromJson(regularInspectionMap))
           .toList();
-      return regularInspection;
+      return regularInspection.first;
     } else {
       print('Not Working!');
     }

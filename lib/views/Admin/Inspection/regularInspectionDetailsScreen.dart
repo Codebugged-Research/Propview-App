@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/RegularInspection.dart';
+import 'package:propview/models/RegularInspectionRow.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyService.dart';
+import 'package:propview/services/regulationInspectionRowService.dart';
+import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 
@@ -23,6 +26,7 @@ class _RegularInspectionDetailsScreenState
   RegularInspection regularInspection;
   User user;
   PropertyElement propertyElement;
+  List<RegularInspectionRow> regularInspectionRowList = [];
 
   @override
   void initState() {
@@ -39,6 +43,15 @@ class _RegularInspectionDetailsScreenState
         await UserService.getUserById(regularInspection.employeeId.toString());
     propertyElement = await PropertyService.getPropertyById(
         regularInspection.propertyId.toString());
+    List rowList = regularInspection.rowList.split(",").toList();
+    if (regularInspection.rowList != "") {
+      for (int i = 0; i < rowList.length; i++) {
+        regularInspectionRowList
+            .add(await RegularInspectionRowService.getRegularInspectionRowById(rowList[i]));        
+      }
+    } else {
+      regularInspectionRowList = [];
+    }
     setState(() {
       isLoading = false;
     });
@@ -49,19 +62,20 @@ class _RegularInspectionDetailsScreenState
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Regular Inspection Details'),
         ),
         body: isLoading
             ? circularProgressWidget()
             : Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
                           text: TextSpan(
-                              text: "Inspection\n",
+                              text: "Regular Inspection\n",
                               style: Theme.of(context)
                                   .primaryTextTheme
                                   .headline4
@@ -76,10 +90,10 @@ class _RegularInspectionDetailsScreenState
                           ])),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      titleWidget(context, 'Inspection Type'),
-                      subHeadingWidget(context, 'Regular Inspection'),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
+                      // titleWidget(context, 'Inspection Type'),
+                      // subHeadingWidget(context, 'Regular Inspection'),
+                      // SizedBox(
+                      //     height: MediaQuery.of(context).size.height * 0.02),
                       titleWidget(context, 'Property ID'),
                       subHeadingWidget(
                           context, '${regularInspection.propertyId}'),
@@ -94,12 +108,96 @@ class _RegularInspectionDetailsScreenState
                       subHeadingWidget(context, '${user.name}'),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
+                      ListView.builder(
+                              itemBuilder: (context, index) {
+                                return inspectionCard(constraints, index);
+                              },
+                              itemCount: regularInspectionRowList.length,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            ),
                     ],
                   ),
                 ),
               ),
       );
     });
+  }
+  inspectionCard(constraints, index) {
+    return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          Text(
+            regularInspectionRowList[index].roomsubroomName,
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.minWidth),
+              child: DataTable(
+                dataRowHeight: 80,
+                dividerThickness: 2,
+                columns: [
+                  DataColumn(
+                      label: Text("Termite Issue",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Seepage Check",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("General Cleanliness",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                  DataColumn(
+                      label: Text("Other Issues",
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle2
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black))),
+                ],
+                rows: 
+                    [DataRow(
+                        cells: [
+                          DataCell(Text(regularInspectionRowList[index].termiteCheck)),
+                          DataCell(Text(regularInspectionRowList[index].seepageCheck)),
+                          DataCell(Text(regularInspectionRowList[index].generalCleanliness)),
+                          DataCell(Text(regularInspectionRowList[index].otherIssue)),
+                        ],
+                      )]
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget titleWidget(BuildContext context, String title) {

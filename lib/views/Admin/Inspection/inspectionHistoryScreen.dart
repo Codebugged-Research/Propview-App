@@ -64,6 +64,7 @@ class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
                         itemBuilder: (BuildContext context, int index) {
                           return InspectionCard(
                             inspection: inspections[index],
+                            propertyElement: propertyElement,
                           );
                         })));
   }

@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
+import 'package:propview/models/Property.dart';
 import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/regularInspectionDetailsScreen.dart';
 
 class RegularInspectionCard extends StatelessWidget {
   final RegularInspection regularInspection;
+  final PropertyElement propertyElement;
 
-  RegularInspectionCard({this.regularInspection});
+  RegularInspectionCard({this.regularInspection, this.propertyElement});
+
+  getDate(DateTime date) {
+    return date.day.toString().padLeft(2, "0") +
+        '-' +
+        date.month.toString().padLeft(2, "0") +
+        '-' +
+        date.year.toString() +
+        " " +
+        date.hour.toString() +
+        ":" +
+        date.minute.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +61,14 @@ class RegularInspectionCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text('Inspection ID: ',
+                        Text('Property Owner: ',
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
                                 .copyWith(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w800)),
-                        Text('${regularInspection.id}',
+                        Text(propertyElement.propertyOwner.ownerName,
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
@@ -64,18 +78,42 @@ class RegularInspectionCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
-                      height: UIConstants.fitToHeight(16, context),
+                      height: UIConstants.fitToHeight(2, context),
                     ),
                     Row(
                       children: [
-                        Text('Inspection Type: ',
+                        Text('Property: ',
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
                                 .copyWith(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w800)),
-                        Text('Regular Inspection',
+                        Text(
+                            propertyElement.tblSociety.socname +
+                                ", " +
+                                propertyElement.tableproperty.unitNo,
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500))
+                      ],
+                    ),
+                    SizedBox(
+                      height: UIConstants.fitToHeight(2, context),
+                    ),
+                    Row(
+                      children: [
+                        Text('Inspection Date: ',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w800)),
+                        Text('${getDate(regularInspection.createdAt)}',
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1

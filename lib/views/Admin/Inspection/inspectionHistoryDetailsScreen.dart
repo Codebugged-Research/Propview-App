@@ -47,7 +47,6 @@ class _InspectionHistoryDetailsScreenState
     user = await UserService.getUserById(inspection.employeeId.toString());
     propertyElement =
         await PropertyService.getPropertyById(inspection.propertyId.toString());
-
     List issueIdList = inspection.issueIdList.split(",").toList();
     if (inspection.issueIdList != "") {
       for (int i = 0; i < issueIdList.length; i++) {
@@ -66,7 +65,6 @@ class _InspectionHistoryDetailsScreenState
     } else {
       issueTables = [];
     }
-
     setState(() {
       isLoading = false;
     });

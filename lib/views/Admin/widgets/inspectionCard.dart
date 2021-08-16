@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Inspection.dart';
+import 'package:propview/models/Property.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/inspectionHistoryDetailsScreen.dart';
 
 class InspectionCard extends StatelessWidget {
   final Inspection inspection;
+  final PropertyElement propertyElement;
 
-  InspectionCard({this.inspection});
+  InspectionCard({this.inspection, this.propertyElement});
+
+  getDate(DateTime date) {
+    return date.day.toString().padLeft(2, "0") +
+        '-' +
+        date.month.toString().padLeft(2, "0") +
+        '-' +
+        date.year.toString() +
+        " " +
+        date.hour.toString() +
+        ":" +
+        date.minute.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +60,14 @@ class InspectionCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text('Inspection ID: ',
+                        Text('Property Owner: ',
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
                                 .copyWith(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w800)),
-                        Text('${inspection.inspectionId}',
+                        Text(propertyElement.propertyOwner.ownerName,
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
@@ -63,7 +77,31 @@ class InspectionCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
-                      height: UIConstants.fitToHeight(16, context),
+                      height: UIConstants.fitToHeight(2, context),
+                    ),
+                    Row(
+                      children: [
+                        Text('Property: ',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w800)),
+                        Text(
+                            propertyElement.tblSociety.socname +
+                                ", " +
+                                propertyElement.tableproperty.unitNo,
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500))
+                      ],
+                    ),
+                    SizedBox(
+                      height: UIConstants.fitToHeight(2, context),
                     ),
                     Row(
                       children: [
@@ -74,7 +112,28 @@ class InspectionCard extends StatelessWidget {
                                 .copyWith(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w800)),
-                        Text('${inspection.inspectType}',
+                        Text(inspection.inspectType,
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500))
+                      ],
+                    ),
+                    SizedBox(
+                      height: UIConstants.fitToHeight(2, context),
+                    ),
+                    Row(
+                      children: [
+                        Text('Inspection Date: ',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w800)),
+                        Text('${getDate(inspection.createdAt)}',
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
