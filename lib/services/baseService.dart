@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 
 class BaseService {
-  static const BASE_URI = "http://68.183.247.233/";
+  static const BASE_URI = "https://api.propdial.co.in/";
 
   static final Map<String, String> headers = {
     "Content-Type": "application/json"
@@ -9,7 +9,7 @@ class BaseService {
 
   static Future getAppCurrentVersion() async {
     http.Response response =
-        await http.get(Uri.parse("http://68.183.247.233/version"));
+        await http.get(Uri.parse("https://api.propdial.co.in/version"));
     return response.body;
   }
 

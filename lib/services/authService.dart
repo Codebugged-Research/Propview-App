@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'baseService.dart';
 
 class AuthService extends BaseService {
-  static const BASE_URI = "http://68.183.247.233/";
+  static const BASE_URI = "https://api.propdial.co.in/";
   static Map<String, dynamic> _authDetails;
   static const String authNamespace = "auth";
 

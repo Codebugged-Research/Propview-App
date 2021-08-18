@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:api_cache_manager/models/cache_db_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:api_cache_manager/api_cache_manager.dart';
 import 'package:propview/services/authService.dart';
@@ -19,6 +20,25 @@ class PropertyOwnerService extends AuthService {
       return propertyOwner;
     } else {
       print("DEBUG");
+    }
+  }
+
+  static Future<List<PropertyOwnerElement>> searchOwner(String query) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+      AuthService.BASE_URI + 'api/propertyOwner/search',
+      method: 'POST',
+      body: jsonEncode({"query": "%" + query + "%"}),
+    );
+    var responseMap = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      List<PropertyOwnerElement> propertyOwners = responseMap["propertyOwner"]
+          .map<PropertyOwnerElement>((propertyOwnerElement) =>
+              PropertyOwnerElement.fromJson(propertyOwnerElement))
+          .toList();
+      return propertyOwners;
+    } else {
+      print("DEBUG search");
+      return [];
     }
   }
 

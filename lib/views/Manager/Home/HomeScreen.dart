@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Property.dart';
@@ -6,6 +5,7 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Manager/Home/searchScreen.dart';
 import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 import 'package:propview/config.dart';
@@ -127,7 +127,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            getData();
+                             Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => SearchScreen(property: property,),
+                              ),
+                            );
                           },
                           child: Container(
                             height: 35,
@@ -153,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ]),
                             child: Icon(
-                              Icons.refresh,
+                              Icons.search,
                               color: Color(0xff314B8C),
                               size: 24,
                             ),

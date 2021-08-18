@@ -23,7 +23,7 @@ class NotificationService {
       },
     );
     http.Response response = await http.post(
-        Uri.parse("http://68.183.247.233/api/notification/one"),
+        Uri.parse("https://api.propdial.co.in/api/notification/one"),
         headers: headers,
         body: body);
     if (response.statusCode == 200) {
@@ -45,7 +45,7 @@ class NotificationService {
       },
     );
     http.Response response = await http.post(
-        Uri.parse("http://68.183.247.233/api/notification/one"),
+        Uri.parse("https://api.propdial.co.in/api/notification/one"),
         headers: headers,
         body: body);
     if (response.statusCode == 200) {
@@ -71,7 +71,7 @@ class NotificationService {
       },
     );
     http.Response response = await http.post(
-        Uri.parse("http://68.183.247.233/api/notification/one"),
+        Uri.parse("https://api.propdial.co.in/notification/one"),
         headers: headers,
         body: body);
     print(response.body);

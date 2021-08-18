@@ -6,6 +6,7 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Admin/Home/searchScreen.dart';
 import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -114,7 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            getData();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => SearchScreen(),
+                              ),
+                            );
                           },
                           child: Container(
                             height: 35,
@@ -140,15 +145,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ]),
                             child: Icon(
-                              Icons.refresh,
+                              Icons.search,
                               color: Color(0xff314B8C),
                               size: 24,
                             ),
                           ),
                         ),
-                        // SizedBox(
-                        //   width: 16,
-                        // ),
                       ],
                     ),
                   ),
@@ -167,7 +169,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.topLeft,
                   ),
                 ),
-                //TODO: Add search bar
                 Expanded(
                   child: ListView.builder(
                     controller: _sc,
@@ -181,7 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : Container(
                                       padding: EdgeInsets.all(16),
                                       child: Text("No more Properties"),
-                                    ))
+                                    ),
+                            )
                           : PropertyCard(
                               propertyElement: property.data.property[index],
                             );

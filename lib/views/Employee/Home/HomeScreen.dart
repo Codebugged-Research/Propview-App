@@ -8,6 +8,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 import 'package:propview/config.dart';
+import 'package:propview/views/Manager/Home/searchScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -102,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      "Manager",
+                      "Employee",
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle2
@@ -114,7 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            getData();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => SearchScreen(property: property,),
+                              ),
+                            );
                           },
                           child: Container(
                             height: 35,
@@ -140,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ]),
                             child: Icon(
-                              Icons.refresh,
+                              Icons.search,
                               color: Color(0xff314B8C),
                               size: 24,
                             ),

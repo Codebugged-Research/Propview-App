@@ -223,7 +223,7 @@ class UserService extends AuthService {
   static Future<String> getDeviceToken(String id) async {
     final Map<String, String> headers = {"Content-Type": "application/json"};
     http.Response response = await http.get(
-      Uri.parse("http://68.183.247.233/api/user/deviceToken/$id"),
+      Uri.parse("https://api.propdial.co.in/api/user/deviceToken/$id"),
       headers: headers,
     );
     if (response.statusCode == 200 && response.body != null) {
