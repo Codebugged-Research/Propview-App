@@ -15,7 +15,6 @@ class FullInspectionCard extends StatefulWidget {
 }
 
 class _FullInspectionCardState extends State<FullInspectionCard> {
-
   TextEditingController amountController;
   List ss = [];
   bool loading = false;
@@ -75,7 +74,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                 Row(
                   children: [
                     Text(
-                      'Property Name:  ',
+                      'Bill Authority:  ',
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle1
@@ -83,18 +82,19 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                               color: Colors.black, fontWeight: FontWeight.w700),
                     ),
                     Text(
-                      widget.propertyElement.propertyOwner.ownerName,
+                      widget.billToProperty.authorityName,
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle1
                           .copyWith(color: Colors.black),
-                    )
+                    ),
                   ],
-                ), SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
                 Row(
                   children: [
                     Text(
-                      'Last Updated:  ',
+                      'Added On:  ',
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle1
@@ -102,7 +102,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                               color: Colors.black, fontWeight: FontWeight.w700),
                     ),
                     Text(
-                      widget.billToProperty.lastUpdate.toLocal().toString(),
+                      dateChange(widget.billToProperty.dateAdded.toLocal()),
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle1
@@ -110,7 +110,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                     )
                   ],
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
                 Text(
                   'Amount',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
@@ -118,9 +118,18 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.005),
                 inputWidget(amountController),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
               ],
             ),
           );
+  }
+
+  dateChange(DateTime date) {
+    return date.day.toString().padLeft(2, "0") +
+        "-" +
+        date.month.toString().padLeft(2, "0") +
+        "-" +
+        date.year.toString();
   }
 
   Widget inputWidget(TextEditingController textEditingController) {
@@ -139,6 +148,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
         textCapitalization: TextCapitalization.words,
         decoration: InputDecoration(
           filled: true,
+          prefixText: "₹",
           fillColor: Colors.grey[300],
           labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),

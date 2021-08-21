@@ -187,7 +187,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(height: 75),
+                        ListTile(
+                          leading: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                          tileColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        SizedBox(height: 36),
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 80,

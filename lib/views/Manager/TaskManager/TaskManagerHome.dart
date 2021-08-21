@@ -9,6 +9,7 @@ import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Manager/Profile/ProfileScreen.dart';
 import 'package:propview/views/Manager/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Manager/TaskManager/CreateTaskScreen.dart';
 import 'package:propview/views/Manager/widgets/taskCard.dart';
@@ -117,6 +118,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(),
+                          ),
+                        );
+                      },
                       leading: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 30,

@@ -203,6 +203,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           : ListView.builder(
                               shrinkWrap: true,
                               itemCount: bills.length,
+                              physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (BuildContext context, int index) {
                                 return FullInspectionCard(
                                   propertyElement: propertyElement,

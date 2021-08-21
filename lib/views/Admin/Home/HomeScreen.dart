@@ -7,6 +7,7 @@ import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Home/searchScreen.dart';
+import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,8 +74,15 @@ class _HomeScreenState extends State<HomeScreen> {
             body: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
+                  padding: const EdgeInsets.fromLTRB(0, 48, 12, 12),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(),
+                        ),
+                      );
+                    },
                     leading: ClipOval(
                       child: FadeInImage.assetNetwork(
                         height: 60,

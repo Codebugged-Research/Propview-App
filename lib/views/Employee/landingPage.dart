@@ -117,7 +117,7 @@ class _LandingScreenState extends State<LandingScreen> {
     HomeScreen(),
     TaskMangerHome(),
     AttendanceHome(),
-    ProfileScreen(),
+    // ProfileScreen(),
   ];
 
   checkversion() async {
@@ -176,10 +176,10 @@ class _LandingScreenState extends State<LandingScreen> {
                   icon: Icons.fact_check,
                   text: 'Attendance',
                 ),
-                GButton(
-                  icon: Icons.person,
-                  text: 'Profile',
-                ),
+                // GButton(
+                //   icon: Icons.person,
+                //   text: 'Profile',
+                // ),
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) {

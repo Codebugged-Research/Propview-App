@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
           showInSnackBar(context, 'Check notification settings', 2500);
         }
       } else {
-        showInSnackBar(context, 'Authentication Denied!', 2500);
+        showInSnackBar(context, 'Wrong Email or Password!', 2500);
         AuthService.clearAuth();
       }
     } else {

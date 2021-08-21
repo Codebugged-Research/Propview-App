@@ -123,18 +123,33 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   bool propertySelectBox = false;
 
   checkPayload() {
-    if (_selectedProperty.toString().length > 0 &&
-        _taskName.text.length > 0 &&
-        _taskDescription.text.length > 0 &&
-        _property.text.length > 0 &&
-        _taskStartDateTime2.text.length > 0 &&
-        _taskEndDateTime2.text.length > 0 &&
-        _selectedUser.userId.toString().length > 0 &&
-        _selectedProperty.toString().length > 0 &&
-        _selectedPropertyOwner.toString().length > 0) {
-      return true;
+    if (_selectedTaskCategory == "Propdial Office Work" ||
+        _selectedTaskCategory == "Other Executive Work") {
+      if (_selectedProperty.toString().length > 0 &&
+          _taskName.text.length > 0 &&
+          _taskDescription.text.length > 0 &&
+          _property.text.length > 0 &&
+          _taskStartDateTime2.text.length > 0 &&
+          _taskEndDateTime2.text.length > 0 &&
+          _selectedUser.userId.toString().length > 0) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      if (_selectedProperty.toString().length > 0 &&
+          _taskName.text.length > 0 &&
+          _taskDescription.text.length > 0 &&
+          _property.text.length > 0 &&
+          _taskStartDateTime2.text.length > 0 &&
+          _taskEndDateTime2.text.length > 0 &&
+          _selectedUser.userId.toString().length > 0 &&
+          _selectedProperty.toString().length > 0 &&
+          _selectedPropertyOwner.toString().length > 0) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 

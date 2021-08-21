@@ -31,6 +31,7 @@ class _OwnerPropertyListScreenState extends State<OwnerPropertyListScreen> {
     });
     property = await PropertyService.getAllPropertiesByOwnerId(
         widget.propertyElement.ownerId);
+    print(property.data.property.length);
     setState(() {
       loading = false;
     });
@@ -84,7 +85,7 @@ class _OwnerPropertyListScreenState extends State<OwnerPropertyListScreen> {
                           itemCount: property.data.property.length,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            if (index == property.data.property.length - 1 &&
+                            if (index == property.data.property.length &&
                                 index == 0)
                               return Center(child: Text("No Properties Found"));
                             else
