@@ -59,33 +59,16 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _tabController21 = TabController(length: 3, vsync: this, initialIndex: 0);
     _tabController22 = TabController(length: 3, vsync: this, initialIndex: 0);
-    var taskData1 = await TaskService.getAllTaskByUserId(user.userId);
-    var taskData12 = await TaskService.getAllTaskByManagerId(user.userId);
-    List<TaskElement> taskList = [];
-    taskList.addAll(taskData1.data.task);
-    taskList.addAll(taskData12.data.task);
-    for (int i = 0; i < taskList.length; i++) {
-      if (taskList[i].taskStatus == "Pending" ||
-          taskList[i].taskStatus == "Rejected") {
-        if (taskList[i].assignedTo == user.userId.toString()) {
-          pendingTaskList.add(taskList[i]);
-        } else {
-          pendingTaskList2.add(taskList[i]);
-        }
-      } else if (taskList[i].taskStatus == "Completed") {
-        if (taskList[i].assignedTo == user.userId.toString()) {
-          completedTaskList.add(taskList[i]);
-        } else {
-          completedTaskList2.add(taskList[i]);
-        }
-      } else if (taskList[i].taskStatus == "Unapproved") {
-        if (taskList[i].assignedTo == user.userId.toString()) {
-          unApprovedTaskList.add(taskList[i]);
-        } else {
-          unApprovedTaskList2.add(taskList[i]);
-        }
-      }
-    }
+    pendingTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Pending");
+    List<TaskElement> rejectedSelf = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Rejected");
+    pendingTaskList.addAll(rejectedSelf);
+    unApprovedTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
+    completedTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
+    List<TaskElement> rejectedTeam = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Rejected");
+    pendingTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Pending");
+    pendingTaskList2.addAll(rejectedTeam);
+    unApprovedTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Unapproved");
+    completedTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Completed");
     setState(() {
       tempUser = user;
       loading = false;
@@ -251,6 +234,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Expanded(
                     child: Container(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           TabBar(
                             isScrollable: true,

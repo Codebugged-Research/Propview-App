@@ -43,16 +43,15 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     });
     user = await UserService.getUser();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-    taskData = await TaskService.getAllTaskByUserId(user.userId);
-    for (int i = 0; i < taskData.data.task.length; i++) {
-      if (taskData.data.task[i].taskStatus == "Pending") {
-        pendingTaskList.add(taskData.data.task[i]);
-      } else if (taskData.data.task[i].taskStatus == "Completed") {
-        completedTaskList.add(taskData.data.task[i]);
-      } else if (taskData.data.task[i].taskStatus == "Unapproved") {
-        unApprovedTaskList.add(taskData.data.task[i]);
-      }
-    }
+    pendingTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Pending");
+    List<TaskElement> tempList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Rejected");
+    pendingTaskList.addAll(tempList);
+    unApprovedTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
+    completedTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
     setState(() {
       loading = false;
     });

@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              formheaderWidget(context, 'Email/Username'),
+              formheaderWidget(context, 'Email/Phone Number'),
               inputEmailWidget(
                   emailController, "Please Enter your Email", false, (value) {
                 email = value;
