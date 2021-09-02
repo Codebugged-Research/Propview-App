@@ -49,7 +49,7 @@ class SubRoomCard extends StatelessWidget {
                     style:
                         Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                               color: Colors.black,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w800 ,
                             ),
                   ),
                   Text('(${subRoom.roomSize2} X ${subRoom.roomSize1}) ft',
