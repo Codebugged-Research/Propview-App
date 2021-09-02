@@ -187,19 +187,23 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                                     .copyWith(fontWeight: FontWeight.normal))
                           ])),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
-                      titleWidget(context, 'Inspection'),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
-                      bills.length == 0
-                          ? Center(
-                              child: Text(
-                                'Nothing to Inspect!!',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle2,
-                              ),
-                            )
+                          height: MediaQuery.of(context).size.height * 0.01),
+                      bills.length != 0
+                          ? titleWidget(context, 'Pending Biils')
+                          : Container(),
+                      bills.length != 0
+                          ? SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02)
+                          : Container(),
+                      bills.length == 0 ? Container() 
+                          // ? Center(
+                          //     child: Text(
+                          //       'Nothing to Inspect!!',
+                          //       style: Theme.of(context)
+                          //           .primaryTextTheme
+                          //           .subtitle2,
+                          //     ),
+                          //   )
                           : ListView.builder(
                               shrinkWrap: true,
                               itemCount: bills.length,
@@ -212,20 +216,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               }),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.04),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          titleWidget(context, 'Issues'),
-                          InkWell(
-                            child: Icon(Icons.add),
-                            onTap: () {
-                              showRoomSelect();
-                            },
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
                         itemBuilder: (context, index) {
                           return issueCard(constraints, index);
@@ -233,6 +223,26 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         itemCount: issueTableList.length,
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Select/Add Room',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .headline6
+                                .copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black),
+                          ),
+                          InkWell(
+                            child: Icon(Icons.add),
+                            onTap: () {
+                              showRoomSelect();
+                            },
+                          )
+                        ],
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
@@ -628,12 +638,19 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   Widget titleWidget(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(context)
-          .primaryTextTheme
-          .headline6
-          .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xff314B8C).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Text(
+        title,
+        style: Theme.of(context)
+            .primaryTextTheme
+            .headline6
+            .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+      ),
     );
   }
 

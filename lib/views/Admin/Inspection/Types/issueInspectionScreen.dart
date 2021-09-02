@@ -172,20 +172,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                           ])),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.04),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          titleWidget(context, 'Issues'),
-                          InkWell(
-                            child: Icon(Icons.add),
-                            onTap: () {
-                              showRoomSelect();
-                            },
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
                         itemBuilder: (context, index) {
                           return issueCard(constraints, index);
@@ -194,6 +180,29 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                       ),
+                          SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Select/Add Room',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .headline6
+                                .copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black),
+                          ),
+                          InkWell(
+                            child: Icon(Icons.add),
+                            onTap: () {
+                              showRoomSelect();
+                            },
+                          )
+                        ],
+                      ),
+                      
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
@@ -585,12 +594,19 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   }
 
   Widget titleWidget(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(context)
-          .primaryTextTheme
-          .subtitle1
-          .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xff314B8C).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Text(
+        title,
+        style: Theme.of(context)
+            .primaryTextTheme
+            .headline6
+            .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+      ),
     );
   }
 
