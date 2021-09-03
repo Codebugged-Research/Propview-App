@@ -32,6 +32,7 @@ import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 
 import 'package:propview/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -60,6 +61,7 @@ class FullInspectionScreen extends StatefulWidget {
 
 class _FullInspectionScreenState extends State<FullInspectionScreen> {
   Inspection inspection;
+  SharedPreferences prefs;
 
   // TextEditingController maintainanceController;
 
@@ -80,7 +82,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   @override
   void initState() {
     super.initState();
+    initialiseSharedPreference();
     getData();
+  }
+
+  initialiseSharedPreference() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   String dummyDouble = (0.0).toString();
@@ -195,7 +202,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           ? SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02)
                           : Container(),
-                      bills.length == 0 ? Container() 
+                      bills.length == 0
+                          ? Container()
                           // ? Center(
                           //     child: Text(
                           //       'Nothing to Inspect!!',
@@ -603,6 +611,18 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                     inspection = Inspection(
                       inspectType: "Full Inspection",
                     );
+                    var fullInspectionCacheData = json.encode({
+                      "imageList": list,
+                      "index1": index1,
+                      "index2": index2,
+                      "bills": bills,
+                      "inspection": inspection,
+                      "rows": rows,
+                      "issueTableList": issueTableList
+                    }).toString();
+                    prefs.setString(
+                        "full-${propertyElement.tableproperty.propertyId}",
+                        fullInspectionCacheData);
                     Routing.makeRouting(
                       context,
                       routeMethod: 'pushReplacement',

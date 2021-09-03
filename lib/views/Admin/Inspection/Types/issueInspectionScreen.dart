@@ -26,8 +26,9 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../config.dart';
+import 'package:propview/config.dart';
 
 class IssueInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -54,6 +55,7 @@ class IssueInspectionScreen extends StatefulWidget {
 
 class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   Inspection inspection;
+  SharedPreferences prefs;
 
   PropertyElement propertyElement;
   List<RoomsToPropertyModel> rooms = [];
@@ -70,7 +72,12 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   @override
   void initState() {
     super.initState();
+    initialiseSharedPreference();
     getData();
+  }
+
+  initialiseSharedPreference() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   double dummyDouble = 0.0;
@@ -560,6 +567,17 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                     inspection = Inspection(
                       inspectType: "Full Inspection",
                     );
+                    var issueInspectionCacheData = json.encode({
+                      "imageList": list,
+                      "index1": index1,
+                      "index2": index2,
+                      "inspection": inspection,
+                      "rows": rows,
+                      "issueTableList": issueTableList
+                    }).toString();
+                    prefs.setString(
+                        "issue-${propertyElement.tableproperty.propertyId}",
+                        issueInspectionCacheData);
                     Routing.makeRouting(
                       context,
                       routeMethod: 'pushReplacement',

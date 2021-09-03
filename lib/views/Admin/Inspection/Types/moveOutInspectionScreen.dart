@@ -37,6 +37,7 @@ import 'package:propview/views/Admin/Inspection/MoveOutInspection/captureScreenM
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/moveOutInspectionCard.dart';
 import 'package:propview/views/Admin/widgets/tenantWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MoveOutInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -70,6 +71,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   String dummyDouble = (0.0).toString();
 
   PropertyElement propertyElement;
+  SharedPreferences prefs;
   Inspection inspection;
   RoomType roomTypes;
 
@@ -90,6 +92,12 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     super.initState();
     propertyElement = widget.propertyElement;
     loadDataForScreen();
+    initialiseSharedPreference();
+  }
+
+
+  initialiseSharedPreference() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   loadDataForScreen() async {
@@ -589,6 +597,18 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                     inspection = Inspection(
                       inspectType: "Move in Inspection",
                     );
+                    var moveInInspectionCacheData = json.encode({
+                      "imageList": list,
+                      "index1": index1,
+                      "index2": index2,
+                      bills: bills,
+                      "inspection": inspection,
+                      "rows": rows,
+                      "issueTableList": issueTableList
+                    }).toString();
+                    prefs.setString(
+                        "moveout-${propertyElement.tableproperty.propertyId}",
+                        moveInInspectionCacheData);
                     Routing.makeRouting(
                       context,
                       routeMethod: 'pushReplacement',
