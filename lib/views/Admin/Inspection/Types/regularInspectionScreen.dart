@@ -123,87 +123,97 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) => Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      text: "Regular\n",
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .headline4
-                          .copyWith(fontWeight: FontWeight.bold),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: LayoutBuilder(
+          builder: (context, constraints) => Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: "Regular\n",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .headline4
+                            .copyWith(fontWeight: FontWeight.bold),
+                        children: [
+                          TextSpan(
+                            text: "Inspection",
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .headline3
+                                .copyWith(
+                                  fontWeight: FontWeight.normal,
+                                ),
+                          )
+                        ],
+                      ),
+                    ),
+                    bills.length != 0
+                        ? titleWidget(context, 'Pending Biils')
+                        : Container(),
+                    bills.length != 0
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02)
+                        : Container(),
+                    bills.length == 0
+                        ? Container()
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: bills.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return FullInspectionCard(
+                                propertyElement: propertyElement,
+                                billToProperty: bills[index],
+                              );
+                            }),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextSpan(
-                          text: "Inspection",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .headline3
-                              .copyWith(
-                                fontWeight: FontWeight.normal,
-                              ),
+                        Text(
+                              'Select/Add Room',
+                              style: Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline6
+                                  .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
+                            ),
+                        InkWell(
+                          child: Icon(Icons.add),
+                          onTap: () {
+                            showRoomSelect();
+                          },
                         )
                       ],
                     ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      titleWidget(context, 'Bills'),
-                    ],
-                  ),
-                  bills.length == 0
-                      ? Center(
-                          child: Text(
-                            'Nothing to Inspect!!',
-                            style: Theme.of(context).primaryTextTheme.subtitle2,
-                          ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: bills.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return FullInspectionCard(
-                              propertyElement: propertyElement,
-                              billToProperty: bills[index],
-                            );
-                          }),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      titleWidget(context, 'Issues'),
-                      InkWell(
-                        child: Icon(Icons.add),
-                        onTap: () {
-                          showRoomSelect();
-                        },
-                      )
-                    ],
-                  ),
-                  ListView.builder(
-                      itemCount: regularInspectionRowList.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return inspectionCard(constraints, index);
-                      }),
-                  regularInspectionRowList.length > 0
-                      ? buttonWidget(context)
-                      : Container(),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                ],
+                    ListView.builder(
+                        itemCount: regularInspectionRowList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return inspectionCard(constraints, index);
+                        }),
+                    regularInspectionRowList.length > 0
+                        ? buttonWidget(context)
+                        : Container(),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                  ],
+                ),
               ),
             ),
           ),
@@ -232,85 +242,87 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: constraints.minWidth),
-              child: DataTable(
-                dataRowHeight: 80,
-                dividerThickness: 2,
-                columns: [
-                  DataColumn(
-                      label: Text("Termite Issue",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Seepage Check",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("General Cleanliness",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Other Issues",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                ],
-                rows: 
-                    [DataRow(
-                        cells: [
-                          DataCell(TextFormField(
-                            initialValue: regularInspectionRowList[index].termiteCheck,
-                            onChanged: (value) {
-                              setState(() {
-                                regularInspectionRowList[index].termiteCheck = value;
-                              });
-                            },
-                          )),
-                          DataCell(TextFormField(
-                            initialValue: regularInspectionRowList[index].seepageCheck,
-                            onChanged: (value) {
-                              setState(() {
-                                regularInspectionRowList[index].seepageCheck = value;
-                              });
-                            },
-                          )),
-                          DataCell(
-                            TextFormField(
-                              initialValue: regularInspectionRowList[index].generalCleanliness,
-                              onChanged: (value) {
-                                setState(() {
-                                  regularInspectionRowList[index].generalCleanliness = value;
-                                });
-                              },
-                            ),
-                          ),
-                          DataCell(
-                            TextFormField(
-                              initialValue: regularInspectionRowList[index].otherIssue,
-                              onChanged: (value) {
-                                setState(() {
-                                  regularInspectionRowList[index].otherIssue = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      )]
-              ),
+              child:
+                  DataTable(dataRowHeight: 80, dividerThickness: 2, columns: [
+                DataColumn(
+                    label: Text("Termite Issue",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Seepage Check",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("General Cleanliness",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Other Issues",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+              ], rows: [
+                DataRow(
+                  cells: [
+                    DataCell(TextFormField(
+                      initialValue:
+                          regularInspectionRowList[index].termiteCheck,
+                      onChanged: (value) {
+                        setState(() {
+                          regularInspectionRowList[index].termiteCheck = value;
+                        });
+                      },
+                    )),
+                    DataCell(TextFormField(
+                      initialValue:
+                          regularInspectionRowList[index].seepageCheck,
+                      onChanged: (value) {
+                        setState(() {
+                          regularInspectionRowList[index].seepageCheck = value;
+                        });
+                      },
+                    )),
+                    DataCell(
+                      TextFormField(
+                        initialValue:
+                            regularInspectionRowList[index].generalCleanliness,
+                        onChanged: (value) {
+                          setState(() {
+                            regularInspectionRowList[index].generalCleanliness =
+                                value;
+                          });
+                        },
+                      ),
+                    ),
+                    DataCell(
+                      TextFormField(
+                        initialValue:
+                            regularInspectionRowList[index].otherIssue,
+                        onChanged: (value) {
+                          setState(() {
+                            regularInspectionRowList[index].otherIssue = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ]),
             ),
           ),
         ],
@@ -392,7 +404,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
           .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
     );
   }
-
 
   bool loading = false;
 

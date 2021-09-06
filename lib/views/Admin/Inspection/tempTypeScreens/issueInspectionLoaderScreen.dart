@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/Types/issueInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IssueInspectionLoaderScreen extends StatefulWidget {
@@ -16,7 +17,6 @@ class IssueInspectionLoaderScreen extends StatefulWidget {
 
 class _IssueInspectionLoaderScreenState
     extends State<IssueInspectionLoaderScreen> {
-
   bool isLoading = false;
   SharedPreferences prefs;
   PropertyElement propertyElement;
@@ -25,39 +25,41 @@ class _IssueInspectionLoaderScreenState
   void initState() {
     super.initState();
     propertyElement = widget.propertyElement;
-    initialiseSharedPreference();
     loadDataForScreen();
   }
-
-  initialiseSharedPreference() async {
-    prefs = await SharedPreferences.getInstance();
-  }
+  var data;
 
   loadDataForScreen() async {
-    setState(() {
-      isLoading = true;
-    });
-    var data =
-    prefs.getString("moveout-${propertyElement.tableproperty.propertyId}");
-    print(data);
-    setState(() {
-      isLoading = false;
-    });
+    prefs = await SharedPreferences.getInstance();
+    try {
+      data =
+          prefs.getString("issue-${propertyElement.tableproperty.propertyId}");
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => IssueInspectionScreen(
+                  propertyElement: propertyElement,
+                ),
+            settings: RouteSettings()),
+      );
+    } catch (e) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => IssueInspectionScreen(
+            propertyElement: propertyElement,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: isLoading
-              ? circularProgressWidget()
-              : Routing.makeRouting(context,
-              routeMethod: 'push',
-              newWidget: IssueInspectionLoaderScreen(
-                propertyElement: propertyElement,
-              ))),
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: circularProgressWidget(),
+      ),
     );
   }
 }

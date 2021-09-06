@@ -148,82 +148,89 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(),
-      body: loader
-          ? circularProgressWidget()
-          : LayoutBuilder(
-              builder: (context, constraints) => SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      RichText(
-                          text: TextSpan(
-                              text: "Issue Based\n",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline4
-                                  .copyWith(fontWeight: FontWeight.bold),
-                              children: [
-                            TextSpan(
-                                text: "Inspection",
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        return true;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(),
+        body: loader
+            ? circularProgressWidget()
+            : LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                                text: "Issue Based\n",
                                 style: Theme.of(context)
                                     .primaryTextTheme
-                                    .headline3
-                                    .copyWith(fontWeight: FontWeight.normal))
-                          ])),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
-                      ListView.builder(
-                        itemBuilder: (context, index) {
-                          return issueCard(constraints, index);
-                        },
-                        itemCount: issueTableList.length,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      ),
-                          SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Select/Add Room',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .headline6
-                                .copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black),
-                          ),
-                          InkWell(
-                            child: Icon(Icons.add),
-                            onTap: () {
-                              showRoomSelect();
-                            },
-                          )
-                        ],
-                      ),
-                      
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      issueTableList.length > 0
-                          ? buttonWidget(context)
-                          : Container(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                    ],
+                                    .headline4
+                                    .copyWith(fontWeight: FontWeight.bold),
+                                children: [
+                              TextSpan(
+                                  text: "Inspection",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline3
+                                      .copyWith(fontWeight: FontWeight.normal))
+                            ])),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.04),
+                        ListView.builder(
+                          itemBuilder: (context, index) {
+                            return issueCard(constraints, index);
+                          },
+                          itemCount: issueTableList.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                        ),
+                            SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Select/Add Room',
+                              style: Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline6
+                                  .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
+                            ),
+                            InkWell(
+                              child: Icon(Icons.add),
+                              onTap: () {
+                                showRoomSelect();
+                              },
+                            )
+                          ],
+                        ),
+                        
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                        issueTableList.length > 0
+                            ? buttonWidget(context)
+                            : Container(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 

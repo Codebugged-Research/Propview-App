@@ -221,157 +221,179 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: isLoading
-          ? circularProgressWidget()
-          : LayoutBuilder(
-              builder: (context, constraints) => Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                            text: TextSpan(
-                                text: "Move In\n",
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .headline4
-                                    .copyWith(fontWeight: FontWeight.bold),
-                                children: [
-                              TextSpan(
-                                  text: "Inspection",
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: isLoading
+            ? circularProgressWidget()
+            : LayoutBuilder(
+                builder: (context, constraints) => Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                              text: TextSpan(
+                                  text: "Move In\n",
                                   style: Theme.of(context)
                                       .primaryTextTheme
-                                      .headline3
-                                      .copyWith(fontWeight: FontWeight.normal))
-                            ])),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02),
-                        titleWidget(context, 'Inspection'),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02),
-                        bills.length == 0
-                            ? Center(
-                                child: Text(
-                                  'Nothing to Inspect!!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle2,
-                                ),
-                              )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: bills.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return MoveInInspectionCard(
-                                    propertyElement: propertyElement,
-                                    billToProperty: bills[index],
-                                  );
-                                }),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
-                        subHeadingWidget(context, 'Tenant Details'),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02),
-                        tenants.length == 0
-                            ? Center(
-                                child: Text('No Tenant is found!',
+                                      .headline4
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                  children: [
+                                TextSpan(
+                                    text: "Inspection",
                                     style: Theme.of(context)
                                         .primaryTextTheme
-                                        .subtitle2
+                                        .headline3
                                         .copyWith(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600)),
+                                            fontWeight: FontWeight.normal))
+                              ])),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
+                          bills.length != 0
+                              ? titleWidget(context, 'Pending Biils')
+                              : Container(),
+                          bills.length != 0
+                              ? SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.02)
+                              : Container(),
+                          bills.length == 0
+                              ? Container()
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: bills.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return MoveInInspectionCard(
+                                      propertyElement: propertyElement,
+                                      billToProperty: bills[index],
+                                    );
+                                  }),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.04),
+                          subHeadingWidget(context, 'Tenant Details'),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
+                          tenants.length == 0
+                              ? Center(
+                                  child: Text('No Tenant is found!',
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle2
+                                          .copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600)),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: tenants.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return TenantWidget(
+                                      tenant: tenants[index],
+                                      index: index,
+                                      cstates: cstates,
+                                      cities: cities,
+                                    );
+                                  }),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.04),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Select/Add Room',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .headline6
+                                    .copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                              ),
+                              InkWell(
+                                child: Icon(Icons.add),
+                                onTap: () {
+                                  showRoomSelect();
+                                },
                               )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: tenants.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return TenantWidget(
-                                    tenant: tenants[index],
-                                    index: index,
-                                    cstates: cstates,
-                                    cities: cities,
-                                  );
-                                }),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            subHeadingWidget(context, 'Issues'),
-                            InkWell(
-                              child: Icon(Icons.add),
-                              onTap: () {
-                                showRoomSelect();
-                              },
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02),
-                        ListView.builder(
-                          itemBuilder: (context, index) {
-                            return issueCard(constraints, index);
-                          },
-                          itemCount: issueTableList.length,
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
-                        buttonWidget(context),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02,
-                        ),
-                      ],
+                            ],
+                          ),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
+                          ListView.builder(
+                            itemBuilder: (context, index) {
+                              return issueCard(constraints, index);
+                            },
+                            itemCount: issueTableList.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                          ),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.04),
+                          buttonWidget(context),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.add_event,
-        visible: true,
-        curve: Curves.bounceIn,
-        children: [
-          SpeedDialChild(
-              child: Icon(Icons.group, color: Colors.white),
-              backgroundColor: Color(0xff314B8C),
-              onTap: () {
-                Routing.makeRouting(context,
-                    routeMethod: 'push',
-                    newWidget: AddTenantFamilyScreen(
-                        propertyElement: propertyElement, tenants: tenants));
-              },
-              label: 'Tenant Family',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Color(0xff314B8C)),
-          SpeedDialChild(
-              child: Icon(Icons.person, color: Colors.white),
-              backgroundColor: Color(0xff314B8C),
-              onTap: () {
-                Routing.makeRouting(context,
-                    routeMethod: 'push',
-                    newWidget:
-                        AddTenantScreen(propertyElement: propertyElement));
-              },
-              label: 'Tenant',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Color(0xff314B8C)),
-        ],
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.add_event,
+          visible: true,
+          curve: Curves.bounceIn,
+          children: [
+            SpeedDialChild(
+                child: Icon(Icons.group, color: Colors.white),
+                backgroundColor: Color(0xff314B8C),
+                onTap: () {
+                  Routing.makeRouting(context,
+                      routeMethod: 'push',
+                      newWidget: AddTenantFamilyScreen(
+                          propertyElement: propertyElement, tenants: tenants));
+                },
+                label: 'Tenant Family',
+                labelStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 16.0),
+                labelBackgroundColor: Color(0xff314B8C)),
+            SpeedDialChild(
+                child: Icon(Icons.person, color: Colors.white),
+                backgroundColor: Color(0xff314B8C),
+                onTap: () {
+                  Routing.makeRouting(context,
+                      routeMethod: 'push',
+                      newWidget:
+                          AddTenantScreen(propertyElement: propertyElement));
+                },
+                label: 'Tenant',
+                labelStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 16.0),
+                labelBackgroundColor: Color(0xff314B8C)),
+          ],
+        ),
       ),
     );
   }
