@@ -11,8 +11,11 @@ import 'package:propview/config.dart';
 import 'package:propview/constants/uiContants.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/roomType.dart';
+import 'package:propview/services/roomService.dart';
+import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
@@ -48,6 +51,8 @@ class AddSubRoomScreen extends StatefulWidget {
 }
 
 class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
+  bool isLoading = false;
+
   Facility facilityDropDownValue;
   PropertyRoom roomTypeDropDownValue;
   PropertyRoom subRoomTypeDropDownValue;
@@ -55,8 +60,10 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   List<Facility> facilities = [];
   List<Facility> facilityTag = [];
   List<String> imageList;
+  List<RoomsToPropertyModel> rooms = [];
 
   List<PropertyRoom> roomTypes = [];
+  RoomType allRoomTypes;
   List<PropertyRoom> subRoomTypes = [];
 
   PropertyElement propertyElement;
@@ -85,6 +92,9 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
         roomTypes.add(element);
       }
     });
+
+    loadDataForScreen();
+
     roomTypeDropDownValue = widget.roomTypeDropDownValue == null
         ? roomTypes[0]
         : widget.roomTypeDropDownValue;
@@ -96,6 +106,29 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   addTag(Facility tag) {
     setState(() {
       facilityTag.add(tag);
+    });
+  }
+
+  loadDataForScreen() async {
+    setState(() {
+      isLoading = true;
+    });
+    rooms = await RoomService.getRoomByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
+    allRoomTypes = await RoomTypeService.getRoomTypes();
+    List<PropertyRoom> newRoomList = [];
+    for (int i = 0; i < rooms.length; i++) {
+      for (int j = 0; i < allRoomTypes.data.propertyRoom.length; i++) {
+        if (rooms[i].roomId == allRoomTypes.data.propertyRoom[j].roomId) {
+          newRoomList.add(allRoomTypes.data.propertyRoom[j]);
+        }
+      }
+    }
+
+    setState(() {
+      allRoomTypes.count = rooms.length;
+      allRoomTypes.data.propertyRoom = newRoomList;
+      isLoading = false;
     });
   }
 
