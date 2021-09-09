@@ -63,7 +63,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   List<RoomsToPropertyModel> rooms = [];
 
   List<PropertyRoom> roomTypes = [];
-  RoomType allRoomTypes;
+  List<PropertyRoom> allRoomTypes = [];
   List<PropertyRoom> subRoomTypes = [];
 
   PropertyElement propertyElement;
@@ -76,6 +76,19 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   @override
   void initState() {
     super.initState();
+    loadDataForScreen();
+  }
+
+  addTag(Facility tag) {
+    setState(() {
+      facilityTag.add(tag);
+    });
+  }
+
+  loadDataForScreen() async {
+    setState(() {
+      isLoading = true;
+    });
     propertyElement = widget.propertyElement;
     facilities = widget.facilities;
     imageList = widget.imageList;
@@ -92,42 +105,28 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
         roomTypes.add(element);
       }
     });
+    rooms = await RoomService.getRoomByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
+    allRoomTypes = widget.roomTypes;
+    List<PropertyRoom> newRoomList = [];
+    for (int i = 0; i < rooms.length; i++) {
+      for (int j = 0; j < allRoomTypes.length; j++) {
+        if (rooms[i].roomId == allRoomTypes[j].roomId) {
+          newRoomList.add(allRoomTypes[j]);
+        }
+      }
+    }
 
-    loadDataForScreen();
-
+    setState(() {
+      roomTypes = newRoomList;
+    });
     roomTypeDropDownValue = widget.roomTypeDropDownValue == null
         ? roomTypes[0]
         : widget.roomTypeDropDownValue;
     subRoomTypeDropDownValue = widget.subRoomTypeDropDownValue == null
         ? subRoomTypes[0]
         : widget.subRoomTypeDropDownValue;
-  }
-
-  addTag(Facility tag) {
     setState(() {
-      facilityTag.add(tag);
-    });
-  }
-
-  loadDataForScreen() async {
-    setState(() {
-      isLoading = true;
-    });
-    rooms = await RoomService.getRoomByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
-    allRoomTypes = await RoomTypeService.getRoomTypes();
-    List<PropertyRoom> newRoomList = [];
-    for (int i = 0; i < rooms.length; i++) {
-      for (int j = 0; i < allRoomTypes.data.propertyRoom.length; i++) {
-        if (rooms[i].roomId == allRoomTypes.data.propertyRoom[j].roomId) {
-          newRoomList.add(allRoomTypes.data.propertyRoom[j]);
-        }
-      }
-    }
-
-    setState(() {
-      allRoomTypes.count = rooms.length;
-      allRoomTypes.data.propertyRoom = newRoomList;
       isLoading = false;
     });
   }
@@ -138,7 +137,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
       appBar: AppBar(
         title: Text('Add Sub-Room'),
       ),
-      body: Container(
+      body: isLoading ? circularProgressWidget() : Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(

@@ -195,8 +195,14 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Status: ',
                         '${widget.taskElement.taskStatus}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(
+                     widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ?SizedBox(): SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                     widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? SizedBox() : titleWidget(
                       context,
                       'Property: ',
                       propName,

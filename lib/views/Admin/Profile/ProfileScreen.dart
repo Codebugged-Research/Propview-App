@@ -159,6 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('No image selected.\!');
     }
   }
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -266,6 +267,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Icons.call, () {}),
                   profileInfo(
                       'Email', '${user.officialEmail}', Icons.mail, () {}),
+                  loading ? circularProgressWidget() :profileInfo(
+                      'Export Attendance', 'Download', Icons.import_export,
+                      () async {
+                        setState(() {                          
+                        loading = true;
+                        });
+                    var responseMap =
+                        await AuthService.makeAuthenticatedRequest(
+                      AuthService.BASE_URI + 'api/attendance/export',
+                      body: jsonEncode({}),
+                      method: 'POST',
+                    );
+                    print(responseMap.body);
+                        setState(() {                          
+                        loading = false;
+                        });
+                    if (responseMap.statusCode == 200) {
+                     showInSnackBar(context, "File sent!", 800);
+                    }else{
+                     showInSnackBar(context, "File failed!", 800);
+                      
+                    }
+                  }),
                   profileInfo(
                       'Access Level',
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',

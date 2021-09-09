@@ -48,7 +48,7 @@ class PropertyService extends AuthService {
           await cacheData.getCacheData("getAllProperties" + offset.toString());
       DateTime lastCache =
           DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
-      if (DateTime.now().difference(lastCache).inDays > 7) {
+      if (DateTime.now().difference(lastCache).inDays > 1) {
         print("reset");
         cacheData.deleteCache("getAllProperties" + offset.toString());
         http.Response response = await AuthService.makeAuthenticatedRequest(
@@ -122,7 +122,7 @@ class PropertyService extends AuthService {
           .getCacheData("getAllPropertiesByUserId" + id.toString());
       DateTime lastCache =
           DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
-      if (DateTime.now().difference(lastCache).inDays > 30) {
+      if (DateTime.now().difference(lastCache).inDays > 1) {
         cacheData.deleteCache("getAllPropertiesByUserId" + id.toString());
         http.Response response = await AuthService.makeAuthenticatedRequest(
             AuthService.BASE_URI + 'api/properties/user/$id',
@@ -178,7 +178,7 @@ class PropertyService extends AuthService {
           await cacheData.getCacheData("getSocietyName" + id.toString());
       DateTime lastCache =
           DateTime.fromMillisecondsSinceEpoch(responseBody.syncTime);
-      if (DateTime.now().difference(lastCache).inDays > 30) {
+      if (DateTime.now().difference(lastCache).inDays > 1) {
         cacheData.deleteCache("getSocietyName" + id.toString());
         http.Response response = await AuthService.makeAuthenticatedRequest(
             AuthService.BASE_URI + 'api/property/society/$id',
