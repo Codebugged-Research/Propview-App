@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/Types/issueInspectionScreen.dart';
@@ -34,13 +38,45 @@ class _IssueInspectionLoaderScreenState
     try {
       data =
           prefs.getString("issue-${propertyElement.tableproperty.propertyId}");
-      Navigator.of(context).push(
-        MaterialPageRoute(
+       if (data == null) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
             builder: (context) => IssueInspectionScreen(
-                  propertyElement: propertyElement,
-                ),
-            settings: RouteSettings()),
-      );
+              propertyElement: propertyElement,
+            ),
+          ),
+        );
+        print("use cache Data but no --------------------------");
+      } else {
+        var tempData = jsonDecode(data);
+        List<List<Issue>> rows = [];
+        for (int i = 0; i < tempData["rows"].length; i++) {
+          rows.add([]);
+          for (int j = 0; j < tempData["rows"][i].length; j++) {
+            rows[j].add(
+              Issue(
+                issueName: tempData["rows"][i][j]['issue_name'],
+                status: tempData["rows"][i][j]['status'],
+                remarks: tempData["rows"][i][j]['remarks'],
+                photo: tempData["rows"][i][j]['photo'].cast<String>()
+              )
+            );
+          }
+        }
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => IssueInspectionScreen(
+              propertyElement: propertyElement,
+              rows: rows,
+              issueTableList: tempData["issueTableList"]
+                  .map<IssueTableData>(
+                      (issueTableMap) => IssueTableData.fromJson(issueTableMap))
+                  .toList(),
+            ),
+          ),
+        );
+        print("use cache Data --------------------------");
+      }
     } catch (e) {
       Navigator.of(context).push(
         MaterialPageRoute(

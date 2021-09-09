@@ -61,6 +61,12 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     loadDataForScreen();
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+    print("exit");
+  }
+
   List<RegularInspectionRow> regularInspectionRowList = [];
 
   loadDataForScreen() async {

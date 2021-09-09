@@ -1,7 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:propview/models/BillToProperty.dart';
+import 'package:propview/models/Inspection.dart';
+import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
@@ -48,18 +52,39 @@ class _FullInspectionLoaderScreenState
         print("use cache Data but no --------------------------");
       } else {
         var tempData = jsonDecode(data);
-        print(tempData["imageList"]);
+        List<List<Issue>> rows = [];
+        for (int i = 0; i < tempData["rows"].length; i++) {
+          rows.add([]);
+          for (int j = 0; j < tempData["rows"][i].length; j++) {
+            rows[j].add(
+              Issue(
+                issueName: tempData["rows"][i][j]['issue_name'],
+                status: tempData["rows"][i][j]['status'],
+                remarks: tempData["rows"][i][j]['remarks'],
+                photo: tempData["rows"][i][j]['photo'].cast<String>()
+              )
+            );
+          }
+        }
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => FullInspectionScreen(
               propertyElement: propertyElement,
-              imageList: tempData["imageList"],
+              bills: tempData["bills"]
+                  .map<BillToProperty>((bill) => BillToProperty.fromJson(bill))
+                  .toList(),
+              rows: rows,
+              issueTableList: tempData["issueTableList"]
+                  .map<IssueTableData>(
+                      (issueTableMap) => IssueTableData.fromJson(issueTableMap))
+                  .toList(),
             ),
           ),
         );
         print("use cache Data --------------------------");
       }
     } catch (e) {
+      print(e);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => FullInspectionScreen(

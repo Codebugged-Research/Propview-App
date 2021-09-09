@@ -37,10 +37,8 @@ class IssueInspectionScreen extends StatefulWidget {
   final List<String> imageList;
   final int index1;
   final int index2;
-  final Inspection inspection;
 
   IssueInspectionScreen({
-    this.inspection,
     this.propertyElement,
     this.rows,
     this.issueTableList,
@@ -578,7 +576,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       "imageList": list,
                       "index1": index1,
                       "index2": index2,
-                      "inspection": inspection,
                       "rows": rows,
                       "issueTableList": issueTableList
                     }).toString();
@@ -592,7 +589,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                         imageList: list,
                         index1: index1,
                         index2: index2,
-                        inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
                         issueTableList: issueTableList,

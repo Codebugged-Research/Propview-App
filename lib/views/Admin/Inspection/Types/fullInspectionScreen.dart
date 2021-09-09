@@ -41,11 +41,9 @@ class FullInspectionScreen extends StatefulWidget {
   final List<String> imageList;
   final int index1;
   final int index2;
-  final Inspection inspection;
   List<BillToProperty> bills;
 
   FullInspectionScreen({
-    this.inspection,
     this.bills,
     this.propertyElement,
     this.rows,
@@ -108,6 +106,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       issueTableList =
           widget.issueTableList != null ? widget.issueTableList : [];
       rows[widget.index1][widget.index2].photo = widget.imageList;
+    }else {
+      rows = widget.rows;
+      issueTableList = widget.issueTableList;
     }
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
@@ -615,7 +616,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       "index1": index1,
                       "index2": index2,
                       "bills": bills,
-                      "inspection": inspection,
                       "rows": rows,
                       "issueTableList": issueTableList
                     }).toString();
@@ -630,7 +630,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         index1: index1,
                         index2: index2,
                         bills: bills,
-                        inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
                         issueTableList: issueTableList,

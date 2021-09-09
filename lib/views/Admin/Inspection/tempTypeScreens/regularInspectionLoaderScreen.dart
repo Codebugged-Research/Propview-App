@@ -31,14 +31,14 @@ class _RegularInspectionLoaderScreenState
   loadDataForScreen() async {
     prefs = await SharedPreferences.getInstance();
     try {
-      data =
-          prefs.getString("regular-${propertyElement.tableproperty.propertyId}");
+      // data = prefs
+      //     .getString("regular-${propertyElement.tableproperty.propertyId}");
       Navigator.of(context).push(
         MaterialPageRoute(
-            builder: (context) => RegularInspectionScreen(
-                  propertyElement: propertyElement,
-                ),
-            settings: RouteSettings()),
+          builder: (context) => RegularInspectionScreen(
+            propertyElement: propertyElement,
+          ),
+        ),
       );
     } catch (e) {
       Navigator.of(context).push(

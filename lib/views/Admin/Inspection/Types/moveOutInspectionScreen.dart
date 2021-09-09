@@ -46,11 +46,9 @@ class MoveOutInspectionScreen extends StatefulWidget {
   final List<String> imageList;
   final int index1;
   final int index2;
-  final Inspection inspection;
   List<BillToProperty> bills;
 
   MoveOutInspectionScreen({
-    this.inspection,
     this.bills,
     this.propertyElement,
     this.rows,
@@ -616,8 +614,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                       "imageList": list,
                       "index1": index1,
                       "index2": index2,
-                      bills: bills,
-                      "inspection": inspection,
+                      "bills": bills,
                       "rows": rows,
                       "issueTableList": issueTableList
                     }).toString();
@@ -632,7 +629,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                         index1: index1,
                         index2: index2,
                         bills: bills,
-                        inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
                         issueTableList: issueTableList,

@@ -51,11 +51,9 @@ class MoveInInspectionScreen extends StatefulWidget {
   final List<String> imageList;
   final int index1;
   final int index2;
-  final Inspection inspection;
   List<BillToProperty> bills;
 
   MoveInInspectionScreen({
-    this.inspection,
     this.bills,
     this.propertyElement,
     this.rows,
@@ -655,8 +653,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                       "imageList": list,
                       "index1": index1,
                       "index2": index2,
-                      bills: bills,
-                      "inspection": inspection,
+                      "bills": bills,
                       "rows": rows,
                       "issueTableList": issueTableList
                     }).toString();
@@ -671,7 +668,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                         index1: index1,
                         index2: index2,
                         bills: bills,
-                        inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
                         issueTableList: issueTableList,
