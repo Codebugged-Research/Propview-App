@@ -23,7 +23,6 @@ class CaptureScreenMoveIn extends StatefulWidget {
   final List<List<Issue>> rows;
   List<BillToProperty> bills = [];
   final List<IssueTableData> issueTableList;
-  final Inspection inspection;
 
   CaptureScreenMoveIn({
     this.imageList,
@@ -31,7 +30,6 @@ class CaptureScreenMoveIn extends StatefulWidget {
     this.index1,
     this.index2,
     this.bills,
-    this.inspection,
     this.rows,
     this.issueTableList,
   });
@@ -99,7 +97,6 @@ class _CaptureScreenMoveInState extends State<CaptureScreenMoveIn>
           index1: widget.index1,
           index2: widget.index2,
           bills: widget.bills,
-          inspection: widget.inspection,
           propertyElement: widget.propertyElement,
           rows: widget.rows,
           issueTableList: widget.issueTableList,

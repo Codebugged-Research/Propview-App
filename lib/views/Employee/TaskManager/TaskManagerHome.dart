@@ -7,6 +7,7 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
 import 'package:propview/views/Employee/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Employee/TaskManager/createTaskScreen.dart';
 import 'package:propview/views/Employee/widgets/taskCard.dart';
@@ -42,16 +43,15 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     });
     user = await UserService.getUser();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-    taskData = await TaskService.getAllTaskByUserId(user.userId);
-    for (int i = 0; i < taskData.data.task.length; i++) {
-      if (taskData.data.task[i].taskStatus == "Pending") {
-        pendingTaskList.add(taskData.data.task[i]);
-      } else if (taskData.data.task[i].taskStatus == "Completed") {
-        completedTaskList.add(taskData.data.task[i]);
-      } else if (taskData.data.task[i].taskStatus == "Unapproved") {
-        unApprovedTaskList.add(taskData.data.task[i]);
-      }
-    }
+    pendingTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Pending");
+    List<TaskElement> tempList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Rejected");
+    pendingTaskList.addAll(tempList);
+    unApprovedTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
+    completedTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
     setState(() {
       loading = false;
     });
@@ -79,6 +79,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(),
+                          ),
+                        );
+                      },
                       leading: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 30,

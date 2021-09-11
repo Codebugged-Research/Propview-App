@@ -26,8 +26,9 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../config.dart';
+import 'package:propview/config.dart';
 
 class IssueInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -36,10 +37,8 @@ class IssueInspectionScreen extends StatefulWidget {
   final List<String> imageList;
   final int index1;
   final int index2;
-  final Inspection inspection;
 
   IssueInspectionScreen({
-    this.inspection,
     this.propertyElement,
     this.rows,
     this.issueTableList,
@@ -54,6 +53,7 @@ class IssueInspectionScreen extends StatefulWidget {
 
 class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   Inspection inspection;
+  SharedPreferences prefs;
 
   PropertyElement propertyElement;
   List<RoomsToPropertyModel> rooms = [];
@@ -70,7 +70,12 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   @override
   void initState() {
     super.initState();
+    initialiseSharedPreference();
     getData();
+  }
+
+  initialiseSharedPreference() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   double dummyDouble = 0.0;
@@ -141,73 +146,89 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(),
-      body: loader
-          ? circularProgressWidget()
-          : LayoutBuilder(
-              builder: (context, constraints) => SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      RichText(
-                          text: TextSpan(
-                              text: "Issue Based\n",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline4
-                                  .copyWith(fontWeight: FontWeight.bold),
-                              children: [
-                            TextSpan(
-                                text: "Inspection",
+    return WillPopScope(
+      onWillPop: ()async{
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        return true;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(),
+        body: loader
+            ? circularProgressWidget()
+            : LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                                text: "Issue Based\n",
                                 style: Theme.of(context)
                                     .primaryTextTheme
-                                    .headline3
-                                    .copyWith(fontWeight: FontWeight.normal))
-                          ])),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          titleWidget(context, 'Issues'),
-                          InkWell(
-                            child: Icon(Icons.add),
-                            onTap: () {
-                              showRoomSelect();
-                            },
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
-                      ListView.builder(
-                        itemBuilder: (context, index) {
-                          return issueCard(constraints, index);
-                        },
-                        itemCount: issueTableList.length,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      issueTableList.length > 0
-                          ? buttonWidget(context)
-                          : Container(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                    ],
+                                    .headline4
+                                    .copyWith(fontWeight: FontWeight.bold),
+                                children: [
+                              TextSpan(
+                                  text: "Inspection",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline3
+                                      .copyWith(fontWeight: FontWeight.normal))
+                            ])),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.04),
+                        ListView.builder(
+                          itemBuilder: (context, index) {
+                            return issueCard(constraints, index);
+                          },
+                          itemCount: issueTableList.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                        ),
+                            SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Select/Add Room',
+                              style: Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline6
+                                  .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
+                            ),
+                            InkWell(
+                              child: Icon(Icons.add),
+                              onTap: () {
+                                showRoomSelect();
+                              },
+                            )
+                          ],
+                        ),
+                        
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                        issueTableList.length > 0
+                            ? buttonWidget(context)
+                            : Container(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
@@ -551,6 +572,16 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                     inspection = Inspection(
                       inspectType: "Full Inspection",
                     );
+                    var issueInspectionCacheData = json.encode({
+                      "imageList": list,
+                      "index1": index1,
+                      "index2": index2,
+                      "rows": rows,
+                      "issueTableList": issueTableList
+                    }).toString();
+                    prefs.setString(
+                        "issue-${propertyElement.tableproperty.propertyId}",
+                        issueInspectionCacheData);
                     Routing.makeRouting(
                       context,
                       routeMethod: 'pushReplacement',
@@ -558,7 +589,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                         imageList: list,
                         index1: index1,
                         index2: index2,
-                        inspection: inspection,
                         propertyElement: widget.propertyElement,
                         rows: rows,
                         issueTableList: issueTableList,
@@ -585,12 +615,19 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   }
 
   Widget titleWidget(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(context)
-          .primaryTextTheme
-          .subtitle1
-          .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xff314B8C).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Text(
+        title,
+        style: Theme.of(context)
+            .primaryTextTheme
+            .headline6
+            .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+      ),
     );
   }
 

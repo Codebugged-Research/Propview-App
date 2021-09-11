@@ -1,4 +1,4 @@
-import 'dart:convert';
+ import 'dart:convert';
 
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -30,7 +30,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
-    checkversion();
+    checkVersion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       showDialog(
@@ -47,7 +47,7 @@ class _LandingScreenState extends State<LandingScreen> {
     _selectedIndex = widget.selectedIndex;
   }
 
-  checkversion() async {
+  checkVersion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
     var responseMap = jsonDecode(getVersion);
     if (responseMap != Config.APP_VERISON) {
@@ -120,15 +120,11 @@ class _LandingScreenState extends State<LandingScreen> {
     return scheduledTime;
   }
 
-//*
-
-  // static const TextStyle optionStyle =
-  //     TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     TaskMangerHome(),
     AttendanceHome(),
-    ProfileScreen(),
+    // ProfileScreen(),
   ];
 
   @override
@@ -178,10 +174,10 @@ class _LandingScreenState extends State<LandingScreen> {
                   icon: Icons.fact_check,
                   text: 'Attendance',
                 ),
-                GButton(
-                  icon: Icons.person,
-                  text: 'Profile',
-                ),
+                // GButton(
+                //   icon: Icons.person,
+                //   text: 'Profile',
+                // ),
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) {

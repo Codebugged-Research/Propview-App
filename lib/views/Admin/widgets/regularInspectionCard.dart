@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiContants.dart';
-import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/inspectionHistoryDetailsScreen.dart';
+import 'package:propview/views/Admin/Inspection/regularInspectionDetailsScreen.dart';
 
-class InspectionCard extends StatelessWidget {
-  final Inspection inspection;
+class RegularInspectionCard extends StatelessWidget {
+  final RegularInspection regularInspection;
   final PropertyElement propertyElement;
 
-  InspectionCard({this.inspection, this.propertyElement});
+  RegularInspectionCard({this.regularInspection, this.propertyElement});
 
   getDate(DateTime date) {
     return date.day.toString().padLeft(2, "0") +
@@ -29,7 +29,8 @@ class InspectionCard extends StatelessWidget {
       onTap: () {
         Routing.makeRouting(context,
             routeMethod: 'push',
-            newWidget: InspectionHistoryDetailsScreen(inspection: inspection));
+            newWidget: RegularInspectionDetailsScreen(
+                regularInspection: regularInspection));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -105,27 +106,6 @@ class InspectionCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Text('Inspection Type: ',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w800)),
-                        Text(inspection.inspectType,
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500))
-                      ],
-                    ),
-                    SizedBox(
-                      height: UIConstants.fitToHeight(2, context),
-                    ),
-                    Row(
-                      children: [
                         Text('Inspection Date: ',
                             style: Theme.of(context)
                                 .primaryTextTheme
@@ -133,7 +113,7 @@ class InspectionCard extends StatelessWidget {
                                 .copyWith(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w800)),
-                        Text('${getDate(inspection.createdAt)}',
+                        Text('${getDate(regularInspection.createdAt)}',
                             style: Theme.of(context)
                                 .primaryTextTheme
                                 .subtitle1
@@ -150,5 +130,6 @@ class InspectionCard extends StatelessWidget {
         ),
       ),
     );
+    ;
   }
 }

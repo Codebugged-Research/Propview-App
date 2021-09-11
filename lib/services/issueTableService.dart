@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:propview/models/Issue.dart';
+import 'package:propview/models/issueTable.dart';
 import 'package:propview/services/authService.dart';
 
 class IssueTableService extends AuthService {
@@ -18,14 +19,14 @@ class IssueTableService extends AuthService {
     }
   }
 
-  static Future<Issue> getIssueTableById(var issueId) async {
+  static Future<IssueTable> getIssueTableById(var issueId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/issue/table/get/$issueId',
       method: 'GET',
     );
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
-      Issue issue = responseMap["data"];
+      IssueTable issue = IssueTable.fromJson(responseMap);
       return issue;
     } else {
       print("Not working!");

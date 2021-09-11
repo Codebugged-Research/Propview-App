@@ -195,8 +195,14 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Status: ',
                         '${widget.taskElement.taskStatus}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(
+                     widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ?SizedBox(): SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                     widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? SizedBox() : titleWidget(
                       context,
                       'Property: ',
                       propName,
@@ -210,7 +216,17 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Description: ',
                         '${widget.taskElement.taskDesc}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),                    
+                    widget.taskElement.taskStatus == "Pending" ||
+                            widget.taskElement.taskStatus == "Rejected"
+                        ? Container()
+                        : titleWidget(context, 'Task Update Time: ',
+                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}'),
+                    widget.taskElement.taskStatus == "Pending" ||
+                            widget.taskElement.taskStatus == "Rejected"
+                        ? Container()
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Start Time: ',
                         '${dateTimeFormatter(widget.taskElement.startDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -398,6 +414,7 @@ class _TaskCardState extends State<TaskCard> {
                                               setState(() {
                                                 widget.taskElement.taskStatus =
                                                     "Unapproved";
+                                                        widget.taskElement.updatedAt = DateTime.now();
                                               });
                                               var response =
                                                   await TaskService.updateTask(
@@ -566,6 +583,7 @@ class _TaskCardState extends State<TaskCard> {
                                                     widget.taskElement
                                                             .taskStatus =
                                                         "Completed";
+                                                        widget.taskElement.updatedAt = DateTime.now();
                                                   });
                                                   var response =
                                                       await TaskService
@@ -689,6 +707,7 @@ class _TaskCardState extends State<TaskCard> {
                                                     widget.taskElement
                                                             .taskStatus =
                                                         "Rejected";
+                                                        widget.taskElement.updatedAt = DateTime.now();
                                                   });
                                                   var response =
                                                       await TaskService

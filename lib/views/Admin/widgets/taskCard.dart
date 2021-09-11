@@ -82,8 +82,14 @@ class _TaskCardState extends State<TaskCard> {
               decoration: BoxDecoration(
                 border: Border(
                   left: widget.taskElement.taskStatus == "Rejected"
-                      ? BorderSide(width: 4.0, color: Colors.red, )
-                      : BorderSide(width: 4.0, color: Colors.white,),
+                      ? BorderSide(
+                          width: 4.0,
+                          color: Colors.red,
+                        )
+                      : BorderSide(
+                          width: 4.0,
+                          color: Colors.white,
+                        ),
                 ),
               ),
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
@@ -200,8 +206,14 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Status: ',
                         '${widget.taskElement.taskStatus}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(
+                    widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ?SizedBox(): SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                     widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? SizedBox() : titleWidget(
                       context,
                       'Property: ',
                       propName,
@@ -216,6 +228,16 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(context, 'Task Description: ',
                         '${widget.taskElement.taskDesc}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    widget.taskElement.taskStatus == "Pending" ||
+                            widget.taskElement.taskStatus == "Rejected"
+                        ? Container()
+                        : titleWidget(context, 'Task Update Time: ',
+                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}'),
+                    widget.taskElement.taskStatus == "Pending" ||
+                            widget.taskElement.taskStatus == "Rejected"
+                        ? Container()
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Start Time: ',
                         '${dateTimeFormatter(widget.taskElement.startDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -225,79 +247,102 @@ class _TaskCardState extends State<TaskCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/house.png",
-                                    height: 35,
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : InkWell(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          "assets/house.png",
+                                          height: 35,
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "Property\ndetails",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Property\ndetails",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PropertyDetailScreen(
-                                  propertyId: widget.taskElement.propertyRef,
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PropertyDetailScreen(
+                                        propertyId:
+                                            widget.taskElement.propertyRef,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container()  : InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/owner.png",
-                                    height: 35,
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : InkWell(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          "assets/owner.png",
+                                          height: 35,
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "Property\nOwner details",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Property\nOwner details",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PropertyOwnerDetailScreen(
-                                  propertyOwnerId:
-                                      widget.taskElement.propertyOwnerRef,
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PropertyOwnerDetailScreen(
+                                        propertyOwnerId:
+                                            widget.taskElement.propertyOwnerRef,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        widget.taskElement.category == "Propdial Office Work" || widget.taskElement.category == "Other Executive Work"  ? Container() : SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
+                        widget.taskElement.category == "Propdial Office Work" ||
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
+                            ? Container()
+                            : SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
                         InkWell(
                           child: Card(
                             elevation: 2,
@@ -338,7 +383,8 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.currentUser.userId.toString() ==
                             widget.taskElement.assignedTo
-                        ? widget.taskElement.taskStatus == "Pending" || widget.taskElement.taskStatus == "Rejected"
+                        ? widget.taskElement.taskStatus == "Pending" ||
+                                widget.taskElement.taskStatus == "Rejected"
                             ? Align(
                                 alignment: Alignment.center,
                                 child: MaterialButton(
@@ -379,6 +425,7 @@ class _TaskCardState extends State<TaskCard> {
                                               setState(() {
                                                 widget.taskElement.taskStatus =
                                                     "Unapproved";
+                                                        widget.taskElement.updatedAt = DateTime.now();
                                               });
                                               var response =
                                                   await TaskService.updateTask(
@@ -413,22 +460,22 @@ class _TaskCardState extends State<TaskCard> {
                                                               .parentId !=
                                                           "") {
                                                     for (int i = 0;
-                                                    i <
-                                                        widget
-                                                            .taskElement
-                                                            .tblUsers
-                                                            .parentId
-                                                            .split(",")
-                                                            .length;
-                                                    i++) {
+                                                        i <
+                                                            widget
+                                                                .taskElement
+                                                                .tblUsers
+                                                                .parentId
+                                                                .split(",")
+                                                                .length;
+                                                        i++) {
                                                       var managerToken =
-                                                      await UserService
-                                                          .getDeviceToken(
-                                                          widget
-                                                              .taskElement
-                                                              .tblUsers
-                                                              .parentId
-                                                              .split(",")[i]);
+                                                          await UserService
+                                                              .getDeviceToken(widget
+                                                                  .taskElement
+                                                                  .tblUsers
+                                                                  .parentId
+                                                                  .split(
+                                                                      ",")[i]);
                                                       NotificationService
                                                           .sendPushToOne(
                                                         "Task Submitted",
@@ -499,7 +546,7 @@ class _TaskCardState extends State<TaskCard> {
                     //             widget.currentUser.userId.toString() ==
                     //                 widget.taskElement.tblUsers.parentId
                     //                     .toString() ||
-                            widget.currentUser.userType == "admin" ||
+                    widget.currentUser.userType == "admin" ||
                             widget.currentUser.userType == "super_admin"
                         ? widget.taskElement.taskStatus == "Unapproved"
                             ? Row(
@@ -548,6 +595,7 @@ class _TaskCardState extends State<TaskCard> {
                                                     widget.taskElement
                                                             .taskStatus =
                                                         "Completed";
+                                                        widget.taskElement.updatedAt = DateTime.now();
                                                   });
                                                   var response =
                                                       await TaskService
@@ -670,7 +718,8 @@ class _TaskCardState extends State<TaskCard> {
                                                   setState(() {
                                                     widget.taskElement
                                                             .taskStatus =
-                                                        "Rejected";
+                                                        "Rejected";                                                        
+                                                        widget.taskElement.updatedAt = DateTime.now();
                                                   });
                                                   var response =
                                                       await TaskService

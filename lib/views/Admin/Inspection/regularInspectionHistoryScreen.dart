@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Property.dart';
-import 'package:propview/services/inspectionService.dart';
+import 'package:propview/models/RegularInspection.dart';
+import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/widgets/inspectionCard.dart';
+import 'package:propview/views/Admin/widgets/regularInspectionCard.dart';
 
-class InspectionHistoryScreen extends StatefulWidget {
-  InspectionHistoryScreen({this.propertyElement});
-
+class RegularInspectionHistoryScreen extends StatefulWidget {
   final PropertyElement propertyElement;
 
+  RegularInspectionHistoryScreen({this.propertyElement});
+
   @override
-  _InspectionHistoryScreenState createState() =>
-      _InspectionHistoryScreenState();
+  _RegularInspectionHistoryScreenState createState() =>
+      _RegularInspectionHistoryScreenState();
 }
 
-class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
-  List<Inspection> inspections = [];
-  bool isLoading = false;
+class _RegularInspectionHistoryScreenState
+    extends State<RegularInspectionHistoryScreen> {
   PropertyElement propertyElement;
+  List<RegularInspection> regularInspection;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -31,8 +33,9 @@ class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
     setState(() {
       isLoading = true;
     });
-    inspections = await InspectionService.getInspectionByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
+    regularInspection =
+        await RegularInspectionService.getRegularInspectionByPropertyId(
+            propertyElement.tableproperty.propertyId.toString());
     setState(() {
       isLoading = false;
     });
@@ -46,10 +49,10 @@ class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
           : Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: inspections.isEmpty
+              child: regularInspection.isEmpty
                   ? Center(
                       child: Text(
-                        'No Inspection Found!!',
+                        'No Regular Inspection Found!!',
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle1
@@ -60,15 +63,13 @@ class _InspectionHistoryScreenState extends State<InspectionHistoryScreen> {
                     )
                   : ListView.builder(
                       shrinkWrap: true,
-                      itemCount: inspections.length,
+                      itemCount: regularInspection.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return InspectionCard(
-                          inspection: inspections[index],
+                        return RegularInspectionCard(
+                          regularInspection: regularInspection[index],
                           propertyElement: propertyElement,
                         );
-                      },
-                    ),
-            ),
+                      })),
     );
   }
 }

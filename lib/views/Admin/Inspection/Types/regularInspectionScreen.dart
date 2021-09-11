@@ -61,6 +61,12 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     loadDataForScreen();
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+    print("exit");
+  }
+
   List<RegularInspectionRow> regularInspectionRowList = [];
 
   loadDataForScreen() async {
@@ -121,91 +127,99 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     return room.roomName;
   }
 
-  List<List<RegularInspectionRow>> rows = [];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) => Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      text: "Regular\n",
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .headline4
-                          .copyWith(fontWeight: FontWeight.bold),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: LayoutBuilder(
+          builder: (context, constraints) => Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: "Regular\n",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .headline4
+                            .copyWith(fontWeight: FontWeight.bold),
+                        children: [
+                          TextSpan(
+                            text: "Inspection",
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .headline3
+                                .copyWith(
+                                  fontWeight: FontWeight.normal,
+                                ),
+                          )
+                        ],
+                      ),
+                    ),
+                    bills.length != 0
+                        ? titleWidget(context, 'Pending Biils')
+                        : Container(),
+                    bills.length != 0
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02)
+                        : Container(),
+                    bills.length == 0
+                        ? Container()
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: bills.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return FullInspectionCard(
+                                propertyElement: propertyElement,
+                                billToProperty: bills[index],
+                              );
+                            }),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextSpan(
-                          text: "Inspection",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .headline3
-                              .copyWith(
-                                fontWeight: FontWeight.normal,
-                              ),
+                        Text(
+                              'Select/Add Room',
+                              style: Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline6
+                                  .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
+                            ),
+                        InkWell(
+                          child: Icon(Icons.add),
+                          onTap: () {
+                            showRoomSelect();
+                          },
                         )
                       ],
                     ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      titleWidget(context, 'Bills'),
-                    ],
-                  ),
-                  bills.length == 0
-                      ? Center(
-                          child: Text(
-                            'Nothing to Inspect!!',
-                            style: Theme.of(context).primaryTextTheme.subtitle2,
-                          ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: bills.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return FullInspectionCard(
-                              propertyElement: propertyElement,
-                              billToProperty: bills[index],
-                            );
-                          }),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      titleWidget(context, 'Issues'),
-                      InkWell(
-                        child: Icon(Icons.add),
-                        onTap: () {
-                          showRoomSelect();
-                        },
-                      )
-                    ],
-                  ),
-                  ListView.builder(
-                      itemCount: regularInspectionRowList.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return inspectionCard(constraints, index);
-                      }),
-                  regularInspectionRowList.length > 0
-                      ? buttonWidget(context)
-                      : Container(),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                ],
+                    ListView.builder(
+                        itemCount: regularInspectionRowList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return inspectionCard(constraints, index);
+                        }),
+                    regularInspectionRowList.length > 0
+                        ? buttonWidget(context)
+                        : Container(),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                  ],
+                ),
               ),
             ),
           ),
@@ -216,152 +230,110 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
 
   inspectionCard(constraints, index) {
     return SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            Text(
-              regularInspectionRowList[index].roomsubroomName,
-              style: Theme.of(context)
-                  .primaryTextTheme
-                  .headline5
-                  .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: constraints.minWidth),
-                child: DataTable(
-                  dataRowHeight: 80,
-                  dividerThickness: 2,
-                  columns: [
-                    DataColumn(
-                        label: Text("Termite Issue",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                    DataColumn(
-                        label: Text("Seepage Check",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                    DataColumn(
-                        label: Text("General Cleanliness",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
-                    DataColumn(
-                        label: Text("Other Issues",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle2
-                                .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black))),
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          Text(
+            regularInspectionRowList[index].roomsubroomName,
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.minWidth),
+              child:
+                  DataTable(dataRowHeight: 80, dividerThickness: 2, columns: [
+                DataColumn(
+                    label: Text("Termite Issue",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Seepage Check",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("General Cleanliness",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Other Issues",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+              ], rows: [
+                DataRow(
+                  cells: [
+                    DataCell(TextFormField(
+                      initialValue:
+                          regularInspectionRowList[index].termiteCheck,
+                      onChanged: (value) {
+                        setState(() {
+                          regularInspectionRowList[index].termiteCheck = value;
+                        });
+                      },
+                    )),
+                    DataCell(TextFormField(
+                      initialValue:
+                          regularInspectionRowList[index].seepageCheck,
+                      onChanged: (value) {
+                        setState(() {
+                          regularInspectionRowList[index].seepageCheck = value;
+                        });
+                      },
+                    )),
+                    DataCell(
+                      TextFormField(
+                        initialValue:
+                            regularInspectionRowList[index].generalCleanliness,
+                        onChanged: (value) {
+                          setState(() {
+                            regularInspectionRowList[index].generalCleanliness =
+                                value;
+                          });
+                        },
+                      ),
+                    ),
+                    DataCell(
+                      TextFormField(
+                        initialValue:
+                            regularInspectionRowList[index].otherIssue,
+                        onChanged: (value) {
+                          setState(() {
+                            regularInspectionRowList[index].otherIssue = value;
+                          });
+                        },
+                      ),
+                    ),
                   ],
-                  rows: rows[index]
-                      .asMap()
-                      .entries
-                      .map(
-                        (e) => DataRow(
-                          cells: [
-                            DataCell(TextFormField(
-                              initialValue: e.value.termiteCheck,
-                              onChanged: (value) {
-                                setState(() {
-                                  e.value.termiteCheck = value;
-                                });
-                              },
-                            )),
-                            DataCell(TextFormField(
-                              initialValue: e.value.seepageCheck,
-                              onChanged: (value) {
-                                setState(() {
-                                  e.value.seepageCheck = value;
-                                });
-                              },
-                            )),
-                            DataCell(
-                              TextFormField(
-                                initialValue: e.value.generalCleanliness,
-                                onChanged: (value) {
-                                  setState(() {
-                                    e.value.generalCleanliness = value;
-                                  });
-                                },
-                              ),
-                            ),
-                            DataCell(
-                              TextFormField(
-                                initialValue: e.value.otherIssue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    e.value.otherIssue = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
+                )
+              ]),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  color: Colors.blueAccent,
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      // photoList.add([]);
-                      rows[index].add(
-                        RegularInspectionRow(
-                          termiteCheck: "",
-                          seepageCheck: "",
-                          generalCleanliness: "",
-                          otherIssue: "",
-                        ),
-                      );
-                    });
-                  },
-                ),
-                IconButton(
-                  color: Colors.redAccent,
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    setState(() {
-                      rows[index].removeLast();
-                    });
-                  },
-                ),
-                IconButton(
-                  color: Colors.green,
-                  icon: Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {
-                      rows[index].clear();
-                    });
-                  },
-                ),
-              ],
-            )
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   showRoomSelect() {
@@ -417,7 +389,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       roomsubroomName: selectedRoomSubRoom.roomSubRoomName,
                       createdAt: DateTime.now(),
                     ));
-                    rows.add([]);
                   });
                   Routing.makeRouting(context, routeMethod: 'pop');
                 },
@@ -437,37 +408,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
           .primaryTextTheme
           .subtitle1
           .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
-    );
-  }
-
-  Widget inputWidget(object) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            object = value;
-          });
-        },
-        obscureText: false,
-        keyboardType: TextInputType.number,
-        textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[300],
-          labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-        ),
-      ),
     );
   }
 

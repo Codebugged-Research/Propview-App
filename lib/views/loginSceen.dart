@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
           showInSnackBar(context, 'Check notification settings', 2500);
         }
       } else {
-        showInSnackBar(context, 'Authentication Denied!', 2500);
+        showInSnackBar(context, 'Wrong Email or Password!', 2500);
         AuthService.clearAuth();
       }
     } else {
@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              formheaderWidget(context, 'Email/Username'),
+              formheaderWidget(context, 'Email/Phone Number'),
               inputEmailWidget(
                   emailController, "Please Enter your Email", false, (value) {
                 email = value;

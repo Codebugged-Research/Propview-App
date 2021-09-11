@@ -8,7 +8,12 @@ import 'package:propview/views/Admin/Inspection/Types/moveInInspectionScreen.dar
 import 'package:propview/views/Admin/Inspection/Types/moveOutInspectionScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/propertyStructureScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/regularInspectionScreen.dart';
-import 'package:propview/views/Admin/Inspection/inspectionHistoryScreen.dart';
+import 'package:propview/views/Admin/Inspection/historyScreen.dart';
+import 'package:propview/views/Admin/Inspection/tempTypeScreens/fullInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/tempTypeScreens/issueInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/tempTypeScreens/moveInInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/tempTypeScreens/moveOutInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/tempTypeScreens/regularInspectionLoaderScreen.dart';
 
 class InspectionHomeScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -38,8 +43,7 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
               onPressed: () {
                 Routing.makeRouting(context,
                     routeMethod: 'push',
-                    newWidget: InspectionHistoryScreen(
-                        propertyElement: propertyElement));
+                    newWidget: HistoryScreen(propertyElement: propertyElement));
               },
               icon: Icon(
                 Icons.history,
@@ -68,43 +72,61 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
                     children: [
                       metricCard('property_structure',
                           'Property Structure Determination', onTap: () {
-                        Routing.makeRouting(context,
-                            routeMethod: 'push',
-                            newWidget: PropertyStructureScreen(
-                                propertyElement: propertyElement));
+                        Routing.makeRouting(
+                          context,
+                          routeMethod: 'push',
+                          newWidget: PropertyStructureScreen(
+                            propertyElement: propertyElement,
+                          ),
+                        );
                       }),
                       metricCard('full_inspection', 'Full Inspection',
                           onTap: () {
-                        Routing.makeRouting(context,
-                            routeMethod: 'push',
-                            newWidget: FullInspectionScreen(
-                                propertyElement: propertyElement));
+                        Routing.makeRouting(
+                          context,
+                          routeMethod: 'push',
+                          newWidget: FullInspectionLoaderScreen(
+                            propertyElement: propertyElement,
+                          ),
+                        );
                       }),
                       metricCard('move_in', 'Move In Inspection', onTap: () {
-                        Routing.makeRouting(context,
-                            routeMethod: 'push',
-                            newWidget: MoveInInspectionScreen(
-                                propertyElement: propertyElement));
+                        Routing.makeRouting(
+                          context,
+                          routeMethod: 'push',
+                          newWidget: MoveInInspectionLoaderScreen(
+                            propertyElement: propertyElement,
+                          ),
+                        );
                       }),
                       metricCard('move_out', 'Move Out Inspection', onTap: () {
-                        Routing.makeRouting(context,
-                            routeMethod: 'push',
-                            newWidget: MoveOutInspectionScreen(
-                                propertyElement: propertyElement));
+                        Routing.makeRouting(
+                          context,
+                          routeMethod: 'push',
+                          newWidget: MoveOutInspectionLoaderScreen(
+                            propertyElement: propertyElement,
+                          ),
+                        );
                       }),
                       metricCard('regular_inspection', 'Regular Inspection',
                           onTap: () {
-                        Routing.makeRouting(context,
-                            routeMethod: 'push',
-                            newWidget: RegularInspectionScreen(
-                                propertyElement: propertyElement));
+                        Routing.makeRouting(
+                          context,
+                          routeMethod: 'push',
+                          newWidget: RegularInspectionLoaderScreen(
+                            propertyElement: propertyElement,
+                          ),
+                        );
                       }),
                       metricCard('issue_inspection', 'Issue Based Inspection',
                           onTap: () {
-                        Routing.makeRouting(context,
-                            routeMethod: 'push',
-                            newWidget: IssueInspectionScreen(
-                                propertyElement: propertyElement));
+                        Routing.makeRouting(
+                          context,
+                          routeMethod: 'push',
+                          newWidget: IssueInspectionLoaderScreen(
+                            propertyElement: propertyElement,
+                          ),
+                        );
                       }),
                     ],
                   ),

@@ -30,101 +30,28 @@ class RoomCard extends StatelessWidget {
             ]),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text('Room ID: ',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800)),
-                      Text(
-                          '${roomTypes.where((element) {
-                                return element.roomId.toString() ==
-                                    room.roomId.toString();
-                              }).first.roomName}',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                  SizedBox(
-                    height: UIConstants.fitToHeight(16, context),
-                  ),
-                  Row(
-                    children: [
-                      Text('Property ID: ',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800)),
-                      Text('${room.propertyId}',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                ],
+              Text(
+                '${roomTypes.where((element) {
+                      return element.roomId.toString() ==
+                          room.roomId.toString();
+                    }).first.roomName}',
+                style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w800,
+                    ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Text('Length: ',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800)),
-                      Text('${room.roomSize1}',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text('Width: ',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800)),
-                      Text('${room.roomSize2}',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                ],
-              )
+              Text(
+                '(${room.roomSize1} x ${room.roomSize2}) ft',
+                style:
+                    Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+              ),
             ],
           ),
         ),

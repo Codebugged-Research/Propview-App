@@ -12,7 +12,6 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
 import 'package:propview/views/Admin/Inspection/Types/issueInspectionScreen.dart';
 
 class CaptureIssueBasesInspectionScreen extends StatefulWidget {
@@ -22,13 +21,11 @@ class CaptureIssueBasesInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
-  final Inspection inspection;
   CaptureIssueBasesInspectionScreen({
     this.imageList,
     this.propertyElement,
     this.index1,
     this.index2,
-    this.inspection,
     this.rows,
     this.issueTableList,
   });
@@ -95,7 +92,6 @@ class _CaptureIssueBasesInspectionScreenState
           imageList: imageList,
           index1: widget.index1,
           index2: widget.index2,
-          inspection: widget.inspection,
           propertyElement: widget.propertyElement,
           rows: widget.rows,
           issueTableList: widget.issueTableList,

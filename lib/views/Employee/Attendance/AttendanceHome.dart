@@ -12,6 +12,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Employee/Attendance/LogCard.dart';
 import 'package:propview/views/Employee/Attendance/SoloAttendanceScreen.dart';
+import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome();
@@ -110,60 +111,68 @@ class _AttendanceHomeState extends State<AttendanceHome>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 25,
-                              child: ClipOval(
-                                child: FadeInImage.assetNetwork(
-                                  height: 50,
-                                  width: 50,
-                                  placeholder: "assets/loader.gif",
-                                  fit: BoxFit.cover,
-                                  image:
-                                      "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
-                                  imageErrorBuilder: (BuildContext context,
-                                      Object exception, StackTrace stackTrace) {
-                                    return CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      radius: 25,
-                                      backgroundImage: AssetImage(
-                                        "assets/dummy.png",
-                                      ),
-                                    );
-                                  },
+                        InkWell(onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 25,
+                                child: ClipOval(
+                                  child: FadeInImage.assetNetwork(
+                                    height: 50,
+                                    width: 50,
+                                    placeholder: "assets/loader.gif",
+                                    fit: BoxFit.cover,
+                                    image:
+                                        "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                                    imageErrorBuilder: (BuildContext context,
+                                        Object exception, StackTrace stackTrace) {
+                                      return CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 25,
+                                        backgroundImage: AssetImage(
+                                          "assets/dummy.png",
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user.name,
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline5
-                                      .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  "Employee",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle2
-                                      .copyWith(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.name,
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .headline5
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "Employee",
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle2
+                                        .copyWith(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                         InkWell(
                           child: Column(

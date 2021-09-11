@@ -8,6 +8,8 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 import 'package:propview/config.dart';
+import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
+import 'package:propview/views/Manager/Home/searchScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -27,11 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getData();
-    // _sc.addListener(() {
-    //   if (_sc.position.pixels == _sc.position.maxScrollExtent) {
-    //     getNextData();
-    //   }
-    // });
   }
 
   getData() async {
@@ -45,25 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // getNextData() async {
-  //   setState(() {
-  //     loading2 = true;
-  //   });
-  //   Property tempList = await PropertyService.getAllPropertiesByLimit(page, 50);
-  //   setState(() {
-  //     property.data.property.addAll(tempList.data.property);
-  //     property.count += tempList.count;
-  //     page += 50;
-  //     loading2 = false;
-  //   });
-  // }
-
-  // @override
-  // void dispose() {
-  //   _sc.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return loading
@@ -74,6 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(),
+                        ),
+                      );
+                    },
                     leading: ClipOval(
                       child: FadeInImage.assetNetwork(
                         height: 60,
@@ -102,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      "Manager",
+                      "Employee",
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle2
@@ -114,7 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            getData();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => SearchScreen(
+                                  property: property,
+                                ),
+                              ),
+                            );
                           },
                           child: Container(
                             height: 35,
@@ -140,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ]),
                             child: Icon(
-                              Icons.refresh,
+                              Icons.search,
                               color: Color(0xff314B8C),
                               size: 24,
                             ),
