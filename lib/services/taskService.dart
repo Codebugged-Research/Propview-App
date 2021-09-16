@@ -133,13 +133,13 @@ class TaskService extends AuthService {
   static Future<List<TaskElement>> getAllTeamTaskByIdAndType(
       id, String type) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-      AuthService.BASE_URI + 'api/new/task/self',
+      AuthService.BASE_URI + 'api/new/task/team',
       method: 'POST',
       body: jsonEncode(
         {
           "id1": "$id",
           "id2": "%,$id",
-          "id31": "%,$id,%",
+          "id3": "%,$id,%",
           "id4": "$id,%",
           "task_type": type,
         },

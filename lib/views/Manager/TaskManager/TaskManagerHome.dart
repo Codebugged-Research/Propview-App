@@ -65,7 +65,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     unApprovedTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
     completedTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
     List<TaskElement> rejectedTeam = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Rejected");
-    pendingTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Pending");
+    pendingTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Pending");    
     pendingTaskList2.addAll(rejectedTeam);
     unApprovedTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Unapproved");
     completedTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Completed");
@@ -153,43 +153,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          InkWell(
-                            onTap: () {
-                              getData();
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[200],
-                                      offset: const Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ), //BoxShadow
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: const Offset(0.0, 0.0),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ),
-                                  ]),
-                              child: Icon(
-                                Icons.refresh,
-                                color: Color(0xff314B8C),
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(

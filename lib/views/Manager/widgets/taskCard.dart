@@ -117,11 +117,16 @@ class _TaskCardState extends State<TaskCard> {
                       textWidget(
                           context, "Task Name: ", widget.taskElement.taskName),
                       !widget.isSelf
-                          ? textWidget(
-                              context,
-                              "Assigned: ",
-                              widget.taskElement.tblUsers.name +
-                                  "\n(${widget.taskElement.tblUsers.designation})")
+                          ? textWidget(context, "Assigned: ",
+                              widget.taskElement.tblUsers.name)
+                          : Container(),
+                      widget.taskElement.taskStatus == "Unapproved"
+                          ? textWidget(context, "Submission Time: ",
+                              '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                          : Container(),
+                      widget.taskElement.taskStatus == "Completed"
+                          ? textWidget(context, "Verification Time: ",
+                              '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                           : Container(),
                     ],
                   ),
@@ -195,18 +200,29 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Status: ',
                         '${widget.taskElement.taskStatus}'),
-                     widget.taskElement.category == "Propdial Office Work" ||
-                                widget.taskElement.category ==
-                                    "Other Executive Work"
-                            ?SizedBox(): SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                     widget.taskElement.category == "Propdial Office Work" ||
-                                widget.taskElement.category ==
-                                    "Other Executive Work"
-                            ? SizedBox() : titleWidget(
-                      context,
-                      'Property: ',
-                      propName,
-                    ),
+                    widget.taskElement.category == "Propdial Office Work" ||
+                            widget.taskElement.category ==
+                                "Other Executive Work"
+                        ? SizedBox()
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01),
+                    widget.taskElement.category == "Propdial Office Work" ||
+                            widget.taskElement.category ==
+                                "Other Executive Work"
+                        ? SizedBox()
+                        : titleWidget(
+                            context,
+                            'Property: ',
+                            propName,
+                          ),
+                    !widget.isSelf
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01)
+                        : Container(),
+                    !widget.isSelf
+                        ? titleWidget(context, "Assigned: ",
+                            widget.taskElement.tblUsers.name)
+                        : Container(),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Category: ',
                         '${widget.taskElement.category}'),
@@ -216,17 +232,20 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Task Description: ',
                         '${widget.taskElement.taskDesc}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),                    
-                    widget.taskElement.taskStatus == "Pending" ||
-                            widget.taskElement.taskStatus == "Rejected"
-                        ? Container()
-                        : titleWidget(context, 'Task Update Time: ',
-                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}'),
-                    widget.taskElement.taskStatus == "Pending" ||
-                            widget.taskElement.taskStatus == "Rejected"
-                        ? Container()
-                        : SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    widget.taskElement.taskStatus == "Unapproved"
+                        ? titleWidget(context, "Submission Time: ",
+                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                        : Container(),
+                    widget.taskElement.taskStatus == "Completed"
+                        ? titleWidget(context, "Verification Time: ",
+                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                        : Container(),
+                    widget.taskElement.taskStatus == "Unapproved" ||
+                            widget.taskElement.taskStatus == "Completed"
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01)
+                        : Container(),
                     titleWidget(context, 'Task Start Time: ',
                         '${dateTimeFormatter(widget.taskElement.startDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -332,41 +351,6 @@ class _TaskCardState extends State<TaskCard> {
                             : SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width * 0.02),
-                        InkWell(
-                          child: Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    "assets/person.png",
-                                    height: 35,
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Assigned\nPerson details",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AssignedPersonDetailScreen(
-                                  assignedTo: widget.taskElement.assignedTo,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                       ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -378,7 +362,7 @@ class _TaskCardState extends State<TaskCard> {
                                 alignment: Alignment.center,
                                 child: MaterialButton(
                                   child: Text(
-                                    "submit Task",
+                                    "Submit Task For Approval",
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .subtitle2
@@ -400,7 +384,7 @@ class _TaskCardState extends State<TaskCard> {
                                                   fontWeight: FontWeight.w600),
                                         ),
                                         content: Text(
-                                          "Do you want to submit your task ?",
+                                          "Do you want to submit your task for approval?",
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .subtitle1
@@ -414,7 +398,8 @@ class _TaskCardState extends State<TaskCard> {
                                               setState(() {
                                                 widget.taskElement.taskStatus =
                                                     "Unapproved";
-                                                        widget.taskElement.updatedAt = DateTime.now();
+                                                widget.taskElement.updatedAt =
+                                                    DateTime.now();
                                               });
                                               var response =
                                                   await TaskService.updateTask(
@@ -583,7 +568,9 @@ class _TaskCardState extends State<TaskCard> {
                                                     widget.taskElement
                                                             .taskStatus =
                                                         "Completed";
-                                                        widget.taskElement.updatedAt = DateTime.now();
+                                                    widget.taskElement
+                                                            .updatedAt =
+                                                        DateTime.now();
                                                   });
                                                   var response =
                                                       await TaskService
@@ -707,7 +694,9 @@ class _TaskCardState extends State<TaskCard> {
                                                     widget.taskElement
                                                             .taskStatus =
                                                         "Rejected";
-                                                        widget.taskElement.updatedAt = DateTime.now();
+                                                    widget.taskElement
+                                                            .updatedAt =
+                                                        DateTime.now();
                                                   });
                                                   var response =
                                                       await TaskService

@@ -18,6 +18,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/loginSceen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -52,6 +53,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isLoading = true;
     });
     user = await UserService.getUser();
+    imageCache.clearLiveImages();
+    imageCache.clear();
     setState(() {
       isLoading = false;
     });
@@ -130,6 +133,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     var res = await request.send();
                     if (res.statusCode == 200) {
                       imageCache.clear();
+                      imageCache.clearLiveImages();
+                      setState(() {});
                       Navigator.of(context).pop();
                       getData();
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -159,6 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('No image selected.\!');
     }
   }
+
   bool loading = false;
 
   @override
@@ -267,29 +273,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Icons.call, () {}),
                   profileInfo(
                       'Email', '${user.officialEmail}', Icons.mail, () {}),
-                  loading ? circularProgressWidget() :profileInfo(
-                      'Export Attendance', 'Download', Icons.import_export,
-                      () async {
-                        setState(() {                          
-                        loading = true;
-                        });
-                    var responseMap =
-                        await AuthService.makeAuthenticatedRequest(
-                      AuthService.BASE_URI + 'api/attendance/export',
-                      body: jsonEncode({}),
-                      method: 'POST',
-                    );
-                    print(responseMap.body);
-                        setState(() {                          
-                        loading = false;
-                        });
-                    if (responseMap.statusCode == 200) {
-                     showInSnackBar(context, "File sent!", 800);
-                    }else{
-                     showInSnackBar(context, "File failed!", 800);
-                      
-                    }
-                  }),
                   profileInfo(
                       'Access Level',
                       '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
