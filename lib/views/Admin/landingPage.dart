@@ -1,4 +1,4 @@
- import 'dart:convert';
+import 'dart:convert';
 
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,7 +9,6 @@ import 'package:propview/config.dart';
 import 'package:propview/services/baseService.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Admin/Home/homeScreen.dart';
-import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/TaskManager/taskManagerHome.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceHome.dart';
 

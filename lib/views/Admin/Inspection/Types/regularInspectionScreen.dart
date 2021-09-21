@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:propview/models/BillToProperty.dart';
@@ -62,7 +61,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     print("exit");
   }
@@ -191,14 +190,14 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                              'Select/Add Room',
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline6
-                                  .copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black),
-                            ),
+                          'Select/Add Room',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .headline6
+                              .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black),
+                        ),
                         InkWell(
                           child: Icon(Icons.add),
                           onTap: () {

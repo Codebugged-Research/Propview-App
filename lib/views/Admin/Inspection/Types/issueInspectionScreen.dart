@@ -147,7 +147,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
+      onWillPop: () async {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -191,7 +191,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                         ),
-                            SizedBox(
+                        SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,7 +213,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                             )
                           ],
                         ),
-                        
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),

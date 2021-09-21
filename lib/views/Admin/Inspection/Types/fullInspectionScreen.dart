@@ -106,7 +106,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       issueTableList =
           widget.issueTableList != null ? widget.issueTableList : [];
       rows[widget.index1][widget.index2].photo = widget.imageList;
-    }else {
+    } else {
       rows = widget.rows;
       issueTableList = widget.issueTableList;
     }
@@ -166,7 +166,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
+      onWillPop: () async {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -207,7 +207,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                             : Container(),
                         bills.length != 0
                             ? SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.02)
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02)
                             : Container(),
                         bills.length == 0
                             ? Container()

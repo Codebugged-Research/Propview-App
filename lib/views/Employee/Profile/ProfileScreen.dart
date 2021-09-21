@@ -17,7 +17,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/loginSceen.dart';
+import 'package:propview/views/loginScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override

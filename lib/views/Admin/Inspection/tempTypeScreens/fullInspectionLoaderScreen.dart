@@ -2,12 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:propview/models/BillToProperty.dart';
-import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,14 +54,11 @@ class _FullInspectionLoaderScreenState
         for (int i = 0; i < tempData["rows"].length; i++) {
           rows.add([]);
           for (int j = 0; j < tempData["rows"][i].length; j++) {
-            rows[j].add(
-              Issue(
+            rows[j].add(Issue(
                 issueName: tempData["rows"][i][j]['issue_name'],
                 status: tempData["rows"][i][j]['status'],
                 remarks: tempData["rows"][i][j]['remarks'],
-                photo: tempData["rows"][i][j]['photo'].cast<String>()
-              )
-            );
+                photo: tempData["rows"][i][j]['photo'].cast<String>()));
           }
         }
         Navigator.of(context).push(

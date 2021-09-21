@@ -15,7 +15,6 @@ import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/roomService.dart';
-import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
@@ -137,257 +136,266 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
       appBar: AppBar(
         title: Text('Add Sub-Room'),
       ),
-      body: isLoading ? circularProgressWidget() : Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-              child: Column(children: [
-            SizedBox(height: UIConstants.fitToHeight(16, context)),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Text('Fill the Details',
-                    style: Theme.of(context)
-                        .primaryTextTheme
-                        .headline6
-                        .copyWith(
-                            color: Colors.black, fontWeight: FontWeight.w700)),
-              ),
-            ),
-            SizedBox(height: UIConstants.fitToHeight(16, context)),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Container(
-                  child: Form(
-                    key: formkey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Room Type',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          DropdownButton(
-                            isExpanded: true,
-                            value: roomTypeDropDownValue,
-                            elevation: 8,
-                            underline: Container(
-                              height: 2,
-                              width: MediaQuery.of(context).size.width,
-                              color: Color(0xff314B8C),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                roomTypeDropDownValue = value;
-                              });
-                            },
-                            items: roomTypes.map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value.roomName),
-                              );
-                            }).toList(),
-                          ),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('SubRoom Type',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          DropdownButton(
-                            isExpanded: true,
-                            value: subRoomTypeDropDownValue,
-                            elevation: 8,
-                            underline: Container(
-                              height: 2,
-                              width: MediaQuery.of(context).size.width,
-                              color: Color(0xff314B8C),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                subRoomTypeDropDownValue = value;
-                              });
-                            },
-                            items: subRoomTypes.map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value.roomName),
-                              );
-                            }).toList(),
-                          ),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Room Size 1',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          SizedBox(height: UIConstants.fitToHeight(4, context)),
-                          inputWidget(
-                              roomSizeOneController,
-                              'Please enter Room Size One.',
-                              false,
-                              'Room Size One',
-                              'Room Size One', (value) {
-                            print(value);
-                          }),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Room Size 2',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          SizedBox(height: UIConstants.fitToHeight(4, context)),
-                          inputWidget(
-                              roomSizeTwoController,
-                              'Please enter Room Size Two.',
-                              false,
-                              'Room Size Two',
-                              'Room Size Two', (value) {
-                            print(value);
-                          }),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Facilities',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          DropdownButton(
-                            isExpanded: true,
-                            value: facilityDropDownValue,
-                            elevation: 8,
-                            underline: Container(
-                              height: 2,
-                              width: MediaQuery.of(context).size.width,
-                              color: Color(0xff314B8C),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                addTag(value);
-                                facilityDropDownValue = value;
-                              });
-                            },
-                            items: facilities.map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value.facilityName),
-                              );
-                            }).toList(),
-                          ),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
-                          Visibility(
-                              visible: facilityTag.length > 0,
-                              child: Container(
+      body: isLoading
+          ? circularProgressWidget()
+          : Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                  child: Column(children: [
+                SizedBox(height: UIConstants.fitToHeight(16, context)),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Text('Fill the Details',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .headline6
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700)),
+                  ),
+                ),
+                SizedBox(height: UIConstants.fitToHeight(16, context)),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Container(
+                      child: Form(
+                        key: formkey,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Align(
                                 alignment: Alignment.centerLeft,
-                                height: 100,
-                                width: 100,
-                                child: TagWidget(tagList: facilityTag),
-                              )),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Images',
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .subtitle1
-                                  .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 36.0),
-                            child: Visibility(
-                              visible: imageList.length <= 0,
-                              child: Center(
+                                child: Text('Room Type',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700)),
+                              ),
+                              DropdownButton(
+                                isExpanded: true,
+                                value: roomTypeDropDownValue,
+                                elevation: 8,
+                                underline: Container(
+                                  height: 2,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: Color(0xff314B8C),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    roomTypeDropDownValue = value;
+                                  });
+                                },
+                                items: roomTypes.map<DropdownMenuItem>((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value.roomName),
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(16, context)),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('SubRoom Type',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700)),
+                              ),
+                              DropdownButton(
+                                isExpanded: true,
+                                value: subRoomTypeDropDownValue,
+                                elevation: 8,
+                                underline: Container(
+                                  height: 2,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: Color(0xff314B8C),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    subRoomTypeDropDownValue = value;
+                                  });
+                                },
+                                items:
+                                    subRoomTypes.map<DropdownMenuItem>((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value.roomName),
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(16, context)),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('Room Size 1',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700)),
+                              ),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(4, context)),
+                              inputWidget(
+                                  roomSizeOneController,
+                                  'Please enter Room Size One.',
+                                  false,
+                                  'Room Size One',
+                                  'Room Size One', (value) {
+                                print(value);
+                              }),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(8, context)),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('Room Size 2',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700)),
+                              ),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(4, context)),
+                              inputWidget(
+                                  roomSizeTwoController,
+                                  'Please enter Room Size Two.',
+                                  false,
+                                  'Room Size Two',
+                                  'Room Size Two', (value) {
+                                print(value);
+                              }),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(16, context)),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('Facilities',
+                                    style: Theme.of(context)
+                                        .primaryTextTheme
+                                        .subtitle1
+                                        .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700)),
+                              ),
+                              DropdownButton(
+                                isExpanded: true,
+                                value: facilityDropDownValue,
+                                elevation: 8,
+                                underline: Container(
+                                  height: 2,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: Color(0xff314B8C),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    addTag(value);
+                                    facilityDropDownValue = value;
+                                  });
+                                },
+                                items:
+                                    facilities.map<DropdownMenuItem>((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value.facilityName),
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(16, context)),
+                              Visibility(
+                                  visible: facilityTag.length > 0,
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    height: 100,
+                                    width: 100,
+                                    child: TagWidget(tagList: facilityTag),
+                                  )),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(8, context)),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  'No Image is captured!',
+                                  'Images',
                                   style: Theme.of(context)
                                       .primaryTextTheme
-                                      .subtitle2
+                                      .subtitle1
                                       .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w700),
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                 ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 36.0),
+                                child: Visibility(
+                                  visible: imageList.length <= 0,
+                                  child: Center(
+                                    child: Text(
+                                      'No Image is captured!',
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle2
+                                          .copyWith(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Visibility(
+                                  visible: imageList.length > 0,
+                                  child: ListView.builder(
+                                      itemCount: imageList.length,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.vertical,
+                                      physics: BouncingScrollPhysics(),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              imageList.removeAt(index);
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Image.file(
+                                              File(imageList[index]),
+                                              height: UIConstants.fitToHeight(
+                                                  200, context),
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              ),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(24, context)),
+                              buttonWidget(context),
+                              SizedBox(
+                                  height: UIConstants.fitToHeight(32, context)),
+                            ],
                           ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Visibility(
-                              visible: imageList.length > 0,
-                              child: ListView.builder(
-                                  itemCount: imageList.length,
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  physics: BouncingScrollPhysics(),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          imageList.removeAt(index);
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Image.file(
-                                          File(imageList[index]),
-                                          height: UIConstants.fitToHeight(
-                                              200, context),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(24, context)),
-                          buttonWidget(context),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(32, context)),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ))
-          ]))),
+                    ))
+              ]))),
       floatingActionButton: FloatingActionButton(
         onPressed: imageList.length < 3
             ? () {

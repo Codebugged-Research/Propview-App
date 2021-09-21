@@ -9,7 +9,7 @@ import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/landingPage.dart' as ad;
 import 'package:propview/views/Manager/landingPage.dart' as man;
 import 'package:propview/views/Employee/landingPage.dart' as emp;
-import 'package:propview/views/loginSceen.dart';
+import 'package:propview/views/loginScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

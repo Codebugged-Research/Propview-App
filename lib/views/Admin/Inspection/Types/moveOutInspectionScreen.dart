@@ -93,7 +93,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     initialiseSharedPreference();
   }
 
-
   initialiseSharedPreference() async {
     prefs = await SharedPreferences.getInstance();
   }
@@ -234,7 +233,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
+      onWillPop: () async {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -269,14 +268,14 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                         ])),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     bills.length != 0
-                            ? titleWidget(context, 'Pending Biils')
-                            : Container(),
-                        bills.length != 0
-                            ? SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.02)
-                            : Container(),
-                        bills.length == 0
-                            ? Container()
+                        ? titleWidget(context, 'Pending Biils')
+                        : Container(),
+                    bills.length != 0
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02)
+                        : Container(),
+                    bills.length == 0
+                        ? Container()
                         : ListView.builder(
                             shrinkWrap: true,
                             itemCount: bills.length,
@@ -317,14 +316,14 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                              'Select/Add Room',
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline6
-                                  .copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black),
-                            ),
+                          'Select/Add Room',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .headline6
+                              .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black),
+                        ),
                         InkWell(
                           child: Icon(Icons.add),
                           onTap: () {

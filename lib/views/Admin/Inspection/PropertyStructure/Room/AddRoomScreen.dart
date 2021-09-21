@@ -114,8 +114,14 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         title: Text('Add Room'),
       ),
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -125,12 +131,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Text('Fill the Details',
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .primaryTextTheme
                           .headline6
                           .copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700)),
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700)),
                 ),
               ),
               Padding(
@@ -148,12 +155,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text('Room Type',
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700)),
                           ),
                           DropdownButton(
                             isExpanded: true,
@@ -161,7 +169,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             elevation: 8,
                             underline: Container(
                               height: 2,
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
                               color: Color(0xff314B8C),
                             ),
                             onChanged: (value) {
@@ -170,7 +181,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                               });
                             },
                             items:
-                                widget.roomList.map<DropdownMenuItem>((value) {
+                            widget.roomList.map<DropdownMenuItem>((value) {
                               return DropdownMenuItem(
                                 value: value,
                                 child: Text(value.roomName),
@@ -181,39 +192,41 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                               height: UIConstants.fitToHeight(16, context)),
                           Align(
                               alignment: Alignment.centerLeft,
-                              child: Text('Room Size 1',
-                                  style: Theme.of(context)
+                              child: Text('Room Length',
+                                  style: Theme
+                                      .of(context)
                                       .primaryTextTheme
                                       .subtitle1
                                       .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w700))),
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700))),
                           SizedBox(height: UIConstants.fitToHeight(4, context)),
                           inputWidget(
                               roomSizeOneController,
-                              'Please enter Room Size One.',
+                              'Please enter Room Length!',
                               false,
-                              'Room Size One',
-                              'Room Size One', (value) {
+                              'Room Length',
+                              'Room Length', (value) {
                             print(value);
                           }),
                           SizedBox(height: UIConstants.fitToHeight(8, context)),
                           Align(
                               alignment: Alignment.centerLeft,
-                              child: Text('Room Size 2',
-                                  style: Theme.of(context)
+                              child: Text('Room Breadth',
+                                  style: Theme
+                                      .of(context)
                                       .primaryTextTheme
                                       .subtitle1
                                       .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w700))),
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700))),
                           SizedBox(height: UIConstants.fitToHeight(4, context)),
                           inputWidget(
                               roomSizeTwoController,
-                              'Please enter Room Size Two.',
+                              'Please enter Room Breadth!',
                               false,
-                              'Room Size Two',
-                              'Room Size Two', (value) {
+                              'Room Breadth',
+                              'Room Breadth', (value) {
                             print(value);
                           }),
                           SizedBox(
@@ -221,12 +234,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text('Facilities',
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700)),
                           ),
                           DropdownButton(
                             isExpanded: true,
@@ -234,7 +248,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             elevation: 8,
                             underline: Container(
                               height: 2,
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
                               color: Color(0xff314B8C),
                             ),
                             onChanged: (value) {
@@ -260,12 +277,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text('Flooring Type',
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700)),
                           ),
                           DropdownButton<String>(
                             isExpanded: true,
@@ -273,7 +291,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             elevation: 8,
                             underline: Container(
                               height: 2,
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
                               color: Color(0xff314B8C),
                             ),
                             onChanged: (value) {
@@ -293,7 +314,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           CheckboxListTile(
                             value: isBath,
                             title: Text('Bathroom',
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(color: Colors.black)),
@@ -306,7 +328,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           CheckboxListTile(
                             value: isBalcony,
                             title: Text('Balcony',
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(color: Colors.black)),
@@ -320,7 +343,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             value: isWardrobe,
                             title: Text(
                               'Wardrobe',
-                              style: Theme.of(context)
+                              style: Theme
+                                  .of(context)
                                   .primaryTextTheme
                                   .subtitle1
                                   .copyWith(color: Colors.black),
@@ -334,12 +358,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text('Images',
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400)),
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 36.0),
@@ -347,18 +372,19 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                 visible: imageList.length <= 0,
                                 child: Center(
                                     child: Text(
-                                  'No Image is captured!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle2
-                                      .copyWith(
+                                      'No Image is captured!',
+                                      style: Theme
+                                          .of(context)
+                                          .primaryTextTheme
+                                          .subtitle2
+                                          .copyWith(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600),
-                                ))),
+                                    ))),
                           ),
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Visibility(
                               visible: imageList.length > 0,
                               child: ListView.builder(
@@ -405,31 +431,31 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: imageList.length < 3
             ? () {
-                Routing.makeRouting(context,
-                    routeMethod: 'pushReplacement',
-                    newWidget: CaptureRoomScreen(
-                      propertyElement: propertyElement,
-                      facilities: facilities,
-                      imageList: imageList,
-                      facilityTag: facilityTag,
-                      flooringType: flooringType,
-                      marbelTypeDropDownValue: marbelTypeDropDownValue,
-                      roomSizeOne: double.parse(roomSizeOneController.text),
-                      roomSizeTwo: double.parse(roomSizeTwoController.text),
-                      isBath: isBath,
-                      roomTypes: widget.roomList,
-                      isBalcony: isBalcony,
-                      isWardrobe: isWardrobe,
-                      roomTypeDropDownValue: roomTypeDropDownValue,
-                    ));
-              }
+          Routing.makeRouting(context,
+              routeMethod: 'pushReplacement',
+              newWidget: CaptureRoomScreen(
+                propertyElement: propertyElement,
+                facilities: facilities,
+                imageList: imageList,
+                facilityTag: facilityTag,
+                flooringType: flooringType,
+                marbelTypeDropDownValue: marbelTypeDropDownValue,
+                roomSizeOne: double.parse(roomSizeOneController.text),
+                roomSizeTwo: double.parse(roomSizeTwoController.text),
+                isBath: isBath,
+                roomTypes: widget.roomList,
+                isBalcony: isBalcony,
+                isWardrobe: isWardrobe,
+                roomTypeDropDownValue: roomTypeDropDownValue,
+              ));
+        }
             : () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Cannot add more than 3 photos !"),
-                  ),
-                );
-              },
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Cannot add more than 3 photos !"),
+            ),
+          );
+        },
         child: Icon(Icons.add_a_photo),
       ),
     );
@@ -450,7 +476,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     final pickedFile = File(pic);
     String target = propertyId +
         "-" +
-        DateTime.now().millisecondsSinceEpoch.toString() +
+        DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString() +
         ".jpeg";
     if (pickedFile != null) {
       File img = await compress(pickedFile, target);
@@ -472,74 +501,77 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     return loader
         ? circularProgressWidget()
         : Visibility(
-            visible: imageList.length >= 3,
-            child: MaterialButton(
-              minWidth: 360,
-              height: 55,
-              color: Color(0xff314B8C),
-              onPressed: () async {
-                String modelFacilty = "";
-                facilityTag.forEach((e) {
-                  modelFacilty += e.facilityId.toString();
-                  modelFacilty += ",";
-                });
-                modelFacilty =
-                    modelFacilty.substring(0, modelFacilty.length - 1);
-                String img1 = "";
-                String img2 = "";
-                String img3 = "";
-                if (imageList.length > 0) {
-                  img1 = await upload(imageList[0],
-                      propertyElement.tableproperty.propertyId.toString());
-                } else if (imageList.length > 1) {
-                  img2 = await upload(imageList[1],
-                      propertyElement.tableproperty.propertyId.toString());
-                } else if (imageList.length > 2) {
-                  img3 = await upload(imageList[2],
-                      propertyElement.tableproperty.propertyId.toString());
-                }
-                RoomsToPropertyModel room = RoomsToPropertyModel(
-                  propertyId: propertyElement.tableproperty.propertyId,
-                  roomId: roomTypeDropDownValue.roomId,
-                  // create drop down for this
-                  roomSize1: double.parse(roomSizeOneController.text),
-                  roomSize2: double.parse(roomSizeTwoController.text),
-                  bath: isBath == true ? 1 : 0,
-                  balcony: isBath == true ? 1 : 0,
-                  wardrobe: isWardrobe == true ? 1 : 0,
-                  facility: modelFacilty,
-                  flooring: marbelTypeDropDownValue,
-                  image1: img1,
-                  image2: img2,
-                  image3: img3,
-                );
-                setState(() {
-                  loader = true;
-                });
-                bool result = await RoomService.createRoomByPropertyId(
-                    jsonEncode(room.toJson()));
-                setState(() {
-                  loader = false;
-                });
-                if (result) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Room added!"),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Room addition failed!"),
-                    ),
-                  );
-                }
-                Navigator.of(context).pop();
-              },
-              child: Text("Create Room",
-                  style: Theme.of(context).primaryTextTheme.subtitle1),
-            ),
+      visible: imageList.length >= 3,
+      child: MaterialButton(
+        minWidth: 360,
+        height: 55,
+        color: Color(0xff314B8C),
+        onPressed: () async {
+          String modelFacilty = "";
+          facilityTag.forEach((e) {
+            modelFacilty += e.facilityId.toString();
+            modelFacilty += ",";
+          });
+          modelFacilty =
+              modelFacilty.substring(0, modelFacilty.length - 1);
+          String img1 = "";
+          String img2 = "";
+          String img3 = "";
+          if (imageList.length > 0) {
+            img1 = await upload(imageList[0],
+                propertyElement.tableproperty.propertyId.toString());
+          } else if (imageList.length > 1) {
+            img2 = await upload(imageList[1],
+                propertyElement.tableproperty.propertyId.toString());
+          } else if (imageList.length > 2) {
+            img3 = await upload(imageList[2],
+                propertyElement.tableproperty.propertyId.toString());
+          }
+          RoomsToPropertyModel room = RoomsToPropertyModel(
+            propertyId: propertyElement.tableproperty.propertyId,
+            roomId: roomTypeDropDownValue.roomId,
+            // create drop down for this
+            roomSize1: double.parse(roomSizeOneController.text),
+            roomSize2: double.parse(roomSizeTwoController.text),
+            bath: isBath == true ? 1 : 0,
+            balcony: isBath == true ? 1 : 0,
+            wardrobe: isWardrobe == true ? 1 : 0,
+            facility: modelFacilty,
+            flooring: marbelTypeDropDownValue,
+            image1: img1,
+            image2: img2,
+            image3: img3,
           );
+          setState(() {
+            loader = true;
+          });
+          bool result = await RoomService.createRoomByPropertyId(
+              jsonEncode(room.toJson()));
+          setState(() {
+            loader = false;
+          });
+          if (result) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Room added!"),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Room addition failed!"),
+              ),
+            );
+          }
+          Navigator.of(context).pop();
+        },
+        child: Text("Create Room",
+            style: Theme
+                .of(context)
+                .primaryTextTheme
+                .subtitle1),
+      ),
+    );
   }
 
   Widget inputWidget(TextEditingController textEditingController,

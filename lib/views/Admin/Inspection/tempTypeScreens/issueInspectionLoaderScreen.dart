@@ -5,7 +5,6 @@ import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/Types/issueInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,6 +30,7 @@ class _IssueInspectionLoaderScreenState
     propertyElement = widget.propertyElement;
     loadDataForScreen();
   }
+
   var data;
 
   loadDataForScreen() async {
@@ -38,7 +38,7 @@ class _IssueInspectionLoaderScreenState
     try {
       data =
           prefs.getString("issue-${propertyElement.tableproperty.propertyId}");
-       if (data == null) {
+      if (data == null) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => IssueInspectionScreen(
@@ -53,14 +53,11 @@ class _IssueInspectionLoaderScreenState
         for (int i = 0; i < tempData["rows"].length; i++) {
           rows.add([]);
           for (int j = 0; j < tempData["rows"][i].length; j++) {
-            rows[j].add(
-              Issue(
+            rows[j].add(Issue(
                 issueName: tempData["rows"][i][j]['issue_name'],
                 status: tempData["rows"][i][j]['status'],
                 remarks: tempData["rows"][i][j]['remarks'],
-                photo: tempData["rows"][i][j]['photo'].cast<String>()
-              )
-            );
+                photo: tempData["rows"][i][j]['photo'].cast<String>()));
           }
         }
         Navigator.of(context).push(
