@@ -108,7 +108,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       rows[widget.index1][widget.index2].photo = widget.imageList;
     }else {
       rows = widget.rows;
-      issueTableList = widget.issueTableList;
+      issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
     }
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(

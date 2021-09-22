@@ -9,8 +9,6 @@ import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
 
 class SearchTask extends StatefulWidget {
-  const SearchTask();
-
   @override
   _SearchTaskState createState() => _SearchTaskState();
 }
@@ -18,7 +16,6 @@ class SearchTask extends StatefulWidget {
 class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
   @override
   void initState() {
-    print("Dsa");
     super.initState();
     getData();
   }
@@ -35,12 +32,16 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
   TabController _tabController;
 
   getData() async {
+    pendingTaskList.clear();
+    completedTaskList.clear();
+    unApprovedTaskList.clear();
     setState(() {
       loading = true;
     });
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     user = await UserService.getUser();
-    userList = await UserService.getAllUserUnderManger(user.userId);
+    userList = await UserService.getAllUser();
+    userList.add(user);
     print(userList.length);
     setState(() {
       loading = false;
@@ -50,9 +51,17 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: loading
-          ? circularProgressWidget()
+          ? Align(
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(
+                valueColor:
+                    new AlwaysStoppedAnimation<Color>(Color(0xff314B8C)),
+              ),
+            )
           : Container(
+            padding: EdgeInsets.only(top: 50),
               child: Column(
                 children: [
                   Row(
@@ -114,11 +123,11 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                               onSuggestionSelected: (suggestion) async {
                                 setState(() {
                                   serachLoading = true;
+                                  _searchController.text = suggestion.name;
                                 });
                                 Task userTask =
                                     await TaskService.getAllTaskByUserId(
                                         suggestion.userId);
-                                print(userTask.count);
                                 if (userTask.count == 0) {
                                   showInSnackBar(context,
                                       "No task found in database !", 2500);
@@ -172,6 +181,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                           setState(() {
                             tempUser = user;
                             _searchController.clear();
+                            pendingTaskList.clear();
+                            completedTaskList.clear();
+                            unApprovedTaskList.clear();
                           });
                         },
                       ),
