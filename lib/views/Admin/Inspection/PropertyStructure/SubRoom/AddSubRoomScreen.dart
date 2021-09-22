@@ -30,8 +30,10 @@ class AddSubRoomScreen extends StatefulWidget {
   final List<PropertyRoom> roomTypes;
   final PropertyRoom roomTypeDropDownValue;
   final PropertyRoom subRoomTypeDropDownValue;
-  final double roomSizeOne;
-  final double roomSizeTwo;
+  final double roomLengthFeet;
+  final double roomLengthInches;
+  final double roomWidthFeet;
+  final double roomWidthInches;
 
   AddSubRoomScreen({
     this.propertyElement,
@@ -39,8 +41,10 @@ class AddSubRoomScreen extends StatefulWidget {
     this.imageList,
     this.roomTypes,
     this.facilityTag,
-    this.roomSizeOne = 0.0,
-    this.roomSizeTwo = 0.0,
+    this.roomLengthFeet = 0.0,
+    this.roomLengthInches = 0.0,
+    this.roomWidthFeet = 0.0,
+    this.roomWidthInches = 0.0,
     this.roomTypeDropDownValue,
     this.subRoomTypeDropDownValue,
   });
@@ -69,8 +73,11 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
 
   final formkey = new GlobalKey<FormState>();
 
-  TextEditingController roomSizeOneController = new TextEditingController();
-  TextEditingController roomSizeTwoController = new TextEditingController();
+  TextEditingController roomLengthFeetController = new TextEditingController();
+  TextEditingController roomLengthInchesController =
+      new TextEditingController();
+  TextEditingController roomWidthFeetController = new TextEditingController();
+  TextEditingController roomWidthInchesController = new TextEditingController();
 
   @override
   void initState() {
@@ -92,8 +99,10 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
     facilities = widget.facilities;
     imageList = widget.imageList;
     facilityDropDownValue = facilities[0];
-    roomSizeOneController.text = widget.roomSizeOne.toString();
-    roomSizeTwoController.text = widget.roomSizeTwo.toString();
+    roomLengthFeetController.text = widget.roomLengthFeet.toString();
+    roomLengthInchesController.text = widget.roomLengthInches.toString();
+    roomWidthFeetController.text = widget.roomWidthFeet.toString();
+    roomWidthInchesController.text = widget.roomWidthInches.toString();
     widget.facilityTag == null
         ? facilityTag = []
         : facilityTag = widget.facilityTag;
@@ -237,7 +246,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                   height: UIConstants.fitToHeight(16, context)),
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text('Room Size 1',
+                                child: Text('Room Length',
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .subtitle1
@@ -247,19 +256,40 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                               ),
                               SizedBox(
                                   height: UIConstants.fitToHeight(4, context)),
-                              inputWidget(
-                                  roomSizeOneController,
-                                  'Please enter Room Size One.',
-                                  false,
-                                  'Room Size One',
-                                  'Room Size One', (value) {
-                                print(value);
-                              }),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    flex: 1,
+                                    child: inputWidget(
+                                        roomLengthFeetController,
+                                        'Please enter Room Length.',
+                                        false,
+                                        'Room Length',
+                                        'Room Size Length',
+                                        'ft', (value) {
+                                      print(value);
+                                    }),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    flex: 1,
+                                    child: inputWidget(
+                                        roomLengthInchesController,
+                                        'Please enter Room Length.',
+                                        false,
+                                        'Room Length',
+                                        'Room Length',
+                                        'inches', (value) {
+                                      print(value);
+                                    }),
+                                  ),
+                                ],
+                              ),
                               SizedBox(
                                   height: UIConstants.fitToHeight(8, context)),
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text('Room Size 2',
+                                child: Text('Room Width',
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .subtitle1
@@ -269,14 +299,34 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                               ),
                               SizedBox(
                                   height: UIConstants.fitToHeight(4, context)),
-                              inputWidget(
-                                  roomSizeTwoController,
-                                  'Please enter Room Size Two.',
-                                  false,
-                                  'Room Size Two',
-                                  'Room Size Two', (value) {
-                                print(value);
-                              }),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: inputWidget(
+                                        roomWidthFeetController,
+                                        'Please enter Room Width.',
+                                        false,
+                                        'Room Width',
+                                        'Room Width',
+                                        'ft', (value) {
+                                      print(value);
+                                    }),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    flex: 1,
+                                    child: inputWidget(
+                                        roomWidthInchesController,
+                                        'Please enter Room Length.',
+                                        false,
+                                        'Room Width',
+                                        'Room Width',
+                                        'inches', (value) {
+                                      print(value);
+                                    }),
+                                  ),
+                                ],
+                              ),
                               SizedBox(
                                   height: UIConstants.fitToHeight(16, context)),
                               Align(
@@ -407,8 +457,13 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                       imageList: imageList,
                       facilityTag: facilityTag,
                       roomTypes: widget.roomTypes,
-                      roomSizeOne: double.parse(roomSizeOneController.text),
-                      roomSizeTwo: double.parse(roomSizeTwoController.text),
+                      roomLengthFeet:
+                      double.parse(roomLengthFeetController.text),
+                      roomLengthInches:
+                      double.parse(roomLengthInchesController.text),
+                      roomWidthFeet: double.parse(roomWidthFeetController.text),
+                      roomWidthInches:
+                      double.parse(roomWidthInchesController.text),
                       roomTypeDropDownValue: roomTypeDropDownValue,
                       subRoomTypeDropDownValue: subRoomTypeDropDownValue,
                     ));
@@ -485,12 +540,23 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                 img3 = await upload(imageList[2],
                     propertyElement.tableproperty.propertyId.toString());
               }
+
+              double roomLength =
+                  double.parse(roomLengthFeetController.text) +
+                      (double.parse(roomLengthInchesController.text) / 12.0);
+              double roomWidth = double.parse(roomWidthFeetController.text) +
+                  (double.parse(roomWidthInchesController.text) / 12.0);
+
+              roomLength = double.parse(roomLength.toStringAsFixed(2));
+              roomWidth = double.parse(roomWidth.toStringAsFixed(2));
+
+
               SubRoomElement subRoom = SubRoomElement(
                 propertyId: propertyElement.tableproperty.propertyId,
                 roomId: roomTypeDropDownValue.roomId,
                 subRoomId: subRoomTypeDropDownValue.roomId,
-                roomSize1: double.parse(roomSizeOneController.text),
-                roomSize2: double.parse(roomSizeTwoController.text),
+                roomSize1: roomLength,
+                roomSize2: roomWidth,
                 facility: modelFacilty,
                 image1: img1,
                 image2: img2,
@@ -518,8 +584,14 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
           );
   }
 
-  Widget inputWidget(TextEditingController textEditingController,
-      String validation, bool isVisible, String label, String hint, save) {
+  Widget inputWidget(
+      TextEditingController textEditingController,
+      String validation,
+      bool isVisible,
+      String label,
+      String hint,
+      String suffixText,
+      save) {
     return TextFormField(
       style: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
       controller: textEditingController,
@@ -529,6 +601,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
         filled: true,
         fillColor: Colors.white,
         hintText: hint,
+        suffixText: suffixText,
         hintStyle: TextStyle(fontSize: 15.0, color: Color(0xff9FA0AD)),
         labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),

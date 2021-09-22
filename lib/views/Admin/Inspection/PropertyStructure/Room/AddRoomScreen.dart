@@ -68,6 +68,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   String marbelTypeDropDownValue;
   PropertyRoom roomTypeDropDownValue;
 
+  //TODO: @Sambit Kumar Majhi
+  List<bool> _floorSelections = List.generate(3, (_) => false);
+  List<bool> _roomSelection = List.generate(3, (_) => false);
+
   List<Facility> facilities = [];
   List<Facility> facilityTag = [];
   List<String> flooringType = [];
@@ -318,70 +322,119 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700)),
                           ),
-                          DropdownButton<String>(
-                            isExpanded: true,
-                            value: marbelTypeDropDownValue,
-                            elevation: 8,
-                            underline: Container(
-                              height: 2,
-                              width: MediaQuery.of(context).size.width,
-                              color: Color(0xff314B8C),
-                            ),
-                            onChanged: (value) {
+                          // DropdownButton<String>(
+                          //   isExpanded: true,
+                          //   value: marbelTypeDropDownValue,
+                          //   elevation: 8,
+                          //   underline: Container(
+                          //     height: 2,
+                          //     width: MediaQuery.of(context).size.width,
+                          //     color: Color(0xff314B8C),
+                          //   ),
+                          //   onChanged: (value) {
+                          //     setState(() {
+                          //       marbelTypeDropDownValue = value;
+                          //     });
+                          //   },
+                          //   items: flooringType
+                          //       .map<DropdownMenuItem<String>>((String value) {
+                          //     return DropdownMenuItem<String>(
+                          //       value: value,
+                          //       child: Text(value),
+                          //     );
+                          //   }).toList(),
+                          // ),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
+                          ToggleButtons(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Vitrified Tiles'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Marble'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Wooden'),
+                              )
+                            ],
+                            isSelected: _floorSelections,
+                            onPressed: (int index) {
                               setState(() {
-                                marbelTypeDropDownValue = value;
+                                _floorSelections[index] =
+                                    !_floorSelections[index];
                               });
                             },
-                            items: flooringType
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
                           ),
                           SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          CheckboxListTile(
-                            value: isBath,
-                            title: Text('Bathroom',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(color: Colors.black)),
-                            onChanged: (bool value) {
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
+                          ToggleButtons(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Bathroom'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Balcony'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Wardrobe'),
+                              )
+                            ],
+                            isSelected: _roomSelection,
+                            onPressed: (int index) {
                               setState(() {
-                                isBath = value;
+                                _roomSelection[index] = !_roomSelection[index];
                               });
                             },
                           ),
-                          CheckboxListTile(
-                            value: isBalcony,
-                            title: Text('Balcony',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(color: Colors.black)),
-                            onChanged: (bool value) {
-                              setState(() {
-                                isBalcony = value;
-                              });
-                            },
-                          ),
-                          CheckboxListTile(
-                            value: isWardrobe,
-                            title: Text(
-                              'Wardrobe',
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .subtitle1
-                                  .copyWith(color: Colors.black),
-                            ),
-                            onChanged: (bool value) {
-                              setState(() {
-                                isWardrobe = value;
-                              });
-                            },
-                          ),
+                          // CheckboxListTile(
+                          //   value: isBath,
+                          //   title: Text('Bathroom',
+                          //       style: Theme.of(context)
+                          //           .primaryTextTheme
+                          //           .subtitle1
+                          //           .copyWith(color: Colors.black)),
+                          //   onChanged: (bool value) {
+                          //     setState(() {
+                          //       isBath = value;
+                          //     });
+                          //   },
+                          // ),
+                          // CheckboxListTile(
+                          //   value: isBalcony,
+                          //   title: Text('Balcony',
+                          //       style: Theme.of(context)
+                          //           .primaryTextTheme
+                          //           .subtitle1
+                          //           .copyWith(color: Colors.black)),
+                          //   onChanged: (bool value) {
+                          //     setState(() {
+                          //       isBalcony = value;
+                          //     });
+                          //   },
+                          // ),
+                          // CheckboxListTile(
+                          //   value: isWardrobe,
+                          //   title: Text(
+                          //     'Wardrobe',
+                          //     style: Theme.of(context)
+                          //         .primaryTextTheme
+                          //         .subtitle1
+                          //         .copyWith(color: Colors.black),
+                          //   ),
+                          //   onChanged: (bool value) {
+                          //     setState(() {
+                          //       isWardrobe = value;
+                          //     });
+                          //   },
+                          // ),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text('Images',
@@ -390,7 +443,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                     .subtitle1
                                     .copyWith(
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w400)),
+                                        fontWeight: FontWeight.w800)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 36.0),

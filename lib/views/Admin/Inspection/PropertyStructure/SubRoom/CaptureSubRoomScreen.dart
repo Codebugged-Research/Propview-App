@@ -23,8 +23,10 @@ class CaptureSubRoomScreen extends StatefulWidget {
   final List<PropertyRoom> roomTypes;
   final PropertyRoom roomTypeDropDownValue;
   final PropertyRoom subRoomTypeDropDownValue;
-  final double roomSizeOne;
-  final double roomSizeTwo;
+  final roomLengthFeet;
+  final roomLengthInches;
+  final roomWidthFeet;
+  final roomWidthInches;
 
   CaptureSubRoomScreen({
     this.propertyElement,
@@ -33,8 +35,10 @@ class CaptureSubRoomScreen extends StatefulWidget {
     this.roomTypes,
     this.facilitiesName,
     this.facilityTag,
-    this.roomSizeOne = 0.0,
-    this.roomSizeTwo = 0.0,
+    this.roomLengthFeet,
+    this.roomLengthInches,
+    this.roomWidthFeet,
+    this.roomWidthInches,
     this.roomTypeDropDownValue,
     this.subRoomTypeDropDownValue,
   });
@@ -94,8 +98,10 @@ class _CaptureSubRoomScreenState extends State<CaptureSubRoomScreen>
             roomTypes: widget.roomTypes,
             roomTypeDropDownValue: widget.roomTypeDropDownValue,
             subRoomTypeDropDownValue: widget.subRoomTypeDropDownValue,
-            roomSizeOne: widget.roomSizeOne,
-            roomSizeTwo: widget.roomSizeTwo,
+            roomLengthFeet: widget.roomLengthFeet,
+            roomLengthInches: widget.roomLengthInches,
+            roomWidthFeet: widget.roomWidthFeet,
+            roomWidthInches: widget.roomWidthInches,
           ));
     } catch (e) {
       print(e);
