@@ -29,7 +29,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       height: 75,
                     ),
                     Text(
-                      "Task Details",
+                      "Details",
                       style: GoogleFonts.nunito(
                         color: Colors.black,
                         fontSize: 28,
