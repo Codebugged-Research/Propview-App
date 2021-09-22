@@ -12,6 +12,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/TaskManager/CalenderScreen.dart';
+import 'package:propview/views/Admin/TaskManager/SearchTask.dart';
 import 'package:propview/views/Admin/TaskManager/createTaskScreen.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
 
@@ -28,7 +29,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     getData();
   }
 
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   User user;
   List<User> userList;
@@ -168,6 +169,48 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SearchTask(
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[200],
+                                      offset: const Offset(
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ), //BoxShadow
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: const Offset(0.0, 0.0),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ),
+                                  ]),
+                              child: Icon(
+                                Icons.search_sharp,
+                                color: Color(0xff314B8C),
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(
