@@ -133,43 +133,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         children: [
                           InkWell(
                             onTap: () {
-                              getData();
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[200],
-                                      offset: const Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ), //BoxShadow
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: const Offset(0.0, 0.0),
-                                      blurRadius: 4.0,
-                                      spreadRadius: 0.0,
-                                    ),
-                                  ]),
-                              child: Icon(
-                                Icons.refresh,
-                                color: Color(0xff314B8C),
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          InkWell(
-                            onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => CalenderScreen(
                                         taskList: pendingTaskList,

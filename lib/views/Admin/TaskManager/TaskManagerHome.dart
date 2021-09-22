@@ -12,6 +12,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/TaskManager/CalenderScreen.dart';
+import 'package:propview/views/Admin/TaskManager/SearchTask.dart';
 import 'package:propview/views/Admin/TaskManager/createTaskScreen.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
 
@@ -28,7 +29,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     getData();
   }
 
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   User user;
   List<User> userList;
@@ -40,9 +41,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
   List<TaskElement> pendingTaskList2 = [];
   List<TaskElement> completedTaskList2 = [];
   List<TaskElement> unApprovedTaskList2 = [];
-  List<TaskElement> pendingTaskList3 = [];
-  List<TaskElement> completedTaskList3 = [];
-  List<TaskElement> unApprovedTaskList3 = [];
   User tempUser;
 
   getData() async {
@@ -88,8 +86,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       loading = false;
     });
   }
-
-  bool serachLoading = false;
 
   TabController _tabController;
   TabController _tabController21;
@@ -170,7 +166,12 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         children: [
                           InkWell(
                             onTap: () {
-                              getData();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SearchTask(
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               height: 35,
@@ -196,21 +197,24 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                     ),
                                   ]),
                               child: Icon(
-                                Icons.refresh,
+                                Icons.search_sharp,
                                 color: Color(0xff314B8C),
                                 size: 24,
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: 16,
+                            width: 8,
                           ),
                           InkWell(
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
                                   builder: (context) => CalenderScreen(
-                                        taskList: pendingTaskList,
-                                      )));
+                                    taskList: pendingTaskList,
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               height: 35,
@@ -456,146 +460,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             ],
                           ),
                           Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16, top: 8),
-                                    child: Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                75,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          color: Color(0xff314B8C)
-                                              .withOpacity(0.12),
-                                        ),
-                                        child: TypeAheadFormField(
-                                          textFieldConfiguration:
-                                              TextFieldConfiguration(
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                            ),
-                                            controller: this._searchController,
-                                          ),
-                                          suggestionsCallback: (pattern) {
-                                            List<User> matches = [];
-                                            matches.addAll(userList);
-                                            matches.retainWhere((s) => s.name
-                                                .toLowerCase()
-                                                .contains(
-                                                    pattern.toLowerCase()));
-                                            return matches;
-                                          },
-                                          itemBuilder:
-                                              (context, User suggestion) {
-                                            return ListTile(
-                                              title: Text(suggestion.name),
-                                              subtitle: Text(
-                                                  suggestion.officialEmail),
-                                            );
-                                          },
-                                          noItemsFoundBuilder: (context) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'Type to find User !',
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .disabledColor,
-                                                      fontSize: 18.0),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          transitionBuilder: (context,
-                                              suggestionsBox, controller) {
-                                            return suggestionsBox;
-                                          },
-                                          onSuggestionSelected:
-                                              (suggestion) async {
-                                            setState(() {
-                                              serachLoading = true;
-                                            });
-                                            Task userTask = await TaskService
-                                                .getAllTaskByUserId(
-                                                    suggestion.userId);
-                                            print(userTask.count);
-                                            if (userTask.count == 0) {
-                                              showInSnackBar(
-                                                  context,
-                                                  "No task found in database !",
-                                                  2500);
-                                            } else {
-                                              pendingTaskList3.clear();
-                                              unApprovedTaskList3.clear();
-                                              completedTaskList3.clear();
-                                              for (int i = 0;
-                                                  i < userTask.data.task.length;
-                                                  i++) {
-                                                if (userTask.data.task[i]
-                                                            .taskStatus ==
-                                                        "Pending" ||
-                                                    userTask.data.task[i]
-                                                            .taskStatus ==
-                                                        "Rejected") {
-                                                  pendingTaskList3.add(
-                                                      userTask.data.task[i]);
-                                                } else if (userTask.data.task[i]
-                                                        .taskStatus ==
-                                                    "Completed") {
-                                                  completedTaskList3.add(
-                                                      userTask.data.task[i]);
-                                                } else if (userTask.data.task[i]
-                                                        .taskStatus ==
-                                                    "Unapproved") {
-                                                  unApprovedTaskList3.add(
-                                                      userTask.data.task[i]);
-                                                }
-                                              }
-                                              showInSnackBar(
-                                                  context,
-                                                  "${userTask.count} task found in database !",
-                                                  2500);
-                                              setState(() {
-                                                tempUser = suggestion;
-                                              });
-                                            }
-                                            setState(() {
-                                              serachLoading = false;
-                                            });
-                                          },
-                                          validator: (value) => value.isEmpty
-                                              ? 'Please select an Owner Name'
-                                              : null,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    child: Icon(Icons.clear),
-                                    onTap: () {
-                                      setState(() {
-                                        tempUser = user;
-                                        _searchController.clear();
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                              serachLoading
-                                  ? circularProgressWidget()
-                                  : TabBar(
+                            children: [ TabBar(
                                       isScrollable: true,
                                       controller: _tabController22,
                                       indicator: UnderlineTabIndicator(
@@ -641,8 +506,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                           height: 12,
                                         ),
                                         Expanded(
-                                          child: tempUser.userId == user.userId
-                                              ? pendingTaskList2.length == 0
+                                          child: pendingTaskList2.length == 0
                                                   ? Center(
                                                       child: Text(
                                                         'No Task!',
@@ -679,45 +543,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                           isSelf: false,
                                                         );
                                                       },
-                                                    )
-                                              : pendingTaskList3.length == 0
-                                                  ? Center(
-                                                      child: Text(
-                                                        'No Task!',
-                                                        style: Theme.of(context)
-                                                            .primaryTextTheme
-                                                            .subtitle1
-                                                            .copyWith(
-                                                                color: Color(
-                                                                    0xff314B8C),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                      ),
-                                                    )
-                                                  : ListView.builder(
-                                                      padding:
-                                                          EdgeInsets.all(8.0),
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      physics:
-                                                          BouncingScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      itemCount:
-                                                          pendingTaskList3
-                                                              .length,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        return TaskCard(
-                                                          taskElement:
-                                                              pendingTaskList3[
-                                                                  index],
-                                                          currentUser: user,
-                                                          isSelf: false,
-                                                        );
-                                                      },
-                                                    ),
+                                                    )                                              
                                         )
                                       ],
                                     ),
@@ -730,8 +556,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                           height: 12,
                                         ),
                                         Expanded(
-                                          child: tempUser.userId == user.userId
-                                              ? unApprovedTaskList2.length == 0
+                                          child:  unApprovedTaskList2.length == 0
                                                   ? Center(
                                                       child: Text(
                                                         'No Task!',
@@ -796,71 +621,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                         );
                                                       },
                                                     )
-                                              : unApprovedTaskList3.length == 0
-                                                  ? Center(
-                                                      child: Text(
-                                                        'No Task!',
-                                                        style: Theme.of(context)
-                                                            .primaryTextTheme
-                                                            .subtitle1
-                                                            .copyWith(
-                                                                color: Color(
-                                                                    0xff314B8C),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                      ),
-                                                    )
-                                                  : ListView.builder(
-                                                      padding:
-                                                          EdgeInsets.all(8.0),
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      physics:
-                                                          BouncingScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      itemCount:
-                                                          unApprovedTaskList3
-                                                              .length,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        return TaskCard(
-                                                          taskElement:
-                                                              unApprovedTaskList3[
-                                                                  index],
-                                                          currentUser: user,
-                                                          isSelf: false,
-                                                          change1: (TaskElement
-                                                              taskElement) {
-                                                            setState(() {
-                                                              unApprovedTaskList
-                                                                  .removeWhere((element) =>
-                                                                      element
-                                                                          .taskId ==
-                                                                      taskElement
-                                                                          .taskId);
-                                                              completedTaskList
-                                                                  .add(
-                                                                      taskElement);
-                                                            });
-                                                          },
-                                                          change2: (TaskElement
-                                                              taskElement) {
-                                                            setState(() {
-                                                              unApprovedTaskList
-                                                                  .removeWhere((element) =>
-                                                                      element
-                                                                          .taskId ==
-                                                                      taskElement
-                                                                          .taskId);
-                                                              pendingTaskList.add(
-                                                                  taskElement);
-                                                            });
-                                                          },
-                                                        );
-                                                      },
-                                                    ),
                                         )
                                       ],
                                     ),
@@ -873,8 +633,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                           height: 12,
                                         ),
                                         Expanded(
-                                          child: tempUser.userId == user.userId
-                                              ? completedTaskList2.length == 0
+                                          child: completedTaskList2.length == 0
                                                   ? Center(
                                                       child: Text(
                                                         'No Task!',
@@ -911,45 +670,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                           isSelf: false,
                                                         );
                                                       },
-                                                    )
-                                              : completedTaskList3.length == 0
-                                                  ? Center(
-                                                      child: Text(
-                                                        'No Task!',
-                                                        style: Theme.of(context)
-                                                            .primaryTextTheme
-                                                            .subtitle1
-                                                            .copyWith(
-                                                                color: Color(
-                                                                    0xff314B8C),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                      ),
-                                                    )
-                                                  : ListView.builder(
-                                                      padding:
-                                                          EdgeInsets.all(8.0),
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      physics:
-                                                          BouncingScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      itemCount:
-                                                          completedTaskList3
-                                                              .length,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        return TaskCard(
-                                                          taskElement:
-                                                              completedTaskList3[
-                                                                  index],
-                                                          currentUser: user,
-                                                          isSelf: false,
-                                                        );
-                                                      },
-                                                    ),
+                                                    )                                              
                                         )
                                       ],
                                     ),

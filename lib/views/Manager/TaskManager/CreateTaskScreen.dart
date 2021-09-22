@@ -193,6 +193,96 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
+                              "Select Employee: ",
+                              style: GoogleFonts.nunito(
+                                  color: Color(0xff314B8C),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              height: 75,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Color(0xff314B8C).withOpacity(0.12),
+                              ),
+                              child: TypeAheadFormField(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  textCapitalization: TextCapitalization.words,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  controller: this._user,
+                                ),
+                                suggestionsCallback: (pattern) {
+                                  List<User> matches = [];
+                                  matches.addAll(users);
+                                  matches.retainWhere((s) => s.name
+                                      .toLowerCase()
+                                      .contains(pattern.toLowerCase()));
+                                  return matches;
+                                },
+                                itemBuilder: (context, User user) {
+                                  return ListTile(
+                                    title: Text(user.name),
+                                    subtitle: Text(user.designation),
+                                  );
+                                },
+                                noItemsFoundBuilder: (context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Type to find executive!',
+                                        style: TextStyle(
+                                            color:
+                                            Theme.of(context).disabledColor,
+                                            fontSize: 18.0),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                transitionBuilder:
+                                    (context, suggestionsBox, controller) {
+                                  return suggestionsBox;
+                                },
+                                onSuggestionSelected: (suggestion) {
+                                  this._user.text = suggestion.name.toString() +
+                                      "\n" +
+                                      suggestion.designation.toString();
+                                  setState(() {
+                                    _selectedUser = suggestion;
+                                  });
+                                },
+                                validator: (value) => value.isEmpty
+                                    ? 'Please select a property'
+                                    : null,
+                                // onSaved: (value) => this.propertyOwner = value,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 8.0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
                               "Select Category of Task: ",
                               style: GoogleFonts.nunito(
                                   color: Color(0xff314B8C),
@@ -482,96 +572,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         _taskStartDateTime, _taskStartDateTime2, true),
                     inputDateTime("Enter End Date and Time", _taskEndDateTime,
                         _taskEndDateTime2, false),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Select Employee: ",
-                              style: GoogleFonts.nunito(
-                                  color: Color(0xff314B8C),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              height: 75,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color(0xff314B8C).withOpacity(0.12),
-                              ),
-                              child: TypeAheadFormField(
-                                textFieldConfiguration: TextFieldConfiguration(
-                                  textCapitalization: TextCapitalization.words,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                  ),
-                                  controller: this._user,
-                                ),
-                                suggestionsCallback: (pattern) {
-                                  List<User> matches = [];
-                                  matches.addAll(users);
-                                  matches.retainWhere((s) => s.name
-                                      .toLowerCase()
-                                      .contains(pattern.toLowerCase()));
-                                  return matches;
-                                },
-                                itemBuilder: (context, User user) {
-                                  return ListTile(
-                                    title: Text(user.name),
-                                    subtitle: Text(user.designation),
-                                  );
-                                },
-                                noItemsFoundBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Type to find executive!',
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).disabledColor,
-                                            fontSize: 18.0),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                transitionBuilder:
-                                    (context, suggestionsBox, controller) {
-                                  return suggestionsBox;
-                                },
-                                onSuggestionSelected: (suggestion) {
-                                  this._user.text = suggestion.name.toString() +
-                                      "\n" +
-                                      suggestion.designation.toString();
-                                  setState(() {
-                                    _selectedUser = suggestion;
-                                  });
-                                },
-                                validator: (value) => value.isEmpty
-                                    ? 'Please select a property'
-                                    : null,
-                                // onSaved: (value) => this.propertyOwner = value,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
                     SizedBox(
                       height: 16,
                     ),

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/City.dart';
@@ -11,6 +13,7 @@ import 'package:propview/services/attendanceService.dart';
 import 'package:propview/services/cityService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceCard.dart';
 import 'package:propview/views/Admin/Attendance/LogCard.dart';
 import 'package:propview/views/Admin/Attendance/SoloAttendance.dart';
@@ -33,9 +36,11 @@ class _AttendanceHomeState extends State<AttendanceHome>
 
   bool loading = false;
   User user;
+  int index = 0;
   List<User> userList = [];
   TabController _tabController;
   Attendance attendance;
+  Attendance attendance2;
   Attendance attendanceToday;
   List bools = [];
   List<City> cities = [];
@@ -78,6 +83,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
       }
     }
     setState(() {
+      attendance2 = attendance;
       loading = false;
     });
   }
@@ -95,6 +101,9 @@ class _AttendanceHomeState extends State<AttendanceHome>
     var date = DateTime.now();
     return '${date.day.toString().padLeft(2, "0")}-${date.month.toString().padLeft(2, "0")}-${DateTime.now().year}';
   }
+
+  TextEditingController _searchController = TextEditingController();
+  bool serachLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +223,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TabBar(
                       isScrollable: true,
                       controller: _tabController,
@@ -236,6 +245,9 @@ class _AttendanceHomeState extends State<AttendanceHome>
                         Tab(text: "Logs"),
                       ],
                       onTap: (value) {
+                        setState(() {
+                          index = value;
+                        });
                         _tabController.animateTo(
                           value,
                           curve: Curves.easeIn,
@@ -244,6 +256,113 @@ class _AttendanceHomeState extends State<AttendanceHome>
                       },
                     ),
                   ),
+                  index == 1
+                      ? Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, right: 16, top: 8, bottom: 6),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width - 75,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Color(0xff314B8C).withOpacity(0.12),
+                                  ),
+                                  child: TypeAheadFormField(
+                                    textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
+                                      controller: this._searchController,
+                                    ),
+                                    suggestionsCallback: (pattern) {
+                                      List<User> matches = [];
+                                      matches.addAll(userList);
+                                      matches.retainWhere((s) => s.name
+                                          .toLowerCase()
+                                          .contains(pattern.toLowerCase()));
+                                      return matches;
+                                    },
+                                    itemBuilder: (context, User suggestion) {
+                                      return ListTile(
+                                        title: Text(suggestion.name),
+                                        subtitle:
+                                            Text(suggestion.officialEmail),
+                                      );
+                                    },
+                                    noItemsFoundBuilder: (context) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Type to find User !',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .disabledColor,
+                                                fontSize: 18.0),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    transitionBuilder:
+                                        (context, suggestionsBox, controller) {
+                                      return suggestionsBox;
+                                    },
+                                    onSuggestionSelected: (suggestion) async {
+                                      setState(() {
+                                        serachLoading = true;
+                                        _searchController.text = suggestion.name;
+                                      });
+                                      List<AttendanceElement> temp = attendance2.data.attendance.where((element) {
+                                        return element.name.toLowerCase().contains(suggestion.name.toLowerCase());
+                                      }).toList();
+                                      attendance2.data.attendance = temp;
+                                      attendance2.count = temp.length;
+                                      if (temp.length == 0) {
+                                        showInSnackBar(
+                                            context,
+                                            "No attendance log found in database !",
+                                            2500);
+                                      } else {
+                                        showInSnackBar(
+                                            context,
+                                            "${temp.length} logs found in database !",
+                                            2500);
+                                      }
+                                      setState(() {
+                                        serachLoading = false;
+                                      });
+                                    },
+                                    validator: (value) => value.isEmpty
+                                        ? 'Please select an Owner Name'
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              child: Icon(Icons.clear),
+                              onTap: () async{
+                                serachLoading = true;
+                                attendance = await AttendanceService.getAllWithoutDate(0, 1000);
+                                attendance2.count = attendance.count;
+                                attendance2.data.attendance = attendance.data.attendance;
+                                setState(() {
+                                  _searchController.clear();
+                                  serachLoading = false;
+                                });
+                              },
+                            ),
+                          ],
+                        )
+                      : Container(),
                   Expanded(
                     child: TabBarView(
                       physics: NeverScrollableScrollPhysics(),
@@ -276,28 +395,30 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                   );
                                 },
                               ),
-                        attendance.count == 0
-                            ? Center(
-                                child: Text(
-                                  'No Logs!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle1
-                                      .copyWith(
-                                          color: Color(0xff314B8C),
-                                          fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            : ListView.builder(
-                                padding: EdgeInsets.only(top: 0),
-                                itemCount: attendance.count,
-                                itemBuilder: (context, index) {
-                                  return LogCard(
-                                    attendanceElement:
-                                        attendance.data.attendance[index],
-                                  );
-                                },
-                              ),
+                        serachLoading
+                            ? circularProgressWidget()
+                            : attendance2.count == 0
+                                ? Center(
+                                    child: Text(
+                                      'No Logs!',
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle1
+                                          .copyWith(
+                                              color: Color(0xff314B8C),
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    padding: EdgeInsets.only(top: 0),
+                                    itemCount: attendance2.count,
+                                    itemBuilder: (context, index) {
+                                      return LogCard(
+                                        attendanceElement:
+                                            attendance2.data.attendance[index],
+                                      );
+                                    },
+                                  ),
                       ],
                     ),
                   ),

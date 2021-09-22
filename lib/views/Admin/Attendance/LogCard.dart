@@ -40,7 +40,7 @@ class _LogCardState extends State<LogCard> {
                 spreadRadius: 0.0,
               ),
             ]),
-        height: 150,
+        height: 145,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(

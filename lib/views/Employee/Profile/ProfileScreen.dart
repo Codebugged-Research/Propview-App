@@ -52,6 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isLoading = true;
     });
     user = await UserService.getUser();
+    imageCache.clearLiveImages();
+    imageCache.clear();
     setState(() {
       isLoading = false;
     });
@@ -132,6 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         await http.MultipartFile.fromPath('upload', img.path));
                     var res = await request.send();
                     if (res.statusCode == 200) {
+                      imageCache.clearLiveImages();
                       imageCache.clear();
                       Navigator.of(context).pop();
                       getData();

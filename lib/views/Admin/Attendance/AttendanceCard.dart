@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/config.dart';
 import 'package:propview/models/City.dart';
 import 'package:propview/models/attd.dart';
+import 'package:propview/views/Admin/TaskManager/SoloCalendar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AttendanceCard extends StatefulWidget {
@@ -129,13 +130,27 @@ class _AttendanceCardState extends State<AttendanceCard> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  InkWell(
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Colors.blue,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => SoloCalendar(
+                            id: widget.attd.user.userId.toString(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   Icon(
                     Icons.emoji_people,
                     color: widget.attd.isPresent
                         ? Colors.black
                         : Colors.grey.shade300,
                   ),
-                  VerticalDivider(),
                   InkWell(
                     child: Icon(
                       Icons.call,
