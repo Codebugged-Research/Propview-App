@@ -8,7 +8,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:propview/config.dart';
-import 'package:propview/constants/uiContants.dart';
+import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/Facility.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';

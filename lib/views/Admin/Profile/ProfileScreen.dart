@@ -10,7 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:propview/config.dart';
 
-import 'package:propview/constants/uiContants.dart';
+import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/authService.dart';
 import 'package:propview/services/userService.dart';

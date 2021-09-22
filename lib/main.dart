@@ -13,16 +13,16 @@ ReminderService reminderService;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   AndroidInitializationSettings androidInitializationSettings =
-      AndroidInitializationSettings("logo");
+  AndroidInitializationSettings("logo");
 
   IOSInitializationSettings iosInitializationSettings =
-      IOSInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true);
+  IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true);
 
   final InitializationSettings initializationSettings = InitializationSettings(
       android: androidInitializationSettings, iOS: iosInitializationSettings);
@@ -40,7 +40,7 @@ scheduleIncoming(
     FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
     RemoteMessage message) async {
   var scheduledNotificationStartTime =
-      determineScheduledTime(message.data['startTime']);
+  determineScheduledTime(message.data['startTime']);
   var android = AndroidNotificationDetails("id", "channel", "description");
   var ios = IOSNotificationDetails();
   var platform = new NotificationDetails(android: android, iOS: ios);
@@ -57,7 +57,7 @@ scheduleOutgoing(
     FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
     RemoteMessage message) async {
   var scheduledNotificationEndTime =
-      determineScheduledTime(message.data['endTime']);
+  determineScheduledTime(message.data['endTime']);
 
   var android = AndroidNotificationDetails("id", "channel", "description");
 
@@ -88,7 +88,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
 );
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -96,7 +96,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+      AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(

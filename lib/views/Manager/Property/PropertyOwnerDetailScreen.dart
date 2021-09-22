@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:propview/constants/uiContants.dart';
+import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/utils/progressBar.dart';

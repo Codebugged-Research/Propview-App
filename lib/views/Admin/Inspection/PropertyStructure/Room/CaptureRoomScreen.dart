@@ -18,8 +18,10 @@ class CaptureRoomScreen extends StatefulWidget {
   final List<Facility> facilities;
   final List<String> imageList;
   final List<String> flooringType;
-  final double roomSizeOne;
-  final double roomSizeTwo;
+  final roomLengthFeet;
+  final roomLengthInches;
+  final roomWidthFeet;
+  final roomWidthInches;
   final bool isBath;
   final bool isBalcony;
   final String marbelTypeDropDownValue;
@@ -33,10 +35,12 @@ class CaptureRoomScreen extends StatefulWidget {
     this.facilities,
     this.imageList,
     this.flooringType,
-    this.roomSizeOne,
     this.facilityTag,
     this.marbelTypeDropDownValue,
-    this.roomSizeTwo,
+    this.roomLengthFeet,
+    this.roomLengthInches,
+    this.roomWidthFeet,
+    this.roomWidthInches,
     this.roomTypes,
     this.isBath = false,
     this.isBalcony = false,
@@ -104,8 +108,10 @@ class _CaptureRoomScreenState extends State<CaptureRoomScreen>
             imageList: widget.imageList,
             roomList: widget.roomTypes,
             flooringType: widget.flooringType,
-            roomSizeOne: widget.roomSizeOne,
-            roomSizeTwo: widget.roomSizeTwo,
+            roomLengthFeet: widget.roomLengthFeet,
+            roomLengthInches: widget.roomLengthInches,
+            roomWidthFeet: widget.roomWidthFeet,
+            roomWidthInches: widget.roomWidthInches,
             facilityTag: widget.facilityTag,
             marbelTypeDropDownValue: widget.marbelTypeDropDownValue,
             isWardrobe: widget.isWardrobe,

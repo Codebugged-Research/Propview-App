@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:propview/constants/uiContants.dart';
+import 'package:propview/constants/uiConstants.dart';
 
 import 'package:propview/services/authService.dart';
 import 'package:propview/utils/routing.dart';

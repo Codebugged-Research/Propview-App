@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:propview/constants/uiContants.dart';
+import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
