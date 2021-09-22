@@ -18,6 +18,8 @@ class CaptureRoomScreen extends StatefulWidget {
   final List<Facility> facilities;
   final List<String> imageList;
   final List<String> flooringType;
+  final List<bool> roomBoolList;
+  final List<bool> flooringLIst;
   final roomLengthFeet;
   final roomLengthInches;
   final roomWidthFeet;
@@ -34,6 +36,8 @@ class CaptureRoomScreen extends StatefulWidget {
     this.propertyElement,
     this.facilities,
     this.imageList,
+    this.roomBoolList,
+    this.flooringLIst,
     this.flooringType,
     this.facilityTag,
     this.marbelTypeDropDownValue,
@@ -111,6 +115,8 @@ class _CaptureRoomScreenState extends State<CaptureRoomScreen>
             roomLengthFeet: widget.roomLengthFeet,
             roomLengthInches: widget.roomLengthInches,
             roomWidthFeet: widget.roomWidthFeet,
+            roomBoolList: widget.roomBoolList,
+            flooringLIst: widget.flooringLIst,
             roomWidthInches: widget.roomWidthInches,
             facilityTag: widget.facilityTag,
             marbelTypeDropDownValue: widget.marbelTypeDropDownValue,

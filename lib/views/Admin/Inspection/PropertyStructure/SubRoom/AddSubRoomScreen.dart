@@ -126,13 +126,13 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
     }
 
     setState(() {
-      roomTypes = newRoomList;
+      roomTypes = newRoomList ?? [];
     });
     roomTypeDropDownValue = widget.roomTypeDropDownValue == null
-        ? roomTypes[0]
+        ? roomTypes.length > 0 ? roomTypes[0]: null
         : widget.roomTypeDropDownValue;
     subRoomTypeDropDownValue = widget.subRoomTypeDropDownValue == null
-        ? subRoomTypes[0]
+        ? subRoomTypes.length > 0 ? subRoomTypes[0]: null
         : widget.subRoomTypeDropDownValue;
     setState(() {
       isLoading = false;

@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      "Admin/Super Admin",
+                      "Manager",
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle2

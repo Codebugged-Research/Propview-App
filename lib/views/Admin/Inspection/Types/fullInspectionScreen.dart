@@ -147,9 +147,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           ));
         });
       }
-    }
+    }roomsAvailable.length > 0 ? selectedRoomSubRoom = roomsAvailable[0] : null;
     setState(() {
-      selectedRoomSubRoom = roomsAvailable[0];
       loader = false;
     });
   }

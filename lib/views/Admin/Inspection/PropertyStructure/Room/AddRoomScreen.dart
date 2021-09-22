@@ -24,6 +24,8 @@ class AddRoomScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<Facility> facilities;
   final List<String> imageList;
+  final List<bool> roomBoolList;
+  final List<bool> flooringLIst;
   final List<String> flooringType;
   final List roomList;
   final List<Facility> facilityTag;
@@ -41,6 +43,8 @@ class AddRoomScreen extends StatefulWidget {
     this.propertyElement,
     this.facilities,
     this.imageList,
+    this.roomBoolList,
+    this.flooringLIst,
     this.marbelTypeDropDownValue,
     this.flooringType,
     this.facilityTag,
@@ -97,6 +101,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     facilities = widget.facilities;
     flooringType = widget.flooringType;
     imageList = widget.imageList;
+    _floorSelections = widget.flooringLIst ?? List.generate(3, (_) => false);
+    _roomSelection = widget.roomBoolList ?? List.generate(3, (_) => false);
     facilityDropDownValue = facilities[0];
     roomLengthFeetController.text = widget.roomLengthFeet.toString();
     roomLengthInchesController.text = widget.roomLengthInches.toString();
@@ -362,6 +368,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             ],
                             isSelected: _floorSelections,
                             onPressed: (int index) {
+                              _floorSelections = List.generate(3, (_) => false);
                               setState(() {
                                 _floorSelections[index] =
                                     !_floorSelections[index];
@@ -530,6 +537,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       isBalcony: isBalcony,
                       isWardrobe: isWardrobe,
                       roomTypeDropDownValue: roomTypeDropDownValue,
+                  roomBoolList: _roomSelection,
+                  flooringLIst: _floorSelections,
                     ));
               }
             : () {
@@ -623,15 +632,16 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   // create drop down for this
                   roomSize1: roomLength,
                   roomSize2: roomWidth,
-                  bath: isBath == true ? 1 : 0,
-                  balcony: isBath == true ? 1 : 0,
-                  wardrobe: isWardrobe == true ? 1 : 0,
+                  bath: _roomSelection[0] == true ? 1 : 0,
+                  balcony: _roomSelection[1]  == true ? 1 : 0,
+                  wardrobe: _roomSelection[2]  == true ? 1 : 0,
                   facility: modelFacilty,
-                  flooring: marbelTypeDropDownValue,
+                  flooring: flooringType[_floorSelections.indexWhere((element) => element == true)],
                   image1: img1,
                   image2: img2,
                   image3: img3,
                 );
+                print(room.toJson());
                 setState(() {
                   loader = true;
                 });
