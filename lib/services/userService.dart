@@ -157,8 +157,17 @@ class UserService extends AuthService {
       if (DateTime.now().difference(lastCache).inDays > 7) {
         cacheData.deleteCache("getAllUserUnderManger" + id.toString());
         http.Response response = await AuthService.makeAuthenticatedRequest(
-            AuthService.BASE_URI + 'api/user/manager/$id',
-            method: 'GET');
+          AuthService.BASE_URI + 'api/user/manager/',
+          method: 'POST',
+          body: jsonEncode(
+            {
+              "id1": "$id",
+              "id2": "%,$id",
+              "id3": "%,$id,%",
+              "id4": "$id,%",
+            },
+          ),
+        );
         if (response.statusCode == 200) {
           cacheData.addCacheData(
             APICacheDBModel(
@@ -184,8 +193,17 @@ class UserService extends AuthService {
       }
     } else {
       http.Response response = await AuthService.makeAuthenticatedRequest(
-          AuthService.BASE_URI + 'api/user/manager/$id',
-          method: 'GET');
+        AuthService.BASE_URI + 'api/user/manager/',
+        method: 'POST',
+        body: jsonEncode(
+          {
+            "id1": "$id",
+            "id2": "%,$id",
+            "id3": "%,$id,%",
+            "id4": "$id,%",
+          },
+        ),
+      );
       if (response.statusCode == 200) {
         cacheData.addCacheData(
           APICacheDBModel(

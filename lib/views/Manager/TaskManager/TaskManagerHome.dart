@@ -12,6 +12,7 @@ import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Manager/Profile/ProfileScreen.dart';
 import 'package:propview/views/Manager/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Manager/TaskManager/CreateTaskScreen.dart';
+import 'package:propview/views/Manager/TaskManager/SearchTask.dart';
 import 'package:propview/views/Manager/widgets/taskCard.dart';
 
 class TaskMangerHome extends StatefulWidget {
@@ -153,6 +154,47 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SearchTask(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[200],
+                                      offset: const Offset(
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ), //BoxShadow
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: const Offset(0.0, 0.0),
+                                      blurRadius: 4.0,
+                                      spreadRadius: 0.0,
+                                    ),
+                                  ]),
+                              child: Icon(
+                                Icons.search_sharp,
+                                color: Color(0xff314B8C),
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
