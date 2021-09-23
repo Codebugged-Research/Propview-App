@@ -47,6 +47,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
   Map gg;
 
   AttendanceElement myAttendance;
+  
 
   getData() async {
     setState(() {

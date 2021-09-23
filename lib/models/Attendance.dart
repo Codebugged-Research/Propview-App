@@ -68,6 +68,8 @@ class AttendanceElement {
     this.diff_km,
     this.tblUsers,
     this.isPresent,
+    this.geo_in,
+    this.geo_out,
   });
 
   int attendanceId;
@@ -81,6 +83,8 @@ class AttendanceElement {
   String date;
   String name;
   String email;
+  String geo_in;
+  String geo_out;
 
   // ignore: non_constant_identifier_names
   int diff_km;
@@ -117,6 +121,8 @@ class AttendanceElement {
         diff_km: json["diff_km"] == null ? 0 : json["diff_km"],
         tblUsers:
             json["tbl_users"] == null ? null : User.fromJson(json["tbl_users"]),
+            geo_in: json["geo_in"] == null ? null : json["geo_in"],
+        geo_out: json["geo_out"] == null ? 0 : json["geo_out"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -132,5 +138,7 @@ class AttendanceElement {
         "name": name == null ? null : name,
         "email": email == null ? null : email,
         "diff_km": diff_km == null ? null : diff_km,
+        "geo_in": geo_in == null ? null : geo_in,
+        "geo_out": geo_out == null ? null : geo_out,
       };
 }
