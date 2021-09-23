@@ -11,6 +11,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Manager/landingPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SoloAttendance extends StatefulWidget {
   final AttendanceElement attendanceElement;
@@ -26,11 +27,20 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   void initState() {
     super.initState();
     getData();
+    getLocation();
   }
 
   bool loading = false;
   User user;
   AttendanceElement attendanceElement;
+  Position position;
+
+  getLocation() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
 
   getData() async {
     setState(() {
@@ -71,12 +81,20 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   updateLog() async {
-    DateTime startTime = DateTime.parse(start);
+    if(position !=null) {
+      showInSnackBar(
+        context,
+        "Please turn on your location! Try again.",
+        1500,
+      );
+    } else {
+      DateTime startTime = DateTime.parse(start);
     DateTime endTime = DateTime.parse(end);
     AttendanceElement tempAttendance;
     if (id != "-") {
       tempAttendance = await AttendanceService.getLogById(id);
       print(tempAttendance.toJson());
+      tempAttendance.geo_out = position.latitude.toString() + "," + position.longitude.toString();
       tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
       tempAttendance.punchOut = endTime;
       tempAttendance.workHour = endTime.difference(startTime).inHours;
@@ -97,10 +115,18 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         1500,
       );
     }
+    }
   }
 
   createLog() async {
-    var payload = {
+    if(position !=null) {
+      showInSnackBar(
+        context,
+        "Please turn on your location! Try again.",
+        1500,
+      );
+    } else {
+      var payload = {
       "user_id": user.userId,
       "parent_id": user.parentId,
       "punch_in": start,
@@ -112,6 +138,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       "name": user.name,
       "email": user.officialEmail,
       "diff_km": 0,
+      "geo_in": position.latitude.toString() + "," + position.longitude.toString(),
+      "geo_out": 0,
     };
     var result = await AttendanceService.createLog(payload);
     if (result != false) {
@@ -130,6 +158,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         1500,
       );
     }
+    }
+    
   }
 
   String start = "--/--/-- -- : --";
