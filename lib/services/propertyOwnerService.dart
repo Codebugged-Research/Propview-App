@@ -42,6 +42,26 @@ class PropertyOwnerService extends AuthService {
     }
   }
 
+
+  static Future<List<PropertyElement>> searchProperty(String query) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+      AuthService.BASE_URI + 'api/property/search',
+      method: 'POST',
+      body: jsonEncode({"query": "%" + query + "%"}),
+    );
+    var responseMap = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      List<PropertyElement> propertyOwners = responseMap["propertyOwner"]
+          .map<PropertyElement>((propertyOwnerElement) =>
+              PropertyElement.fromJson(propertyOwnerElement))
+          .toList();
+      return propertyOwners;
+    } else {
+      print("DEBUG search");
+      return [];
+    }
+  }
+
   // ignore: missing_return
   static Future<PropertyOwner> getAllPropertyOwner() async {
     var cacheData = APICacheManager();

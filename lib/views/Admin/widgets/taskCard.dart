@@ -212,7 +212,7 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(
                         context, 'ID: ', '${widget.taskElement.taskId}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, ' Status: ',
+                    titleWidget(context, 'Status: ',
                         '${widget.taskElement.taskStatus}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(

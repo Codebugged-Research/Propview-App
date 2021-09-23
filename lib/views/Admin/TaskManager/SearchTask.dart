@@ -81,6 +81,7 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                             ),
                             child: TypeAheadFormField(
                               textFieldConfiguration: TextFieldConfiguration(
+                    textCapitalization: TextCapitalization.words,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                 ),

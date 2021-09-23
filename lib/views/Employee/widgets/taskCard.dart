@@ -191,7 +191,7 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(
                         context, 'Task ID: ', '${widget.taskElement.taskId}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Task Status: ',
+                    titleWidget(context, 'Status: ',
                         '${widget.taskElement.taskStatus}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(
@@ -210,13 +210,13 @@ class _TaskCardState extends State<TaskCard> {
                         widget.taskElement.tblUsers.name)
                         : Container(),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Task Category: ',
+                    titleWidget(context, 'Category: ',
                         '${widget.taskElement.category}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Task name: ',
+                    titleWidget(context, 'Name: ',
                         '${widget.taskElement.taskName.trim()}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Task Description: ',
+                    titleWidget(context, 'Description: ',
                         '${widget.taskElement.taskDesc}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.taskElement.taskStatus == "Unapproved"
@@ -232,10 +232,10 @@ class _TaskCardState extends State<TaskCard> {
                         ? SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01)
                         : Container(),
-                    titleWidget(context, 'Task Start Time: ',
+                    titleWidget(context, 'Start Time: ',
                         '${dateTimeFormatter(widget.taskElement.startDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Task End Time: ',
+                    titleWidget(context, 'End Time: ',
                         '${dateTimeFormatter(widget.taskElement.endDateTime.toString())}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     Row(
