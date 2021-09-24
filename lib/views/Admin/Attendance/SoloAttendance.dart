@@ -36,8 +36,12 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   Position position;
 
   getLocation() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      Geolocator.openAppSettings();
+      permission = await Geolocator.requestPermission();
+      print(permission);
+    }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
   }
@@ -88,7 +92,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       tempAttendance = await AttendanceService.getLogById(id);
       print(tempAttendance.toJson());
       tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
-      tempAttendance.geo_out = position.latitude.toString() + "," + position.longitude.toString();
+      tempAttendance.geo_out =
+          position.latitude.toString() + "," + position.longitude.toString();
       tempAttendance.punchOut = endTime;
       tempAttendance.workHour = endTime.difference(startTime).inHours;
       tempAttendance.diff_km =
@@ -111,7 +116,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   createLog() async {
-    if(position !=null) {
+    if (position == null) {
       showInSnackBar(
         context,
         "Please turn on your location! Try again.",
@@ -119,37 +124,38 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       );
     } else {
       var payload = {
-      "user_id": user.userId,
-      "parent_id": user.parentId,
-      "punch_in": start,
-      "punch_out": end,
-      "meter_in": user.bikeReading == 1 ? startMeter : 0,
-      "meter_out": user.bikeReading == 1 ? endMeter : 0,
-      "work_hour": 0,
-      "date": dateFormatter(),
-      "name": user.name,
-      "email": user.officialEmail,
-      "diff_km": 0,
-      "geo_in": position.latitude.toString() + "," + position.longitude.toString(),
-      "geo_out": 0,
-    };
-    var result = await AttendanceService.createLog(payload);
-    if (result != false) {
-      setState(() {
-        id = result.toString();
-      });
-      showInSnackBar(
-        context,
-        "Attendance added successfully",
-        1500,
-      );
-    } else {
-      showInSnackBar(
-        context,
-        "Attendance failed",
-        1500,
-      );
-    }
+        "user_id": user.userId,
+        "parent_id": user.parentId,
+        "punch_in": start,
+        "punch_out": end,
+        "meter_in": user.bikeReading == 1 ? startMeter : 0,
+        "meter_out": user.bikeReading == 1 ? endMeter : 0,
+        "work_hour": 0,
+        "date": dateFormatter(),
+        "name": user.name,
+        "email": user.officialEmail,
+        "diff_km": 0,
+        "geo_in":
+            position.latitude.toString() + "," + position.longitude.toString(),
+        "geo_out": 0,
+      };
+      var result = await AttendanceService.createLog(payload);
+      if (result != false) {
+        setState(() {
+          id = result.toString();
+        });
+        showInSnackBar(
+          context,
+          "Attendance added successfully",
+          1500,
+        );
+      } else {
+        showInSnackBar(
+          context,
+          "Attendance failed",
+          1500,
+        );
+      }
     }
   }
 

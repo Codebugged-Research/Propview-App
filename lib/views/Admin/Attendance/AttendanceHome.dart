@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
@@ -47,7 +45,6 @@ class _AttendanceHomeState extends State<AttendanceHome>
   Map gg;
 
   AttendanceElement myAttendance;
-  
 
   getData() async {
     setState(() {
@@ -102,6 +99,14 @@ class _AttendanceHomeState extends State<AttendanceHome>
     var date = DateTime.now();
     return '${date.day.toString().padLeft(2, "0")}-${date.month.toString().padLeft(2, "0")}-${DateTime.now().year}';
   }
+
+  dateFormatter2(dat) {
+    var date = DateTime.parse(dat);
+    return '${date.day.toString().padLeft(2, "0")}-${date.month.toString().padLeft(2, "0")}-${DateTime.now().year}';
+  }
+
+  String start = "";
+  String end = "";
 
   TextEditingController _searchController = TextEditingController();
   bool serachLoading = false;
@@ -319,10 +324,16 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                     onSuggestionSelected: (suggestion) async {
                                       setState(() {
                                         serachLoading = true;
-                                        _searchController.text = suggestion.name;
+                                        _searchController.text =
+                                            suggestion.name;
                                       });
-                                      List<AttendanceElement> temp = attendance2.data.attendance.where((element) {
-                                        return element.name.toLowerCase().contains(suggestion.name.toLowerCase());
+                                      List<AttendanceElement> temp = attendance
+                                          .data.attendance
+                                          .where((element) {
+                                        return element.name
+                                            .toLowerCase()
+                                            .contains(
+                                                suggestion.name.toLowerCase());
                                       }).toList();
                                       attendance2.data.attendance = temp;
                                       attendance2.count = temp.length;
@@ -338,6 +349,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                             2500);
                                       }
                                       setState(() {
+                                            start = "";
+                                            end = "";
                                         serachLoading = false;
                                       });
                                     },
@@ -350,11 +363,16 @@ class _AttendanceHomeState extends State<AttendanceHome>
                             ),
                             InkWell(
                               child: Icon(Icons.clear),
-                              onTap: () async{
+                              onTap: () async {
                                 serachLoading = true;
-                                attendance = await AttendanceService.getAllWithoutDate(0, 1000);
+                                start = "";
+                                end = "";
+                                attendance =
+                                    await AttendanceService.getAllWithoutDate(
+                                        0, 1000);
                                 attendance2.count = attendance.count;
-                                attendance2.data.attendance = attendance.data.attendance;
+                                attendance2.data.attendance =
+                                    attendance.data.attendance;
                                 setState(() {
                                   _searchController.clear();
                                   serachLoading = false;
@@ -364,6 +382,116 @@ class _AttendanceHomeState extends State<AttendanceHome>
                           ],
                         )
                       : Container(),
+                  _searchController.text != ""
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            MaterialButton(
+                              onPressed: () async {
+                                final DateTime picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: start == ""
+                                      ? DateTime.now()
+                                      : DateTime.parse(start),
+                                  firstDate: DateTime(2021),
+                                  lastDate: DateTime(2055),
+                                );
+                                if (start == "") {
+                                  setState(() {
+                                    start = picked.toString();
+                                    end = DateTime.now().toString();
+                                  });
+                                } else if (picked != null &&
+                                    picked != DateTime.parse(start))
+                                  setState(() {
+                                    start = picked.toString();
+                                  });
+                                List<AttendanceElement> temp =
+                                    attendance.data.attendance.where((element) {
+                                  return element.punchIn.isAfter(
+                                        DateTime.parse(start),
+                                      ) &&
+                                      element.punchIn.isBefore(
+                                        DateTime.parse(end),
+                                      ) &&
+                                      element.name.toLowerCase().contains(
+                                            _searchController.text
+                                                .toLowerCase(),
+                                          );
+                                }).toList();
+                                setState(() {
+                                  attendance2.data.attendance = temp;
+                                  attendance2.count = temp.length;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today),
+                                  Text(
+                                    start == ""
+                                        ? "Starting"
+                                        : dateFormatter2(
+                                            start,
+                                          ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Text("To"),
+                            MaterialButton(
+                              onPressed: () async {
+                                final DateTime picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: end == ""
+                                      ? DateTime.now()
+                                      : DateTime.parse(end),
+                                  firstDate: DateTime(2021),
+                                  lastDate: DateTime(2055),
+                                );
+                                if (end == "") {
+                                  setState(() {
+                                    end = picked.toString();
+                                  });
+                                } else if (picked != null &&
+                                    picked != DateTime.parse(end)) {
+                                  setState(() {
+                                    end = picked.toString();
+                                  });
+                                }
+                                List<AttendanceElement> temp =
+                                    attendance.data.attendance.where((element) {
+                                  return element.punchIn.isAfter(
+                                        DateTime.parse(start),
+                                      ) &&
+                                      element.punchIn.isBefore(
+                                        DateTime.parse(end),
+                                      ) &&
+                                      element.name.toLowerCase().contains(
+                                            _searchController.text
+                                                .toLowerCase(),
+                                          );
+                                }).toList();
+                                setState(() {
+                                  attendance2.data.attendance = temp;
+                                  attendance2.count = temp.length;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today),
+                                  Text(
+                                    end == ""
+                                        ? "Till Date"
+                                        : dateFormatter2(
+                                            end,
+                                          ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox(),
                   Expanded(
                     child: TabBarView(
                       physics: NeverScrollableScrollPhysics(),

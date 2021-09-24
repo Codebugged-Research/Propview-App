@@ -36,8 +36,12 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   Position position;
 
   getLocation() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();    
+    if (permission == LocationPermission.denied) {
+      Geolocator.openAppSettings();
+      permission = await Geolocator.requestPermission();
+      print(permission);
+    }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
   }
@@ -119,7 +123,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   createLog() async {
-    if(position !=null) {
+    if(position ==null) {
       showInSnackBar(
         context,
         "Please turn on your location! Try again.",

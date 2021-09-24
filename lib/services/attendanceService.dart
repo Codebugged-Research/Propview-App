@@ -78,8 +78,13 @@ class AttendanceService extends AuthService {
 
   static Future getAllByMangerIdWithoutDate(id) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
-      AuthService.BASE_URI + 'api/attendance/manager/$id',
-      method: 'GET',
+      AuthService.BASE_URI + 'api/attendance/manager/',
+      method: 'POST', body: jsonEncode({
+          "id1": "$id",
+          "id2": "%,$id",
+          "id3": "%,$id,%",
+          "id4": "$id,%",
+      }),
     );
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);

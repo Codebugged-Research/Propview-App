@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
@@ -35,8 +36,12 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   Position position;
 
   getLocation() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      Geolocator.openAppSettings();
+      permission = await Geolocator.requestPermission();
+      print(permission);
+    }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
   }
@@ -80,7 +85,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   updateLog() async {
-    if(position !=null) {
+    if (position == null) {
       showInSnackBar(
         context,
         "Please turn on your location! Try again.",
@@ -88,38 +93,39 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       );
     } else {
       DateTime startTime = DateTime.parse(start);
-    DateTime endTime = DateTime.parse(end);
-    AttendanceElement tempAttendance;
-    if (id != "-") {
-      tempAttendance = await AttendanceService.getLogById(id);
-      print(tempAttendance.toJson());
-      tempAttendance.geo_out = position.latitude.toString() + "," + position.longitude.toString();
-      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
-      tempAttendance.punchOut = endTime;
-      tempAttendance.workHour = endTime.difference(startTime).inHours;
-      tempAttendance.diff_km =
-          user.bikeReading == 1 ? endMeter - startMeter : 0;
+      DateTime endTime = DateTime.parse(end);
+      AttendanceElement tempAttendance;
+      if (id != "-") {
+        tempAttendance = await AttendanceService.getLogById(id);
+        print(tempAttendance.toJson());
+        tempAttendance.geo_out =
+            position.latitude.toString() + "," + position.longitude.toString();
+        tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
+        tempAttendance.punchOut = endTime;
+        tempAttendance.workHour = endTime.difference(startTime).inHours;
+        tempAttendance.diff_km =
+            user.bikeReading == 1 ? endMeter - startMeter : 0;
+      }
+      var result =
+          await AttendanceService.updateLog(tempAttendance.toJson(), id);
+      if (result && id != "-") {
+        showInSnackBar(
+          context,
+          "Attendance updated successfully",
+          1500,
+        );
+      } else {
+        showInSnackBar(
+          context,
+          "Attendance updation failed",
+          1500,
+        );
+      }
     }
-    var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
-    if (result && id != "-") {
-      showInSnackBar(
-        context,
-        "Attendance updated successfully",
-        1500,
-      );
-    } else {
-      showInSnackBar(
-        context,
-        "Attendance updation failed",
-        1500,
-      );
-    }
-    }
-    
   }
 
   createLog() async {
-    if(position !=null) {
+    if (position != null) {
       showInSnackBar(
         context,
         "Please turn on your location! Try again.",
@@ -138,7 +144,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       "name": user.name,
       "email": user.officialEmail,
       "diff_km": 0,
-      "geo_in": position.latitude.toString() + "," + position.longitude.toString(),
+      "geo_in":
+          position.latitude.toString() + "," + position.longitude.toString(),
       "geo_out": 0,
     };
     var result = await AttendanceService.createLog(payload);

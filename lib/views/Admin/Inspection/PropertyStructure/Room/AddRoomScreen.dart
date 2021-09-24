@@ -30,9 +30,9 @@ class AddRoomScreen extends StatefulWidget {
   final List roomList;
   final List<Facility> facilityTag;
   final double roomLengthFeet;
-  final double roomLengthInches;
+  final int roomLengthInches;
   final double roomWidthFeet;
-  final double roomWidthInches;
+  final int roomWidthInches;
   final bool isBath;
   final String marbelTypeDropDownValue;
   final bool isBalcony;
@@ -48,10 +48,10 @@ class AddRoomScreen extends StatefulWidget {
     this.marbelTypeDropDownValue,
     this.flooringType,
     this.facilityTag,
-    this.roomLengthFeet = 0.0,
-    this.roomLengthInches = 0.0,
-    this.roomWidthFeet = 0.0,
-    this.roomWidthInches = 0.0,
+    this.roomLengthFeet = 0.00,
+    this.roomLengthInches = 0,
+    this.roomWidthFeet = 0.00,
+    this.roomWidthInches = 0,
     this.isBath = false,
     this.isBalcony = false,
     this.isWardrobe = false,
@@ -85,11 +85,14 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
   final formkey = new GlobalKey<FormState>();
 
-  TextEditingController roomLengthFeetController = new TextEditingController();
+  TextEditingController roomLengthFeetController =
+      new TextEditingController(text: "0.00");
   TextEditingController roomLengthInchesController =
-      new TextEditingController();
-  TextEditingController roomWidthFeetController = new TextEditingController();
-  TextEditingController roomWidthInchesController = new TextEditingController();
+      new TextEditingController(text: "0");
+  TextEditingController roomWidthFeetController =
+      new TextEditingController(text: "0.00");
+  TextEditingController roomWidthInchesController =
+      new TextEditingController(text: "0");
 
   @override
   void initState() {
@@ -281,6 +284,78 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                               height: UIConstants.fitToHeight(16, context)),
                           Align(
                             alignment: Alignment.centerLeft,
+                            child: Text('Attached Room',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700)),
+                          ),
+                          SizedBox(
+                              height: UIConstants.fitToHeight(16, context)),
+                          ToggleButtons(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Bathroom'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Balcony'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Wardrobe'),
+                              )
+                            ],
+                            isSelected: _roomSelection,
+                            onPressed: (int index) {
+                              setState(() {
+                                _roomSelection[index] = !_roomSelection[index];
+                              });
+                            },
+                          ),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Flooring Type',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700)),
+                          ),
+                          SizedBox(
+                              height: UIConstants.fitToHeight(16, context)),
+                          ToggleButtons(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Vitrified Tiles'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Marble'),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Wooden'),
+                              )
+                            ],
+                            isSelected: _floorSelections,
+                            onPressed: (int index) {
+                              _floorSelections = List.generate(3, (_) => false);
+                              setState(() {
+                                _floorSelections[index] =
+                                    !_floorSelections[index];
+                              });
+                            },
+                          ),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
+                          Align(
+                            alignment: Alignment.centerLeft,
                             child: Text('Facilities',
                                 style: Theme.of(context)
                                     .primaryTextTheme
@@ -311,146 +386,21 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                               );
                             }).toList(),
                           ),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
                           Visibility(
-                              visible: facilityTag.length > 0,
-                              child: TagWidget(tagList: facilityTag)),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(16, context)),
+                            visible: facilityTag.length > 0,
+                            child: TagWidget(tagList: facilityTag),
+                          ),
+                          SizedBox(height: UIConstants.fitToHeight(8, context)),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text('Flooring Type',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          // DropdownButton<String>(
-                          //   isExpanded: true,
-                          //   value: marbelTypeDropDownValue,
-                          //   elevation: 8,
-                          //   underline: Container(
-                          //     height: 2,
-                          //     width: MediaQuery.of(context).size.width,
-                          //     color: Color(0xff314B8C),
-                          //   ),
-                          //   onChanged: (value) {
-                          //     setState(() {
-                          //       marbelTypeDropDownValue = value;
-                          //     });
-                          //   },
-                          //   items: flooringType
-                          //       .map<DropdownMenuItem<String>>((String value) {
-                          //     return DropdownMenuItem<String>(
-                          //       value: value,
-                          //       child: Text(value),
-                          //     );
-                          //   }).toList(),
-                          // ),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          ToggleButtons(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Vitrified Tiles'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Marble'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Wooden'),
-                              )
-                            ],
-                            isSelected: _floorSelections,
-                            onPressed: (int index) {
-                              _floorSelections = List.generate(3, (_) => false);
-                              setState(() {
-                                _floorSelections[index] =
-                                    !_floorSelections[index];
-                              });
-                            },
-                          ),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          ToggleButtons(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Bathroom'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Balcony'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Wardrobe'),
-                              )
-                            ],
-                            isSelected: _roomSelection,
-                            onPressed: (int index) {
-                              setState(() {
-                                _roomSelection[index] = !_roomSelection[index];
-                              });
-                            },
-                          ),
-                          // CheckboxListTile(
-                          //   value: isBath,
-                          //   title: Text('Bathroom',
-                          //       style: Theme.of(context)
-                          //           .primaryTextTheme
-                          //           .subtitle1
-                          //           .copyWith(color: Colors.black)),
-                          //   onChanged: (bool value) {
-                          //     setState(() {
-                          //       isBath = value;
-                          //     });
-                          //   },
-                          // ),
-                          // CheckboxListTile(
-                          //   value: isBalcony,
-                          //   title: Text('Balcony',
-                          //       style: Theme.of(context)
-                          //           .primaryTextTheme
-                          //           .subtitle1
-                          //           .copyWith(color: Colors.black)),
-                          //   onChanged: (bool value) {
-                          //     setState(() {
-                          //       isBalcony = value;
-                          //     });
-                          //   },
-                          // ),
-                          // CheckboxListTile(
-                          //   value: isWardrobe,
-                          //   title: Text(
-                          //     'Wardrobe',
-                          //     style: Theme.of(context)
-                          //         .primaryTextTheme
-                          //         .subtitle1
-                          //         .copyWith(color: Colors.black),
-                          //   ),
-                          //   onChanged: (bool value) {
-                          //     setState(() {
-                          //       isWardrobe = value;
-                          //     });
-                          //   },
-                          // ),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
                             child: Text('Images',
                                 style: Theme.of(context)
                                     .primaryTextTheme
                                     .subtitle1
                                     .copyWith(
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w800)),
+                                        fontWeight: FontWeight.w700)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 36.0),
@@ -537,8 +487,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       isBalcony: isBalcony,
                       isWardrobe: isWardrobe,
                       roomTypeDropDownValue: roomTypeDropDownValue,
-                  roomBoolList: _roomSelection,
-                  flooringLIst: _floorSelections,
+                      roomBoolList: _roomSelection,
+                      flooringLIst: _floorSelections,
                     ));
               }
             : () {
@@ -616,16 +566,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   img3 = await upload(imageList[2],
                       propertyElement.tableproperty.propertyId.toString());
                 }
-
                 double roomLength =
                     double.parse(roomLengthFeetController.text) +
                         (double.parse(roomLengthInchesController.text) / 12.0);
                 double roomWidth = double.parse(roomWidthFeetController.text) +
                     (double.parse(roomWidthInchesController.text) / 12.0);
-
                 roomLength = double.parse(roomLength.toStringAsFixed(2));
                 roomWidth = double.parse(roomWidth.toStringAsFixed(2));
-
                 RoomsToPropertyModel room = RoomsToPropertyModel(
                   propertyId: propertyElement.tableproperty.propertyId,
                   roomId: roomTypeDropDownValue.roomId,
@@ -633,10 +580,11 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   roomSize1: roomLength,
                   roomSize2: roomWidth,
                   bath: _roomSelection[0] == true ? 1 : 0,
-                  balcony: _roomSelection[1]  == true ? 1 : 0,
-                  wardrobe: _roomSelection[2]  == true ? 1 : 0,
+                  balcony: _roomSelection[1] == true ? 1 : 0,
+                  wardrobe: _roomSelection[2] == true ? 1 : 0,
                   facility: modelFacilty,
-                  flooring: flooringType[_floorSelections.indexWhere((element) => element == true)],
+                  flooring: flooringType[_floorSelections
+                      .indexWhere((element) => element == true)],
                   image1: img1,
                   image2: img2,
                   image3: img3,
@@ -701,7 +649,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         border: OutlineInputBorder(
             borderSide: BorderSide(color: Color(0xff314B8C)),
             borderRadius: BorderRadius.circular(12.0)),
-      ),
+      ),      
       obscureText: isVisible,
       validator: (value) => value.isEmpty ? validation : null,
       onSaved: save,
