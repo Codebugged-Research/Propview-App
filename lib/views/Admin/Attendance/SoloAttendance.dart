@@ -265,10 +265,11 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: Image.asset("assets/attendance.png"),
-                    flex: 3,
-                  ),
+                  // Expanded(
+                  //   child: Image.asset("assets/attendance.png"),
+                  //   flex: 3,
+                  // ),
+                  Text('Latitude: ${position.latitude}, Longitude: ${position.longitude}', style: TextStyle(fontSize: 16, color: Colors.black),),
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
