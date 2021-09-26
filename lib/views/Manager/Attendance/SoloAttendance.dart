@@ -27,7 +27,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   void initState() {
     super.initState();
     getData();
-    getLocation();
   }
 
   bool loading = false;
@@ -36,11 +35,12 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   Position position;
 
   getLocation() async {
-    LocationPermission permission = await Geolocator.checkPermission();    
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      Geolocator.openAppSettings();
       permission = await Geolocator.requestPermission();
-      print(permission);
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Geolocator.openAppSettings();
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -50,6 +50,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     setState(() {
       loading = true;
     });
+    await getLocation();
     user = await UserService.getUser();
     if (widget.attendanceElement != null) {
       attendanceElement = await AttendanceService.getLogById(
@@ -85,7 +86,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   }
 
   updateLog() async {
-    if(position !=null) {
+    if (position != null) {
       showInSnackBar(
         context,
         "Please turn on your location! Try again.",
@@ -93,37 +94,39 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       );
     } else {
       DateTime startTime = DateTime.parse(start);
-    DateTime endTime = DateTime.parse(end);
-    AttendanceElement tempAttendance;
-    if (id != "-") {
-      tempAttendance = await AttendanceService.getLogById(id);
-      print(tempAttendance.toJson());
-      tempAttendance.geo_out = position.latitude.toString() + "," + position.longitude.toString();
-      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
-      tempAttendance.punchOut = endTime;
-      tempAttendance.workHour = endTime.difference(startTime).inHours;
-      tempAttendance.diff_km =
-          user.bikeReading == 1 ? endMeter - startMeter : 0;
-    }
-    var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
-    if (result && id != "-") {
-      showInSnackBar(
-        context,
-        "Attendance updated successfully",
-        1500,
-      );
-    } else {
-      showInSnackBar(
-        context,
-        "Attendance updation failed",
-        1500,
-      );
-    }
+      DateTime endTime = DateTime.parse(end);
+      AttendanceElement tempAttendance;
+      if (id != "-") {
+        tempAttendance = await AttendanceService.getLogById(id);
+        print(tempAttendance.toJson());
+        tempAttendance.geo_out =
+            position.latitude.toString() + "," + position.longitude.toString();
+        tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
+        tempAttendance.punchOut = endTime;
+        tempAttendance.workHour = endTime.difference(startTime).inHours;
+        tempAttendance.diff_km =
+            user.bikeReading == 1 ? endMeter - startMeter : 0;
+      }
+      var result =
+          await AttendanceService.updateLog(tempAttendance.toJson(), id);
+      if (result && id != "-") {
+        showInSnackBar(
+          context,
+          "Attendance updated successfully",
+          1500,
+        );
+      } else {
+        showInSnackBar(
+          context,
+          "Attendance updation failed",
+          1500,
+        );
+      }
     }
   }
 
   createLog() async {
-    if(position ==null) {
+    if (position == null) {
       showInSnackBar(
         context,
         "Please turn on your location! Try again.",
@@ -131,39 +134,39 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       );
     } else {
       var payload = {
-      "user_id": user.userId,
-      "parent_id": user.parentId,
-      "punch_in": start,
-      "punch_out": end,
-      "meter_in": user.bikeReading == 1 ? startMeter : 0,
-      "meter_out": user.bikeReading == 1 ? endMeter : 0,
-      "work_hour": 0,
-      "date": dateFormatter(),
-      "name": user.name,
-      "email": user.officialEmail,
-      "diff_km": 0,
-      "geo_in": position.latitude.toString() + "," + position.longitude.toString(),
-      "geo_out": 0,
-    };
-    var result = await AttendanceService.createLog(payload);
-    if (result != false) {
-      setState(() {
-        id = result.toString();
-      });
-      showInSnackBar(
-        context,
-        "Attendance added successfully",
-        1500,
-      );
-    } else {
-      showInSnackBar(
-        context,
-        "Attendance failed",
-        1500,
-      );
+        "user_id": user.userId,
+        "parent_id": user.parentId,
+        "punch_in": start,
+        "punch_out": end,
+        "meter_in": user.bikeReading == 1 ? startMeter : 0,
+        "meter_out": user.bikeReading == 1 ? endMeter : 0,
+        "work_hour": 0,
+        "date": dateFormatter(),
+        "name": user.name,
+        "email": user.officialEmail,
+        "diff_km": 0,
+        "geo_in":
+            position.latitude.toString() + "," + position.longitude.toString(),
+        "geo_out": 0,
+      };
+      var result = await AttendanceService.createLog(payload);
+      if (result != false) {
+        setState(() {
+          id = result.toString();
+        });
+        showInSnackBar(
+          context,
+          "Attendance added successfully",
+          1500,
+        );
+      } else {
+        showInSnackBar(
+          context,
+          "Attendance failed",
+          1500,
+        );
+      }
     }
-    }
-    
   }
 
   String start = "--/--/-- -- : --";

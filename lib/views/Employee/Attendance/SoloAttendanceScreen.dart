@@ -26,7 +26,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   void initState() {
     super.initState();
-    getLocation();
     getData();
   }
 
@@ -38,9 +37,10 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   getLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      Geolocator.openAppSettings();
       permission = await Geolocator.requestPermission();
-      print(permission);
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Geolocator.openAppSettings();
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -50,6 +50,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     setState(() {
       loading = true;
     });
+    await getLocation();
     user = await UserService.getUser();
     if (widget.attendanceElement != null) {
       attendanceElement = await AttendanceService.getLogById(

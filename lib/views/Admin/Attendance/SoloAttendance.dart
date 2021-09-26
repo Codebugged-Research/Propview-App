@@ -26,7 +26,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   void initState() {
     super.initState();
-    getLocation();
     getData();
   }
 
@@ -38,9 +37,10 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   getLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      Geolocator.openAppSettings();
       permission = await Geolocator.requestPermission();
-      print(permission);
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Geolocator.openAppSettings();
     }
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -50,6 +50,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     setState(() {
       loading = true;
     });
+    await getLocation();
     user = await UserService.getUser();
     if (widget.attendanceElement != null) {
       attendanceElement = await AttendanceService.getLogById(
@@ -265,11 +266,14 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                       ],
                     ),
                   ),
-                  // Expanded(
-                  //   child: Image.asset("assets/attendance.png"),
-                  //   flex: 3,
-                  // ),
-                  Text('Latitude: ${position.latitude}, Longitude: ${position.longitude}', style: TextStyle(fontSize: 16, color: Colors.black),),
+                  Expanded(
+                    child: Image.asset("assets/attendance.png"),
+                    flex: 3,
+                  ),
+                  Text(
+                    'Latitude: ${position?.latitude.toString()}, Longitude: ${position?.longitude.toString()}',
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
