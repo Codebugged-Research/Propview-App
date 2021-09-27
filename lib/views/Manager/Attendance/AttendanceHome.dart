@@ -131,70 +131,65 @@ class _AttendanceHomeState extends State<AttendanceHome>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ProfileScreen(),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 25,
-                                child: ClipOval(
-                                  child: FadeInImage.assetNetwork(
-                                    height: 50,
-                                    width: 50,
-                                    placeholder: "assets/loader.gif",
-                                    fit: BoxFit.cover,
-                                    image:
-                                        "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
-                                    imageErrorBuilder: (BuildContext context,
-                                        Object exception,
-                                        StackTrace stackTrace) {
-                                      return CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 25,
-                                        backgroundImage: AssetImage(
-                                          "assets/dummy.png",
-                                        ),
-                                      );
-                                    },
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(),
                                   ),
+                                );
+                              },
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                  height: 50,
+                                  width: 50,
+                                  placeholder: "assets/loader.gif",
+                                  fit: BoxFit.cover,
+                                  image:
+                                      "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                                  imageErrorBuilder: (BuildContext context,
+                                      Object exception, StackTrace stackTrace) {
+                                    return CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: 25,
+                                      backgroundImage: AssetImage(
+                                        "assets/dummy.png",
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    user.name,
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .headline5
-                                        .copyWith(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Manager",
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle2
-                                        .copyWith(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline5
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Manager",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle2
+                                      .copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         InkWell(
                           child: Column(
@@ -370,7 +365,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                               await AttendanceService
                                                   .getAllUserIdWithoutDate(
                                                       suggestion.userId);
-                                          attendance.data.attendance = temp.data.attendance;
+                                          attendance.data.attendance =
+                                              temp.data.attendance;
                                           attendance.count = temp.count;
                                           if (temp.count == 0) {
                                             showInSnackBar(
@@ -444,13 +440,13 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                             setState(() {
                                               start = picked.toString();
                                             });
-                                             Attendance temp =
+                                          Attendance temp =
                                               await AttendanceService
                                                   .getAllUserIdWithoutDate(
                                                       tempUser.userId);
-                                          List<AttendanceElement> temp2 =
-                                              temp.data.attendance
-                                                  .where((element) {
+                                          List<AttendanceElement> temp2 = temp
+                                              .data.attendance
+                                              .where((element) {
                                             return element.punchIn.isAfter(
                                                   DateTime.parse(start),
                                                 ) &&

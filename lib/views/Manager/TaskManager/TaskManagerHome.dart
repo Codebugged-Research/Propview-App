@@ -102,6 +102,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
+                      leading: InkWell(
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -109,9 +110,6 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           ),
                         );
                       },
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 30,
                         child: ClipOval(
                           child: FadeInImage.assetNetwork(
                             height: 60,

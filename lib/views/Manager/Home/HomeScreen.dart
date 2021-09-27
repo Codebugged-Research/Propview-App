@@ -60,30 +60,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                   child: ListTile(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(),
+                    leading: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(),
+                          ),
+                        );
+                      },
+                      child: ClipOval(
+                        child: FadeInImage.assetNetwork(
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.cover,
+                          placeholder: "assets/loader.gif",
+                          image:
+                              "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                          imageErrorBuilder: (BuildContext context,
+                              Object exception, StackTrace stackTrace) {
+                            return CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30,
+                              backgroundImage: AssetImage(
+                                "assets/dummy.png",
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                    leading: ClipOval(
-                      child: FadeInImage.assetNetwork(
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.cover,
-                        placeholder: "assets/loader.gif",
-                        image: "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
-                        imageErrorBuilder: (BuildContext context,
-                            Object exception, StackTrace stackTrace) {
-                          return CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 30,
-                            backgroundImage: AssetImage(
-                              "assets/dummy.png",
-                            ),
-                          );
-                        },
                       ),
                     ),
                     title: Text(

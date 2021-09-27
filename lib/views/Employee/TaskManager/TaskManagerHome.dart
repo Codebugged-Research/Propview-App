@@ -79,34 +79,36 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 30,
-                        child: ClipOval(
-                          child: FadeInImage.assetNetwork(
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
-                            placeholder: "assets/loader.gif",
-                            image:
-                                "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
-                            imageErrorBuilder: (BuildContext context,
-                                Object exception, StackTrace stackTrace) {
-                              return CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30,
-                                backgroundImage: AssetImage(
-                                  "assets/dummy.png",
-                                ),
-                              );
-                            },
+                      leading: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 30,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                              height: 60,
+                              width: 60,
+                              fit: BoxFit.cover,
+                              placeholder: "assets/loader.gif",
+                              image:
+                                  "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
+                              imageErrorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stackTrace) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  backgroundImage: AssetImage(
+                                    "assets/dummy.png",
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),

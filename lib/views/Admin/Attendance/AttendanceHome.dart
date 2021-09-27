@@ -139,9 +139,14 @@ class _AttendanceHomeState extends State<AttendanceHome>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 25,
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileScreen(),
+                                    ),
+                                  );
+                                },
                                 child: ClipOval(
                                   child: FadeInImage.assetNetwork(
                                     height: 50,
@@ -349,8 +354,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                             2500);
                                       }
                                       setState(() {
-                                            start = "";
-                                            end = "";
+                                        start = "";
+                                        end = "";
                                         serachLoading = false;
                                       });
                                     },

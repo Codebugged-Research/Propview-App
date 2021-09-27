@@ -111,17 +111,18 @@ class _AttendanceHomeState extends State<AttendanceHome>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        InkWell(onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ProfileScreen(),
-                            ),
-                          );
-                        },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CircleAvatar(
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(),
+                                  ),
+                                );
+                              },
+                              child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 radius: 25,
                                 child: ClipOval(
@@ -133,7 +134,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                     image:
                                         "${Config.STORAGE_ENDPOINT}${user.userId}.jpeg",
                                     imageErrorBuilder: (BuildContext context,
-                                        Object exception, StackTrace stackTrace) {
+                                        Object exception,
+                                        StackTrace stackTrace) {
                                       return CircleAvatar(
                                         backgroundColor: Colors.white,
                                         radius: 25,
@@ -145,34 +147,34 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    user.name,
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .headline5
-                                        .copyWith(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Employee",
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle2
-                                        .copyWith(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline5
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Employee",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle2
+                                      .copyWith(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         InkWell(
                           child: Column(

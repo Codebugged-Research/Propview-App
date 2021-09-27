@@ -58,11 +58,37 @@ class _SearchScreenState extends State<SearchScreen>
         resizeToAvoidBottomInset: true,
         body: Container(
           color: Colors.white,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
+              Container(
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                child: TabBar(
+                  controller: _tabController,
+                  indicator: UnderlineTabIndicator(
+                    borderSide:
+                        BorderSide(color: Color(0xff314B8C), width: 4.0),
+                  ),
+                  labelStyle: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff314B8C),
+                  ),
+                  unselectedLabelStyle:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  unselectedLabelColor: Colors.black.withOpacity(0.4),
+                  labelColor: Color(0xff314B8C),
+                  tabs: [
+                    Text(
+                      "Owner",
+                    ),
+                    Text(
+                      "Property",
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: TabBarView(
                   // physics: NeverScrollableScrollPhysics(),
@@ -71,27 +97,6 @@ class _SearchScreenState extends State<SearchScreen>
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: RichText(
-                            text: TextSpan(
-                              text: "Search",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline4
-                                  .copyWith(fontWeight: FontWeight.bold),
-                              children: [
-                                TextSpan(
-                                  text: "\nProperty Owner",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline4
-                                      .copyWith(fontWeight: FontWeight.normal),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Container(
@@ -166,27 +171,6 @@ class _SearchScreenState extends State<SearchScreen>
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: RichText(
-                            text: TextSpan(
-                              text: "Search",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline4
-                                  .copyWith(fontWeight: FontWeight.bold),
-                              children: [
-                                TextSpan(
-                                  text: "\nProperty",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline4
-                                      .copyWith(fontWeight: FontWeight.normal),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
                           child: Container(
                             height: 45,
                             decoration: BoxDecoration(
@@ -207,7 +191,7 @@ class _SearchScreenState extends State<SearchScreen>
                                 disabledBorder: InputBorder.none,
                                 contentPadding: EdgeInsets.only(
                                     left: 15, bottom: 11, top: 11, right: 15),
-                                hintText: "Enter Owner Name",
+                                hintText: "Enter Property Name",
                                 suffixIcon: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,

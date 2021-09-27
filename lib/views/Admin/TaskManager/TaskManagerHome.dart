@@ -111,16 +111,14 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 50, 0, 12),
                     child: ListTile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 30,
+                      leading: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        },
                         child: ClipOval(
                           child: FadeInImage.assetNetwork(
                             height: 60,
