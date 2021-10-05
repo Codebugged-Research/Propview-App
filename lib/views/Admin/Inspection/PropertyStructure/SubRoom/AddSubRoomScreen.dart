@@ -129,10 +129,14 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
       roomTypes = newRoomList ?? [];
     });
     roomTypeDropDownValue = widget.roomTypeDropDownValue == null
-        ? roomTypes.length > 0 ? roomTypes[0]: null
+        ? roomTypes.length > 0
+            ? roomTypes[0]
+            : null
         : widget.roomTypeDropDownValue;
     subRoomTypeDropDownValue = widget.subRoomTypeDropDownValue == null
-        ? subRoomTypes.length > 0 ? subRoomTypes[0]: null
+        ? subRoomTypes.length > 0
+            ? subRoomTypes[0]
+            : null
         : widget.subRoomTypeDropDownValue;
     setState(() {
       isLoading = false;
@@ -458,12 +462,12 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                       facilityTag: facilityTag,
                       roomTypes: widget.roomTypes,
                       roomLengthFeet:
-                      double.parse(roomLengthFeetController.text),
+                          double.parse(roomLengthFeetController.text),
                       roomLengthInches:
-                      double.parse(roomLengthInchesController.text),
+                          double.parse(roomLengthInchesController.text),
                       roomWidthFeet: double.parse(roomWidthFeetController.text),
                       roomWidthInches:
-                      double.parse(roomWidthInchesController.text),
+                          double.parse(roomWidthInchesController.text),
                       roomTypeDropDownValue: roomTypeDropDownValue,
                       subRoomTypeDropDownValue: subRoomTypeDropDownValue,
                     ));
@@ -541,15 +545,13 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                     propertyElement.tableproperty.propertyId.toString());
               }
 
-              double roomLength =
-                  double.parse(roomLengthFeetController.text) +
-                      (double.parse(roomLengthInchesController.text) / 12.0);
+              double roomLength = double.parse(roomLengthFeetController.text) +
+                  (double.parse(roomLengthInchesController.text) / 12.0);
               double roomWidth = double.parse(roomWidthFeetController.text) +
                   (double.parse(roomWidthInchesController.text) / 12.0);
 
               roomLength = double.parse(roomLength.toStringAsFixed(2));
               roomWidth = double.parse(roomWidth.toStringAsFixed(2));
-
 
               SubRoomElement subRoom = SubRoomElement(
                 propertyId: propertyElement.tableproperty.propertyId,

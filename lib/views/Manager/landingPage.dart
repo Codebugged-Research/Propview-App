@@ -10,12 +10,13 @@ import 'package:propview/services/baseService.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Manager/Home/homeScreen.dart';
-import 'package:propview/views/Manager/Profile/ProfileScreen.dart';
 import 'package:propview/views/Manager/TaskManager/taskManagerHome.dart';
 
 class LandingScreen extends StatefulWidget {
   final int selectedIndex;
+
   LandingScreen({this.selectedIndex});
+
   @override
   _LandingScreenState createState() => _LandingScreenState();
 }
@@ -24,6 +25,7 @@ class _LandingScreenState extends State<LandingScreen> {
   int _selectedIndex = 0;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     super.initState();
@@ -110,16 +112,16 @@ class _LandingScreenState extends State<LandingScreen> {
   // static const TextStyle optionStyle =
   //     TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    TaskMangerHome(),
     AttendanceHome(),
+    TaskMangerHome(),
+    HomeScreen(),
   ];
 
   checkversion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
     var responseMap = jsonDecode(getVersion);
     if (responseMap != Config.APP_VERISON) {
-      versionErrorWiget(responseMap,context,
+      versionErrorWiget(responseMap, context,
           "https://play.google.com/store/apps/details?id=com.propdial.propview");
     }
   }
@@ -127,10 +129,10 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DoubleBackToCloseApp(        
-          snackBar: const SnackBar(
-            content: Text('Tap back again to exit'),
-          ),
+      body: DoubleBackToCloseApp(
+        snackBar: const SnackBar(
+          content: Text('Tap back again to exit'),
+        ),
         child: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
@@ -160,16 +162,16 @@ class _LandingScreenState extends State<LandingScreen> {
               color: Colors.black,
               tabs: [
                 GButton(
-                  icon: Icons.house_outlined,
-                  text: 'Home',
+                  icon: Icons.fact_check,
+                  text: 'Attendance',
                 ),
                 GButton(
                   icon: Icons.work,
                   text: 'Task',
                 ),
                 GButton(
-                  icon: Icons.fact_check,
-                  text: 'Attendance',
+                  icon: Icons.house_outlined,
+                  text: 'Home',
                 ),
               ],
               selectedIndex: _selectedIndex,

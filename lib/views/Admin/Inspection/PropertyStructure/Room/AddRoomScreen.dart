@@ -649,7 +649,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         border: OutlineInputBorder(
             borderSide: BorderSide(color: Color(0xff314B8C)),
             borderRadius: BorderRadius.circular(12.0)),
-      ),      
+      ),
       obscureText: isVisible,
       validator: (value) => value.isEmpty ? validation : null,
       onSaved: save,

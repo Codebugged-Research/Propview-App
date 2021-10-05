@@ -98,28 +98,29 @@ class _TaskCardState extends State<TaskCard> {
                         context,
                         "Property: ",
                         widget.taskElement.category == "Propdial Office Work" ||
-                            widget.taskElement.category ==
-                                "Other Executive Work"
+                                widget.taskElement.category ==
+                                    "Other Executive Work"
                             ? "NA"
                             : propName,
                       ),
                       textWidget(
                           context, "Task Name: ", widget.taskElement.taskName),
-                      textWidget(
-                          context, "Task Type: ", widget.taskElement.category),
+                      textWidget(context, "Task Category: ",
+                          widget.taskElement.category),
                       !widget.isSelf
                           ? textWidget(
                               context,
                               "Assigned: ",
-                              widget.taskElement.tblUsers.name,)
+                              widget.taskElement.tblUsers.name,
+                            )
                           : Container(),
                       widget.taskElement.taskStatus == "Unapproved"
                           ? textWidget(context, "Submission Time: ",
-                          '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                              '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                           : Container(),
                       widget.taskElement.taskStatus == "Completed"
                           ? textWidget(context, "Verification Time: ",
-                          '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                              '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                           : Container(),
                     ],
                   ),
@@ -194,6 +195,17 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(context, 'Status: ',
                         '${widget.taskElement.taskStatus}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    !widget.isSelf
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01)
+                        : Container(),
+                    !widget.isSelf
+                        ? titleWidget(context, "Assigned: ",
+                            widget.taskElement.tblUsers.name)
+                        : Container(),
+                    titleWidget(context, 'Category: ',
+                        '${widget.taskElement.category}'),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(
                       context,
                       'Property: ',
@@ -203,15 +215,6 @@ class _TaskCardState extends State<TaskCard> {
                           ? "NA"
                           : propName,
                     ),
-                    !widget.isSelf ? SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01) : Container(),
-                    !widget.isSelf
-                        ? titleWidget(context, "Assigned: ",
-                        widget.taskElement.tblUsers.name)
-                        : Container(),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Category: ',
-                        '${widget.taskElement.category}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Name: ',
                         '${widget.taskElement.taskName.trim()}'),
@@ -221,16 +224,16 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     widget.taskElement.taskStatus == "Unapproved"
                         ? titleWidget(context, "Submission Time: ",
-                        '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                         : Container(),
                     widget.taskElement.taskStatus == "Completed"
                         ? titleWidget(context, "Verification Time: ",
-                        '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
+                            '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                         : Container(),
                     widget.taskElement.taskStatus == "Unapproved" ||
-                        widget.taskElement.taskStatus == "Completed"
+                            widget.taskElement.taskStatus == "Completed"
                         ? SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01)
+                            height: MediaQuery.of(context).size.height * 0.01)
                         : Container(),
                     titleWidget(context, 'Start Time: ',
                         '${dateTimeFormatter(widget.taskElement.startDateTime.toString())}'),

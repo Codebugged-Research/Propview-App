@@ -112,8 +112,8 @@ class _TaskCardState extends State<TaskCard> {
                         "Property: ",
                         propName,
                       ),
-                      textWidget(
-                          context, "Task Type: ", widget.taskElement.category),
+                      textWidget(context, "Task Category: ",
+                          widget.taskElement.category),
                       textWidget(
                           context, "Task Name: ", widget.taskElement.taskName),
                       !widget.isSelf
@@ -206,15 +206,6 @@ class _TaskCardState extends State<TaskCard> {
                         ? SizedBox()
                         : SizedBox(
                             height: MediaQuery.of(context).size.height * 0.01),
-                    widget.taskElement.category == "Propdial Office Work" ||
-                            widget.taskElement.category ==
-                                "Other Executive Work"
-                        ? SizedBox()
-                        : titleWidget(
-                            context,
-                            'Property: ',
-                            propName,
-                          ),
                     !widget.isSelf
                         ? SizedBox(
                             height: MediaQuery.of(context).size.height * 0.01)
@@ -226,6 +217,15 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Category: ',
                         '${widget.taskElement.category}'),
+                    widget.taskElement.category == "Propdial Office Work" ||
+                            widget.taskElement.category ==
+                                "Other Executive Work"
+                        ? SizedBox()
+                        : titleWidget(
+                            context,
+                            'Property: ',
+                            propName,
+                          ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Name: ',
                         '${widget.taskElement.taskName.trim()}'),
