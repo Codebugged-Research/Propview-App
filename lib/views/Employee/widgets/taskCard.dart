@@ -94,6 +94,15 @@ class _TaskCardState extends State<TaskCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      !widget.isSelf
+                          ? textWidget(
+                              context,
+                              "Assigned: ",
+                              widget.taskElement.tblUsers.name,
+                            )
+                          : Container(),
+                      textWidget(context, "Task Category: ",
+                          widget.taskElement.category),
                       textWidget(
                         context,
                         "Property: ",
@@ -105,15 +114,6 @@ class _TaskCardState extends State<TaskCard> {
                       ),
                       textWidget(
                           context, "Task Name: ", widget.taskElement.taskName),
-                      textWidget(context, "Task Category: ",
-                          widget.taskElement.category),
-                      !widget.isSelf
-                          ? textWidget(
-                              context,
-                              "Assigned: ",
-                              widget.taskElement.tblUsers.name,
-                            )
-                          : Container(),
                       widget.taskElement.taskStatus == "Unapproved"
                           ? textWidget(context, "Submission Time: ",
                               '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')

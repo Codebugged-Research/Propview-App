@@ -116,10 +116,22 @@ class _LogCardState extends State<LogCard> {
                       ),
                     ],
                   ),
-                  textWidget(
-                    context,
-                    "Work Hours: ",
-                    widget.attendanceElement.workHour.toString(),
+                  Row(
+                    children: [
+                      textWidget(
+                        context,
+                        "Work Hours: ",
+                        '${widget.attendanceElement.workHour.toString()} Hrs',
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      textWidget(
+                        context,
+                        "Distance:  ",
+                        '${widget.attendanceElement.diff_km.toString()} KM',
+                      ),
+                    ],
                   ),
                 ],
               ),
