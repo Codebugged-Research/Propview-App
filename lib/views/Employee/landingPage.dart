@@ -11,7 +11,6 @@ import 'package:propview/services/reminderService.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Employee/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Employee/Home/homeScreen.dart';
-import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
 import 'package:propview/views/Employee/TaskManager/taskManagerHome.dart';
 
 class LandingScreen extends StatefulWidget {
@@ -99,7 +98,7 @@ class _LandingScreenState extends State<LandingScreen> {
     await _flutterLocalNotificationsPlugin.schedule(
         0,
         "Scheduled Task",
-        "Your scehduled task will about to end within 15 minutes",
+        "Your scheduled task will about to end within 15 minutes",
         scheduledNotificationEndTime,
         platform);
   }
@@ -114,9 +113,9 @@ class _LandingScreenState extends State<LandingScreen> {
   // static const TextStyle optionStyle =
   //     TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    TaskMangerHome(),
     AttendanceHome(),
+    TaskMangerHome(),
+    HomeScreen(),
     // ProfileScreen(),
   ];
 
@@ -165,21 +164,17 @@ class _LandingScreenState extends State<LandingScreen> {
               color: Colors.black,
               tabs: [
                 GButton(
-                  icon: Icons.house_outlined,
-                  text: 'Home',
+                  icon: Icons.fact_check,
+                  text: 'Attendance',
                 ),
                 GButton(
                   icon: Icons.work,
                   text: 'Task',
                 ),
                 GButton(
-                  icon: Icons.fact_check,
-                  text: 'Attendance',
+                  icon: Icons.house_outlined,
+                  text: 'Home',
                 ),
-                // GButton(
-                //   icon: Icons.person,
-                //   text: 'Profile',
-                // ),
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) {

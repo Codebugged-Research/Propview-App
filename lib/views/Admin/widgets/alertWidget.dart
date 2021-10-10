@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 class AlertWidget extends StatelessWidget {
   final String title, body;
+
   AlertWidget({this.title, this.body});
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async{
+      onWillPop: () async {
         Navigator.of(context).pop();
-        return true;
       },
       child: AlertDialog(
           backgroundColor: Color(0xFFFFFFFF),
@@ -21,10 +22,11 @@ class AlertWidget extends StatelessWidget {
               style: Theme.of(context)
                   .primaryTextTheme
                   .subtitle2
-                  .copyWith(fontWeight: FontWeight.w600, color: Colors.black)), 
+                  .copyWith(fontWeight: FontWeight.w600, color: Colors.black)),
           actions: <Widget>[
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },

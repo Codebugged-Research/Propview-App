@@ -120,9 +120,9 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    TaskMangerHome(),
     AttendanceHome(),
+    TaskMangerHome(),
+    HomeScreen(),
     // ProfileScreen(),
   ];
 
@@ -162,21 +162,17 @@ class _LandingScreenState extends State<LandingScreen> {
               color: Colors.black,
               tabs: [
                 GButton(
-                  icon: Icons.house_outlined,
-                  text: 'Home',
+                  icon: Icons.fact_check,
+                  text: 'Attendance',
                 ),
                 GButton(
                   icon: Icons.work,
                   text: 'Task',
                 ),
                 GButton(
-                  icon: Icons.fact_check,
-                  text: 'Attendance',
+                  icon: Icons.house_outlined,
+                  text: 'Property',
                 ),
-                // GButton(
-                //   icon: Icons.person,
-                //   text: 'Profile',
-                // ),
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) {

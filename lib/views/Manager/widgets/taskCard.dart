@@ -11,7 +11,6 @@ import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/Manager/AssignedPersonDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyOwnerDetailScreen.dart';
 import 'package:propview/views/Manager/TaskManager/SoloCalendar.dart';
@@ -107,19 +106,19 @@ class _TaskCardState extends State<TaskCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      !widget.isSelf
+                          ? textWidget(context, "Assigned: ",
+                              widget.taskElement.tblUsers.name)
+                          : Container(),
+                      textWidget(context, "Task Category: ",
+                          widget.taskElement.category),
                       textWidget(
                         context,
                         "Property: ",
                         propName,
                       ),
                       textWidget(
-                          context, "Task Type: ", widget.taskElement.category),
-                      textWidget(
                           context, "Task Name: ", widget.taskElement.taskName),
-                      !widget.isSelf
-                          ? textWidget(context, "Assigned: ",
-                              widget.taskElement.tblUsers.name)
-                          : Container(),
                       widget.taskElement.taskStatus == "Unapproved"
                           ? textWidget(context, "Submission Time: ",
                               '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
@@ -206,15 +205,6 @@ class _TaskCardState extends State<TaskCard> {
                         ? SizedBox()
                         : SizedBox(
                             height: MediaQuery.of(context).size.height * 0.01),
-                    widget.taskElement.category == "Propdial Office Work" ||
-                            widget.taskElement.category ==
-                                "Other Executive Work"
-                        ? SizedBox()
-                        : titleWidget(
-                            context,
-                            'Property: ',
-                            propName,
-                          ),
                     !widget.isSelf
                         ? SizedBox(
                             height: MediaQuery.of(context).size.height * 0.01)
@@ -226,6 +216,15 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Category: ',
                         '${widget.taskElement.category}'),
+                    widget.taskElement.category == "Propdial Office Work" ||
+                            widget.taskElement.category ==
+                                "Other Executive Work"
+                        ? SizedBox()
+                        : titleWidget(
+                            context,
+                            'Property: ',
+                            propName,
+                          ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Name: ',
                         '${widget.taskElement.taskName.trim()}'),

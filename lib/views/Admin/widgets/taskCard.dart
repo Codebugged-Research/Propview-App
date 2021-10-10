@@ -22,6 +22,7 @@ class TaskCard extends StatefulWidget {
   Function change2;
   final User currentUser;
   final bool isSelf;
+
   TaskCard({
     this.taskElement,
     this.currentUser,
@@ -117,6 +118,12 @@ class _TaskCardState extends State<TaskCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      !widget.isSelf
+                          ? textWidget(context, "Assigned: ",
+                              widget.taskElement.tblUsers.name)
+                          : Container(),
+                      textWidget(context, "Task Category: ",
+                          widget.taskElement.category),
                       textWidget(
                         context,
                         "Property: ",
@@ -127,13 +134,7 @@ class _TaskCardState extends State<TaskCard> {
                             : propName,
                       ),
                       textWidget(
-                          context, "Type: ", widget.taskElement.category),
-                      textWidget(
                           context, "Name: ", widget.taskElement.taskName),
-                      !widget.isSelf
-                          ? textWidget(context, "Assigned: ",
-                              widget.taskElement.tblUsers.name)
-                          : Container(),
                       widget.taskElement.taskStatus == "Unapproved"
                           ? textWidget(context, "Submission Time: ",
                               '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
@@ -215,6 +216,18 @@ class _TaskCardState extends State<TaskCard> {
                     titleWidget(context, 'Status: ',
                         '${widget.taskElement.taskStatus}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    !widget.isSelf
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.01)
+                        : Container(),
+                    !widget.isSelf
+                        ? titleWidget(context, "Assigned: ",
+                            widget.taskElement.tblUsers.name)
+                        : Container(),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    titleWidget(context, 'Category: ',
+                        '${widget.taskElement.category}'),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(
                       context,
                       'Property: ',
@@ -224,16 +237,6 @@ class _TaskCardState extends State<TaskCard> {
                           ? "NA"
                           : propName,
                     ),
-                    !widget.isSelf ? SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01) : Container(),
-                    !widget.isSelf
-                        ? titleWidget(context, "Assigned: ",
-                            widget.taskElement.tblUsers.name)
-                        : Container(),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    titleWidget(context, 'Category: ',
-                        '${widget.taskElement.category}'),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     titleWidget(context, 'Name: ',
                         '${widget.taskElement.taskName.trim()}'),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -477,12 +480,12 @@ class _TaskCardState extends State<TaskCard> {
                                                   Navigator.of(context).pop();
                                                   showInSnackBar(
                                                       context,
-                                                      "Task Updation successfull",
+                                                      "Task Updated successfully!",
                                                       1500);
                                                 } else {
                                                   showInSnackBar(
                                                       context,
-                                                      "Task Updation failed try agin later",
+                                                      "Task Updation failed! Try again later.",
                                                       800);
                                                   Navigator.of(context).pop();
                                                 }

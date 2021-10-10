@@ -108,7 +108,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       rows[widget.index1][widget.index2].photo = widget.imageList;
     } else {
       rows = widget.rows;
-      issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
+      issueTableList =
+          widget.issueTableList != null ? widget.issueTableList : [];
     }
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
@@ -147,7 +148,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           ));
         });
       }
-    }roomsAvailable.length > 0 ? selectedRoomSubRoom = roomsAvailable[0] : null;
+    }
+    roomsAvailable.length > 0 ? selectedRoomSubRoom = roomsAvailable[0] : null;
     setState(() {
       loader = false;
     });
