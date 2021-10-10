@@ -57,9 +57,9 @@ class _AttendanceHomeState extends State<AttendanceHome>
     userList = await UserService.getAllUserUnderManger(user.userId);
     attendance =
         await AttendanceService.getAllByMangerIdWithoutDate(user.userId);
-    var attendanceMine =
+    Attendance attendanceMine =
         await AttendanceService.getAllUserIdWithoutDate(user.userId);
-    attendanceToday = await AttendanceService.getAllWithDate(dateFormatter());
+    attendanceToday  = await AttendanceService.getAllWithDate(dateFormatter());
     for (int i = 0; i < userList.length; i++) {
       if (attendanceToday.data.attendance
               .where((element) =>
@@ -74,11 +74,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
     }
     gg = genGrouping();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
-    var today = attendanceToday.data.attendance
-        .where((element) => element.userId == user.userId.toString())
-        .toList();
-    if (today.length > 0) {
-      myAttendance = today.last;
+    if (attendanceMine.data.attendance.length > 0) {
+      myAttendance = attendanceMine.data.attendance.last;
       if (myAttendance.punchOut == Config.dummyTime) {
         setState(() {
           label = "Punch Out";
@@ -320,6 +317,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                         suggestionsCallback: (pattern) {
                                           List<User> matches = [];
                                           matches.addAll(userList);
+                                          matches.add(user);
                                           matches.retainWhere((s) => s.name
                                               .toLowerCase()
                                               .contains(pattern.toLowerCase()));

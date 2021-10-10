@@ -9,6 +9,8 @@ import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
 
 class SearchTask extends StatefulWidget {
+  int index;
+  SearchTask({this.index});
   @override
   _SearchTaskState createState() => _SearchTaskState();
 }
@@ -44,6 +46,7 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
       loading = true;
     });
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    _tabController.index = widget.index;
     user = await UserService.getUser();
     userList = await UserService.getAllUserUnderManger(user.userId);
     userList.add(user);
@@ -239,34 +242,39 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                   pendingTaskList2.clear();
                                   completedTaskList2.clear();
                                   unApprovedTaskList2.clear();
-                                  pendingTaskList2 = pendingTaskList.where(
-                                    (element) =>
-                                        element.createdAt.isAfter(
-                                          DateTime.parse(start),
-                                        ) &&
-                                        element.createdAt.isBefore(
-                                          DateTime.parse(end),
-                                        ),
-                                  ).toList();
-                                  completedTaskList2 = completedTaskList.where(
-                                    (element) =>
-                                        element.createdAt.isAfter(
-                                          DateTime.parse(start),
-                                        ) &&
-                                        element.createdAt.isBefore(
-                                          DateTime.parse(end),
-                                        ),
-                                  ).toList();
-                                  unApprovedTaskList2 =
-                                      unApprovedTaskList.where(
-                                    (element) =>
-                                        element.createdAt.isAfter(
-                                          DateTime.parse(start),
-                                        ) &&
-                                        element.createdAt.isBefore(
-                                          DateTime.parse(end),
-                                        ),
-                                  ).toList();
+                                  pendingTaskList2 = pendingTaskList
+                                      .where(
+                                        (element) =>
+                                            element.createdAt.isAfter(
+                                              DateTime.parse(start),
+                                            ) &&
+                                            element.createdAt.isBefore(
+                                              DateTime.parse(end),
+                                            ),
+                                      )
+                                      .toList();
+                                  completedTaskList2 = completedTaskList
+                                      .where(
+                                        (element) =>
+                                            element.createdAt.isAfter(
+                                              DateTime.parse(start),
+                                            ) &&
+                                            element.createdAt.isBefore(
+                                              DateTime.parse(end),
+                                            ),
+                                      )
+                                      .toList();
+                                  unApprovedTaskList2 = unApprovedTaskList
+                                      .where(
+                                        (element) =>
+                                            element.createdAt.isAfter(
+                                              DateTime.parse(start),
+                                            ) &&
+                                            element.createdAt.isBefore(
+                                              DateTime.parse(end),
+                                            ),
+                                      )
+                                      .toList();
                                   setState(() {});
                                 },
                                 child: Row(
@@ -309,34 +317,39 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                   unApprovedTaskList2.clear();
                                   print(start);
                                   print(end);
-                                  pendingTaskList2 = pendingTaskList.where(
-                                    (element) =>
-                                        element.createdAt.isAfter(
-                                          DateTime.parse(start),
-                                        ) &&
-                                        element.createdAt.isBefore(
-                                          DateTime.parse(end),
-                                        ),
-                                  ).toList();
-                                  completedTaskList2 = completedTaskList.where(
-                                    (element) =>
-                                        element.createdAt.isAfter(
-                                          DateTime.parse(start),
-                                        ) &&
-                                        element.createdAt.isBefore(
-                                          DateTime.parse(end),
-                                        ),
-                                  ).toList();
-                                  unApprovedTaskList2 =
-                                      unApprovedTaskList.where(
-                                    (element) =>
-                                        element.createdAt.isAfter(
-                                          DateTime.parse(start),
-                                        ) &&
-                                        element.createdAt.isBefore(
-                                          DateTime.parse(end),
-                                        ),
-                                  ).toList();
+                                  pendingTaskList2 = pendingTaskList
+                                      .where(
+                                        (element) =>
+                                            element.createdAt.isAfter(
+                                              DateTime.parse(start),
+                                            ) &&
+                                            element.createdAt.isBefore(
+                                              DateTime.parse(end),
+                                            ),
+                                      )
+                                      .toList();
+                                  completedTaskList2 = completedTaskList
+                                      .where(
+                                        (element) =>
+                                            element.createdAt.isAfter(
+                                              DateTime.parse(start),
+                                            ) &&
+                                            element.createdAt.isBefore(
+                                              DateTime.parse(end),
+                                            ),
+                                      )
+                                      .toList();
+                                  unApprovedTaskList2 = unApprovedTaskList
+                                      .where(
+                                        (element) =>
+                                            element.createdAt.isAfter(
+                                              DateTime.parse(start),
+                                            ) &&
+                                            element.createdAt.isBefore(
+                                              DateTime.parse(end),
+                                            ),
+                                      )
+                                      .toList();
                                   setState(() {});
                                 },
                                 child: Row(
@@ -425,6 +438,17 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                                   pendingTaskList[index],
                                               currentUser: user,
                                               isSelf: false,
+                                              change1:
+                                                  (TaskElement taskElement) {
+                                                setState(() {
+                                                  pendingTaskList.removeWhere(
+                                                      (element) =>
+                                                          element.taskId ==
+                                                          taskElement.taskId);
+                                                  unApprovedTaskList
+                                                      .add(taskElement);
+                                                });
+                                              },
                                             );
                                           },
                                         )
@@ -454,6 +478,17 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                                   pendingTaskList2[index],
                                               currentUser: user,
                                               isSelf: false,
+                                              change1:
+                                                    (TaskElement taskElement) {
+                                                  setState(() {
+                                                    pendingTaskList2.removeWhere(
+                                                        (element) =>
+                                                            element.taskId ==
+                                                            taskElement.taskId);
+                                                    unApprovedTaskList2
+                                                        .add(taskElement);
+                                                  });
+                                                },
                                             );
                                           },
                                         ),

@@ -9,6 +9,8 @@ import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
 
 class SearchTask extends StatefulWidget {
+  int index = 0;
+  SearchTask({this.index});
   @override
   _SearchTaskState createState() => _SearchTaskState();
 }
@@ -44,9 +46,8 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
       loading = true;
     });
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-    user = await UserService.getUser();
+    _tabController.index = widget.index;    
     userList = await UserService.getAllUser();
-    userList.add(user);
     print(userList.length);
     setState(() {
       loading = false;
@@ -233,9 +234,6 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                     setState(() {
                                       start = picked.toString();
                                     });
-
-                                  print(start);
-                                  print(end);
                                   pendingTaskList2.clear();
                                   completedTaskList2.clear();
                                   unApprovedTaskList2.clear();
@@ -303,7 +301,6 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                       end = picked.toString();
                                     });
                                   }
-
                                   pendingTaskList2.clear();
                                   completedTaskList2.clear();
                                   unApprovedTaskList2.clear();
@@ -425,6 +422,17 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                                   pendingTaskList[index],
                                               currentUser: user,
                                               isSelf: false,
+                                              change1:
+                                                    (TaskElement taskElement) {
+                                                  setState(() {
+                                                    pendingTaskList.removeWhere(
+                                                        (element) =>
+                                                            element.taskId ==
+                                                            taskElement.taskId);
+                                                    unApprovedTaskList
+                                                        .add(taskElement);
+                                                  });
+                                                },
                                             );
                                           },
                                         )
@@ -454,6 +462,17 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                                   pendingTaskList2[index],
                                               currentUser: user,
                                               isSelf: false,
+                                              change1:
+                                                    (TaskElement taskElement) {
+                                                  setState(() {
+                                                    pendingTaskList2.removeWhere(
+                                                        (element) =>
+                                                            element.taskId ==
+                                                            taskElement.taskId);
+                                                    unApprovedTaskList2
+                                                        .add(taskElement);
+                                                  });
+                                                },
                                             );
                                           },
                                         ),

@@ -161,7 +161,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              "Select Category of Task: ",
+                              "Task Category: ",
                               style: GoogleFonts.nunito(
                                   color: Color(0xff314B8C),
                                   fontSize: 18,
@@ -218,7 +218,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    "Select Property Owner: ",
+                                    "Property Owner: ",
                                     style: GoogleFonts.nunito(
                                         color: Color(0xff314B8C),
                                         fontSize: 18,
@@ -341,7 +341,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             ? Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  "Select Property of the Owner: ",
+                                  "Property of the Owner: ",
                                   style: GoogleFonts.nunito(
                                       color: Color(0xff314B8C),
                                       fontSize: 18,
@@ -444,11 +444,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 height: 8,
                               )
                             : Container(),
-                    inputField("Enter Task Name", _taskName, 1),
-                    inputField("Enter Task Description", _taskDescription, 5),
-                    inputDateTime("Enter Start Date and Time",
+                    inputField("Task Name:", _taskName, 1),
+                    inputField("Task Description:", _taskDescription, 5),
+                    inputDateTime("Start Date and Time:",
                         _taskStartDateTime, _taskStartDateTime2, true),
-                    inputDateTime("Enter End Date and Time", _taskEndDateTime,
+                    inputDateTime("End Date and Time:", _taskEndDateTime,
                         _taskEndDateTime2, false),
                     SizedBox(
                       height: 16,

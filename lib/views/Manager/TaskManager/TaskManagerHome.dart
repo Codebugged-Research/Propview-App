@@ -156,7 +156,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => SearchTask(),
+                                  builder: (context) => SearchTask(                                    
+                                    index: _tabController.index == 0
+                                        ? _tabController21.index
+                                        : _tabController22.index,
+                                  ),
                                 ),
                               );
                             },

@@ -89,7 +89,7 @@ class _LogCardState extends State<LogCard> {
                 children: [
                   textWidget(
                     context,
-                    "Work Hours: ",
+                    "Hours: ",
                     '${widget.attendanceElement.workHour.toString()} Hrs',
                   ),
                   SizedBox(

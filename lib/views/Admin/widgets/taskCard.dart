@@ -66,6 +66,8 @@ class _TaskCardState extends State<TaskCard> {
         : GestureDetector(
             onTap: () {
               taskDetailsWidget(context);
+              
+                                                      print(widget.taskElement.taskId);
             },
             onLongPress: widget.isSelf
                 ? () {}
@@ -473,7 +475,6 @@ class _TaskCardState extends State<TaskCard> {
                                                       );
                                                     }
                                                   }
-
                                                   widget.change1(
                                                       widget.taskElement);
                                                   Navigator.of(context).pop();
