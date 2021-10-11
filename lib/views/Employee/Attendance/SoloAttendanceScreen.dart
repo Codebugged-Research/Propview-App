@@ -71,7 +71,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         start = attendanceElement.punchIn.toString();
         end = attendanceElement.punchOut == Config.dummyTime
             ? "--/--/-- -- : --"
-            : attendanceElement.punchOut;
+            : attendanceElement.punchOut.toString();
         startMeter = attendanceElement.meterIn;
         endMeter = attendanceElement.punchOut == Config.dummyTime
             ? 0

@@ -34,6 +34,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
   List<User> userList = [];
   TabController _tabController;
   Attendance attendance;
+  Attendance attendanceTemp;
   Attendance attendanceToday;
   List bools = [];
   List<City> cities = [];
@@ -76,6 +77,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
       }
     }
     setState(() {
+      attendanceTemp = attendance;
       loading = false;
     });
   }
@@ -88,11 +90,18 @@ class _AttendanceHomeState extends State<AttendanceHome>
   }
 
   String label = "Punch In";
+    String start = "";
+  String end = "";
 
   dateFormatter() {
     var date = DateTime.now();
     return '${date.day.toString().padLeft(2, "0")}-${date.month.toString().padLeft(2, "0")}-${DateTime.now().year}';
   }
+  dateFormatter2(dat) {
+    var date = DateTime.parse(dat);
+    return '${date.day.toString().padLeft(2, "0")}-${date.month.toString().padLeft(2, "0")}-${DateTime.now().year}';
+  }
+  int index =0;
 
   @override
   Widget build(BuildContext context) {
@@ -234,6 +243,9 @@ class _AttendanceHomeState extends State<AttendanceHome>
                         Tab(text: "Logs"),
                       ],
                       onTap: (value) {
+                        setState(() {                          
+                        index = value;
+                        });
                         _tabController.animateTo(
                           value,
                           curve: Curves.easeIn,
@@ -242,6 +254,114 @@ class _AttendanceHomeState extends State<AttendanceHome>
                       },
                     ),
                   ),
+                 index == 1 ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            MaterialButton(
+                              onPressed: () async {
+                                attendanceTemp = await AttendanceService.getAllUserIdWithoutDate(user.userId);
+                                final DateTime picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: start == ""
+                                      ? DateTime.now()
+                                      : DateTime.parse(start),
+                                  firstDate: DateTime(2021),
+                                  lastDate: DateTime(2055),
+                                );
+                                if (start == "") {
+                                  setState(() {
+                                    start = picked.toString();
+                                    end = DateTime.now().toString();
+                                  });
+                                } else if (picked != null &&
+                                    picked != DateTime.parse(start))
+                                  setState(() {
+                                    start = picked.toString();
+                                  });
+                                List<AttendanceElement> temp = [];
+                                attendanceTemp.data.attendance.forEach((element) { 
+                                  if(element.punchIn.isAfter(
+                                        DateTime.parse(start),
+                                      ) &&
+                                      element.punchIn.isBefore(
+                                        DateTime.parse(end),
+                                      )){
+                                        temp.add(element);
+                                      }
+                                });
+                                print(temp.length);
+                                setState(() {
+                                  attendance.data.attendance = temp;
+                                  attendance.count = temp.length;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today),
+                                  Text(
+                                    start == ""
+                                        ? "Starting"
+                                        : dateFormatter2(
+                                            start,
+                                          ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Text("To"),
+                            MaterialButton(
+                              onPressed: () async {
+                                attendanceTemp = await AttendanceService.getAllUserIdWithoutDate(user.userId);
+                                final DateTime picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: end == ""
+                                      ? DateTime.now()
+                                      : DateTime.parse(end),
+                                  firstDate: DateTime(2021),
+                                  lastDate: DateTime(2055),
+                                );
+                                if (end == "") {
+                                  setState(() {
+                                    end = picked.toString();
+                                  });
+                                } else if (picked != null &&
+                                    picked != DateTime.parse(end)) {
+                                  setState(() {
+                                    end = picked.toString();
+                                  });
+                                }
+                                List<AttendanceElement> temp = [];
+                                attendanceTemp.data.attendance.forEach((element) { 
+                                  if(element.punchIn.isAfter(
+                                        DateTime.parse(start),
+                                      ) &&
+                                      element.punchIn.isBefore(
+                                        DateTime.parse(end),
+                                      )){
+                                        temp.add(element);
+                                      }
+                                });
+                                setState(() {
+                                  attendance.data.attendance = temp;
+                                  attendance.count = temp.length;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today),
+                                  Text(
+                                    end == ""
+                                        ? "Till Date"
+                                        : dateFormatter2(
+                                            end,
+                                          ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox(),
                   Expanded(
                     child: TabBarView(
                       physics: NeverScrollableScrollPhysics(),
