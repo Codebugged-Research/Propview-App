@@ -74,8 +74,11 @@ class _AttendanceHomeState extends State<AttendanceHome>
     }
     gg = genGrouping();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
-    if (attendanceMine.data.attendance.length > 0) {
-      myAttendance = attendanceMine.data.attendance.last;
+    var today = attendanceToday.data.attendance
+        .where((element) => element.userId == user.userId.toString())
+        .toList();
+    if (today.length > 0) {
+      myAttendance = today.last;
       if (myAttendance.punchOut == Config.dummyTime) {
         setState(() {
           label = "Punch Out";
