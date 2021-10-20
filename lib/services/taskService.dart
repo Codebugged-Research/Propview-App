@@ -94,7 +94,7 @@ class TaskService extends AuthService {
         AuthService.BASE_URI + 'api/task/manager/',
         method: 'POST',
         body: jsonEncode(
-            {"id1": "$id", "id2": "%,$id", "id31": "%,$id,%", "id4": "$id,%"}));
+            {"id1": "$id", "id2": "%,$id", "id3": "%,$id,%", "id4": "$id,%"}));
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       Task taskList = Task.fromJson(responseMap);

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/inspectionHomeScreen.dart';
+import 'package:propview/views/Manager/Home/AssignProperty.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 
 class PropertyCard extends StatefulWidget {
@@ -13,11 +16,19 @@ class PropertyCard extends StatefulWidget {
 }
 
 class _PropertyCardState extends State<PropertyCard> {
+  PropertyElement propertyElement;
+
+  @override
+  void initState() {
+    super.initState();
+    propertyElement = widget.propertyElement;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        propertyOptionWidget(context);
+        propertyOptionWidget(context, propertyElement);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -39,7 +50,6 @@ class _PropertyCardState extends State<PropertyCard> {
                   spreadRadius: 0.0,
                 ),
               ]),
-          height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -55,8 +65,27 @@ class _PropertyCardState extends State<PropertyCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      textWidget(context, "Property Name: ",
-                          '${widget.propertyElement.tblSociety.socname} ,  ${widget.propertyElement.tableproperty.unitNo}'),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.propertyElement.propertyOwner == null
+                                ? "No Name"
+                                : widget
+                                    .propertyElement.propertyOwner.ownerName,
+                            style: GoogleFonts.nunito(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textWidget(
+                          context,
+                          "${widget.propertyElement.tblSociety.socname} ,  ${widget.propertyElement.tableproperty.unitNo}",
+                          '${widget.propertyElement.tblState.sname} ,  ${widget.propertyElement.tblCity.ccname}'),
                     ],
                   ),
                 ),
@@ -77,8 +106,8 @@ class _PropertyCardState extends State<PropertyCard> {
           label,
           style: GoogleFonts.nunito(
             color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            fontWeight: FontWeight.normal,
           ),
         ),
         Text(
@@ -87,7 +116,7 @@ class _PropertyCardState extends State<PropertyCard> {
           // overflow: TextOverflow.ellipsis,
           style: GoogleFonts.nunito(
             color: Colors.black,
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.normal,
           ),
         ),
@@ -95,7 +124,7 @@ class _PropertyCardState extends State<PropertyCard> {
     );
   }
 
-  optionCard(label, image, onClick) {
+  Widget optionCard(label, image, onClick) {
     return InkWell(
       onTap: onClick,
       child: Container(
@@ -133,17 +162,17 @@ class _PropertyCardState extends State<PropertyCard> {
             SizedBox(
               height: 8,
             ),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-            ),
+            Text(label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).primaryTextTheme.caption.copyWith(
+                    fontWeight: FontWeight.w700, color: Colors.black)),
           ],
         ),
       ),
     );
   }
 
-  propertyOptionWidget(BuildContext context) {
+  propertyOptionWidget(BuildContext context, PropertyElement propertyElement) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -175,8 +204,20 @@ class _PropertyCardState extends State<PropertyCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  optionCard("Inspection", "inspection-asset", () {}),
-                  optionCard("Edit\nProperty", "renovation", () {}),
+                  optionCard("Inspection", "inspection-asset", () {
+                    Routing.makeRouting(context,
+                        routeMethod: 'push',
+                        newWidget: InspectionHomeScreen(
+                            propertyElement: propertyElement));
+                  }),
+                  optionCard("Assign\nproperty", "owner", () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AssignProperty(propertyElement: propertyElement,),
+                      ),
+                    );
+                  }),
+                  // optionCard("Edit\nProperty", "renovation", () {}),
                   optionCard("Property\nDetails", "house", () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -191,17 +232,6 @@ class _PropertyCardState extends State<PropertyCard> {
                 ],
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  optionCard(
-                    "Assign\nproperty",
-                    "owner",
-                    () {},
-                  ),
-                ],
-              ),
             ],
           ),
         ),

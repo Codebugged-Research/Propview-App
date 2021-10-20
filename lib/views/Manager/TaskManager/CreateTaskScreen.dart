@@ -8,6 +8,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
+import 'package:propview/services/PropertyAssignment.dart';
 import 'package:propview/services/notificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
@@ -92,10 +93,23 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     _selectedUser = widget.user;
     propertyList =
         await PropertyService.getAllPropertiesByUserId(widget.user.userId);
+    Property tempProp = await PropertyAssignment.getAllTempPropertiesByUserId(
+        widget.user.userId);
+    if (tempProp.data.property != null) {
+      propertyList.count += tempProp.count;
+      propertyList.data.property.addAll(tempProp.data.property);
+    }
     //get list of all peroperties assigned to his employees and merge
     for (int i = 0; i < users.length; i++) {
       var tempPropertyList =
           await PropertyService.getAllPropertiesByUserId(users[i].userId);
+      Property tempProp2 =
+          await PropertyAssignment.getAllTempPropertiesByUserId(
+              users[i].userId);
+      if (tempProp2.data.property != null) {
+        propertyList.count += tempProp.count;
+        propertyList.data.property.addAll(tempProp.data.property);
+      }
       propertyList.count += tempPropertyList.count;
       propertyList.data.property.addAll(tempPropertyList.data.property);
     }
@@ -245,7 +259,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                         'Type to find executive!',
                                         style: TextStyle(
                                             color:
-                                            Theme.of(context).disabledColor,
+                                                Theme.of(context).disabledColor,
                                             fontSize: 18.0),
                                       ),
                                     ),
@@ -568,8 +582,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             : Container(),
                     inputField("Task Name:", _taskName, 1),
                     inputField("Task Description:", _taskDescription, 5),
-                    inputDateTime("Start Date and Time:",
-                        _taskStartDateTime, _taskStartDateTime2, true),
+                    inputDateTime("Start Date and Time:", _taskStartDateTime,
+                        _taskStartDateTime2, true),
                     inputDateTime("End Date and Time:", _taskEndDateTime,
                         _taskEndDateTime2, false),
                     SizedBox(
@@ -616,7 +630,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                         "Propdial Office Work" ||
                                     _selectedTaskCategory ==
                                         "Other Executive Work"
-                                ? 13                            
+                                ? 13
                                 : _selectedPropertyOwner,
                           });
                           bool response = await TaskService.createTask(payload);

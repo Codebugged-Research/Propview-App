@@ -30,7 +30,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   await Firebase.initializeApp();
-  if (message.data != null) {
+  if (message.data['startTime'] != null) {
+    print(message.data);
     scheduleIncoming(_flutterLocalNotificationsPlugin, message);
     scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
   }

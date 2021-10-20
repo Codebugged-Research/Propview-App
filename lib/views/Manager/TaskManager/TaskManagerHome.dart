@@ -625,13 +625,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                           change1: (TaskElement
                                                               taskElement) {
                                                             setState(() {
-                                                              unApprovedTaskList
+                                                              unApprovedTaskList2
                                                                   .removeWhere((element) =>
                                                                       element
                                                                           .taskId ==
                                                                       taskElement
                                                                           .taskId);
-                                                              completedTaskList
+                                                              completedTaskList2
                                                                   .add(
                                                                       taskElement);
                                                             });
@@ -639,13 +639,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                           change2: (TaskElement
                                                               taskElement) {
                                                             setState(() {
-                                                              unApprovedTaskList
+                                                              unApprovedTaskList2
                                                                   .removeWhere((element) =>
                                                                       element
                                                                           .taskId ==
                                                                       taskElement
                                                                           .taskId);
-                                                              pendingTaskList.add(
+                                                              pendingTaskList2.add(
                                                                   taskElement);
                                                             });
                                                           },
@@ -690,13 +690,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                           change1: (TaskElement
                                                               taskElement) {
                                                             setState(() {
-                                                              unApprovedTaskList
+                                                              unApprovedTaskList3
                                                                   .removeWhere((element) =>
                                                                       element
                                                                           .taskId ==
                                                                       taskElement
                                                                           .taskId);
-                                                              completedTaskList
+                                                              completedTaskList3
                                                                   .add(
                                                                       taskElement);
                                                             });
@@ -704,13 +704,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                           change2: (TaskElement
                                                               taskElement) {
                                                             setState(() {
-                                                              unApprovedTaskList
+                                                              unApprovedTaskList3
                                                                   .removeWhere((element) =>
                                                                       element
                                                                           .taskId ==
                                                                       taskElement
                                                                           .taskId);
-                                                              pendingTaskList.add(
+                                                              pendingTaskList3.add(
                                                                   taskElement);
                                                             });
                                                           },

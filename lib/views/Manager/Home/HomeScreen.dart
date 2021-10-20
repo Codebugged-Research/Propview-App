@@ -6,7 +6,7 @@ import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Manager/Home/searchScreen.dart';
-import 'package:propview/views/Admin/widgets/propertyCard.dart';
+import 'package:propview/views/Manager/widgets/propertyCard.dart';
 
 import 'package:propview/config.dart';
 import 'package:propview/views/Manager/Profile/ProfileScreen.dart';

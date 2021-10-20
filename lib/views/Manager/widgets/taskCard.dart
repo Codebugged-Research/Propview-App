@@ -124,7 +124,7 @@ class _TaskCardState extends State<TaskCard> {
                               '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                           : Container(),
                       widget.taskElement.taskStatus == "Completed"
-                          ? textWidget(context, "Verification Time: ",
+                          ? textWidget(context, "Completion Time: ",
                               '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                           : Container(),
                     ],

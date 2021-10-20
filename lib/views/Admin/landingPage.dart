@@ -38,7 +38,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 content: Text(message.notification.body),
                 title: Text(message.notification.title),
               ));
-      if (message.data != null) {
+      if (message.data['startTime'] != null) {
         scheduleIncoming(_flutterLocalNotificationsPlugin, message);
         scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
       }
