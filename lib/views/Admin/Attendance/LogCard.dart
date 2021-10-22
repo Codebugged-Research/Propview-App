@@ -95,6 +95,7 @@ class _LogCardState extends State<LogCard> {
                       textWidget(
                           context,
                           "Out Time: ",
+                          widget.attendanceElement.punchOut == Config.dummyTime ? "--/--/-- -- : --":
                           dateTimeFormatter(
                               widget.attendanceElement.punchOut.toString())),
                     ],
