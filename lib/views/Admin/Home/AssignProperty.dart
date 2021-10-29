@@ -42,6 +42,7 @@ class _AssignPropertyState extends State<AssignProperty> {
     );
     userList = await UserService.getAllUser();
     user0 = await UserService.getUserById(id0);
+    userList.removeWhere((element) => element.cid != user0.cid);
     if (id1 != 0) {
       user1 = await UserService.getUserById(id1);
       temp = user1;
@@ -128,6 +129,55 @@ class _AssignPropertyState extends State<AssignProperty> {
                             height: 16,
                           )
                         : SizedBox(),
+                    temp == user1 && user1 != null
+                        ? MaterialButton(
+                            minWidth: 250,
+                            height: 50,
+                            color: Color(0xff314B8C),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text("Remove Temp Assign Property",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle1),
+                            ),
+                            onPressed: () async {
+                              if (temp == user1) {
+                                PropertyAssignmentModel res =
+                                    await PropertyAssignment
+                                        .getTempAssignRowByUserId(user1.userId);
+                                List<String> res2 = res.propertyId.split(",");
+                                res2.removeWhere(
+                                  (element) =>
+                                      element ==
+                                      widget.propertyElement.tableproperty
+                                          .propertyId
+                                          .toString(),
+                                );
+
+                                bool res3 = await PropertyAssignment
+                                    .updateTempAssignment(
+                                        res2, res.userToPropertyId);
+                                if (res3) {
+                                  showInSnackBar(context,
+                                      "Assigne succesfully removed", 800);
+                                  setState(() {
+                                    showForm = true;
+                                    user1 = null;
+                                  });
+                                } else {
+                                  showInSnackBar(
+                                      context, "Assigne removal failed2", 800);
+                                }
+                              }
+                            },
+                          )
+                        : SizedBox(),
+                    user1 != null
+                        ? SizedBox(
+                            height: 16,
+                          )
+                        : SizedBox(),
                     showForm
                         ? SizedBox()
                         : MaterialButton(
@@ -136,23 +186,28 @@ class _AssignPropertyState extends State<AssignProperty> {
                             color: Color(0xff314B8C),
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
-                              child: Text("Temp Assign Property",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle1),
+                              child: user1 != null
+                                  ? Text("Change Temp Assigne",
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle1)
+                                  : Text("Temp Assign Property",
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle1),
                             ),
                             onPressed: () async {
                               if (temp != user1) {
                                 var res = await PropertyAssignment
                                     .getTempAssignRowByUserId(user1.userId);
                                 if (res == 0) {
-                                  bool res = await PropertyAssignment
+                                  bool res2 = await PropertyAssignment
                                       .createTempAssignment({
                                     "user_id": user1.userId,
                                     "property_id": widget.propertyElement
                                         .tableproperty.propertyId
                                   });
-                                  if (res) {
+                                  if (res2) {
                                     showInSnackBar(context,
                                         "Property succesfully assigned", 800);
                                   } else {

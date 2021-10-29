@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -8,30 +10,41 @@ import 'package:provider/provider.dart';
 import 'package:propview/services/reminderService.dart';
 import 'package:propview/utils/theme.dart';
 import 'package:propview/views/splashScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 ReminderService reminderService;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   AndroidInitializationSettings androidInitializationSettings =
-  AndroidInitializationSettings("logo");
+      AndroidInitializationSettings("logo");
 
   IOSInitializationSettings iosInitializationSettings =
-  IOSInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true);
+      IOSInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true);
 
   final InitializationSettings initializationSettings = InitializationSettings(
       android: androidInitializationSettings, iOS: iosInitializationSettings);
 
   await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> nList = prefs.getStringList("notifications") ?? [];
   await Firebase.initializeApp();
+  print(message);
+  nList.add(jsonEncode({
+    "message": message.notification.body,
+    "title": message.notification.title,
+    "start": message.data['startTime']??"",
+    "end": message.data['endTime']??"",
+    "time": DateTime.now().toString(),
+  }));
+  print(nList.length);
+  prefs.setStringList("notifications", nList);
   if (message.data['startTime'] != null) {
-    print(message.data);
     scheduleIncoming(_flutterLocalNotificationsPlugin, message);
     scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
   }
@@ -41,7 +54,7 @@ scheduleIncoming(
     FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
     RemoteMessage message) async {
   var scheduledNotificationStartTime =
-  determineScheduledTime(message.data['startTime']);
+      determineScheduledTime(message.data['startTime']);
   var android = AndroidNotificationDetails("id", "channel", "description");
   var ios = IOSNotificationDetails();
   var platform = new NotificationDetails(android: android, iOS: ios);
@@ -58,7 +71,7 @@ scheduleOutgoing(
     FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin,
     RemoteMessage message) async {
   var scheduledNotificationEndTime =
-  determineScheduledTime(message.data['endTime']);
+      determineScheduledTime(message.data['endTime']);
 
   var android = AndroidNotificationDetails("id", "channel", "description");
 
@@ -89,7 +102,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
 );
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,7 +110,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(

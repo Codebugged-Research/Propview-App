@@ -11,6 +11,7 @@ import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Manager/Home/homeScreen.dart';
 import 'package:propview/views/Manager/TaskManager/taskManagerHome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LandingScreen extends StatefulWidget {
   final int selectedIndex;
@@ -30,7 +31,9 @@ class _LandingScreenState extends State<LandingScreen> {
   void initState() {
     super.initState();
     initialiseLocalNotification();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> nList = prefs.getStringList("notifications") ?? [];
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -42,6 +45,15 @@ class _LandingScreenState extends State<LandingScreen> {
         scheduleIncoming(_flutterLocalNotificationsPlugin, message);
         scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
       }
+      
+      nList.add(jsonEncode({
+        "message": message.notification.body,
+        "title": message.notification.title,
+        "start": message.data['startTime'],
+        "end": message.data['endTime'],
+        "time": DateTime.now().toString(),
+      }));
+      prefs.setStringList("notifications", nList);
     });
     _selectedIndex = widget.selectedIndex;
   }

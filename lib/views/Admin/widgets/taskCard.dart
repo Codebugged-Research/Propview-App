@@ -66,8 +66,8 @@ class _TaskCardState extends State<TaskCard> {
         : GestureDetector(
             onTap: () {
               taskDetailsWidget(context);
-              
-                                                      print(widget.taskElement.taskId);
+
+              print(widget.taskElement.taskId);
             },
             onLongPress: widget.isSelf
                 ? () {}
@@ -118,7 +118,7 @@ class _TaskCardState extends State<TaskCard> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       !widget.isSelf
                           ? textWidget(context, "Assigned: ",
@@ -145,6 +145,10 @@ class _TaskCardState extends State<TaskCard> {
                           ? textWidget(context, "Completion Time: ",
                               '${dateTimeFormatter(widget.taskElement.updatedAt.toString())}')
                           : Container(),
+                      widget.taskElement.taskStatus == "Pending"
+                          ? textWidget(context, "Deadline: ",
+                              '${dateTimeFormatter(widget.taskElement.endDateTime.toString())}')
+                          : Container(),
                     ],
                   ),
                 ),
@@ -156,6 +160,7 @@ class _TaskCardState extends State<TaskCard> {
   Widget textWidget(BuildContext context, String label, String data) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,

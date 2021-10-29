@@ -45,6 +45,7 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
     setState(() {
       loading = true;
     });
+    user = await UserService.getUser();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     _tabController.index = widget.index;    
     userList = await UserService.getAllUser();

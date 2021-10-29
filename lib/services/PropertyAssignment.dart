@@ -24,10 +24,10 @@ class PropertyAssignment {
       method: 'PUT',
       body: jsonEncode(payload),
     );
+      print(id);
     if (response.statusCode == 200) {
       return true;
     } else {
-      print(response.body);
       return false;
     }}
 

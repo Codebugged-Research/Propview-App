@@ -17,6 +17,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/NotifcationScreen.dart';
 import 'package:propview/views/loginScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -191,14 +192,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
+                          leading: InkWell(
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
                           tileColor: Colors.transparent,
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
+                          trailing: InkWell(
+                            child: Icon(
+                              Icons.notifications_active,
+                              color: Colors.white,
+                            ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => NotificationScreen(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                         SizedBox(height: 36),
                         CircleAvatar(
