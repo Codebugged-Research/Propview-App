@@ -242,19 +242,19 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                         children: [
                           RichText(
                               text: TextSpan(
-                                  text: "Move In\n",
+                                  text: "Move In ",
                                   style: Theme.of(context)
                                       .primaryTextTheme
-                                      .headline4
+                                      .headline5
                                       .copyWith(fontWeight: FontWeight.bold),
                                   children: [
                                 TextSpan(
                                     text: "Inspection",
                                     style: Theme.of(context)
                                         .primaryTextTheme
-                                        .headline3
+                                        .headline5
                                         .copyWith(
-                                            fontWeight: FontWeight.normal))
+                                            fontWeight: FontWeight.bold))
                               ])),
                           SizedBox(
                               height:

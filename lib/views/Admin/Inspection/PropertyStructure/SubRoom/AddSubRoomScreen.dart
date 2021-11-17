@@ -335,7 +335,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                   height: UIConstants.fitToHeight(16, context)),
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text('Facilities',
+                                child: Text('Articles',
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .subtitle1
@@ -451,14 +451,16 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                     ))
               ]))),
       floatingActionButton: FloatingActionButton(
-        onPressed: imageList.length < 3
-            ? () {
+        onPressed: 
+        // imageList.length < 3
+        //     ? 
+            () {
                 Routing.makeRouting(context,
                     routeMethod: 'pushReplacement',
                     newWidget: CaptureSubRoomScreen(
                       propertyElement: propertyElement,
                       facilities: facilities,
-                      imageList: imageList,
+                      // imageList: imageList,
                       facilityTag: facilityTag,
                       roomTypes: widget.roomTypes,
                       roomLengthFeet:
@@ -472,13 +474,13 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                       subRoomTypeDropDownValue: subRoomTypeDropDownValue,
                     ));
               }
-            : () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Cannot add more than 3 photos !"),
-                  ),
-                );
-              },
+            // : () {
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       SnackBar(
+            //         content: Text("Cannot add more than 3 photos !"),
+            //       ),
+            //     );
+            //   },
         child: Icon(Icons.add_a_photo),
       ),
     );

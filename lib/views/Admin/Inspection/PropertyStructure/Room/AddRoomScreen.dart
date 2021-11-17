@@ -356,7 +356,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           SizedBox(height: UIConstants.fitToHeight(8, context)),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text('Facilities',
+                            child: Text('Articles',
                                 style: Theme.of(context)
                                     .primaryTextTheme
                                     .subtitle1
@@ -391,65 +391,65 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             visible: facilityTag.length > 0,
                             child: TagWidget(tagList: facilityTag),
                           ),
-                          SizedBox(height: UIConstants.fitToHeight(8, context)),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Images',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    .copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 36.0),
-                            child: Visibility(
-                                visible: imageList.length <= 0,
-                                child: Center(
-                                    child: Text(
-                                  'No Image is captured!',
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .subtitle2
-                                      .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                ))),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Visibility(
-                              visible: imageList.length > 0,
-                              child: ListView.builder(
-                                  itemCount: imageList.length,
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  physics: BouncingScrollPhysics(),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          imageList.removeAt(index);
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Image.file(
-                                          File(imageList[index]),
-                                          height: UIConstants.fitToHeight(
-                                              200, context),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ),
-                          SizedBox(
-                              height: UIConstants.fitToHeight(24, context)),
+                          SizedBox(height: UIConstants.fitToHeight(24, context)),
+                          // Align(
+                          //   alignment: Alignment.centerLeft,
+                          //   child: Text('Images',
+                          //       style: Theme.of(context)
+                          //           .primaryTextTheme
+                          //           .subtitle1
+                          //           .copyWith(
+                          //               color: Colors.black,
+                          //               fontWeight: FontWeight.w700)),
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(top: 36.0),
+                          //   child: Visibility(
+                          //       visible: imageList.length <= 0,
+                          //       child: Center(
+                          //           child: Text(
+                          //         'No Image is captured!',
+                          //         style: Theme.of(context)
+                          //             .primaryTextTheme
+                          //             .subtitle2
+                          //             .copyWith(
+                          //                 color: Colors.black,
+                          //                 fontWeight: FontWeight.w600),
+                          //       ))),
+                          // ),
+                          // Padding(
+                          //   padding:
+                          //       const EdgeInsets.symmetric(horizontal: 16.0),
+                          //   child: Visibility(
+                          //     visible: imageList.length > 0,
+                          //     child: ListView.builder(
+                          //         itemCount: imageList.length,
+                          //         shrinkWrap: true,
+                          //         scrollDirection: Axis.vertical,
+                          //         physics: BouncingScrollPhysics(),
+                          //         itemBuilder:
+                          //             (BuildContext context, int index) {
+                          //           return InkWell(
+                          //             onTap: () {
+                          //               setState(() {
+                          //                 imageList.removeAt(index);
+                          //               });
+                          //             },
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.all(8.0),
+                          //               child: Image.file(
+                          //                 File(imageList[index]),
+                          //                 height: UIConstants.fitToHeight(
+                          //                     200, context),
+                          //                 fit: BoxFit.contain,
+                          //               ),
+                          //             ),
+                          //           );
+                          //         }),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //     height: UIConstants.fitToHeight(24, context)),
                           buttonWidget(context),
                           SizedBox(
                               height: UIConstants.fitToHeight(24, context)),
@@ -464,14 +464,15 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: imageList.length < 3
-            ? () {
+        onPressed: 
+        // imageList.length < 3 ? 
+        () {
                 Routing.makeRouting(context,
                     routeMethod: 'pushReplacement',
                     newWidget: CaptureRoomScreen(
                       propertyElement: propertyElement,
                       facilities: facilities,
-                      imageList: imageList,
+                      // imageList: imageList,
                       facilityTag: facilityTag,
                       flooringType: flooringType,
                       marbelTypeDropDownValue: marbelTypeDropDownValue,
@@ -491,13 +492,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       flooringLIst: _floorSelections,
                     ));
               }
-            : () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Cannot add more than 3 photos !"),
-                  ),
-                );
-              },
+            // : () {
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       SnackBar(
+            //         content: Text("Cannot add more than 3 photos !"),
+            //       ),
+            //     );
+            //   },
         child: Icon(Icons.add_a_photo),
       ),
     );

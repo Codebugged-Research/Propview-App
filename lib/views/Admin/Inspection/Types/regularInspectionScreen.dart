@@ -149,19 +149,19 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                   children: [
                     RichText(
                       text: TextSpan(
-                        text: "Regular\n",
+                        text: "Regular ",
                         style: Theme.of(context)
                             .primaryTextTheme
-                            .headline4
+                            .headline5
                             .copyWith(fontWeight: FontWeight.bold),
                         children: [
                           TextSpan(
                             text: "Inspection",
                             style: Theme.of(context)
                                 .primaryTextTheme
-                                .headline3
+                                .headline5
                                 .copyWith(
-                                  fontWeight: FontWeight.normal,
+                                  fontWeight: FontWeight.bold,
                                 ),
                           )
                         ],

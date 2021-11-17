@@ -168,18 +168,18 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       children: [
                         RichText(
                             text: TextSpan(
-                                text: "Issue Based\n",
+                                text: "Issue Based ",
                                 style: Theme.of(context)
                                     .primaryTextTheme
-                                    .headline4
+                                    .headline5
                                     .copyWith(fontWeight: FontWeight.bold),
                                 children: [
                               TextSpan(
                                   text: "Inspection",
                                   style: Theme.of(context)
                                       .primaryTextTheme
-                                      .headline3
-                                      .copyWith(fontWeight: FontWeight.normal))
+                                      .headline5
+                                      .copyWith(fontWeight: FontWeight.bold))
                             ])),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.04),
