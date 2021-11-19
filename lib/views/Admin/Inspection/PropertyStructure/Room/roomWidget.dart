@@ -6,6 +6,7 @@ import 'package:propview/models/Room.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/AddRoomScreen.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/EditRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
 import 'package:propview/views/Admin/widgets/roomCard.dart';
 
@@ -65,10 +66,21 @@ class _RoomWidgetState extends State<RoomWidget> {
                   shrinkWrap: true,
                   itemCount: rooms.length,
                   itemBuilder: (context, int index) {
-                    return RoomCard(
-                      room: rooms[index],
-                      propertyElement: propertyElement,
-                      roomTypes: roomTypes,
+                    return GestureDetector(
+                      onTap: () async {
+                        await Routing.makeRouting(context,
+                            routeMethod: 'push',
+                            newWidget: EditRoomScreen(
+                              room: rooms[index],
+                              propertyElement: propertyElement,
+                              roomTypes: roomTypes,
+                            ));
+                      },
+                      child: RoomCard(
+                        room: rooms[index],
+                        propertyElement: propertyElement,
+                        roomTypes: roomTypes,
+                      ),
                     );
                   })),
       floatingActionButton: FloatingActionButton(

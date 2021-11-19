@@ -5,6 +5,7 @@ import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/AddSubRoomScreen.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/EditSubRoomScreen.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyFunctions.dart';
 import 'package:propview/views/Admin/widgets/subRoomCard.dart';
 
@@ -53,10 +54,17 @@ class _SubRoomWidgetState extends State<SubRoomWidget> {
                 shrinkWrap: true,
                 itemCount: subRooms.length,
                 itemBuilder: (context, int index) {
-                  return SubRoomCard(
-                    subRoom: subRooms[index],
-                    propertyElement: propertyElement,
-                    roomTypes: widget.roomTypes,
+                  return GestureDetector(
+                    onTap: ()async {
+                      await Routing.makeRouting(context,  routeMethod: 'push',  newWidget: EditSubRoomScreen(subRoom: subRooms[index],
+                        propertyElement: propertyElement,
+                        roomTypes: widget.roomTypes,));
+                    },
+                    child: SubRoomCard(
+                      subRoom: subRooms[index],
+                      propertyElement: propertyElement,
+                      roomTypes: widget.roomTypes,
+                    ),
                   );
                 }),
       ),
