@@ -32,19 +32,26 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inspection Type'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Routing.makeRouting(context,
-                    routeMethod: 'push',
-                    newWidget: HistoryScreen(propertyElement: propertyElement));
-              },
-              icon: Icon(
-                Icons.history,
-                color: Color(0xff314B8C),
-              ))
-        ],
+        centerTitle: true,
+        title: Text(
+          'Inspection Home',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         Routing.makeRouting(context,
+        //             routeMethod: 'push',
+        //             newWidget: HistoryScreen(propertyElement: propertyElement));
+        //       },
+        //       icon: Icon(
+        //         Icons.history,
+        //         color: Color(0xff314B8C),
+        //       ))
+        // ],
       ),
       body: CustomPaint(
         painter: CurvePainter(),

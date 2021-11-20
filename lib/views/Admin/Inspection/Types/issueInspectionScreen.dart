@@ -21,6 +21,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/IssueBaseInspection/CaptureIssueBasesInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/IssueBaseInspection/IssueInspectionHistory.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
@@ -154,7 +155,32 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text(
+            'Issue Based Inspection',
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.history_outlined,
+                color: Color(0xff314b8c),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => IssueInspectionHistoryScreen(
+                      propertyElement: widget.propertyElement,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         body: loader
             ? circularProgressWidget()
             : LayoutBuilder(
@@ -166,21 +192,21 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        RichText(
-                            text: TextSpan(
-                                text: "Issue Based ",
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .headline5
-                                    .copyWith(fontWeight: FontWeight.bold),
-                                children: [
-                              TextSpan(
-                                  text: "Inspection",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline5
-                                      .copyWith(fontWeight: FontWeight.bold))
-                            ])),
+                        // RichText(
+                        //     text: TextSpan(
+                        //         text: "Issue Based ",
+                        //         style: Theme.of(context)
+                        //             .primaryTextTheme
+                        //             .headline5
+                        //             .copyWith(fontWeight: FontWeight.bold),
+                        //         children: [
+                        //       TextSpan(
+                        //           text: "Inspection",
+                        //           style: Theme.of(context)
+                        //               .primaryTextTheme
+                        //               .headline5
+                        //               .copyWith(fontWeight: FontWeight.bold))
+                        //     ])),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.04),
                         ListView.builder(

@@ -33,6 +33,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/Inspection/MoveOutInspection/MoveOutInspectionHistory.dart';
 import 'package:propview/views/Admin/Inspection/MoveOutInspection/captureScreenMoveOut.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/moveOutInspectionCard.dart';
@@ -239,7 +240,33 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text(
+            'Move out Inspection',
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.history_outlined,
+                color: Color(0xff314b8c),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MoveOutInspectionHistoryScreen(
+                      propertyElement: widget.propertyElement,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         body: LayoutBuilder(
           builder: (context, constraints) => Container(
             height: MediaQuery.of(context).size.height,
@@ -251,21 +278,21 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RichText(
-                        text: TextSpan(
-                            text: "Move out ",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .headline5
-                                .copyWith(fontWeight: FontWeight.bold),
-                            children: [
-                          TextSpan(
-                              text: "Inspection",
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline5
-                                  .copyWith(fontWeight: FontWeight.bold))
-                        ])),
+                    // RichText(
+                    //     text: TextSpan(
+                    //         text: "Move out ",
+                    //         style: Theme.of(context)
+                    //             .primaryTextTheme
+                    //             .headline5
+                    //             .copyWith(fontWeight: FontWeight.bold),
+                    //         children: [
+                    //       TextSpan(
+                    //           text: "Inspection",
+                    //           style: Theme.of(context)
+                    //               .primaryTextTheme
+                    //               .headline5
+                    //               .copyWith(fontWeight: FontWeight.bold))
+                    //     ])),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     bills.length != 0
                         ? titleWidget(context, 'Pending Biils')

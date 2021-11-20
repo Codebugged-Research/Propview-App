@@ -28,6 +28,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/FullInspection/FullInspectionHistory.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 
@@ -106,10 +107,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       issueTableList =
           widget.issueTableList != null ? widget.issueTableList : [];
       rows[widget.index1][widget.index2].photo = widget.imageList;
-    } else {
-      rows = widget.rows;
-      issueTableList =
-          widget.issueTableList != null ? widget.issueTableList : [];
     }
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
@@ -174,7 +171,32 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            "Full Inspection",
+            style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.history_outlined,
+                color: Color(0xff314b8c),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FullInspectionHistoryScreen(
+                      propertyElement: widget.propertyElement,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         body: loader
             ? circularProgressWidget()
             : LayoutBuilder(
@@ -186,30 +208,13 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        RichText(
-                            text: TextSpan(
-                                text: "Full ",
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .headline5
-                                    .copyWith(fontWeight: FontWeight.bold),
-                                children: [
-                              TextSpan(
-                                  text: "Inspection",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline5
-                                      .copyWith(fontWeight: FontWeight.bold))
-                            ])),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01),
                         bills.length != 0
                             ? titleWidget(context, 'Pending Biils')
                             : Container(),
                         bills.length != 0
                             ? SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.02)
+                                    MediaQuery.of(context).size.height * 0.01)
                             : Container(),
                         bills.length == 0
                             ? Container()
@@ -237,7 +242,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Select/Add Room',
+                              'Select Room',
                               style: Theme.of(context)
                                   .primaryTextTheme
                                   .headline6
@@ -256,7 +261,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),
-                        buttonWidget(context),
+                        issueTableList.length > 0
+                            ? buttonWidget(context)
+                            : SizedBox(),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),

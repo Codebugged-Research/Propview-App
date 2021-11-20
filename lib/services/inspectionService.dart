@@ -63,6 +63,26 @@ class InspectionService extends AuthService {
       return inspection;
     } else {
       print("Failed!");
+      return  [];
+    }
+  }
+
+  
+  static Future<List<Inspection>> getInspectionByPropertyIdAndType(
+      String propertyId, String type) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/inspection/get/type/property/$propertyId/$type',
+        method: 'GET');
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      List<Inspection> inspection = responseMap["data"]["inspection"]
+          .map<Inspection>(
+              (inspectionMap) => Inspection.fromJson(inspectionMap))
+          .toList();
+      return inspection;
+    } else {
+      print("Failed!");
+      return  [];
     }
   }
 

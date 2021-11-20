@@ -36,6 +36,7 @@ import 'package:propview/services/tenantService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/MoveInInspectionHistory.dart';
 import 'package:propview/views/Admin/Inspection/MoveInInspection/addTenantFamilyScreen.dart';
 import 'package:propview/views/Admin/Inspection/MoveInInspection/addTenantScreen.dart';
 import 'package:propview/views/Admin/Inspection/MoveInInspection/captureScreenMoveIn.dart';
@@ -226,7 +227,33 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text(
+            'Move-In Inspection',
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.history_outlined,
+                color: Color(0xff314b8c),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MoveInInspectionHistoryScreen(
+                      propertyElement: widget.propertyElement,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         body: isLoading
             ? circularProgressWidget()
             : LayoutBuilder(
@@ -240,22 +267,21 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RichText(
-                              text: TextSpan(
-                                  text: "Move In ",
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline5
-                                      .copyWith(fontWeight: FontWeight.bold),
-                                  children: [
-                                TextSpan(
-                                    text: "Inspection",
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .headline5
-                                        .copyWith(
-                                            fontWeight: FontWeight.bold))
-                              ])),
+                          // RichText(
+                          //     text: TextSpan(
+                          //         text: "Move In ",
+                          //         style: Theme.of(context)
+                          //             .primaryTextTheme
+                          //             .headline5
+                          //             .copyWith(fontWeight: FontWeight.bold),
+                          //         children: [
+                          //       TextSpan(
+                          //           text: "Inspection",
+                          //           style: Theme.of(context)
+                          //               .primaryTextTheme
+                          //               .headline5
+                          //               .copyWith(fontWeight: FontWeight.bold))
+                          //     ])),
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),

@@ -19,6 +19,7 @@ import 'package:propview/services/subRoomService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Inspection/regularInspectionHistoryScreen.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 
@@ -81,14 +82,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     );
     if (rooms.length == 0) {
       showDialog(
-          context: context,
-          builder: (_) {
-            return AlertWidget(
-              title: 'Property Structure is not defined!',
-              body:
-                  'First you have to determine the property structure to begin with inspection.',
-            );
-          });
+        context: context,
+        builder: (_) {
+          return AlertWidget(
+            title: 'Property Structure is not defined!',
+            body:
+                'First you have to determine the property structure to begin with inspection.',
+          );
+        },
+      );
     } else {
       subRooms = await SubRoomService.getSubRoomByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
@@ -135,7 +137,33 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text(
+            "Regular Inspection",
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline5
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.history_outlined,
+                color: Color(0xff314b8c),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RegularInspectionHistoryScreen(
+                      propertyElement: widget.propertyElement,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         body: LayoutBuilder(
           builder: (context, constraints) => Container(
             height: MediaQuery.of(context).size.height,
@@ -147,28 +175,28 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        text: "Regular ",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .headline5
-                            .copyWith(fontWeight: FontWeight.bold),
-                        children: [
-                          TextSpan(
-                            text: "Inspection",
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .headline5
-                                .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          )
-                        ],
-                      ),
-                    ),
+                    // RichText(
+                    //   text: TextSpan(
+                    //     text: "Regular ",
+                    //     style: Theme.of(context)
+                    //         .primaryTextTheme
+                    //         .headline5
+                    //         .copyWith(fontWeight: FontWeight.bold),
+                    //     children: [
+                    //       TextSpan(
+                    //         text: "Inspection",
+                    //         style: Theme.of(context)
+                    //             .primaryTextTheme
+                    //             .headline5
+                    //             .copyWith(
+                    //               fontWeight: FontWeight.bold,
+                    //             ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
                     bills.length != 0
-                        ? titleWidget(context, 'Pending Biils')
+                        ? titleWidget(context, 'Pending Bills')
                         : Container(),
                     bills.length != 0
                         ? SizedBox(

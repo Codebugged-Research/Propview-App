@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Property.dart';
-import 'package:propview/models/RegularInspection.dart';
-import 'package:propview/services/regulationInspectionService.dart';
+import 'package:propview/services/inspectionService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/widgets/regularInspectionCard.dart';
+import 'package:propview/views/Admin/widgets/inspectionCard.dart';
 
-class RegularInspectionHistoryScreen extends StatefulWidget {
+class MoveOutInspectionHistoryScreen extends StatefulWidget {
+  MoveOutInspectionHistoryScreen({this.propertyElement});
+
   final PropertyElement propertyElement;
 
-  RegularInspectionHistoryScreen({this.propertyElement});
-
   @override
-  _RegularInspectionHistoryScreenState createState() =>
-      _RegularInspectionHistoryScreenState();
+  _MoveOutInspectionHistoryScreenState createState() =>
+      _MoveOutInspectionHistoryScreenState();
 }
 
-class _RegularInspectionHistoryScreenState
-    extends State<RegularInspectionHistoryScreen> {
-  PropertyElement propertyElement;
-  List<RegularInspection> regularInspection;
-
+class _MoveOutInspectionHistoryScreenState
+    extends State<MoveOutInspectionHistoryScreen> {
+  List<Inspection> inspections = [];
   bool isLoading = false;
+  PropertyElement propertyElement;
 
   @override
   void initState() {
@@ -33,9 +32,8 @@ class _RegularInspectionHistoryScreenState
     setState(() {
       isLoading = true;
     });
-    regularInspection =
-        await RegularInspectionService.getRegularInspectionByPropertyId(
-            propertyElement.tableproperty.propertyId.toString());
+    inspections = await InspectionService.getInspectionByPropertyIdAndType(
+        propertyElement.tableproperty.propertyId.toString(), "Move out Inspection");
     setState(() {
       isLoading = false;
     });
@@ -46,7 +44,7 @@ class _RegularInspectionHistoryScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Regular Inspection History",
+          "Move Out Inspection History",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
@@ -56,10 +54,10 @@ class _RegularInspectionHistoryScreenState
           : Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: regularInspection.isEmpty
+              child: inspections.isEmpty
                   ? Center(
                       child: Text(
-                        'No Regular Inspection Found!!',
+                        'No Inspection Found!!',
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle1
@@ -70,13 +68,15 @@ class _RegularInspectionHistoryScreenState
                     )
                   : ListView.builder(
                       shrinkWrap: true,
-                      itemCount: regularInspection.length,
+                      itemCount: inspections.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return RegularInspectionCard(
-                          regularInspection: regularInspection[index],
+                        return InspectionCard(
+                          inspection: inspections[index],
                           propertyElement: propertyElement,
                         );
-                      })),
+                      },
+                    ),
+            ),
     );
   }
 }
