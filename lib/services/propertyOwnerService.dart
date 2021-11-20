@@ -27,7 +27,12 @@ class PropertyOwnerService extends AuthService {
     http.Response response = await AuthService.makeAuthenticatedRequest(
       AuthService.BASE_URI + 'api/propertyOwner/search',
       method: 'POST',
-      body: jsonEncode({"query": "%" + query + "%"}),
+      body: jsonEncode({
+        "query1": "%" + query + "%",
+        "query2": "%" + query,
+        "query3": query + "%",
+        "query4": query
+      }),
     );
     var responseMap = jsonDecode(response.body);
     if (response.statusCode == 200) {
@@ -41,7 +46,6 @@ class PropertyOwnerService extends AuthService {
       return [];
     }
   }
-
 
   static Future<List<PropertyElement>> searchProperty(String query) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(

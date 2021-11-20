@@ -450,6 +450,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                       ),
                     ))
               ]))),
+<<<<<<< Updated upstream
       // floatingActionButton: FloatingActionButton(
       //   onPressed:
       //   // imageList.length < 3
@@ -483,6 +484,41 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
       //       //   },
       //   child: Icon(Icons.add_a_photo),
       // ),
+=======
+      floatingActionButton: FloatingActionButton(
+        onPressed: 
+        // imageList.length < 3
+        //     ? 
+            () {
+                Routing.makeRouting(context,
+                    routeMethod: 'pushReplacement',
+                    newWidget: CaptureSubRoomScreen(
+                      propertyElement: propertyElement,
+                      facilities: facilities,
+                      // imageList: imageList,
+                      facilityTag: facilityTag,
+                      roomTypes: widget.roomTypes,
+                      roomLengthFeet:
+                          double.parse(roomLengthFeetController.text),
+                      roomLengthInches:
+                          double.parse(roomLengthInchesController.text),
+                      roomWidthFeet: double.parse(roomWidthFeetController.text),
+                      roomWidthInches:
+                          double.parse(roomWidthInchesController.text),
+                      roomTypeDropDownValue: roomTypeDropDownValue,
+                      subRoomTypeDropDownValue: subRoomTypeDropDownValue,
+                    ));
+              },
+            // : () {
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       SnackBar(
+            //         content: Text("Cannot add more than 3 photos !"),
+            //       ),
+            //     );
+            //   },
+        child: Icon(Icons.add_a_photo),
+      ),
+>>>>>>> Stashed changes
     );
   }
 

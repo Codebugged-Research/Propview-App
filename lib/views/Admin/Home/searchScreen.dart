@@ -34,7 +34,7 @@ class _SearchScreenState extends State<SearchScreen>
       loading = true;
       propertyOwners.clear();
     });
-    propertyOwners = await PropertyOwnerService.searchOwner(_controller.text.toLowerCase());
+    propertyOwners = await PropertyOwnerService.searchOwner(_controller.text);
     setState(() {
       loading = false;
     });

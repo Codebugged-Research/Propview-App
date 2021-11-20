@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Property.dart';
+import 'package:propview/views/Manager/Home/AssignProperty.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 
 class PropertyCard extends StatefulWidget {
@@ -198,7 +199,15 @@ class _PropertyCardState extends State<PropertyCard> {
                   optionCard(
                     "Assign\nproperty",
                     "owner",
-                    () {},
+                    () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AssignProperty(
+                            propertyElement: widget.propertyElement,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/views/Admin/Home/AssignProperty.dart';
 import 'package:propview/views/Admin/Inspection/inspectionHomeScreen.dart';
 import 'package:propview/views/Admin/Property/PropertyDetailScreen.dart';
 
@@ -208,7 +209,15 @@ class _SearchPropertyCardState extends State<SearchPropertyCard> {
                         newWidget: InspectionHomeScreen(
                             propertyElement: propertyElement));
                   }),
-                  optionCard("Assign\nproperty", "owner", () {}),
+                  optionCard("Assign\nproperty", "owner", () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AssignProperty(
+                          propertyElement: propertyElement,
+                        ),
+                      ),
+                    );
+                  }),
                   // optionCard("Edit\nProperty", "renovation", () {}),
                   optionCard("Property\nDetails", "house", () {
                     Navigator.of(context).push(

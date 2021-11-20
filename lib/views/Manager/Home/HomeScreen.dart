@@ -40,14 +40,17 @@ class _HomeScreenState extends State<HomeScreen> {
     users = await UserService.getAllUserUnderManger(user.userId);
     users.add(user);
     for (int i = 0; i < users.length; i++) {
+    print("user" + users[i].userId.toString());
       var tempPropertyList =
           await PropertyService.getAllPropertiesByUserId(users[i].userId);
+    print(tempPropertyList.count);
       property.count += tempPropertyList.count;
       property.data.property.addAll(tempPropertyList.data.property);
     }
     setState(() {
       loading = false;
     });
+    print(property.count);
   }
 
   @override
