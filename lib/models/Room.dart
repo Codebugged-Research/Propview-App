@@ -60,9 +60,6 @@ class RoomsToPropertyModel {
     @required this.balcony,
     @required this.wardrobe,
     @required this.facility,
-    @required this.image1,
-    @required this.image2,
-    @required this.image3,
   });
 
   int propertyRoomId;
@@ -91,9 +88,6 @@ class RoomsToPropertyModel {
         balcony: json["balcony"],
         wardrobe: json["wardrobe"],
         facility: json["facility"],
-        image1: json["image1"],
-        image2: json["image2"],
-        image3: json["image3"],
       );
 
   Map<String, dynamic> toJson() => {

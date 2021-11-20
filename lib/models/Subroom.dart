@@ -55,9 +55,6 @@ class SubRoomElement {
     @required this.roomSize1,
     @required this.roomSize2,
     @required this.facility,
-    @required this.image1,
-    @required this.image2,
-    @required this.image3,
   });
 
   int propertySubRoomId;
@@ -79,9 +76,6 @@ class SubRoomElement {
         roomSize1: double.parse(json["room_size1"].toString()),
         roomSize2: double.parse(json["room_size2"].toString()),
         facility: json["facility"],
-        image1: json["image1"],
-        image2: json["image2"],
-        image3: json["image3"],
       );
 
   Map<String, dynamic> toJson() => {

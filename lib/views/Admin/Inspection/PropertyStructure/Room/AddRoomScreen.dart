@@ -463,46 +463,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
           ),
         ),
       ),
-<<<<<<< Updated upstream
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed:
-      //   // imageList.length < 3 ?
-      //   () {
-      //           Routing.makeRouting(context,
-      //               routeMethod: 'pushReplacement',
-      //               newWidget: CaptureRoomScreen(
-      //                 propertyElement: propertyElement,
-      //                 facilities: facilities,
-      //                 // imageList: imageList,
-      //                 facilityTag: facilityTag,
-      //                 flooringType: flooringType,
-      //                 marbelTypeDropDownValue: marbelTypeDropDownValue,
-      //                 roomLengthFeet:
-      //                     double.parse(roomLengthFeetController.text),
-      //                 roomLengthInches:
-      //                     double.parse(roomLengthInchesController.text),
-      //                 roomWidthFeet: double.parse(roomWidthFeetController.text),
-      //                 roomWidthInches:
-      //                     double.parse(roomWidthInchesController.text),
-      //                 isBath: isBath,
-      //                 roomTypes: widget.roomList,
-      //                 isBalcony: isBalcony,
-      //                 isWardrobe: isWardrobe,
-      //                 roomTypeDropDownValue: roomTypeDropDownValue,
-      //                 roomBoolList: _roomSelection,
-      //                 flooringLIst: _floorSelections,
-      //               ));
-      //         }
-      //       // : () {
-      //       //     ScaffoldMessenger.of(context).showSnackBar(
-      //       //       SnackBar(
-      //       //         content: Text("Cannot add more than 3 photos !"),
-      //       //       ),
-      //       //     );
-      //       //   },
-      //   // child: Icon(Icons.add_a_photo),
-      // ),
-=======
       floatingActionButton: FloatingActionButton(
         onPressed: 
         // imageList.length < 3 ? 
@@ -541,7 +501,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
             //   },
         child: Icon(Icons.add_a_photo),
       ),
->>>>>>> Stashed changes
     );
   }
 
@@ -613,6 +572,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 (double.parse(roomWidthInchesController.text) / 12.0);
             roomLength = double.parse(roomLength.toStringAsFixed(2));
             roomWidth = double.parse(roomWidth.toStringAsFixed(2));
+            // ignore: missing_required_param
             RoomsToPropertyModel room = RoomsToPropertyModel(
               propertyId: propertyElement.tableproperty.propertyId,
               roomId: roomTypeDropDownValue.roomId,
