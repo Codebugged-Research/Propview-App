@@ -72,7 +72,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   String marbelTypeDropDownValue;
   PropertyRoom roomTypeDropDownValue;
 
-  //TODO: @Sambit Kumar Majhi
   List<bool> _floorSelections = List.generate(3, (_) => false);
   List<bool> _roomSelection = List.generate(3, (_) => false);
 
@@ -552,19 +551,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
             });
             modelFacilty =
                 modelFacilty.substring(0, modelFacilty.length - 1);
-            String img1 = "";
-            String img2 = "";
-            String img3 = "";
-            if (imageList.length > 0) {
-              img1 = await upload(imageList[0],
-                  propertyElement.tableproperty.propertyId.toString());
-            } else if (imageList.length > 1) {
-              img2 = await upload(imageList[1],
-                  propertyElement.tableproperty.propertyId.toString());
-            } else if (imageList.length > 2) {
-              img3 = await upload(imageList[2],
-                  propertyElement.tableproperty.propertyId.toString());
-            }
             double roomLength =
                 double.parse(roomLengthFeetController.text) +
                     (double.parse(roomLengthInchesController.text) / 12.0);
