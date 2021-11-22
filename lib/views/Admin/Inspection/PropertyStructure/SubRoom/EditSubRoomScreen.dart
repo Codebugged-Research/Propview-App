@@ -7,6 +7,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
 import 'package:propview/models/roomType.dart';
+import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
@@ -55,9 +56,31 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    facilities = await FacilityService.getFacilities();
     subRoom = widget.subRoom;
-    propertyElement = widget.propertyElement;
     roomTypes = widget.roomTypes;
+    roomTypeDropDownValue =
+        roomTypes.firstWhere((element) => element.roomId == subRoom.roomId);
+    propertyElement = widget.propertyElement;
+    roomLengthFeetController.text = (subRoom.roomSize1 ~/ 12).toString();
+    roomLengthInchesController.text = (subRoom.roomSize1 % 12).toString();
+    roomWidthFeetController.text = (subRoom.roomSize2 ~/ 12).toString();
+    roomWidthInchesController.text = (subRoom.roomSize2 % 12).toString();
+    subRoom.facility.split(",").forEach((element) {
+      facilityTag.add(facilities
+          .firstWhere((element2) => element2.facilityId == int.parse(element)));
+    });
+    facilityDropDownValue = facilities.first;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   addTag(Facility tag) {
