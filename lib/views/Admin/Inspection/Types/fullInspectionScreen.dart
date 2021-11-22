@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:propview/models/BillToProperty.dart';
+import 'package:propview/models/Facility.dart';
 
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
@@ -18,6 +19,7 @@ import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/billPropertyService.dart';
+import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/inspectionService.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
@@ -74,6 +76,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   List<IssueTableData> issueTableList = [];
   List<List<List<String>>> photoList = [];
 
+  List<Facility> facilityList = [];
+
   List<BillToProperty> bills = [];
 
   RoomType roomTypes;
@@ -97,6 +101,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       loader = true;
       propertyElement = widget.propertyElement;
     });
+    facilityList = await FacilityService.getFacilities();
     if (widget.bills != null) {
       bills = widget.bills;
     } else {
@@ -362,7 +367,33 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
-              setState(() {
+             bool isValid = false;
+             showDialog(context: context, builder: (context){
+               return AlertDialog(
+                 shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.circular(10.0),
+                 ),
+                 content: Text("Are you sure you want to submit the inspection?"),
+                 actions: [
+                   MaterialButton(
+                     child: Text("Yes"),
+                     onPressed: (){
+                       isValid = true;
+                       Navigator.of(context).pop();
+                     },
+                   ),
+                   MaterialButton(
+                     child: Text("No"),
+                     onPressed: (){
+                       isValid = false;
+                       Navigator.of(context).pop();
+                     },
+                   ),
+                 ],
+               );
+             });
+             if(isValid){
+                setState(() {
                 loading = true;
               });
               User user = await UserService.getUser();
@@ -444,6 +475,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                   ),
                 );
               }
+             }
             },
             child: Text(
               "Add Inspection",
@@ -557,11 +589,23 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                                 fontWeight: FontWeight.w800,
                               ),
                     ),
-                    TextFormField(
-                      initialValue: issue.issueName,
-                      onChanged: (value) {
+                    DropdownButtonFormField(
+                      decoration: new InputDecoration(
+                        icon: Icon(Icons.hvac),
+                      ), //, color: Colors.white10
+                      value: issue.issueName == ""
+                          ? facilityList[01].facilityName
+                          : issue.issueName,
+                      items:
+                          facilityList.map<DropdownMenuItem>((Facility value) {
+                        return DropdownMenuItem(
+                          value: value.facilityName,
+                          child: Text(value.facilityName),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
                         this.setState(() {
-                          issue.issueName = value;
+                          issue.issueName = newValue;
                         });
                       },
                     ),
