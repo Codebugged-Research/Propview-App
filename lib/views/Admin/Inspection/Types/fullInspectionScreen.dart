@@ -35,6 +35,7 @@ import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 import 'package:propview/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
@@ -71,7 +72,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
-  List<List<String>> photoList = [];
+  List<List<List<String>>> photoList = [];
 
   List<BillToProperty> bills = [];
 
@@ -182,6 +183,26 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           actions: [
             IconButton(
               icon: Icon(
+                Icons.save,
+                color: Color(0xff314b8c),
+              ),
+              onPressed: () {
+                inspection = Inspection(
+                  inspectType: "Full Inspection",
+                );
+                var fullInspectionCacheData = json.encode({
+                  "imageList": photoList,
+                  "bills": bills,
+                  "rows": rows,
+                  "issueTableList": issueTableList
+                }).toString();
+                prefs.setString(
+                    "full-${propertyElement.tableproperty.propertyId}",
+                    fullInspectionCacheData);
+              },
+            ),
+            IconButton(
+              icon: Icon(
                 Icons.history_outlined,
                 color: Color(0xff314b8c),
               ),
@@ -199,76 +220,100 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         ),
         body: loader
             ? circularProgressWidget()
-            : LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        bills.length != 0
-                            ? titleWidget(context, 'Pending Biils')
-                            : Container(),
-                        bills.length != 0
-                            ? SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.01)
-                            : Container(),
-                        bills.length == 0
-                            ? Container()
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: bills.length,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return FullInspectionCard(
-                                    propertyElement: propertyElement,
-                                    billToProperty: bills[index],
-                                  );
-                                }),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
-                        ListView.builder(
-                          itemBuilder: (context, index) {
-                            return issueCard(constraints, index);
-                          },
-                          itemCount: issueTableList.length,
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Select Room',
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline6
-                                  .copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black),
-                            ),
-                            InkWell(
-                              child: Icon(Icons.add),
-                              onTap: () {
-                                showRoomSelect();
-                              },
+            : SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      bills.length != 0
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xff314B8C).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: Text(
+                                "Pending Bills",
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .headline6
+                                    .copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                              ),
                             )
-                          ],
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02,
-                        ),
-                        issueTableList.length > 0
-                            ? buttonWidget(context)
-                            : SizedBox(),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02,
-                        ),
-                      ],
-                    ),
+                          : SizedBox(),
+                      bills.length != 0
+                          ? SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.01)
+                          : SizedBox(),
+                      bills.length == 0
+                          ? SizedBox()
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: bills.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (BuildContext context, int index) {
+                                return FullInspectionCard(
+                                  propertyElement: propertyElement,
+                                  billToProperty: bills[index],
+                                );
+                              },
+                            ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      ListView.builder(
+                        itemCount: issueTableList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return issueCard(index);
+                        },
+                      ),
+                      issueTableList.length >= roomsAvailable.length
+                          ? SizedBox()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Select Room',
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline6
+                                      .copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black),
+                                ),
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: Color(0xff314b8c),
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showRoomSelect();
+                                  },
+                                )
+                              ],
+                            ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      issueTableList.length > 0
+                          ? buttonWidget(context)
+                          : SizedBox(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -470,144 +515,177 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  Widget issueCard(constraints, int index) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        titleWidget(context, issueTableList[index].roomsubroomName),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minWidth: constraints.minWidth),
-            child: DataTable(
-              dataRowHeight: 80,
-              dividerThickness: 2,
-              columns: [
-                DataColumn(
-                    label: Text("Item/Issue Name",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Status",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Remarks",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Photos",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-              ],
-              rows: rows[index]
-                  .asMap()
-                  .entries
-                  .map(
-                    (e) => DataRow(
-                      cells: [
-                        DataCell(TextFormField(
-                          initialValue: e.value.issueName,
-                          onChanged: (value) {
-                            setState(() {
-                              e.value.issueName = value;
-                            });
-                          },
-                        )),
-                        DataCell(TextFormField(
-                          initialValue: e.value.status,
-                          onChanged: (value) {
-                            setState(() {
-                              e.value.status = value;
-                            });
-                          },
-                        )),
-                        DataCell(
+  showCardEdit(Issue issue) {
+    return showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        backgroundColor: Color(0xFFFFFFFF),
+        builder: (BuildContext context) {
+          return  StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 16.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Edit Issue Entry',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .headline6,
+                              )),
+                          Align(
+                              alignment: Alignment.center,
+                              child: Divider(
+                                color: Color(0xff314B8C),
+                                thickness: 2.5,
+                                indent: 100,
+                                endIndent: 100,
+                              )),
+                          SizedBox(height: 4),
+                          Text(
+                            'Issue: ',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
                           TextFormField(
-                            initialValue: e.value.remarks,
+                            initialValue: issue.issueName,
                             onChanged: (value) {
-                              setState(() {
-                                e.value.remarks = value;
+                              this.setState(() {
+                                issue.issueName = value;
                               });
                             },
                           ),
-                        ),
-                        DataCell(
-                          photoPick(e.value.photo, index, e.key),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              color: Colors.blueAccent,
-              icon: Icon(Icons.add),
-              onPressed: () {
-                setState(() {
-                  photoList.add([]);
-                  rows[index].add(
-                    Issue(
-                      issueName: "",
-                      status: "",
-                      remarks: "",
-                      photo: photoList[index],
+                          SizedBox(height: 4),
+                          Text(
+                            'Status: ',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                          DropdownButtonFormField(
+                            decoration: new InputDecoration(
+                              icon: Icon(Icons.hvac),
+                            ), //, color: Colors.white10
+                            value: issue.status,
+                            items: ["Excelent", "Good", "Bad", "Broken"]
+                                .map<DropdownMenuItem>((String value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              this.setState(() {
+                                issue.status = newValue;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Remarks: ',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                          TextFormField(
+                            initialValue: issue.issueName,
+                            onChanged: (value) {
+                              this.setState(() {
+                                issue.issueName = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 4),
+                        ],
+                      ),
                     ),
                   );
                 });
+        });
+  }
+
+  Widget issueCard(int tableindex) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          titleWidget(
+              context, issueTableList[tableindex].roomsubroomName, tableindex),
+          SizedBox(
+            height: 8,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.95,
+            height: 200,
+            child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: rows[tableindex].length + 1,
+              itemBuilder: (context, index) {
+                return index == rows[tableindex].length
+                    ? addRowButton(tableindex, index)
+                    : issueRowCard(index, tableindex);
               },
             ),
-            IconButton(
-              color: Colors.redAccent,
-              icon: Icon(Icons.remove),
-              onPressed: () {
-                setState(() {
-                  rows[index].removeLast();
-                  photoList[index].removeLast();
-                });
-              },
-            ),
-            IconButton(
-              color: Colors.green,
-              icon: Icon(Icons.refresh),
-              onPressed: () {
-                setState(() {
-                  rows[index].clear();
-                  photoList[index].clear();
-                });
-              },
-            ),
-          ],
-        )
-      ],
+          ),
+          SizedBox(
+            height: 16,
+          ),
+        ],
+      ),
     );
   }
 
-  Widget photoPick(List<String> list, int index1, int index2) {
+  Widget addRowButton(int tableindex, int index) {
     return Container(
-      width: 300,
+      width: 100,
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: IconButton(
+        color: Colors.blueAccent,
+        icon: Icon(Icons.add, color: Colors.white, size: 30),
+        onPressed: () {
+          setState(() {
+            photoList[tableindex].add([]);
+            rows[tableindex].add(
+              Issue(
+                  issueName: "dsaaa dsa dsad sa sad dsa dsa d",
+                  status: "Excelent",
+                  remarks: "dsa a sdsa das d asda sdsa d sad asd sad",
+                  photo: photoList[tableindex][index]),
+            );
+          });
+        },
+      ),
+    );
+  }
+
+  Widget photoPick(List<String> list, int index1) {
+    return Container(
+      width: 120,
       height: 50,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -615,35 +693,17 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         itemBuilder: (context, index) {
           return index == list.length
               ? InkWell(
-                  onTap: () {
-                    // print(bills[0].amount);
-                    inspection = Inspection(
-                      inspectType: "Full Inspection",
-                    );
-                    var fullInspectionCacheData = json.encode({
-                      "imageList": list,
-                      "index1": index1,
-                      "index2": index2,
-                      "bills": bills,
-                      "rows": rows,
-                      "issueTableList": issueTableList
-                    }).toString();
-                    prefs.setString(
-                        "full-${propertyElement.tableproperty.propertyId}",
-                        fullInspectionCacheData);
-                    Routing.makeRouting(
-                      context,
-                      routeMethod: 'pushReplacement',
-                      newWidget: CaptureFullInspectionScreen(
-                        imageList: list,
-                        index1: index1,
-                        index2: index2,
-                        bills: bills,
-                        propertyElement: widget.propertyElement,
-                        rows: rows,
-                        issueTableList: issueTableList,
+                  onTap: () async {
+                    var tempList = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CaptureFullInspectionScreen(
+                          imageList: list,
+                        ),
                       ),
                     );
+                    setState(() {
+                      list = tempList;
+                    });
                   },
                   child: Icon(Icons.add),
                 )
@@ -651,7 +711,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                   child: Image.file(
                     File(list[index]),
                     height: 60,
-                    width: 60,
+                    width: 45,
                   ),
                   onTap: () {
                     setState(() {
@@ -664,45 +724,294 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  Widget titleWidget(BuildContext context, String title) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Color(0xff314B8C).withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Text(
-        title,
-        style: Theme.of(context)
-            .primaryTextTheme
-            .headline6
-            .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
-      ),
+  Widget titleWidget(BuildContext context, String title, int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Color(0xff314B8C).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Text(
+            title,
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline6
+                .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              issueTableList.removeAt(index);
+              rows.removeAt(index);
+              photoList.removeAt(index);
+            });
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.red,
+          ),
+        )
+      ],
     );
   }
 
-  Widget inputWidget(TextEditingController textEditingController) {
+  Widget issueRowCard(int index, int tableindex) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: TextField(
-        controller: textEditingController,
-        obscureText: false,
-        keyboardType: TextInputType.number,
-        textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[300],
-          labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(12.0)),
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 220,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(2, 2),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.15)),
+            BoxShadow(
+                offset: Offset(-2, 2),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.15))
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showCardEdit(rows[tableindex][index]);
+                    },
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        rows[tableindex].removeAt(index);
+                        photoList.remove(tableindex);
+                      });
+                      print(rows[tableindex][index].toJson());
+                      print(photoList[tableindex].toString());
+                      print(index);
+                    },
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Issue: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      "$tableindex - $index" +
+                          rows[tableindex][index].issueName,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Status: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      rows[tableindex][index].status,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Remarks: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      rows[tableindex][index].remarks,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Photo: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  photoPick(photoList[tableindex][index], index),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class EditModalSheet extends StatefulWidget {
+  Issue issue;
+  EditModalSheet({Key key, @required this.issue}) : super(key: key);
+
+  @override
+  _EditModalSheetState createState() => _EditModalSheetState();
+}
+
+class _EditModalSheetState extends State<EditModalSheet> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Edit Issue Entry',
+                  style: Theme.of(context).primaryTextTheme.headline6,
+                )),
+            Align(
+                alignment: Alignment.center,
+                child: Divider(
+                  color: Color(0xff314B8C),
+                  thickness: 2.5,
+                  indent: 100,
+                  endIndent: 100,
+                )),
+            SizedBox(height: 4),
+            Text(
+              'Issue: ',
+              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+            TextFormField(
+              initialValue: widget.issue.issueName,
+              onChanged: (value) {
+                setState(() {
+                  widget.issue.issueName = value;
+                });
+              },
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Status: ',
+              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+            DropdownButtonFormField(
+              decoration: new InputDecoration(
+                icon: Icon(Icons.hvac),
+              ), //, color: Colors.white10
+              value: widget.issue.status,
+              items: ["Excelent", "Good", "Bad", "Broken"]
+                  .map<DropdownMenuItem>((String value) {
+                return DropdownMenuItem(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  widget.issue.status = newValue;
+                });
+              },
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Remarks: ',
+              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+            TextFormField(
+              initialValue: widget.issue.issueName,
+              onChanged: (value) {
+                setState(() {
+                  widget.issue.issueName = value;
+                });
+              },
+            ),
+            SizedBox(height: 4),
+          ],
         ),
       ),
     );

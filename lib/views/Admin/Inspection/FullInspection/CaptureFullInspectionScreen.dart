@@ -6,32 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:propview/models/BillToProperty.dart';
-import 'package:propview/models/Inspection.dart';
-import 'package:propview/models/Issue.dart';
-import 'package:propview/models/Property.dart';
-import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/fullInspectionScreen.dart';
 
 class CaptureFullInspectionScreen extends StatefulWidget {
   final List<String> imageList;
-  final int index1;
-  final int index2;
-  final PropertyElement propertyElement;
-  final List<List<Issue>> rows;
-  List<BillToProperty> bills;
-  final List<IssueTableData> issueTableList;
 
   CaptureFullInspectionScreen({
     this.imageList,
-    this.propertyElement,
-    this.index1,
-    this.index2,
-    this.bills,
-    this.rows,
-    this.issueTableList,
   });
 
   @override
@@ -90,19 +71,7 @@ class _CaptureFullInspectionScreenState
       setState(() {
         imageList.add(compressedImage.path);
       });
-      await Routing.makeRouting(
-        context,
-        routeMethod: 'pushReplacement',
-        newWidget: FullInspectionScreen(
-          imageList: imageList,
-          index1: widget.index1,
-          index2: widget.index2,
-          bills: widget.bills,
-          propertyElement: widget.propertyElement,
-          rows: widget.rows,
-          issueTableList: widget.issueTableList,
-        ),
-      );
+      Navigator.of(context).pop(imageList);
     } catch (e) {
       print(e);
     }
