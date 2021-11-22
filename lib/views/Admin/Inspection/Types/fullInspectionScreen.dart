@@ -29,6 +29,7 @@ import 'package:propview/services/subRoomService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
 import 'package:propview/views/Admin/Inspection/FullInspection/FullInspectionHistory.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
@@ -42,9 +43,7 @@ class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
-  final List<String> imageList;
-  final int index1;
-  final int index2;
+  final List<List<List<String>>> imageList;
   List<BillToProperty> bills;
 
   FullInspectionScreen({
@@ -52,8 +51,6 @@ class FullInspectionScreen extends StatefulWidget {
     this.propertyElement,
     this.rows,
     this.issueTableList,
-    this.index1,
-    this.index2,
     this.imageList,
   });
 
@@ -101,6 +98,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       loader = true;
       propertyElement = widget.propertyElement;
     });
+    photoList = widget.imageList ?? [];
     facilityList = await FacilityService.getFacilities();
     if (widget.bills != null) {
       bills = widget.bills;
@@ -108,12 +106,15 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       bills = await BillPropertyService.getBillsByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
     }
-    if (widget.index1 != null) {
-      rows = widget.rows != null ? widget.rows : [[]];
-      issueTableList =
-          widget.issueTableList != null ? widget.issueTableList : [];
-      rows[widget.index1][widget.index2].photo = widget.imageList;
+    rows = widget.rows != null ? widget.rows : [[]];
+    for (var i = 0; i < rows.length; i++) {
+      photoList.add([]);
+      for (var j = 0; j < rows[i].length; j++) {
+        photoList[i].add([]);
+        photoList[i][j] = rows[i][j].photo;
+      }
     }
+    issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
       propertyElement.tableproperty.propertyId.toString(),
@@ -166,6 +167,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool saveLoader = false;
 
   @override
   Widget build(BuildContext context) {
@@ -191,19 +193,31 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 Icons.save,
                 color: Color(0xff314b8c),
               ),
-              onPressed: () {
-                inspection = Inspection(
-                  inspectType: "Full Inspection",
-                );
+              onPressed: () async {
+                setState(() {
+                  saveLoader = true;
+                });
+                for (var i = 0; i < rows.length; i++) {
+                  for (var j = 0; j < rows[i].length; j++) {
+                    rows[i][j].photo = photoList[i][j];
+                  }
+                }
                 var fullInspectionCacheData = json.encode({
-                  "imageList": photoList,
                   "bills": bills,
                   "rows": rows,
                   "issueTableList": issueTableList
                 }).toString();
-                prefs.setString(
+                bool success = await prefs.setString(
                     "full-${propertyElement.tableproperty.propertyId}",
                     fullInspectionCacheData);
+                if (success) {
+                  showInSnackBar(context, "Full Inspection Saved", 800);
+                } else {
+                  showInSnackBar(context, "Error Saving Full Inspection", 800);
+                }
+                setState(() {
+                  saveLoader = false;
+                });
               },
             ),
             IconButton(
@@ -223,6 +237,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             ),
           ],
         ),
+        resizeToAvoidBottomInset: false,
         body: loader
             ? circularProgressWidget()
             : SingleChildScrollView(
@@ -367,115 +382,122 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
-             bool isValid = false;
-             showDialog(context: context, builder: (context){
-               return AlertDialog(
-                 shape: RoundedRectangleBorder(
-                   borderRadius: BorderRadius.circular(10.0),
-                 ),
-                 content: Text("Are you sure you want to submit the inspection?"),
-                 actions: [
-                   MaterialButton(
-                     child: Text("Yes"),
-                     onPressed: (){
-                       isValid = true;
-                       Navigator.of(context).pop();
-                     },
-                   ),
-                   MaterialButton(
-                     child: Text("No"),
-                     onPressed: (){
-                       isValid = false;
-                       Navigator.of(context).pop();
-                     },
-                   ),
-                 ],
-               );
-             });
-             if(isValid){
+              bool isValid = false;
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      content: Text(
+                          "Are you sure you want to submit the inspection?"),
+                      actions: [
+                        MaterialButton(
+                          child: Text("Yes"),
+                          onPressed: () {
+                            setState(() {
+                              isValid = true;
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        MaterialButton(
+                          child: Text("No"),
+                          onPressed: () {
+                            setState(() {
+                              isValid = false;
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+              if (isValid) {
                 setState(() {
-                loading = true;
-              });
-              User user = await UserService.getUser();
-              inspection = Inspection(
-                inspectionId: 0,
-                inspectType: "Full Inspection",
-                propertyId: widget.propertyElement.tableproperty.propertyId,
-                employeeId: user.userId,
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
-              );
-              List tempIssueTableList = [];
-              for (int i = 0; i < rows.length; i++) {
-                List issueRowList = [];
-                for (int j = 0; j < rows[i].length; j++) {
-                  List<String> finalPhotoList = [];
-                  for (int k = 0; k < rows[i][j].photo.length; k++) {
-                    String tempUrl = await upload(
-                        rows[i][j].photo[k],
-                        widget.propertyElement.tableproperty.propertyId
-                            .toString());
-                    finalPhotoList.add(tempUrl);
+                  loading = true;
+                });
+                User user = await UserService.getUser();
+                inspection = Inspection(
+                  inspectionId: 0,
+                  inspectType: "Full Inspection",
+                  propertyId: widget.propertyElement.tableproperty.propertyId,
+                  employeeId: user.userId,
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                );
+                List tempIssueTableList = [];
+                for (int i = 0; i < rows.length; i++) {
+                  List issueRowList = [];
+                  for (int j = 0; j < rows[i].length; j++) {
+                    List<String> finalPhotoList = [];
+                    for (int k = 0; k < rows[i][j].photo.length; k++) {
+                      String tempUrl = await upload(
+                          rows[i][j].photo[k],
+                          widget.propertyElement.tableproperty.propertyId
+                              .toString());
+                      finalPhotoList.add(tempUrl);
+                    }
+                    var payload = {
+                      "issue_id": 0,
+                      "issue_name": rows[i][j].issueName,
+                      "status": rows[i][j].status,
+                      "remarks": rows[i][j].remarks,
+                      "photo": finalPhotoList.join(","),
+                      "createdAt": DateTime.now().toString(),
+                      "updatedAt": DateTime.now().toString(),
+                    };
+                    var result =
+                        await IssueService.createIssue(jsonEncode(payload));
+                    issueRowList.add(result);
                   }
-                  var payload = {
-                    "issue_id": 0,
-                    "issue_name": rows[i][j].issueName,
-                    "status": rows[i][j].status,
-                    "remarks": rows[i][j].remarks,
-                    "photo": finalPhotoList.join(","),
-                    "createdAt": DateTime.now().toString(),
-                    "updatedAt": DateTime.now().toString(),
+                  var payload1 = {
+                    "id": 0,
+                    "roomsubroom_id": issueTableList[i].roomsubroomId,
+                    "roomsubroom_name": issueTableList[i].roomsubroomName,
+                    "issub": issueTableList[i].issub,
+                    "issue_row_id": issueRowList.join(","),
+                    "property_id":
+                        widget.propertyElement.tableproperty.propertyId,
+                    "created_at": DateTime.now().toString(),
+                    "updated_at": DateTime.now().toString(),
                   };
-                  var result =
-                      await IssueService.createIssue(jsonEncode(payload));
-                  issueRowList.add(result);
+                  var result = await IssueTableService.createIssueTable(
+                      jsonEncode(payload1));
+                  tempIssueTableList.add(result);
                 }
-                var payload1 = {
-                  "id": 0,
-                  "roomsubroom_id": issueTableList[i].roomsubroomId,
-                  "roomsubroom_name": issueTableList[i].roomsubroomName,
-                  "issub": issueTableList[i].issub,
-                  "issue_row_id": issueRowList.join(","),
-                  "property_id":
-                      widget.propertyElement.tableproperty.propertyId,
-                  "created_at": DateTime.now().toString(),
-                  "updated_at": DateTime.now().toString(),
-                };
-                var result = await IssueTableService.createIssueTable(
-                    jsonEncode(payload1));
-                tempIssueTableList.add(result);
-              }
-              inspection.issueIdList = tempIssueTableList.join(",");
-              print(inspection.toJson());
-              bool result = await InspectionService.createInspection(
-                jsonEncode(
-                  inspection.toJson(),
-                ),
-              );
-              for (int i = 0; i < bills.length; i++) {
-                // ignore: unused_local_variable
-                bool res = await BillPropertyService.updateBillProperty(
-                    bills[i].id.toString(), jsonEncode(bills[i].toJson()));
-              }
-              setState(() {
-                loading = false;
-              });
-              if (result) {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Full Inspection added"),
+                inspection.issueIdList = tempIssueTableList.join(",");
+                print(inspection.toJson());
+                bool result = await InspectionService.createInspection(
+                  jsonEncode(
+                    inspection.toJson(),
                   ),
                 );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Full Inspection addition failed!"),
-                  ),
-                );
+                for (int i = 0; i < bills.length; i++) {
+                  // ignore: unused_local_variable
+                  bool res = await BillPropertyService.updateBillProperty(
+                      bills[i].id.toString(), jsonEncode(bills[i].toJson()));
+                }
+                setState(() {
+                  loading = false;
+                });
+                if (result) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Full Inspection added"),
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Full Inspection addition failed!"),
+                    ),
+                  );
+                }
               }
-             }
             },
             child: Text(
               "Add Inspection",
@@ -556,109 +578,122 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         backgroundColor: Color(0xFFFFFFFF),
         builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Edit Issue Entry',
-                          style: Theme.of(context).primaryTextTheme.headline6,
-                        )),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Divider(
-                          color: Color(0xff314B8C),
-                          thickness: 2.5,
-                          indent: 100,
-                          endIndent: 100,
-                        )),
-                    SizedBox(height: 4),
-                    Text(
-                      'Issue: ',
-                      style:
-                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    DropdownButtonFormField(
-                      decoration: new InputDecoration(
-                        icon: Icon(Icons.hvac),
-                      ), //, color: Colors.white10
-                      value: issue.issueName == ""
-                          ? facilityList[01].facilityName
-                          : issue.issueName,
-                      items:
-                          facilityList.map<DropdownMenuItem>((Facility value) {
-                        return DropdownMenuItem(
-                          value: value.facilityName,
-                          child: Text(value.facilityName),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        this.setState(() {
-                          issue.issueName = newValue;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Status: ',
-                      style:
-                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    DropdownButtonFormField(
-                      decoration: new InputDecoration(
-                        icon: Icon(Icons.hvac),
-                      ), //, color: Colors.white10
-                      value: issue.status,
-                      items: ["Excelent", "Good", "Bad", "Broken"]
-                          .map<DropdownMenuItem>((String value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        this.setState(() {
-                          issue.status = newValue;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Remarks: ',
-                      style:
-                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    TextFormField(
-                      initialValue: issue.issueName,
-                      onChanged: (value) {
-                        this.setState(() {
-                          issue.issueName = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 4),
-                  ],
+          return BottomSheet(
+            onClosing: () {},
+            builder: (BuildContext context) => StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 16.0, horizontal: 16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Edit Issue Entry',
+                            style: Theme.of(context).primaryTextTheme.headline6,
+                          )),
+                      Align(
+                          alignment: Alignment.center,
+                          child: Divider(
+                            color: Color(0xff314B8C),
+                            thickness: 2.5,
+                            indent: 100,
+                            endIndent: 100,
+                          )),
+                      SizedBox(height: 4),
+                      Text(
+                        'Issue: ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                      DropdownButtonFormField(
+                        decoration: new InputDecoration(
+                          icon: Icon(Icons.hvac),
+                        ), //, color: Colors.white10
+                        value: issue.issueName == ""
+                            ? facilityList[01].facilityName
+                            : issue.issueName,
+                        items: facilityList
+                            .map<DropdownMenuItem>((Facility value) {
+                          return DropdownMenuItem(
+                            value: value.facilityName,
+                            child: Text(value.facilityName),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          this.setState(() {
+                            issue.issueName = newValue;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Status: ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                      DropdownButtonFormField(
+                        decoration: new InputDecoration(
+                          icon: Icon(Icons.hvac),
+                        ), //, color: Colors.white10
+                        value: issue.status,
+                        items: ["Excelent", "Good", "Bad", "Broken"]
+                            .map<DropdownMenuItem>((String value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          this.setState(() {
+                            issue.status = newValue;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Remarks: ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: TextFormField(
+                          initialValue: issue.remarks,
+                          onChanged: (value) {
+                            this.setState(() {
+                              issue.remarks = value;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          });
+              );
+            }),
+          );
         });
   }
 
