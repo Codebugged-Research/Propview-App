@@ -954,7 +954,7 @@ class _EditModalSheetState extends State<EditModalSheet> {
                 )),
             SizedBox(height: 4),
             Text(
-              'Issue: ',
+              'Item: ',
               style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                     color: Colors.black,
                     fontWeight: FontWeight.w800,
