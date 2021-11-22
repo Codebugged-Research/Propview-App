@@ -56,17 +56,18 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
     print(facilities.length);
     rooms = await RoomService.getRoomByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
-    if (rooms.length != 0) {
-      subRooms = await SubRoomService.getSubRoomByPropertyId(
-          propertyElement.tableproperty.propertyId.toString());
-      showDialog(
-          context: context,
-          builder: (_) {
-            return PropertyStructureAlertWidget(
-              title: 'Property Structure already defined!',
-              body: 'Do you want to edit the Property Structure?',
-            );
-          });
+    if (propertyElement.tableproperty.freeze == 1) {
+      // subRooms = await SubRoomService.getSubRoomByPropertyId(
+      //     propertyElement.tableproperty.propertyId.toString());
+      // showDialog(
+      //     context: context,
+      //     builder: (_) {
+      //       return PropertyStructureAlertWidget(
+      //         title: 'Property Structure already defined!',
+      //         body: 'Do you want to edit the Property Structure?',
+      //       );
+      //     });
+      await Routing.makeRouting(context, routeMethod: 'pop');
     }
     roomType = await RoomTypeService.getRoomTypes();
     roomType.data.propertyRoom.forEach((e) {

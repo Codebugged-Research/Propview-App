@@ -189,6 +189,7 @@ class Tableproperty {
     this.builtupArea,
     this.builtupAreaPrefix,
     this.lockin,
+    this.freeze,
   });
 
   int propertyId;
@@ -272,6 +273,7 @@ class Tableproperty {
   double builtupArea;
   String builtupAreaPrefix;
   int lockin;
+  int freeze;
 
   factory Tableproperty.fromJson(Map<String, dynamic> json) => Tableproperty(
         propertyId: json["property_id"] == null ? null : json["property_id"],
@@ -411,6 +413,7 @@ class Tableproperty {
             ? null
             : json["builtup_area_prefix"],
         lockin: json["lockin"] == null ? null : json["lockin"],
+        freeze: json["freeze"] == null ? null : json["freeze"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -505,6 +508,7 @@ class Tableproperty {
         "builtup_area_prefix":
             builtupAreaPrefix == null ? null : builtupAreaPrefix,
         "lockin": lockin == null ? null : lockin,
+        "freeze": freeze == null ? null : freeze,
       };
 }
 
