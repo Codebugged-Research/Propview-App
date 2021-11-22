@@ -431,6 +431,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               });
               if (result) {
                 Navigator.of(context).pop();
+                Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text("Full Inspection added"),
@@ -523,105 +524,97 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         backgroundColor: Color(0xFFFFFFFF),
         builder: (BuildContext context) {
-          return  StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 16.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Edit Issue Entry',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .headline6,
-                              )),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Divider(
-                                color: Color(0xff314B8C),
-                                thickness: 2.5,
-                                indent: 100,
-                                endIndent: 100,
-                              )),
-                          SizedBox(height: 4),
-                          Text(
-                            'Issue: ',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                          ),
-                          TextFormField(
-                            initialValue: issue.issueName,
-                            onChanged: (value) {
-                              this.setState(() {
-                                issue.issueName = value;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Status: ',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                          ),
-                          DropdownButtonFormField(
-                            decoration: new InputDecoration(
-                              icon: Icon(Icons.hvac),
-                            ), //, color: Colors.white10
-                            value: issue.status,
-                            items: ["Excelent", "Good", "Bad", "Broken"]
-                                .map<DropdownMenuItem>((String value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (newValue) {
-                              this.setState(() {
-                                issue.status = newValue;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Remarks: ',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                          ),
-                          TextFormField(
-                            initialValue: issue.issueName,
-                            onChanged: (value) {
-                              this.setState(() {
-                                issue.issueName = value;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 4),
-                        ],
-                      ),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Edit Issue Entry',
+                          style: Theme.of(context).primaryTextTheme.headline6,
+                        )),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Divider(
+                          color: Color(0xff314B8C),
+                          thickness: 2.5,
+                          indent: 100,
+                          endIndent: 100,
+                        )),
+                    SizedBox(height: 4),
+                    Text(
+                      'Issue: ',
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
                     ),
-                  );
-                });
+                    TextFormField(
+                      initialValue: issue.issueName,
+                      onChanged: (value) {
+                        this.setState(() {
+                          issue.issueName = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Status: ',
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
+                    ),
+                    DropdownButtonFormField(
+                      decoration: new InputDecoration(
+                        icon: Icon(Icons.hvac),
+                      ), //, color: Colors.white10
+                      value: issue.status,
+                      items: ["Excelent", "Good", "Bad", "Broken"]
+                          .map<DropdownMenuItem>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        this.setState(() {
+                          issue.status = newValue;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Remarks: ',
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
+                    ),
+                    TextFormField(
+                      initialValue: issue.issueName,
+                      onChanged: (value) {
+                        this.setState(() {
+                          issue.issueName = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 4),
+                  ],
+                ),
+              ),
+            );
+          });
         });
   }
 
@@ -672,9 +665,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             photoList[tableindex].add([]);
             rows[tableindex].add(
               Issue(
-                  issueName: "dsaaa dsa dsad sa sad dsa dsa d",
+                  issueName: "",
                   status: "Excelent",
-                  remarks: "dsa a sdsa das d asda sdsa d sad asd sad",
+                  remarks: "",
                   photo: photoList[tableindex][index]),
             );
           });
@@ -830,8 +823,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                   ),
                   Flexible(
                     child: Text(
-                      "$tableindex - $index" +
-                          rows[tableindex][index].issueName,
+                      rows[tableindex][index].issueName,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style:
@@ -913,105 +905,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class EditModalSheet extends StatefulWidget {
-  Issue issue;
-  EditModalSheet({Key key, @required this.issue}) : super(key: key);
-
-  @override
-  _EditModalSheetState createState() => _EditModalSheetState();
-}
-
-class _EditModalSheetState extends State<EditModalSheet> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'Edit Issue Entry',
-                  style: Theme.of(context).primaryTextTheme.headline6,
-                )),
-            Align(
-                alignment: Alignment.center,
-                child: Divider(
-                  color: Color(0xff314B8C),
-                  thickness: 2.5,
-                  indent: 100,
-                  endIndent: 100,
-                )),
-            SizedBox(height: 4),
-            Text(
-              'Item: ',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            TextFormField(
-              initialValue: widget.issue.issueName,
-              onChanged: (value) {
-                setState(() {
-                  widget.issue.issueName = value;
-                });
-              },
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Status: ',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            DropdownButtonFormField(
-              decoration: new InputDecoration(
-                icon: Icon(Icons.hvac),
-              ), //, color: Colors.white10
-              value: widget.issue.status,
-              items: ["Excelent", "Good", "Bad", "Broken"]
-                  .map<DropdownMenuItem>((String value) {
-                return DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  widget.issue.status = newValue;
-                });
-              },
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Remarks: ',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            TextFormField(
-              initialValue: widget.issue.issueName,
-              onChanged: (value) {
-                setState(() {
-                  widget.issue.issueName = value;
-                });
-              },
-            ),
-            SizedBox(height: 4),
-          ],
         ),
       ),
     );

@@ -354,7 +354,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                 Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    "Property Owner: ",
+                                    "Select Owner: ",
                                     style: GoogleFonts.nunito(
                                         color: Color(0xff314B8C),
                                         fontSize: 18,
@@ -477,7 +477,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             ? Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  "Property of the Owner: ",
+                                  "Select Property: ",
                                   style: GoogleFonts.nunito(
                                       color: Color(0xff314B8C),
                                       fontSize: 18,

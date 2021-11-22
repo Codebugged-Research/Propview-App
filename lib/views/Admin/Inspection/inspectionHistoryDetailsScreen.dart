@@ -170,75 +170,190 @@ class _InspectionHistoryDetailsScreenState
     );
   }
 
-  Widget issueCard(constraints, int index) {
+  Widget issueCard(constraints, int tableindex) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        titleWidget(context, issueTables[index].data.first.roomsubroomName),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minWidth: constraints.minWidth),
-            child: DataTable(
-              dataRowHeight: 80,
-              dividerThickness: 2,
-              columns: [
-                DataColumn(
-                    label: Text("Item/Issue Name",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Status",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Remarks",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Photos",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-              ],
-              rows: issues[index]
-                  .asMap()
-                  .entries
-                  .map(
-                    (e) => DataRow(
-                      cells: [
-                        DataCell(Text(e.value.issueName.toString())),
-                        DataCell(Text(e.value.status.toString())),
-                        DataCell(
-                          Text(e.value.remarks.toString()),
-                        ),
-                        e.value.photo.isEmpty
-                            ? DataCell(Text('No Pics!'))
-                            : DataCell(photoPick(e.value.photo)),
-                      ],
-                    ),
-                  )
-                  .toList(),
-            ),
+        titleWidget(context, issueTables[tableindex].data.first.roomsubroomName),
+        SizedBox(
+          height: 8,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.95,
+          height: 200,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: issues[tableindex].length,
+            itemBuilder: (context, index) {
+              return issueRowCard(index, tableindex);
+            },
           ),
         ),
+        SizedBox(
+          height: 16,
+        ),
       ],
+    );
+  }
+
+  Widget issueRowCard(int index, int tableindex) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 220,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(2, 2),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.15)),
+            BoxShadow(
+                offset: Offset(-2, 2),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.15))
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     InkWell(
+              //       onTap: () {
+              //         showCardEdit(rows[tableindex][index]);
+              //       },
+              //       child: Icon(
+              //         Icons.edit,
+              //         color: Colors.blueAccent,
+              //       ),
+              //     ),
+              //     SizedBox(
+              //       width: 8,
+              //     ),
+              //     InkWell(
+              //       onTap: () {
+              //         setState(() {
+              //           rows[tableindex].removeAt(index);
+              //           photoList.remove(tableindex);
+              //         });
+              //         print(rows[tableindex][index].toJson());
+              //         print(photoList[tableindex].toString());
+              //         print(index);
+              //       },
+              //       child: Icon(
+              //         Icons.delete,
+              //         color: Colors.redAccent,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Issue: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      issues[tableindex][index].issueName,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Status: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      issues[tableindex][index].status,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Remarks: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      issues[tableindex][index].remarks,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Photo: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  issues[tableindex][index].photo.length == 0
+                      ? Text('No Pics!')
+                      : photoPick(issues[tableindex][index].photo),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -246,7 +361,7 @@ class _InspectionHistoryDetailsScreenState
     List<String> list,
   ) {
     return Container(
-      width: 300,
+      width: 150,
       height: 50,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
