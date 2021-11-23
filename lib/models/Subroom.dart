@@ -63,10 +63,7 @@ class SubRoomElement {
   int subRoomId;
   double roomSize1;
   double roomSize2;
-  String facility;
-  String image1;
-  String image2;
-  String image3;
+  String facility; 
 
   factory SubRoomElement.fromJson(Map<String, dynamic> json) => SubRoomElement(
         propertySubRoomId: json["property_sub_room_id"],
@@ -79,14 +76,12 @@ class SubRoomElement {
       );
 
   Map<String, dynamic> toJson() => {
+        "property_sub_room_id": propertySubRoomId,
         "property_id": propertyId,
         "room_id": roomId,
         "sub_room_id": subRoomId,
         "room_size1": roomSize1,
         "room_size2": roomSize2,
         "facility": facility,
-        "image1": "",
-        "image2": "",
-        "image3": "",
       };
 }

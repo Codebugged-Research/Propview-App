@@ -72,9 +72,6 @@ class RoomsToPropertyModel {
   int balcony;
   int wardrobe;
   String facility;
-  String image1;
-  String image2;
-  String image3;
 
   factory RoomsToPropertyModel.fromJson(Map<String, dynamic> json) =>
       RoomsToPropertyModel(
@@ -91,7 +88,7 @@ class RoomsToPropertyModel {
       );
 
   Map<String, dynamic> toJson() => {
-        // "property_room_id": propertyRoomId,
+        "property_room_id": propertyRoomId,
         "property_id": propertyId,
         "room_id": roomId,
         "room_size1": roomSize1,
@@ -101,8 +98,5 @@ class RoomsToPropertyModel {
         "balcony": balcony,
         "wardrobe": wardrobe,
         "facility": facility,
-        "image1": "",
-        "image2": "",
-        "image3": "",
       };
 }

@@ -8,7 +8,10 @@ class RoomCard extends StatelessWidget {
   final RoomsToPropertyModel room;
   final PropertyElement propertyElement;
   final List<PropertyRoom> roomTypes;
-  RoomCard({this.room, this.propertyElement, this.roomTypes});
+  RoomCard(
+      {@required this.room,
+      @required this.propertyElement,
+      @required this.roomTypes});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -46,11 +49,10 @@ class RoomCard extends StatelessWidget {
               ),
               Text(
                 '(${room.roomSize1} x ${room.roomSize2}) ft',
-                style:
-                    Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
+                style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ],
           ),

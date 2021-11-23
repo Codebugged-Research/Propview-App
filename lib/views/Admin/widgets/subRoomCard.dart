@@ -8,7 +8,7 @@ class SubRoomCard extends StatelessWidget {
   final SubRoomElement subRoom;
   final PropertyElement propertyElement;
   final List<PropertyRoom> roomTypes;
-  SubRoomCard({this.subRoom, this.propertyElement, this.roomTypes});
+  SubRoomCard({@required this.subRoom,@required  this.propertyElement,@required  this.roomTypes});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -52,7 +52,7 @@ class SubRoomCard extends StatelessWidget {
                               fontWeight: FontWeight.w800 ,
                             ),
                   ),
-                  Text('(${subRoom.roomSize2} X ${subRoom.roomSize1}) ft',
+                  Text('(${subRoom.roomSize1} X ${subRoom.roomSize2}) ft',
                       style: Theme.of(context)
                           .primaryTextTheme
                           .subtitle1

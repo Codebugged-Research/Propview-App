@@ -10,7 +10,6 @@ class SubRoomService extends AuthService {
         AuthService.BASE_URI + 'api/subroom/create',
         method: 'POST',
         body: payload);
-    print(response.body);
     if (response.statusCode == 200)
       return true;
     else
@@ -33,8 +32,10 @@ class SubRoomService extends AuthService {
             .toList();
         return subRoom;
       }
-    } else
-      print("Not Working");
+    } else{      
+      print("Not working!");
+      return [];
+    }
   }
 
   static Future<List<SubRoomElement>> getSubRoomByPropertyId(
@@ -62,6 +63,7 @@ class SubRoomService extends AuthService {
         AuthService.BASE_URI + 'api/subroom/update/$subRoomId',
         method: 'PUT',
         body: payload);
+    print(response.body);
     if (response.statusCode == 200)
       return true;
     else

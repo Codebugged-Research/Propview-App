@@ -23,6 +23,7 @@ class RoomService extends AuthService {
       }
     } else {
       print("Not working!");
+      return [];
     }
   }
 
@@ -33,7 +34,6 @@ class RoomService extends AuthService {
         method: 'POST',
         body: payload);
     if (response.statusCode == 200) {
-      print(response.body);
       return true;
     } else {
       print("Not working!");
@@ -47,6 +47,7 @@ class RoomService extends AuthService {
         AuthService.BASE_URI + 'api/rooms/update/$subRoomId',
         method: 'PUT',
         body: payload);
+      print(response.body);
     if (response.statusCode == 200)
       return true;
     else
