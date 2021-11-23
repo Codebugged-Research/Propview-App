@@ -101,8 +101,8 @@ class RoomsToPropertyModel {
         "balcony": balcony,
         "wardrobe": wardrobe,
         "facility": facility,
-        "image1": image1,
-        "image2": image2,
-        "image3": image3,
+        "image1": "",
+        "image2": "",
+        "image3": "",
       };
 }

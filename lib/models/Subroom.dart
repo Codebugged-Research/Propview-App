@@ -85,8 +85,8 @@ class SubRoomElement {
         "room_size1": roomSize1,
         "room_size2": roomSize2,
         "facility": facility,
-        "image1": image1,
-        "image2": image2,
-        "image3": image3,
+        "image1": "",
+        "image2": "",
+        "image3": "",
       };
 }

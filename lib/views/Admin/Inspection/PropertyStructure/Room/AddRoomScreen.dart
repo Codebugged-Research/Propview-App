@@ -571,9 +571,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               facility: modelFacilty,
               flooring: flooringType[_floorSelections
                   .indexWhere((element) => element == true)],
-              // image1: img1,
-              // image2: img2,
-              // image3: img3,
             );
             print(room.toJson());
             setState(() {
