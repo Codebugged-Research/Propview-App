@@ -41,4 +41,15 @@ class RoomService extends AuthService {
       return false;
     }
   }
+
+  static Future<bool> updateRoom(var payload, String subRoomId) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/rooms/update/$subRoomId',
+        method: 'PUT',
+        body: payload);
+    if (response.statusCode == 200)
+      return true;
+    else
+      return false;
+  }
 }
