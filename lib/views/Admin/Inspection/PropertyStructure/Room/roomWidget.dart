@@ -99,38 +99,4 @@ class _RoomWidgetState extends State<RoomWidget> {
       ),
     );
   }
-
-  Widget inputWidget(
-      TextEditingController textEditingController,
-      String validation,
-      bool isVisible,
-      String label,
-      String hint,
-      save,
-      StateSetter stateSetter) {
-    return TextFormField(
-      style: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-      controller: textEditingController,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        hintText: hint,
-        hintStyle: TextStyle(fontSize: 15.0, color: Color(0xff9FA0AD)),
-        labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-        enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xff314B8C)),
-            borderRadius: BorderRadius.circular(12.0)),
-        focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xff314B8C)),
-            borderRadius: BorderRadius.circular(12.0)),
-        border: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xff314B8C)),
-            borderRadius: BorderRadius.circular(12.0)),
-      ),
-      obscureText: isVisible,
-      validator: (value) => value.isEmpty ? validation : null,
-      onSaved: save,
-    );
-  }
 }

@@ -8,12 +8,10 @@ import 'package:propview/models/roomType.dart';
 import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
-import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/Room/roomWidget.dart';
 import 'package:propview/views/Admin/Inspection/PropertyStructure/SubRoom/subRoomWidget.dart';
-import 'package:propview/views/Admin/widgets/propertyStructureAlertWidget.dart';
 
 class PropertyStructureScreen extends StatefulWidget {
   final PropertyElement propertyElement;
