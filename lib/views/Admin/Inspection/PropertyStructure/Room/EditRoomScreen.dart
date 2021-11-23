@@ -465,7 +465,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                 loader = true;
               });
               bool result = await RoomService.updateRoom(
-                  jsonEncode(room.toJson()), room.roomId);
+                  jsonEncode(room.toJson()), room.roomId.toString());
               setState(() {
                 loader = false;
               });
