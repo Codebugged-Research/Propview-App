@@ -5,9 +5,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:propview/config.dart';
 import 'package:propview/services/baseService.dart';
 import 'package:propview/services/reminderService.dart';
+import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Employee/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Employee/Home/homeScreen.dart';
@@ -31,9 +34,22 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
-    checkversion();
+    getData();
+  }
+
+  bool isLoading = true;
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await checkForUpdate();
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      InAppUpdate.performImmediateUpdate()
+          .catchError((e) => showInSnackBar(context, e.toString(), 800));
+    }
+    await checkVersion();
     initialiseLocalNotification();
-    ReminderService reminderService;
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> nList = prefs.getStringList("notifications") ?? [];
@@ -43,7 +59,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 content: Text(message.notification.body),
                 title: Text(message.notification.title),
               ));
-      if (message.data != null) {
+      if (message.data['startTime'] != null) {
         scheduleIncoming(_flutterLocalNotificationsPlugin, message);
         scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
       }
@@ -57,6 +73,29 @@ class _LandingScreenState extends State<LandingScreen> {
       prefs.setStringList("notifications", nList);
     });
     _selectedIndex = widget.selectedIndex;
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  AppUpdateInfo _updateInfo;
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        _updateInfo = info;
+      });
+    }).catchError((e) {
+      showInSnackBar(context, e.toString(), 800);
+    });
+  }
+
+  checkVersion() async {
+    var getVersion = await BaseService.getAppCurrentVersion();
+    var responseMap = jsonDecode(getVersion);
+    if (responseMap != Config.APP_VERISON) {
+      versionErrorWiget(responseMap, context,
+          "https://play.google.com/store/apps/details?id=com.propdial.propview");
+    }
   }
 
   initialiseLocalNotification() async {
@@ -160,42 +199,47 @@ class _LandingScreenState extends State<LandingScreen> {
             )
           ],
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: GNav(
-              rippleColor: Color(0xff314B8C),
-              hoverColor: Color(0xff314B8C),
-              gap: 8,
-              activeColor: Colors.white,
-              iconSize: 24,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              duration: Duration(milliseconds: 200),
-              tabBackgroundColor: Color(0xff314B8C),
-              color: Colors.black,
-              tabs: [
-                GButton(
-                  icon: Icons.fact_check,
-                  text: 'Attendance',
+        child: isLoading
+            ? Center(
+                child: circularProgressWidget(),
+              )
+            : SafeArea(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+                  child: GNav(
+                    rippleColor: Color(0xff314B8C),
+                    hoverColor: Color(0xff314B8C),
+                    gap: 8,
+                    activeColor: Colors.white,
+                    iconSize: 24,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    duration: Duration(milliseconds: 200),
+                    tabBackgroundColor: Color(0xff314B8C),
+                    color: Colors.black,
+                    tabs: [
+                      GButton(
+                        icon: Icons.fact_check,
+                        text: 'Attendance',
+                      ),
+                      GButton(
+                        icon: Icons.work,
+                        text: 'Task',
+                      ),
+                      GButton(
+                        icon: Icons.house_outlined,
+                        text: 'Home',
+                      ),
+                    ],
+                    selectedIndex: _selectedIndex,
+                    onTabChange: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                  ),
                 ),
-                GButton(
-                  icon: Icons.work,
-                  text: 'Task',
-                ),
-                GButton(
-                  icon: Icons.house_outlined,
-                  text: 'Home',
-                ),
-              ],
-              selectedIndex: _selectedIndex,
-              onTabChange: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }

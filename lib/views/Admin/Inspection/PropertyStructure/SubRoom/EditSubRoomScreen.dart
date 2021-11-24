@@ -77,10 +77,10 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     propertyElement = widget.propertyElement;
     roomLengthFeetController.text = (subRoom.roomSize1.toInt()).toString();
     roomLengthInchesController.text =
-        ((subRoom.roomSize1 * 10) % 10).toInt().toString();
+        (((subRoom.roomSize1 * 10) % 10)*1.2).toInt().toString();
     roomWidthFeetController.text = (subRoom.roomSize2.toInt()).toString();
     roomWidthInchesController.text =
-        ((subRoom.roomSize2 * 10) % 10).toInt().toString();
+        (((subRoom.roomSize2 * 10) % 10)*1.2).toInt().toString();
     subRoom.facility.split(",").forEach((element) {
       facilityTag.add(facilities
           .firstWhere((element2) => element2.facilityId == int.parse(element)));

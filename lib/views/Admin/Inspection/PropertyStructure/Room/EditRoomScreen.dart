@@ -66,9 +66,11 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
         roomTypes.firstWhere((element) => element.roomId == room.roomId);
     propertyElement = widget.propertyElement;
     roomLengthFeetController.text = (room.roomSize1.toInt()).toString();
-    roomLengthInchesController.text = ((room.roomSize1 * 10) % 10).toInt().toString();
+    roomLengthInchesController.text =
+        (((room.roomSize1 * 10) % 10)*1.2).toInt().toString();
     roomWidthFeetController.text = (room.roomSize2.toInt()).toString();
-    roomWidthInchesController.text = ((room.roomSize2 * 10) % 10).toInt().toString();
+    roomWidthInchesController.text =
+        (((room.roomSize2 * 10) % 10)*1.2).toInt().toString();
     room.bath == 1 ? _roomSelection[0] = true : _roomSelection[0] = false;
     room.balcony == 1 ? _roomSelection[1] = true : _roomSelection[1] = false;
     room.wardrobe == 1 ? _roomSelection[2] = true : _roomSelection[2] = false;

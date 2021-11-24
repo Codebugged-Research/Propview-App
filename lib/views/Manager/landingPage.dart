@@ -5,8 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:propview/config.dart';
 import 'package:propview/services/baseService.dart';
+import 'package:propview/utils/progressBar.dart';
+import 'package:propview/utils/snackBar.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceHome.dart';
 import 'package:propview/views/Manager/Home/homeScreen.dart';
@@ -30,6 +33,21 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
+    getData();
+  }
+
+  bool isLoading = true;
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await checkForUpdate();
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      InAppUpdate.performImmediateUpdate()
+          .catchError((e) => showInSnackBar(context, e.toString(), 800));
+    }
+    checkversion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,12 +58,10 @@ class _LandingScreenState extends State<LandingScreen> {
                 content: Text(message.notification.body),
                 title: Text(message.notification.title),
               ));
-      if (message.data != null) {
-        print('Message also contained a notification: ${message.notification}');
+      if (message.data['startTime'] != null) {
         scheduleIncoming(_flutterLocalNotificationsPlugin, message);
         scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
       }
-      
       nList.add(jsonEncode({
         "message": message.notification.body,
         "title": message.notification.title,
@@ -56,6 +72,20 @@ class _LandingScreenState extends State<LandingScreen> {
       prefs.setStringList("notifications", nList);
     });
     _selectedIndex = widget.selectedIndex;
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  AppUpdateInfo _updateInfo;
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        _updateInfo = info;
+      });
+    }).catchError((e) {
+      showInSnackBar(context, e.toString(), 800);
+    });
   }
 
   initialiseLocalNotification() async {
@@ -159,7 +189,11 @@ class _LandingScreenState extends State<LandingScreen> {
             )
           ],
         ),
-        child: SafeArea(
+        child: isLoading
+            ? Center(
+                child: circularProgressWidget(),
+              )
+            :  SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
             child: GNav(
