@@ -41,11 +41,7 @@ class _LandingScreenState extends State<LandingScreen> {
     setState(() {
       isLoading = true;
     });
-    await checkForUpdate();
-    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
-      InAppUpdate.performImmediateUpdate()
-          .catchError((e) => showInSnackBar(context, e.toString(), 800));
-    }
+    await checkForUpdate();    
     await checkVersion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -85,6 +81,10 @@ class _LandingScreenState extends State<LandingScreen> {
     }).catchError((e) {
       showInSnackBar(context, e.toString(), 800);
     });
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      await InAppUpdate.performImmediateUpdate()
+          .catchError((e) => showInSnackBar(context, e.toString(), 800));
+    }
   }
 
   checkVersion() async {
@@ -93,6 +93,8 @@ class _LandingScreenState extends State<LandingScreen> {
     if (responseMap != Config.APP_VERISON) {
       versionErrorWiget(responseMap, context,
           "https://play.google.com/store/apps/details?id=com.propdial.propview");
+           InAppUpdate.performImmediateUpdate()
+          .catchError((e) => showInSnackBar(context, e.toString(), 800));
     }
   }
 

@@ -45,7 +45,8 @@ class _SearchScreenState extends State<SearchScreen>
       loading = true;
       propertyOwners.clear();
     });
-    properties = await PropertyOwnerService.searchProperty(_controller.text.toLowerCase());
+    properties = await PropertyOwnerService.searchProperty(
+        _controller.text.toLowerCase());
     setState(() {
       loading = false;
     });
@@ -60,7 +61,6 @@ class _SearchScreenState extends State<SearchScreen>
           color: Colors.white,
           child: Column(
             children: [
-              
               Container(
                 height: 50,
                 width: MediaQuery.of(context).size.width,
@@ -148,19 +148,19 @@ class _SearchScreenState extends State<SearchScreen>
                                 ? Center(
                                     child: circularProgressWidget(),
                                   )
-                                : ListView.builder(
-                                    itemCount: propertyOwners.length,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      if (index == propertyOwners.length - 1 &&
-                                          index == 0)
-                                        return Text("No Owners Found");
-                                      else
-                                        return propertyOwnerCard(
-                                            propertyOwners[index]);
-                                    },
-                                  ),
+                                : propertyOwners.length == 0
+                                    ? Center(
+                                        child: Text("No Owners Found"),
+                                      )
+                                    : ListView.builder(
+                                        itemCount: propertyOwners.length,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return propertyOwnerCard(
+                                              propertyOwners[index]);
+                                        },
+                                      ),
                           ),
                           flex: 9,
                         ),
@@ -220,20 +220,20 @@ class _SearchScreenState extends State<SearchScreen>
                                 ? Center(
                                     child: circularProgressWidget(),
                                   )
-                                : ListView.builder(
-                                    itemCount: properties.length,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      if (index == properties.length - 1 &&
-                                          index == 0)
-                                        return Text("No Properties Found");
-                                      else
-                                        return PropertyCard(
-                                          propertyElement: properties[index],
-                                        );
-                                    },
-                                  ),
+                                : properties.length == 0
+                                    ? Center(
+                                        child: Text("No properties Found"),
+                                      )
+                                    : ListView.builder(
+                                        itemCount: properties.length,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return PropertyCard(
+                                            propertyElement: properties[index],
+                                          );
+                                        },
+                                      ),
                           ),
                           flex: 9,
                         ),

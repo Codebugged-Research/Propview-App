@@ -43,10 +43,6 @@ class _LandingScreenState extends State<LandingScreen> {
       isLoading = true;
     });
     await checkForUpdate();
-    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
-      InAppUpdate.performImmediateUpdate()
-          .catchError((e) => showInSnackBar(context, e.toString(), 800));
-    }
     checkversion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -86,6 +82,10 @@ class _LandingScreenState extends State<LandingScreen> {
     }).catchError((e) {
       showInSnackBar(context, e.toString(), 800);
     });
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      await InAppUpdate.performImmediateUpdate()
+          .catchError((e) => showInSnackBar(context, e.toString(), 800));
+    }
   }
 
   initialiseLocalNotification() async {
