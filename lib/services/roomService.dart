@@ -42,6 +42,20 @@ class RoomService extends AuthService {
     }
   }
 
+  static Future<RoomsToPropertyModel> getRoomById(roomId) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/rooms/self/' + roomId.toString(),
+        method: 'GET');
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      RoomsToPropertyModel room = RoomsToPropertyModel.fromJson(responseMap[0]);
+      return room;
+    } else {
+      print("Not working!");
+      return null;
+    }
+  }
+
   static Future<bool> updateRoom(var payload, String subRoomId) async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/rooms/update/$subRoomId',

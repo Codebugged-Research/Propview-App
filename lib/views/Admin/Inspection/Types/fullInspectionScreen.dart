@@ -243,45 +243,48 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             : SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       bills.length != 0
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xff314B8C).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: Text(
-                                "Pending Bills",
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .headline6
-                                    .copyWith(
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black),
+                          ? Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xff314B8C).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                child: Text(
+                                  "Pending Bills",
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline6
+                                      .copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black),
+                                ),
                               ),
                             )
                           : SizedBox(),
-                      bills.length != 0
-                          ? SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.01)
-                          : SizedBox(),
                       bills.length == 0
                           ? SizedBox()
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: bills.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (BuildContext context, int index) {
-                                return FullInspectionCard(
-                                  propertyElement: propertyElement,
-                                  billToProperty: bills[index],
-                                );
-                              },
+                          : Container(
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              height: 240,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: bills.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return FullInspectionCard(
+                                    propertyElement: propertyElement,
+                                    billToProperty: bills[index],
+                                  );
+                                },
+                              ),
                             ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
@@ -570,7 +573,13 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  showCardEdit(Issue issue) {
+  showCardEdit(Issue issue, List<int> intList) {
+    List<Facility> facilityList2 = [];
+    facilityList.forEach((element) {
+      if (intList.contains(element.facilityId)) {
+        facilityList2.add(element);
+      }
+    });
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -620,9 +629,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           icon: Icon(Icons.hvac),
                         ), //, color: Colors.white10
                         value: issue.issueName == ""
-                            ? facilityList[01].facilityName
+                            ? facilityList2[0].facilityName
                             : issue.issueName,
-                        items: facilityList
+                        items: facilityList2
                             .map<DropdownMenuItem>((Facility value) {
                           return DropdownMenuItem(
                             value: value.facilityName,
@@ -688,6 +697,25 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         ),
                       ),
                       SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.center,
+                        child: MaterialButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          color: Color(0xFF314B8C),
+                          child: Text(
+                            'Submit',
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .subtitle1
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -717,7 +745,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               itemBuilder: (context, index) {
                 return index == rows[tableindex].length
                     ? addRowButton(tableindex, index)
-                    : issueRowCard(index, tableindex);
+                    : issueRowCard(
+                        index, tableindex, issueTableList[tableindex]);
               },
             ),
           ),
@@ -831,11 +860,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  Widget issueRowCard(int index, int tableindex) {
+  Widget issueRowCard(
+      int index, int tableindex, IssueTableData issueTableData) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        width: 220,
+        width: MediaQuery.of(context).size.width * 0.65,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.0),
@@ -861,8 +891,24 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
-                    onTap: () {
-                      showCardEdit(rows[tableindex][index]);
+                    onTap: () async {
+                      List<int> lint = [];
+                      if (issueTableData.issub == 1) {
+                        SubRoomElement subRoom =
+                            await SubRoomService.getSubRoomById(
+                                issueTableData.roomsubroomId);
+                                print(subRoom.facility);
+                        List<String> lstring = subRoom.facility.split(",");
+                        lint = lstring.map(int.parse).toList();
+                        showCardEdit(rows[tableindex][index], lint);
+                      } else {
+                        RoomsToPropertyModel room =
+                            await RoomService.getRoomById(
+                                issueTableData.roomsubroomId);
+                        List<String> lstring = room.facility.split(",");
+                        lint = lstring.map(int.parse).toList();
+                        showCardEdit(rows[tableindex][index], lint);
+                      }
                     },
                     child: Icon(
                       Icons.edit,

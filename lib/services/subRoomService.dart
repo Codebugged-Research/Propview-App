@@ -16,6 +16,17 @@ class SubRoomService extends AuthService {
       return false;
   }
 
+  static Future<SubRoomElement> getSubRoomById(id) async {
+    http.Response response = await AuthService.makeAuthenticatedRequest(
+        AuthService.BASE_URI + 'api/subroom/get/self/' + id.toString(),
+        method: 'GET');
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      return SubRoomElement.fromJson(jsonResponse[0]);
+    } else
+      return null;
+  }
+
   static Future<List<SubRoomElement>> getAllSubRooms() async {
     http.Response response = await AuthService.makeAuthenticatedRequest(
         AuthService.BASE_URI + 'api/subroom/get',

@@ -46,80 +46,111 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
   Widget build(BuildContext context) {
     return loading
         ? circularProgressWidget()
-        : Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Bill Type:  ',
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(
-                              color: Colors.black, fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      type,
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(color: Colors.black),
-                    ),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-                Row(
-                  children: [
-                    Text(
-                      'Bill Authority:  ',
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(
-                              color: Colors.black, fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      widget.billToProperty.authorityName,
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(color: Colors.black),
-                    ),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-                Row(
-                  children: [
-                    Text(
-                      'Added On:  ',
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(
-                              color: Colors.black, fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      dateChange(widget.billToProperty.dateAdded.toLocal()),
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle1
-                          .copyWith(color: Colors.black),
-                    )
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-                Text(
-                  'Amount',
-                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-                inputWidget(amountController),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              ],
+        : Padding(
+            padding: EdgeInsets.all(8),
+            child: Container(
+              padding: EdgeInsets.all(8),
+              width: MediaQuery.of(context).size.width * 0.80,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+                boxShadow: [
+                  BoxShadow(
+                      offset: Offset(2, 2),
+                      blurRadius: 2,
+                      color: Colors.black.withOpacity(0.15)),
+                  BoxShadow(
+                      offset: Offset(-2, 2),
+                      blurRadius: 2,
+                      color: Colors.black.withOpacity(0.15))
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Bill Type:  ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                      ),
+                      Flexible(
+                        child: Text(
+                          type,
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bill Authority:  ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                      ),
+                      Flexible(
+                        child: Text(
+                          widget.billToProperty.authorityName,
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                  Row(
+                    children: [
+                      Text(
+                        'Added On:  ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        dateChange(widget.billToProperty.dateAdded.toLocal()),
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(color: Colors.black),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                  Text(
+                    'Amount',
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(
+                            color: Colors.black, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                  inputWidget(amountController),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                ],
+              ),
             ),
           );
   }
