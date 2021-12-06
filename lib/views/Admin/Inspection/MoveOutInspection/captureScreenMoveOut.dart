@@ -13,7 +13,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/moveOutInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveOutInspection/moveOutInspectionScreen.dart';
 
 class CaptureScreenMoveOut extends StatefulWidget {
   final List<String> imageList;

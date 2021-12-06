@@ -1,26 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/Inspection/Types/issueInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveOutInspection/moveOutInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class IssueInspectionLoaderScreen extends StatefulWidget {
+class MoveOutInspectionLoaderScreen extends StatefulWidget {
   final PropertyElement propertyElement;
 
-  IssueInspectionLoaderScreen({this.propertyElement});
+  MoveOutInspectionLoaderScreen({this.propertyElement});
 
   @override
-  _IssueInspectionLoaderScreenState createState() =>
-      _IssueInspectionLoaderScreenState();
+  _MoveOutInspectionLoaderScreenState createState() =>
+      _MoveOutInspectionLoaderScreenState();
 }
 
-class _IssueInspectionLoaderScreenState
-    extends State<IssueInspectionLoaderScreen> {
-  bool isLoading = false;
+class _MoveOutInspectionLoaderScreenState
+    extends State<MoveOutInspectionLoaderScreen> {
   SharedPreferences prefs;
   PropertyElement propertyElement;
 
@@ -36,12 +36,13 @@ class _IssueInspectionLoaderScreenState
   loadDataForScreen() async {
     prefs = await SharedPreferences.getInstance();
     try {
-      data =
-          prefs.getString("issue-${propertyElement.tableproperty.propertyId}");
+      data = prefs
+          .getString("moveout-${propertyElement.tableproperty.propertyId}");
+      print(data);
       if (data == null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => IssueInspectionScreen(
+            builder: (context) => MoveOutInspectionScreen(
               propertyElement: propertyElement,
             ),
           ),
@@ -60,10 +61,14 @@ class _IssueInspectionLoaderScreenState
                 photo: tempData["rows"][i][j]['photo'].cast<String>()));
           }
         }
+        print(rows);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => IssueInspectionScreen(
+            builder: (context) => MoveOutInspectionScreen(
               propertyElement: propertyElement,
+              bills: tempData["bills"]
+                  .map<BillToProperty>((bill) => BillToProperty.fromJson(bill))
+                  .toList(),
               rows: rows,
               issueTableList: tempData["issueTableList"]
                   .map<IssueTableData>(
@@ -77,11 +82,12 @@ class _IssueInspectionLoaderScreenState
     } catch (e) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => IssueInspectionScreen(
+          builder: (context) => MoveOutInspectionScreen(
             propertyElement: propertyElement,
           ),
         ),
       );
+      print("use no Data --------------------------");
     }
   }
 

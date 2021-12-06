@@ -3,7 +3,7 @@ import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/regularInspectionDetailsScreen.dart';
+import 'package:propview/views/Admin/Inspection/RegularInspection/regularInspectionDetailsScreen.dart';
 
 class RegularInspectionCard extends StatelessWidget {
   final RegularInspection regularInspection;

@@ -2,16 +2,19 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:propview/config.dart';
+import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/issueTable.dart';
+import 'package:propview/services/billPropertyService.dart';
 import 'package:propview/services/issueService.dart';
 import 'package:propview/services/issueTableService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 
 class InspectionHistoryDetailsScreen extends StatefulWidget {
   final Inspection inspection;
@@ -32,6 +35,7 @@ class _InspectionHistoryDetailsScreenState
   PropertyElement propertyElement;
   List<IssueTable> issueTables = [];
   List<List<Issue>> issues = [];
+  List<BillToProperty> bills = [];
 
   @override
   void initState() {
@@ -65,6 +69,8 @@ class _InspectionHistoryDetailsScreenState
     } else {
       issueTables = [];
     }
+    bills = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     setState(() {
       isLoading = false;
     });
@@ -75,7 +81,28 @@ class _InspectionHistoryDetailsScreenState
     return LayoutBuilder(
       builder: (_, constraints) {
         return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              title: Text(
+                "Inspection History Details",
+                style: Theme.of(context)
+                    .primaryTextTheme
+                    .headline6
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              centerTitle: true,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    child: Icon(
+                      Icons.share,
+                      color: Colors.black,
+                    ),
+                    onTap: () {},
+                  ),
+                )
+              ],
+            ),
             body: isLoading
                 ? circularProgressWidget()
                 : Container(
@@ -88,25 +115,6 @@ class _InspectionHistoryDetailsScreenState
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(
-                                text: TextSpan(
-                                    text: "Inspection\n",
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .headline4
-                                        .copyWith(fontWeight: FontWeight.bold),
-                                    children: [
-                                  TextSpan(
-                                      text: "History",
-                                      style: Theme.of(context)
-                                          .primaryTextTheme
-                                          .headline3
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal))
-                                ])),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.02),
                             titleWidget(context, 'Inspection Type'),
                             subHeadingWidget(
                                 context, '${inspection.inspectType}'),
@@ -130,6 +138,63 @@ class _InspectionHistoryDetailsScreenState
                             SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.02),
+                            titleWidget(context, 'Created On'),
+                            subHeadingWidget(context,
+                                '${dateChange(inspection.createdAt.toLocal())}'),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            bills.length != 0
+                                ? Align(
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xff314B8C)
+                                              .withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: Text(
+                                          "Pending Bills",
+                                          style: Theme.of(context)
+                                              .primaryTextTheme
+                                              .headline6
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.black),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
+                            bills.length == 0
+                                ? SizedBox()
+                                : Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.95,
+                                    height: 260,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: bills.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return FullInspectionCard(
+                                          propertyElement: propertyElement,
+                                          billToProperty: bills[index],
+                                          editable: false,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
                             ListView.builder(
                               itemBuilder: (context, index) {
                                 return issueCard(constraints, index);
@@ -148,6 +213,14 @@ class _InspectionHistoryDetailsScreenState
                   ));
       },
     );
+  }
+
+  dateChange(DateTime date) {
+    return date.day.toString().padLeft(2, "0") +
+        "-" +
+        date.month.toString().padLeft(2, "0") +
+        "-" +
+        date.year.toString();
   }
 
   Widget titleWidget(BuildContext context, String title) {
@@ -174,7 +247,8 @@ class _InspectionHistoryDetailsScreenState
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        titleWidget(context, issueTables[tableindex].data.first.roomsubroomName),
+        titleWidget(
+            context, issueTables[tableindex].data.first.roomsubroomName),
         SizedBox(
           height: 8,
         ),
@@ -198,6 +272,7 @@ class _InspectionHistoryDetailsScreenState
   }
 
   Widget issueRowCard(int index, int tableindex) {
+    print(issues[tableindex][index].photo);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -223,38 +298,6 @@ class _InspectionHistoryDetailsScreenState
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     InkWell(
-              //       onTap: () {
-              //         showCardEdit(rows[tableindex][index]);
-              //       },
-              //       child: Icon(
-              //         Icons.edit,
-              //         color: Colors.blueAccent,
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       width: 8,
-              //     ),
-              //     InkWell(
-              //       onTap: () {
-              //         setState(() {
-              //           rows[tableindex].removeAt(index);
-              //           photoList.remove(tableindex);
-              //         });
-              //         print(rows[tableindex][index].toJson());
-              //         print(photoList[tableindex].toString());
-              //         print(index);
-              //       },
-              //       child: Icon(
-              //         Icons.delete,
-              //         color: Colors.redAccent,
-              //       ),
-              //     ),
-              //   ],
-              // ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

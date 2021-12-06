@@ -6,21 +6,21 @@ import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/Inspection/Types/moveOutInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/moveInInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MoveOutInspectionLoaderScreen extends StatefulWidget {
+class MoveInInspectionLoaderScreen extends StatefulWidget {
   final PropertyElement propertyElement;
 
-  MoveOutInspectionLoaderScreen({this.propertyElement});
+  MoveInInspectionLoaderScreen({this.propertyElement});
 
   @override
-  _MoveOutInspectionLoaderScreenState createState() =>
-      _MoveOutInspectionLoaderScreenState();
+  _MoveInInspectionLoaderScreenState createState() =>
+      _MoveInInspectionLoaderScreenState();
 }
 
-class _MoveOutInspectionLoaderScreenState
-    extends State<MoveOutInspectionLoaderScreen> {
+class _MoveInInspectionLoaderScreenState
+    extends State<MoveInInspectionLoaderScreen> {
   SharedPreferences prefs;
   PropertyElement propertyElement;
 
@@ -36,13 +36,12 @@ class _MoveOutInspectionLoaderScreenState
   loadDataForScreen() async {
     prefs = await SharedPreferences.getInstance();
     try {
-      data = prefs
-          .getString("moveout-${propertyElement.tableproperty.propertyId}");
-      print(data);
+      data =
+          prefs.getString("movein-${propertyElement.tableproperty.propertyId}");
       if (data == null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => MoveOutInspectionScreen(
+            builder: (context) => MoveInInspectionScreen(
               propertyElement: propertyElement,
             ),
           ),
@@ -64,7 +63,7 @@ class _MoveOutInspectionLoaderScreenState
         print(rows);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => MoveOutInspectionScreen(
+            builder: (context) => MoveInInspectionScreen(
               propertyElement: propertyElement,
               bills: tempData["bills"]
                   .map<BillToProperty>((bill) => BillToProperty.fromJson(bill))
@@ -82,12 +81,11 @@ class _MoveOutInspectionLoaderScreenState
     } catch (e) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => MoveOutInspectionScreen(
+          builder: (context) => MoveInInspectionScreen(
             propertyElement: propertyElement,
           ),
         ),
       );
-      print("use no Data --------------------------");
     }
   }
 

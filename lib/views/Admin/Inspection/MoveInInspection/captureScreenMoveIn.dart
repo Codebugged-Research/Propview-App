@@ -13,7 +13,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/moveInInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/moveInInspectionScreen.dart';
 
 class CaptureScreenMoveIn extends StatefulWidget {
   final List<String> imageList;

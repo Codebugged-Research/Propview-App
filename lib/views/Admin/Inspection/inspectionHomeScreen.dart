@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/Types/propertyStructureScreen.dart';
-import 'package:propview/views/Admin/Inspection/historyScreen.dart';
-import 'package:propview/views/Admin/Inspection/tempTypeScreens/fullInspectionLoaderScreen.dart';
-import 'package:propview/views/Admin/Inspection/tempTypeScreens/issueInspectionLoaderScreen.dart';
-import 'package:propview/views/Admin/Inspection/tempTypeScreens/moveInInspectionLoaderScreen.dart';
-import 'package:propview/views/Admin/Inspection/tempTypeScreens/moveOutInspectionLoaderScreen.dart';
-import 'package:propview/views/Admin/Inspection/tempTypeScreens/regularInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/PropertyStructure/propertyStructureScreen.dart';
+import 'package:propview/views/Admin/Inspection/FullInspection/fullInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/IssueBaseInspection/issueInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/moveInInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/MoveOutInspection/moveOutInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/RegularInspection/regularInspectionLoaderScreen.dart';
 
 class InspectionHomeScreen extends StatefulWidget {
   final PropertyElement propertyElement;

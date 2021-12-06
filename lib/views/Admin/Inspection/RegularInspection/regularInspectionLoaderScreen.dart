@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/Inspection/Types/regularInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/RegularInspection/regularInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegularInspectionLoaderScreen extends StatefulWidget {

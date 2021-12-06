@@ -8,7 +8,8 @@ import 'package:propview/utils/progressBar.dart';
 class FullInspectionCard extends StatefulWidget {
   final PropertyElement propertyElement;
   final BillToProperty billToProperty;
-  FullInspectionCard({this.propertyElement, this.billToProperty});
+  final bool editable;
+  FullInspectionCard({this.propertyElement, this.billToProperty, this.editable});
 
   @override
   _FullInspectionCardState createState() => _FullInspectionCardState();
@@ -36,7 +37,7 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
             (element) => element.billTypeId == widget.billToProperty.billTypeId)
         .billName;
     amountController =
-        TextEditingController(text: widget.billToProperty.amount.toString());
+        TextEditingController();
     setState(() {
       loading = false;
     });
@@ -138,6 +139,27 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                  Row(
+                    children: [
+                      Text(
+                        'Last Update On:  ',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        dateChange(widget.billToProperty.lastUpdate.toLocal()),
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(color: Colors.black),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.005),
                   Text(
                     'Amount',
                     style: Theme.of(context)
@@ -147,7 +169,13 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
                             color: Colors.black, fontWeight: FontWeight.w700),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-                  inputWidget(amountController),
+                  widget.editable ? inputWidget(amountController) : Text(
+                    '\₹${widget.billToProperty.amount}',
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black),
+                  ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 ],
               ),
@@ -179,7 +207,8 @@ class _FullInspectionCardState extends State<FullInspectionCard> {
         textCapitalization: TextCapitalization.words,
         decoration: InputDecoration(
           filled: true,
-          prefixText: "₹",
+          prefix: Text("₹"),
+          hintText: 'Enter Amount',
           fillColor: Colors.grey[300],
           labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),

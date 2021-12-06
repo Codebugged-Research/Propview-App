@@ -35,6 +35,7 @@ class _FullInspectionHistoryScreenState
     inspections = await InspectionService.getInspectionByPropertyIdAndType(
         propertyElement.tableproperty.propertyId.toString(), "Full Inspection");
     setState(() {
+      inspections = inspections.reversed.toList();
       isLoading = false;
     });
   }

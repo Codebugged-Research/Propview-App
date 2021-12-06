@@ -100,27 +100,27 @@ class InspectionCard extends StatelessWidget {
                                     fontWeight: FontWeight.w500))
                       ],
                     ),
-                    SizedBox(
-                      height: UIConstants.fitToHeight(2, context),
-                    ),
-                    Row(
-                      children: [
-                        Text('Inspection Type: ',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w800)),
-                        Text(inspection.inspectType,
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500))
-                      ],
-                    ),
+                    // SizedBox(
+                    //   height: UIConstants.fitToHeight(2, context),
+                    // ),
+                    // Row(
+                    //   children: [
+                    //     Text('Inspection Type: ',
+                    //         style: Theme.of(context)
+                    //             .primaryTextTheme
+                    //             .subtitle1
+                    //             .copyWith(
+                    //                 color: Colors.black,
+                    //                 fontWeight: FontWeight.w800)),
+                    //     Text(inspection.inspectType,
+                    //         style: Theme.of(context)
+                    //             .primaryTextTheme
+                    //             .subtitle1
+                    //             .copyWith(
+                    //                 color: Colors.black,
+                    //                 fontWeight: FontWeight.w500))
+                    //   ],
+                    // ),
                     SizedBox(
                       height: UIConstants.fitToHeight(2, context),
                     ),

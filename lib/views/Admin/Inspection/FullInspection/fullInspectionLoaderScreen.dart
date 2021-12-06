@@ -6,21 +6,21 @@ import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/views/Admin/Inspection/Types/moveInInspectionScreen.dart';
+import 'package:propview/views/Admin/Inspection/FullInspection/fullInspectionScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MoveInInspectionLoaderScreen extends StatefulWidget {
+class FullInspectionLoaderScreen extends StatefulWidget {
   final PropertyElement propertyElement;
 
-  MoveInInspectionLoaderScreen({this.propertyElement});
+  FullInspectionLoaderScreen({this.propertyElement});
 
   @override
-  _MoveInInspectionLoaderScreenState createState() =>
-      _MoveInInspectionLoaderScreenState();
+  _FullInspectionLoaderScreenState createState() =>
+      _FullInspectionLoaderScreenState();
 }
 
-class _MoveInInspectionLoaderScreenState
-    extends State<MoveInInspectionLoaderScreen> {
+class _FullInspectionLoaderScreenState
+    extends State<FullInspectionLoaderScreen> {
   SharedPreferences prefs;
   PropertyElement propertyElement;
 
@@ -37,33 +37,36 @@ class _MoveInInspectionLoaderScreenState
     prefs = await SharedPreferences.getInstance();
     try {
       data =
-          prefs.getString("movein-${propertyElement.tableproperty.propertyId}");
+          prefs.getString("full-${propertyElement.tableproperty.propertyId}");
+      print(data);
       if (data == null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => MoveInInspectionScreen(
+            builder: (context) => FullInspectionScreen(
               propertyElement: propertyElement,
             ),
           ),
         );
-        print("use cache Data but no --------------------------");
+        print("use cache Data but not found --------------------------");
       } else {
         var tempData = jsonDecode(data);
         List<List<Issue>> rows = [];
         for (int i = 0; i < tempData["rows"].length; i++) {
           rows.add([]);
           for (int j = 0; j < tempData["rows"][i].length; j++) {
-            rows[j].add(Issue(
+            rows[j].add(
+              Issue(
                 issueName: tempData["rows"][i][j]['issue_name'],
                 status: tempData["rows"][i][j]['status'],
                 remarks: tempData["rows"][i][j]['remarks'],
-                photo: tempData["rows"][i][j]['photo'].cast<String>()));
+                photo: tempData["rows"][i][j]['photo'].cast<String>(),
+              ),
+            );
           }
         }
-        print(rows);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => MoveInInspectionScreen(
+            builder: (context) => FullInspectionScreen(
               propertyElement: propertyElement,
               bills: tempData["bills"]
                   .map<BillToProperty>((bill) => BillToProperty.fromJson(bill))
@@ -79,13 +82,15 @@ class _MoveInInspectionLoaderScreenState
         print("use cache Data --------------------------");
       }
     } catch (e) {
+      print(e);
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => MoveInInspectionScreen(
+          builder: (context) => FullInspectionScreen(
             propertyElement: propertyElement,
           ),
         ),
       );
+      print("use no Data --------------------------");
     }
   }
 

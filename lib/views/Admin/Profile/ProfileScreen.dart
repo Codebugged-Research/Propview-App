@@ -19,6 +19,7 @@ import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/NotifcationScreen.dart';
 import 'package:propview/views/loginScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override

@@ -19,7 +19,7 @@ import 'package:propview/services/subRoomService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/regularInspectionHistoryScreen.dart';
+import 'package:propview/views/Admin/Inspection/RegularInspection/regularInspectionHistoryScreen.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 

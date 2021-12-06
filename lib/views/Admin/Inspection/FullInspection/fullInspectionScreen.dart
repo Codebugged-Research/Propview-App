@@ -106,7 +106,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       bills = await BillPropertyService.getBillsByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
     }
-    rows = widget.rows != null ? widget.rows : [[]];
+    rows = widget.rows != null ? widget.rows : [];
     for (var i = 0; i < rows.length; i++) {
       photoList.add([]);
       for (var j = 0; j < rows[i].length; j++) {
@@ -273,7 +273,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 240,
+                              height: 260,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
@@ -282,6 +282,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                                   return FullInspectionCard(
                                     propertyElement: propertyElement,
                                     billToProperty: bills[index],
+                                    editable: true,
                                   );
                                 },
                               ),
@@ -385,8 +386,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
-              bool isValid = false;
-              showDialog(
+              FocusScope.of(context).unfocus();
+              await showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
@@ -394,22 +395,113 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       content: Text(
-                          "Are you sure you want to submit the inspection?"),
+                        "Are you sure you want to submit the inspection?",
+                      ),
                       actions: [
                         MaterialButton(
                           child: Text("Yes"),
-                          onPressed: () {
-                            setState(() {
-                              isValid = true;
-                            });
+                          onPressed: () async {
                             Navigator.of(context).pop();
+                            setState(() {
+                              loading = true;
+                            });
+                            User user = await UserService.getUser();
+                            inspection = Inspection(
+                              inspectionId: 0,
+                              inspectType: "Full Inspection",
+                              propertyId: widget
+                                  .propertyElement.tableproperty.propertyId,
+                              employeeId: user.userId,
+                              createdAt: DateTime.now(),
+                              updatedAt: DateTime.now(),
+                            );
+                            List tempIssueTableList = [];
+                            for (int i = 0; i < rows.length; i++) {
+                              List issueRowList = [];
+                              for (int j = 0; j < rows[i].length; j++) {
+                                List<String> finalPhotoList = [];
+                                for (int k = 0;
+                                    k < rows[i][j].photo.length;
+                                    k++) {
+                                  String tempUrl = await upload(
+                                      rows[i][j].photo[k],
+                                      widget.propertyElement.tableproperty
+                                          .propertyId
+                                          .toString());
+                                  finalPhotoList.add(tempUrl);
+                                }
+                                var payload = {
+                                  "issue_id": 0,
+                                  "issue_name": rows[i][j].issueName,
+                                  "status": rows[i][j].status,
+                                  "remarks": rows[i][j].remarks,
+                                  "photo": finalPhotoList.join(","),
+                                  "createdAt": DateTime.now().toString(),
+                                  "updatedAt": DateTime.now().toString(),
+                                };
+                                var result = await IssueService.createIssue(
+                                    jsonEncode(payload));
+                                issueRowList.add(result);
+                              }
+                              var payload1 = {
+                                "id": 0,
+                                "roomsubroom_id":
+                                    issueTableList[i].roomsubroomId,
+                                "roomsubroom_name":
+                                    issueTableList[i].roomsubroomName,
+                                "issub": issueTableList[i].issub,
+                                "issue_row_id": issueRowList.join(","),
+                                "property_id": widget
+                                    .propertyElement.tableproperty.propertyId,
+                                "created_at": DateTime.now().toString(),
+                                "updated_at": DateTime.now().toString(),
+                              };
+                              var result =
+                                  await IssueTableService.createIssueTable(
+                                      jsonEncode(payload1));
+                              tempIssueTableList.add(result);
+                            }
+                            inspection.issueIdList =
+                                tempIssueTableList.join(",");
+                            print(inspection.toJson());
+                            bool result =
+                                await InspectionService.createInspection(
+                              jsonEncode(
+                                inspection.toJson(),
+                              ),
+                            );
+                            for (int i = 0; i < bills.length; i++) {
+                              // ignore: unused_local_variable
+                              bills[i].lastUpdate = DateTime.now();
+                              await BillPropertyService.updateBillProperty(
+                                bills[i].id.toString(),
+                                jsonEncode(
+                                  bills[i].toJson(),
+                                ),
+                              );
+                            }
+                            setState(() {
+                              loading = false;
+                            });
+                            print(result);
+                            if (result) {
+                              showInSnackBar(_scaffoldKey.currentContext,
+                                  "Inspection Added Succesfully!", 500);
+                              Future.delayed(Duration(milliseconds: 800), () {
+                                Navigator.of(_scaffoldKey.currentContext).pop();
+                                Navigator.of(_scaffoldKey.currentContext).pop();
+                              });
+                            } else {
+                              showInSnackBar(_scaffoldKey.currentContext,
+                                  "Inspection Addition unsuccessfull! ", 500);
+                            }
                           },
                         ),
                         MaterialButton(
                           child: Text("No"),
                           onPressed: () {
                             setState(() {
-                              isValid = false;
+                              loading = false;
                             });
                             Navigator.of(context).pop();
                           },
@@ -417,90 +509,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       ],
                     );
                   });
-              if (isValid) {
-                setState(() {
-                  loading = true;
-                });
-                User user = await UserService.getUser();
-                inspection = Inspection(
-                  inspectionId: 0,
-                  inspectType: "Full Inspection",
-                  propertyId: widget.propertyElement.tableproperty.propertyId,
-                  employeeId: user.userId,
-                  createdAt: DateTime.now(),
-                  updatedAt: DateTime.now(),
-                );
-                List tempIssueTableList = [];
-                for (int i = 0; i < rows.length; i++) {
-                  List issueRowList = [];
-                  for (int j = 0; j < rows[i].length; j++) {
-                    List<String> finalPhotoList = [];
-                    for (int k = 0; k < rows[i][j].photo.length; k++) {
-                      String tempUrl = await upload(
-                          rows[i][j].photo[k],
-                          widget.propertyElement.tableproperty.propertyId
-                              .toString());
-                      finalPhotoList.add(tempUrl);
-                    }
-                    var payload = {
-                      "issue_id": 0,
-                      "issue_name": rows[i][j].issueName,
-                      "status": rows[i][j].status,
-                      "remarks": rows[i][j].remarks,
-                      "photo": finalPhotoList.join(","),
-                      "createdAt": DateTime.now().toString(),
-                      "updatedAt": DateTime.now().toString(),
-                    };
-                    var result =
-                        await IssueService.createIssue(jsonEncode(payload));
-                    issueRowList.add(result);
-                  }
-                  var payload1 = {
-                    "id": 0,
-                    "roomsubroom_id": issueTableList[i].roomsubroomId,
-                    "roomsubroom_name": issueTableList[i].roomsubroomName,
-                    "issub": issueTableList[i].issub,
-                    "issue_row_id": issueRowList.join(","),
-                    "property_id":
-                        widget.propertyElement.tableproperty.propertyId,
-                    "created_at": DateTime.now().toString(),
-                    "updated_at": DateTime.now().toString(),
-                  };
-                  var result = await IssueTableService.createIssueTable(
-                      jsonEncode(payload1));
-                  tempIssueTableList.add(result);
-                }
-                inspection.issueIdList = tempIssueTableList.join(",");
-                print(inspection.toJson());
-                bool result = await InspectionService.createInspection(
-                  jsonEncode(
-                    inspection.toJson(),
-                  ),
-                );
-                for (int i = 0; i < bills.length; i++) {
-                  // ignore: unused_local_variable
-                  bool res = await BillPropertyService.updateBillProperty(
-                      bills[i].id.toString(), jsonEncode(bills[i].toJson()));
-                }
-                setState(() {
-                  loading = false;
-                });
-                if (result) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Full Inspection added"),
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Full Inspection addition failed!"),
-                    ),
-                  );
-                }
-              }
             },
             child: Text(
               "Add Inspection",
@@ -897,7 +905,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         SubRoomElement subRoom =
                             await SubRoomService.getSubRoomById(
                                 issueTableData.roomsubroomId);
-                                print(subRoom.facility);
+                        print(subRoom.facility);
                         List<String> lstring = subRoom.facility.split(",");
                         lint = lstring.map(int.parse).toList();
                         showCardEdit(rows[tableindex][index], lint);
