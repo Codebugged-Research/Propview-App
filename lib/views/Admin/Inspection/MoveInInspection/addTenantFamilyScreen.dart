@@ -9,6 +9,8 @@ import 'package:propview/services/tenantFamilyService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/Inspection/MoveInInspection/moveInInspectionLoaderScreen.dart';
+import 'package:propview/views/Admin/Inspection/inspectionHomeScreen.dart';
 import 'package:propview/views/Admin/landingPage.dart';
 
 class AddTenantFamilyScreen extends StatefulWidget {
@@ -80,9 +82,23 @@ class _AddTenantFamilyScreenState extends State<AddTenantFamilyScreen> {
           });
           showInSnackBar(context, 'Tenant-Family added successfully!', 2500);
           Timer(Duration(milliseconds: 2510), () {
+           Routing.makeRouting(
+              context,
+              routeMethod: 'pushAndRemoveUntil',
+              newWidget: LandingScreen(selectedIndex: 2),
+            );
             Routing.makeRouting(context,
-                routeMethod: 'pushAndRemoveUntil',
-                newWidget: LandingScreen(selectedIndex: 0));
+                routeMethod: 'push',
+                newWidget: InspectionHomeScreen(
+                  propertyElement: propertyElement,
+                ));
+            Routing.makeRouting(
+              context,
+              routeMethod: 'push',
+              newWidget: MoveInInspectionLoaderScreen(
+                propertyElement: propertyElement,
+              ),
+            );
           });
         } else {
           setState(() {

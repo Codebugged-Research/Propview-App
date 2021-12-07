@@ -1,5 +1,5 @@
 class Config {
-  static const String APP_VERISON = "1.0.30+31";
+  static const String APP_VERISON = "1.0.31+32";
   static DateTime dummyTime = DateTime(
     1,
     1,

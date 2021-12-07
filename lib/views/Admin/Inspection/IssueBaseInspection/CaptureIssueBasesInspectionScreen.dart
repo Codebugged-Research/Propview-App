@@ -1,33 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:propview/models/Inspection.dart';
-import 'package:propview/models/Issue.dart';
-import 'package:propview/models/Property.dart';
-import 'package:propview/models/issueTable.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/routing.dart';
-import 'package:propview/views/Admin/Inspection/IssueBaseInspection/issueInspectionScreen.dart';
 
 class CaptureIssueBasesInspectionScreen extends StatefulWidget {
   final List<String> imageList;
-  final int index1;
-  final int index2;
-  final PropertyElement propertyElement;
-  final List<List<Issue>> rows;
-  final List<IssueTableData> issueTableList;
   CaptureIssueBasesInspectionScreen({
     this.imageList,
-    this.propertyElement,
-    this.index1,
-    this.index2,
-    this.rows,
-    this.issueTableList,
   });
   @override
   _CaptureIssueBasesInspectionScreenState createState() =>
@@ -35,7 +18,8 @@ class CaptureIssueBasesInspectionScreen extends StatefulWidget {
 }
 
 class _CaptureIssueBasesInspectionScreenState
-    extends State<CaptureIssueBasesInspectionScreen> with WidgetsBindingObserver {
+    extends State<CaptureIssueBasesInspectionScreen>
+    with WidgetsBindingObserver {
   CameraController cameraController;
   CameraDescription cameraDescription;
   int selectedCamera = 0;
@@ -74,29 +58,14 @@ class _CaptureIssueBasesInspectionScreenState
 
   takePicture() async {
     try {
-      //Take Picture
       XFile image = (await cameraController.takePicture());
-      //Convert XFile to File
       Uint8List imageBytes = await image.readAsBytes();
       File convertedImage = await File(image.path).writeAsBytes(imageBytes);
-      //Compressing Image
       var compressedImage = await compressImage(convertedImage);
-      //Adding Images to List
       setState(() {
         imageList.add(compressedImage.path);
       });
-      await Routing.makeRouting(
-        context,
-        routeMethod: 'pushReplacement',
-        newWidget: IssueInspectionScreen(
-          imageList: imageList,
-          index1: widget.index1,
-          index2: widget.index2,
-          propertyElement: widget.propertyElement,
-          rows: widget.rows,
-          issueTableList: widget.issueTableList,
-        ),
-      );
+      Navigator.of(context).pop(imageList);
     } catch (e) {
       print(e);
     }
@@ -118,7 +87,13 @@ class _CaptureIssueBasesInspectionScreenState
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Camera'),
+        centerTitle: true,
+        title: Text(
+          'Camera',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         actions: [
           IconButton(
               onPressed: () async {

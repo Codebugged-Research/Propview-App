@@ -38,7 +38,6 @@ class _FullInspectionLoaderScreenState
     try {
       data =
           prefs.getString("full-${propertyElement.tableproperty.propertyId}");
-      print(data);
       if (data == null) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -82,7 +81,6 @@ class _FullInspectionLoaderScreenState
         print("use cache Data --------------------------");
       }
     } catch (e) {
-      print(e);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => FullInspectionScreen(

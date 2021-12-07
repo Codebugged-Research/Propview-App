@@ -10,11 +10,9 @@ import 'package:propview/utils/progressBar.dart';
 
 class CaptureFullInspectionScreen extends StatefulWidget {
   final List<String> imageList;
-
   CaptureFullInspectionScreen({
     this.imageList,
   });
-
   @override
   _CaptureFullInspectionScreenState createState() =>
       _CaptureFullInspectionScreenState();
@@ -60,14 +58,10 @@ class _CaptureFullInspectionScreenState
 
   takePicture() async {
     try {
-      //Take Picture
       XFile image = (await cameraController.takePicture());
-      //Convert XFile to File
       Uint8List imageBytes = await image.readAsBytes();
       File convertedImage = await File(image.path).writeAsBytes(imageBytes);
-      //Compressing Image
       var compressedImage = await compressImage(convertedImage);
-      //Adding Images to List
       setState(() {
         imageList.add(compressedImage.path);
       });
@@ -93,7 +87,13 @@ class _CaptureFullInspectionScreenState
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Camera'),
+        centerTitle: true,
+        title: Text(
+          'Camera',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         actions: [
           IconButton(
               onPressed: () async {

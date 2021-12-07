@@ -53,11 +53,14 @@ class _IssueInspectionLoaderScreenState
         for (int i = 0; i < tempData["rows"].length; i++) {
           rows.add([]);
           for (int j = 0; j < tempData["rows"][i].length; j++) {
-            rows[j].add(Issue(
+            rows[j].add(
+              Issue(
                 issueName: tempData["rows"][i][j]['issue_name'],
                 status: tempData["rows"][i][j]['status'],
                 remarks: tempData["rows"][i][j]['remarks'],
-                photo: tempData["rows"][i][j]['photo'].cast<String>()));
+                photo: tempData["rows"][i][j]['photo'].cast<String>(),
+              ),
+            );
           }
         }
         Navigator.of(context).push(
@@ -81,7 +84,8 @@ class _IssueInspectionLoaderScreenState
             propertyElement: propertyElement,
           ),
         ),
-      );
+      );      
+      print("use no Data --------------------------");
     }
   }
 

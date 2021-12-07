@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
@@ -8,7 +7,6 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Facility.dart';
-
 import 'package:propview/models/Inspection.dart';
 import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
@@ -44,7 +42,7 @@ class FullInspectionScreen extends StatefulWidget {
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
   final List<List<List<String>>> imageList;
-  List<BillToProperty> bills;
+  final List<BillToProperty> bills;
 
   FullInspectionScreen({
     this.bills,
@@ -61,9 +59,6 @@ class FullInspectionScreen extends StatefulWidget {
 class _FullInspectionScreenState extends State<FullInspectionScreen> {
   Inspection inspection;
   SharedPreferences prefs;
-
-  // TextEditingController maintainanceController;
-
   PropertyElement propertyElement;
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
@@ -72,11 +67,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
   List<List<List<String>>> photoList = [];
-
   List<Facility> facilityList = [];
-
   List<BillToProperty> bills = [];
-
   RoomType roomTypes;
   bool loader = false;
 
@@ -91,21 +83,19 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  String dummyDouble = (0.0).toString();
-
   getData() async {
     setState(() {
       loader = true;
       propertyElement = widget.propertyElement;
     });
-    photoList = widget.imageList ?? [];
-    facilityList = await FacilityService.getFacilities();
     if (widget.bills != null) {
       bills = widget.bills;
     } else {
       bills = await BillPropertyService.getBillsByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
     }
+    photoList = widget.imageList ?? [];
+    facilityList = await FacilityService.getFacilities();
     rows = widget.rows != null ? widget.rows : [];
     for (var i = 0; i < rows.length; i++) {
       photoList.add([]);
@@ -183,7 +173,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           centerTitle: true,
           title: Text(
             "Full Inspection",
-            style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+            style: Theme.of(context).primaryTextTheme.headline6.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
@@ -297,6 +287,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           return issueCard(index);
                         },
                       ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
                       issueTableList.length >= roomsAvailable.length
                           ? SizedBox()
                           : Row(
@@ -463,7 +455,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                             }
                             inspection.issueIdList =
                                 tempIssueTableList.join(",");
-                            print(inspection.toJson());
                             bool result =
                                 await InspectionService.createInspection(
                               jsonEncode(
@@ -471,7 +462,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              // ignore: unused_local_variable
                               bills[i].lastUpdate = DateTime.now();
                               await BillPropertyService.updateBillProperty(
                                 bills[i].id.toString(),
@@ -483,8 +473,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                             setState(() {
                               loading = false;
                             });
-                            print(result);
                             if (result) {
+                              await prefs.remove(
+                                  "full-${propertyElement.tableproperty.propertyId}");
                               showInSnackBar(_scaffoldKey.currentContext,
                                   "Inspection Added Succesfully!", 500);
                               Future.delayed(Duration(milliseconds: 800), () {
@@ -734,35 +725,33 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   Widget issueCard(int tableindex) {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          titleWidget(
-              context, issueTableList[tableindex].roomsubroomName, tableindex),
-          SizedBox(
-            height: 8,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        titleWidget(
+            context, issueTableList[tableindex].roomsubroomName, tableindex),
+        SizedBox(
+          height: 8,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.95,
+          height: 200,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: rows[tableindex].length + 1,
+            itemBuilder: (context, index) {
+              return index == rows[tableindex].length
+                  ? addRowButton(tableindex, index)
+                  : issueRowCard(
+                      index, tableindex, issueTableList[tableindex]);
+            },
           ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.95,
-            height: 200,
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: rows[tableindex].length + 1,
-              itemBuilder: (context, index) {
-                return index == rows[tableindex].length
-                    ? addRowButton(tableindex, index)
-                    : issueRowCard(
-                        index, tableindex, issueTableList[tableindex]);
-              },
-            ),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+      ],
     );
   }
 

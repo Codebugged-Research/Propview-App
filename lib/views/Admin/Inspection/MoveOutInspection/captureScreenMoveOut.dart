@@ -17,21 +17,9 @@ import 'package:propview/views/Admin/Inspection/MoveOutInspection/moveOutInspect
 
 class CaptureScreenMoveOut extends StatefulWidget {
   final List<String> imageList;
-  final int index1;
-  final int index2;
-  final PropertyElement propertyElement;
-  final List<List<Issue>> rows;
-  final List<IssueTableData> issueTableList;
-  List<BillToProperty> bills;
 
   CaptureScreenMoveOut({
     this.imageList,
-    this.propertyElement,
-    this.index1,
-    this.index2,
-    this.bills,
-    this.rows,
-    this.issueTableList,
   });
 
   @override
@@ -78,30 +66,14 @@ class _CaptureScreenMoveOutState extends State<CaptureScreenMoveOut>
 
   takePicture() async {
     try {
-      //Take Picture
       XFile image = (await cameraController.takePicture());
-      //Convert XFile to File
       Uint8List imageBytes = await image.readAsBytes();
       File convertedImage = await File(image.path).writeAsBytes(imageBytes);
-      //Compressing Image
       var compressedImage = await compressImage(convertedImage);
-      //Adding Images to List
       setState(() {
         imageList.add(compressedImage.path);
       });
-      await Routing.makeRouting(
-        context,
-        routeMethod: 'pushReplacement',
-        newWidget: MoveOutInspectionScreen(
-          imageList: imageList,
-          index1: widget.index1,
-          index2: widget.index2,
-          bills: widget.bills,
-          propertyElement: widget.propertyElement,
-          rows: widget.rows,
-          issueTableList: widget.issueTableList,
-        ),
-      );
+      Navigator.of(context).pop(imageList);
     } catch (e) {
       print(e);
     }
@@ -123,7 +95,13 @@ class _CaptureScreenMoveOutState extends State<CaptureScreenMoveOut>
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Camera'),
+        centerTitle: true,
+        title: Text(
+          'Camera',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         actions: [
           IconButton(
               onPressed: () async {
