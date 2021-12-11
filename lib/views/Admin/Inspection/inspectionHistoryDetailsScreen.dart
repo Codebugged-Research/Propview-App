@@ -15,6 +15,7 @@ import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InspectionHistoryDetailsScreen extends StatefulWidget {
   final Inspection inspection;
@@ -98,7 +99,10 @@ class _InspectionHistoryDetailsScreenState
                       Icons.share,
                       color: Colors.black,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      launch(
+                          "https://api.propdial.co.in/pdf/${inspection.inspectionId}");
+                    },
                   ),
                 )
               ],
@@ -413,7 +417,7 @@ class _InspectionHistoryDetailsScreenState
           return Image.network(
             Config.INSPECTION_STORAGE_ENDPOINT + list[index].trim(),
             height: 60,
-            width: 60,
+            width: 45,
           );
         },
       ),

@@ -8,6 +8,7 @@ import 'package:propview/services/regulationInspectionRowService.dart';
 import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegularInspectionDetailsScreen extends StatefulWidget {
   final RegularInspection regularInspection;
@@ -62,7 +63,30 @@ class _RegularInspectionDetailsScreenState
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
         appBar: AppBar(
-        ),
+              title: Text(
+                "Regular Inspection Details",
+                style: Theme.of(context)
+                    .primaryTextTheme
+                    .headline6
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              centerTitle: true,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    child: Icon(
+                      Icons.share,
+                      color: Colors.black,
+                    ),
+                    onTap: () {
+                      launch(
+                          "https://api.propdial.co.in/pdf/regular/${regularInspection.id}");
+                    },
+                  ),
+                )
+              ],
+            ),
         body: isLoading
             ? circularProgressWidget()
             : Container(
