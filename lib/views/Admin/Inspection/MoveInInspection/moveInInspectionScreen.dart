@@ -25,6 +25,7 @@ import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/billPropertyService.dart';
+import 'package:propview/services/billTypeService.dart';
 import 'package:propview/services/cityService.dart';
 import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/inspectionService.dart';
@@ -44,7 +45,6 @@ import 'package:propview/views/Admin/Inspection/MoveInInspection/addTenantFamily
 import 'package:propview/views/Admin/Inspection/MoveInInspection/addTenantScreen.dart';
 import 'package:propview/views/Admin/Inspection/MoveInInspection/captureScreenMoveIn.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
-import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
 import 'package:propview/views/Admin/widgets/tenantWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -100,16 +100,29 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
   initialiseSharedPreference() async {
     prefs = await SharedPreferences.getInstance();
   }
+  List<String> billTypeList = [];
+  List billTypes = [];
+  List<TextEditingController> _billControllers = [];
 
   loadDataForScreen() async {
     setState(() {
       isLoading = true;
     });
+    billTypes = await BillTypeService.getAllBillTypes();
     if (widget.bills != null) {
       bills = widget.bills;
     } else {
       bills = await BillPropertyService.getBillsByPropertyId(
           propertyElement.tableproperty.propertyId.toString());
+    }
+    for (int i = 0; i < bills.length; i++) {
+      var type = billTypes
+          .firstWhere(
+            (element) => element.billTypeId == bills[i].billTypeId.toString(),
+          )
+          .billName;
+      billTypeList.add(type);
+      _billControllers.add(TextEditingController());
     }
     photoList = widget.imageList ?? [];
     facilityList = await FacilityService.getFacilities();
@@ -331,10 +344,9 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                                 scrollDirection: Axis.horizontal,
                                 itemCount: bills.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  return FullInspectionCard(
-                                    propertyElement: propertyElement,
-                                    billToProperty: bills[index],
-                                    editable: true,
+                                 _billControllers.add(TextEditingController());
+                                  return billCard(
+                                    index
                                   );
                                 },
                               ),
@@ -485,6 +497,158 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
         ),
       ),
     );
+  }
+
+  Widget billCard(int index) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Container(
+        padding: EdgeInsets.all(8),
+        width: MediaQuery.of(context).size.width * 0.80,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(2, 2),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.15)),
+            BoxShadow(
+                offset: Offset(-2, 2),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.15))
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Bill Type:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Flexible(
+                  child: Text(
+                    billTypeList[index],
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bill Authority:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Flexible(
+                  child: Text(
+                    bills[index].authorityName,
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
+              children: [
+                Text(
+                  'Added On:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  dateChange(bills[index].dateAdded.toLocal()),
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .subtitle1
+                      .copyWith(color: Colors.black),
+                )
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
+              children: [
+                Text(
+                  'Last Update On:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  dateChange(bills[index].lastUpdate.toLocal()),
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .subtitle1
+                      .copyWith(color: Colors.black),
+                )
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Text(
+              'Amount',
+              style: Theme.of(context)
+                  .primaryTextTheme
+                  .subtitle1
+                  .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: TextField(
+                      controller: _billControllers[index],
+                      onChanged: (value) {
+                        bills[index].amount = double.parse(value);
+                      },
+                      obscureText: false,
+                      keyboardType: TextInputType.number,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: InputDecoration(
+                        filled: true,
+                        prefix: Text("₹"),
+                        hintText: 'Enter Amount',
+                        fillColor: Colors.grey[300],
+                        labelStyle:
+                            TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(12.0)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(12.0)),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(12.0)),
+                      ),
+                    ),
+                  ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          ],
+        ),
+      ),
+    );
+  }
+
+   dateChange(DateTime date) {
+    return date.day.toString().padLeft(2, "0") +
+        "-" +
+        date.month.toString().padLeft(2, "0") +
+        "-" +
+        date.year.toString();
   }
 
   Widget titleWidget(BuildContext context, String title, int index) {
@@ -687,7 +851,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   InkWell(
                     onTap: () async {
@@ -1177,7 +1341,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                             setState(() {
                               loading = false;
                             });
-                            Navigator.pop(context);
+                            Navigator.pop(context);FocusScope.of(context).unfocus();
                           },
                         ),
                       ],
@@ -1185,7 +1349,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                   });
             },
             child: Text(
-              "Move In Inspection",
+              "Submit Inspection",
               style: Theme.of(context).primaryTextTheme.subtitle1,
             ),
           );

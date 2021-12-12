@@ -78,7 +78,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
         flooringType.indexWhere((element) => element == room.flooring)] = true;
     room.facility.split(",").forEach((element) {
       facilityTag.add(facilities
-          .firstWhere((element2) => element2.facilityId == int.parse(element)));
+          .firstWhere((element2) => element2.facilityId == int.tryParse(element))?? 84);
     });
     facilityDropDownValue = facilities.first;
     setState(() {
@@ -438,12 +438,10 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
-              String modelFacilty = "";
-              facilityTag.forEach((e) {
-                modelFacilty += e.facilityId.toString();
-                modelFacilty += ",";
+              List<String> modelFacilty = [];
+              facilityTag.forEach((element) { 
+                modelFacilty.add(element.facilityId.toString());
               });
-              modelFacilty = modelFacilty.substring(0, modelFacilty.length - 1);
               double roomLength = double.parse(roomLengthFeetController.text) +
                   (double.parse(roomLengthInchesController.text) / 12.0);
               double roomWidth = double.parse(roomWidthFeetController.text) +
@@ -460,7 +458,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                 bath: _roomSelection[0] == true ? 1 : 0,
                 balcony: _roomSelection[1] == true ? 1 : 0,
                 wardrobe: _roomSelection[2] == true ? 1 : 0,
-                facility: modelFacilty,
+                facility: modelFacilty.join(','),
                 flooring: flooringType[
                     _floorSelections.indexWhere((element) => element == true)],
               );

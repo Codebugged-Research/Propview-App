@@ -2,15 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:propview/models/Facility.dart';
 
 class TagWidget extends StatefulWidget {
-  final List<Facility> tagList;
+  List<Facility> tagList;
 
-  TagWidget({this.tagList});
+  TagWidget({@required this.tagList});
 
   @override
   _TagWidgetState createState() => _TagWidgetState();
 }
 
 class _TagWidgetState extends State<TagWidget> {
+  showConfirm(index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Remove Tag"),
+          content: Text("Are you sure you want to remove tag ${widget.tagList[index].facilityName} ?"),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text("Yes"),
+              onPressed: () {
+                setState(() {
+                  widget.tagList.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -19,9 +48,7 @@ class _TagWidgetState extends State<TagWidget> {
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
-              setState(() {
-                widget.tagList.removeAt(index);
-              });
+              showConfirm(index);
             },
             child: Padding(
               padding: const EdgeInsets.all(4.0),

@@ -4,7 +4,6 @@ import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Home/searchPropertyCard.dart';
-import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 class OwnerPropertyListScreen extends StatefulWidget {
   final PropertyOwnerElement propertyElement;

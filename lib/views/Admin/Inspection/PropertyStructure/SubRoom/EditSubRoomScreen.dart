@@ -82,8 +82,8 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     roomWidthInchesController.text =
         (((subRoom.roomSize2 * 10) % 10)*1.2).toInt().toString();
     subRoom.facility.split(",").forEach((element) {
-      facilityTag.add(facilities
-          .firstWhere((element2) => element2.facilityId == int.parse(element)));
+       facilityTag.add(facilities
+          .firstWhere((element2) => element2.facilityId == int.tryParse(element))?? 84);
     });
     facilityDropDownValue = facilities.first;
     roomTypeDropDownValue =
@@ -376,12 +376,10 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
-              String modelFacilty = "";
-              facilityTag.forEach((e) {
-                modelFacilty += e.facilityId.toString();
-                modelFacilty += ",";
+              List<String> modelFacilty = [];
+              facilityTag.forEach((element) { 
+                modelFacilty.add(element.facilityId.toString());
               });
-              modelFacilty = modelFacilty.substring(0, modelFacilty.length - 1);
               double roomLength = double.parse(roomLengthFeetController.text) +
                   (double.parse(roomLengthInchesController.text) / 12.0);
               double roomWidth = double.parse(roomWidthFeetController.text) +
@@ -398,7 +396,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                 subRoomId: subRoomTypeDropDownValue.roomId,
                 roomSize1: roomLength,
                 roomSize2: roomWidth,
-                facility: modelFacilty,
+                facility: modelFacilty.join(','),
               );
               print(subRoomUpdate.toJson());
               setState(() {

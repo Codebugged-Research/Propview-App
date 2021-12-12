@@ -389,14 +389,11 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
             minWidth: 360,
             height: 55,
             color: Color(0xff314B8C),
-            onPressed: () async {
-              String modelFacilty = "";
-              facilityTag.forEach((e) {
-                modelFacilty += e.facilityId.toString();
-                modelFacilty += ",";
+            onPressed: () async {              
+              List<String> modelFacilty = [];
+              facilityTag.forEach((element) { 
+                modelFacilty.add(element.facilityId.toString());
               });
-              modelFacilty = modelFacilty.substring(0, modelFacilty.length - 1);
-
               double roomLength = double.parse(roomLengthFeetController.text) +
                   (double.parse(roomLengthInchesController.text) / 12.0);
               double roomWidth = double.parse(roomWidthFeetController.text) +
@@ -412,7 +409,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                 subRoomId: subRoomTypeDropDownValue.roomId,
                 roomSize1: roomLength,
                 roomSize2: roomWidth,
-                facility: modelFacilty,
+                facility: modelFacilty.join(','),
               );
               print(subRoom.toJson());
               setState(() {

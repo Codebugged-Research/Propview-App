@@ -439,7 +439,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
               );
             },
             child: Text(
-              "Add Inspection",
+              "Submit Inspection",
               style: Theme.of(context).primaryTextTheme.subtitle1,
             ),
           );
@@ -567,7 +567,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   InkWell(
                     onTap: () async {
@@ -589,9 +589,20 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                         showCardEdit(rows[tableindex][index], lint);
                       }
                     },
-                    child: Icon(
-                      Icons.edit,
-                      color: Colors.blueAccent,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Edit",
+                          style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16),
+                        ),
+                        Icon(
+                          Icons.edit,
+                          color: Colors.blueAccent,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
@@ -607,9 +618,20 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       print(photoList[tableindex].toString());
                       print(index);
                     },
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.redAccent,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Delete",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16),
+                        ),
+                        Icon(
+                          Icons.delete,
+                          color: Colors.redAccent,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -843,6 +865,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                         child: MaterialButton(
                           onPressed: () {
                             Navigator.pop(context);
+                            FocusScope.of(context).unfocus();
                           },
                           color: Color(0xFF314B8C),
                           child: Text(
