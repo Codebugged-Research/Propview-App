@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:propview/models/Task.dart';
 import 'package:propview/models/User.dart';
-import 'package:propview/services/notificationService.dart';
+import 'package:propview/services/NotificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
@@ -13,8 +13,6 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Employee/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Employee/Property/PropertyOwnerDetailScreen.dart';
-
-import '../AssignedPersonDetailScreen.dart';
 
 // ignore: must_be_immutable
 class TaskCard extends StatefulWidget {

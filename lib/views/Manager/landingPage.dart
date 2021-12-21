@@ -12,8 +12,8 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Manager/Attendance/AttendanceHome.dart';
-import 'package:propview/views/Manager/Home/homeScreen.dart';
-import 'package:propview/views/Manager/TaskManager/taskManagerHome.dart';
+import 'package:propview/views/Manager/Home/HomeScreen.dart';
+import 'package:propview/views/Manager/TaskManager/TaskManagerHome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LandingScreen extends StatefulWidget {

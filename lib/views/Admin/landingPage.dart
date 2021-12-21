@@ -11,8 +11,8 @@ import 'package:propview/services/baseService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/utils/udpatepop.dart';
-import 'package:propview/views/Admin/Home/homeScreen.dart';
-import 'package:propview/views/Admin/TaskManager/taskManagerHome.dart';
+import 'package:propview/views/Admin/Home/HomeScreen.dart';
+import 'package:propview/views/Admin/TaskManager/TaskManagerHome.dart';
 import 'package:propview/views/Admin/Attendance/AttendanceHome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

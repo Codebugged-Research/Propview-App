@@ -10,7 +10,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
 import 'package:propview/views/Admin/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Admin/TaskManager/SearchTask.dart';
-import 'package:propview/views/Admin/TaskManager/createTaskScreen.dart';
+import 'package:propview/views/Admin/TaskManager/CreateTaskScreen.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
 
 class TaskMangerHome extends StatefulWidget {

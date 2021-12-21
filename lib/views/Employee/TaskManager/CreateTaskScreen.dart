@@ -8,7 +8,7 @@ import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/models/TaskCategory.dart';
 import 'package:propview/models/User.dart';
-import 'package:propview/services/notificationService.dart';
+import 'package:propview/services/NotificationService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/taskCategoryService.dart';
 import 'package:propview/services/taskService.dart';

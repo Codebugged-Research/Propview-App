@@ -8,13 +8,12 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:propview/config.dart';
 import 'package:propview/services/baseService.dart';
-import 'package:propview/services/reminderService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Employee/Attendance/AttendanceHome.dart';
-import 'package:propview/views/Employee/Home/homeScreen.dart';
-import 'package:propview/views/Employee/TaskManager/taskManagerHome.dart';
+import 'package:propview/views/Employee/Home/HomeScreen.dart';
+import 'package:propview/views/Employee/TaskManager/TaskManagerHome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LandingScreen extends StatefulWidget {

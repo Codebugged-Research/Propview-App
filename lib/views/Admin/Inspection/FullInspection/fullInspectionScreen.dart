@@ -18,7 +18,7 @@ import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/issueTable.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/billPropertyService.dart';
-import 'package:propview/services/billTypeService.dart';
+import 'package:propview/services/BillTypeService.dart';
 import 'package:propview/services/facilityService.dart';
 import 'package:propview/services/inspectionService.dart';
 import 'package:propview/services/issueService.dart';
@@ -153,7 +153,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             isSubroom: true,
             propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
             roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
-                "-" +
+                " of " +
                 getRoomName(rooms[i].roomId),
           ));
         });
@@ -279,16 +279,14 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 260,
+                              height: 280,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
                                 itemCount: bills.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   _billControllers.add(TextEditingController());
-                                  return billCard(
-                                    index
-                                  );
+                                  return billCard(index);
                                 },
                               ),
                             ),
@@ -303,14 +301,15 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         },
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
+                          height: MediaQuery.of(context).size.height * 0.05),
                       issueTableList.length >= roomsAvailable.length
                           ? SizedBox()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Select Room',
+                                  'Select Room ' +
+                                      '(${issueTableList.length}/${roomsAvailable.length})',
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline6
@@ -336,7 +335,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               ],
                             ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
+                        height: MediaQuery.of(context).size.height * 0.05,
                       ),
                       issueTableList.length > 0
                           ? buttonWidget(context)
@@ -417,6 +416,26 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bill No:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Flexible(
+                  child: Text(
+                    bills[index].billId,
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
               children: [
                 Text(
                   'Added On:  ',
@@ -459,36 +478,35 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: TextField(
-                      controller: _billControllers[index],
-                      onChanged: (value) {
-                        bills[index].amount = double.parse(value);
-                      },
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: InputDecoration(
-                        filled: true,
-                        prefix: Text("₹"),
-                        hintText: 'Enter Amount',
-                        fillColor: Colors.grey[300],
-                        labelStyle:
-                            TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                      ),
-                    ),
-                  ),
+              padding: const EdgeInsets.only(top: 8.0),
+              child: TextField(
+                controller: _billControllers[index],
+                onChanged: (value) {
+                  bills[index].amount = double.parse(value);
+                },
+                obscureText: false,
+                keyboardType: TextInputType.number,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefix: Text("₹"),
+                  hintText: 'Enter Amount',
+                  fillColor: Colors.grey[300],
+                  labelStyle:
+                      TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                ),
+              ),
+            ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
           ],
         ),
@@ -496,7 +514,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  
   dateChange(DateTime date) {
     return date.day.toString().padLeft(2, "0") +
         "-" +
@@ -537,8 +554,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   bool loading = false;
-
-  
 
   Widget buttonWidget(BuildContext context) {
     return loading
@@ -749,6 +764,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         facilityList2.add(element);
       }
     });
+    facilityList2.add(
+      Facility(facilityId: 84, facilityName: "Not Selected"),
+    );
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -784,7 +802,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           )),
                       SizedBox(height: 4),
                       Text(
-                        'Issue: ',
+                        'Particular: ',
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle1
@@ -798,7 +816,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           icon: Icon(Icons.hvac),
                         ), //, color: Colors.white10
                         value: issue.issueName == ""
-                            ? facilityList2[0].facilityName
+                            ? "Not Selected"
                             : issue.issueName,
                         items: facilityList2
                             .map<DropdownMenuItem>((Facility value) {
@@ -857,6 +875,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: TextFormField(
+                          minLines: 5,
+                          maxLines: 8,
                           initialValue: issue.remarks,
                           onChanged: (value) {
                             this.setState(() {
@@ -895,12 +915,28 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         });
   }
 
-  Widget issueCard(int tableindex) {
+  issueCard(int tableindex) {
+    List<int> lint = [];
+    if (issueTableList[tableindex].issub == 1) {
+      SubRoomElement subRoom = subRooms.firstWhere((element) =>
+          element.propertySubRoomId ==
+          issueTableList[tableindex].roomsubroomId);
+      List<String> lstring = subRoom.facility.split(",");
+      lint = lstring.map(int.parse).toList();
+    } else {
+      RoomsToPropertyModel room = rooms.firstWhere((element) =>
+          element.propertyRoomId == issueTableList[tableindex].roomsubroomId);
+      List<String> lstring = room.facility.split(",");
+      lint = lstring.map(int.parse).toList();
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         titleWidget(
-            context, issueTableList[tableindex].roomsubroomName, tableindex),
+            context,
+            issueTableList[tableindex].roomsubroomName +
+                '(${rows[tableindex].length}/${lint.length})',
+            tableindex),
         SizedBox(
           height: 8,
         ),
@@ -913,8 +949,11 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             itemCount: rows[tableindex].length + 1,
             itemBuilder: (context, index) {
               return index == rows[tableindex].length
-                  ? addRowButton(tableindex, index)
-                  : issueRowCard(index, tableindex, issueTableList[tableindex]);
+                  ? lint.length == index
+                      ? SizedBox()
+                      : addRowButton(tableindex, index)
+                  : issueRowCard(
+                      index, tableindex, issueTableList[tableindex], lint);
             },
           ),
         ),
@@ -954,7 +993,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   Widget photoPick(List<String> list, int index1) {
     return Container(
       width: 120,
-      height: 50,
+      height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: list.length + 1,
@@ -973,7 +1012,14 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       list = tempList;
                     });
                   },
-                  child: Icon(Icons.add),
+                  child: Container(
+                    width: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.add),
+                  ),
                 )
               : InkWell(
                   child: Image.file(
@@ -982,9 +1028,31 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                     width: 45,
                   ),
                   onTap: () {
-                    setState(() {
-                      list.removeAt(index);
-                    });
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Delete'),
+                        content:
+                            Text('Are you sure you want to delete this image?'),
+                        actions: <Widget>[
+                          MaterialButton(
+                            child: Text('Yes'),
+                            onPressed: () {
+                              setState(() {
+                                list.removeAt(index);
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          MaterialButton(
+                            child: Text('No'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    );
                   },
                 );
         },
@@ -1012,11 +1080,32 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         ),
         IconButton(
           onPressed: () {
-            setState(() {
-              issueTableList.removeAt(index);
-              rows.removeAt(index);
-              photoList.removeAt(index);
-            });
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Are you sure?'),
+                content: Text('Do you want to delete this issue?'),
+                actions: <Widget>[
+                  MaterialButton(
+                    child: Text('Yes'),
+                    onPressed: () {
+                      setState(() {
+                        issueTableList.removeAt(index);
+                        rows.removeAt(index);
+                        photoList.removeAt(index);
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  MaterialButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
           },
           icon: Icon(
             Icons.delete,
@@ -1027,8 +1116,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  Widget issueRowCard(
-      int index, int tableindex, IssueTableData issueTableData) {
+  Widget issueRowCard(int index, int tableindex, IssueTableData issueTableData,
+      List<int> lint) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -1059,23 +1148,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 children: [
                   InkWell(
                     onTap: () async {
-                      List<int> lint = [];
-                      if (issueTableData.issub == 1) {
-                        SubRoomElement subRoom =
-                            await SubRoomService.getSubRoomById(
-                                issueTableData.roomsubroomId);
-                        print(subRoom.facility);
-                        List<String> lstring = subRoom.facility.split(",");
-                        lint = lstring.map(int.parse).toList();
-                        showCardEdit(rows[tableindex][index], lint);
-                      } else {
-                        RoomsToPropertyModel room =
-                            await RoomService.getRoomById(
-                                issueTableData.roomsubroomId);
-                        List<String> lstring = room.facility.split(",");
-                        lint = lstring.map(int.parse).toList();
-                        showCardEdit(rows[tableindex][index], lint);
-                      }
+                      showCardEdit(rows[tableindex][index], lint);
                     },
                     child: Row(
                       children: [
@@ -1098,13 +1171,32 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      setState(() {
-                        rows[tableindex].removeAt(index);
-                        photoList.remove(tableindex);
-                      });
-                      print(rows[tableindex][index].toJson());
-                      print(photoList[tableindex].toString());
-                      print(index);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Are you sure?"),
+                          content: Text(
+                              "This will delete the particular issue and all the photos attached to it"),
+                          actions: [
+                            MaterialButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            MaterialButton(
+                              child: Text("Delete"),
+                              onPressed: () {
+                                setState(() {
+                                  rows[tableindex].removeAt(index);
+                                  photoList.remove(tableindex);
+                                });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
                     child: Row(
                       children: [
@@ -1132,7 +1224,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Issue: ',
+                    'Particular: ',
                     style:
                         Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                               color: Colors.black,

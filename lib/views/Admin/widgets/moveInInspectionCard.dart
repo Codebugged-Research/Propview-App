@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Property.dart';
-import 'package:propview/services/billTypeService.dart';
+import 'package:propview/services/BillTypeService.dart';
 import 'package:propview/utils/progressBar.dart';
 
 class MoveInInspectionCard extends StatefulWidget {

@@ -12,7 +12,7 @@ import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/roomType.dart';
 import 'package:propview/services/billPropertyService.dart';
-import 'package:propview/services/billTypeService.dart';
+import 'package:propview/services/BillTypeService.dart';
 import 'package:propview/services/regulationInspectionRowService.dart';
 import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/roomService.dart';
