@@ -64,12 +64,14 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
   List<CustomRoomSubRoom> roomsAvailable = [];
+  List<CustomRoomSubRoom> roomsAvailable2 = [];
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
   List<List<List<String>>> photoList = [];
   List<Facility> facilityList = [];
   List<BillToProperty> bills = [];
+  List<BillToProperty> bills2 = [];
   RoomType roomTypes;
   bool loader = false;
 
@@ -94,7 +96,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       propertyElement = widget.propertyElement;
     });
     billTypes = await BillTypeService.getAllBillTypes();
-    print(billTypes);
+    bills2 = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     if (widget.bills != null) {
       bills = widget.bills;
     } else {
@@ -108,7 +111,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           )
           .billName;
       billTypeList.add(type);
-      _billControllers.add(TextEditingController());
+      // _billControllers.add(TextEditingController(text: "0.0"));
     }
     photoList = widget.imageList ?? [];
     facilityList = await FacilityService.getFacilities();
@@ -159,8 +162,8 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         });
       }
     }
-    roomsAvailable.length > 0 ? selectedRoomSubRoom = roomsAvailable[0] : null;
     setState(() {
+      roomsAvailable2.addAll(roomsAvailable);
       loader = false;
     });
   }
@@ -279,7 +282,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 280,
+                              height: 300,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
@@ -308,8 +311,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Select Room ' +
-                                      '(${issueTableList.length}/${roomsAvailable.length})',
+                                  'Select Room',
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline6
@@ -444,6 +446,23 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 ),
                 Text(
                   dateChange(bills[index].dateAdded.toLocal()),
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .subtitle1
+                      .copyWith(color: Colors.black),
+                )
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
+              children: [
+                Text(
+                  'Last Amount:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  bills[index].amount.toString(),
                   style: Theme.of(context)
                       .primaryTextTheme
                       .subtitle1
@@ -647,13 +666,21 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              bills[i].lastUpdate = DateTime.now();
-                              await BillPropertyService.updateBillProperty(
-                                bills[i].id.toString(),
-                                jsonEncode(
-                                  bills[i].toJson(),
-                                ),
-                              );
+                              if (bills2[i].amount !=
+                                  double.parse(
+                                    bills[i]
+                                        .amount
+                                        .toString()
+                                        .replaceAll(",", ""),
+                                  )) {
+                                bills[i].lastUpdate = DateTime.now();
+                                await BillPropertyService.updateBillProperty(
+                                  bills[i].id.toString(),
+                                  jsonEncode(
+                                    bills[i].toJson(),
+                                  ),
+                                );
+                              }
                             }
                             setState(() {
                               loading = false;
@@ -694,6 +721,20 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   showRoomSelect() {
+    roomsAvailable.clear();
+    roomsAvailable.addAll(roomsAvailable2);
+    issueTableList.forEach((elementx) {
+      roomsAvailable.removeWhere(
+          (element) => element.propertyRoomSubRoomId == elementx.roomsubroomId);
+    });
+    roomsAvailable.add(
+      CustomRoomSubRoom(
+        isSubroom: false,
+        propertyRoomSubRoomId: 9999999999999,
+        roomSubRoomName: "Choose Room/Subroom",
+      ),
+    );
+    selectedRoomSubRoom = roomsAvailable.last;
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -757,12 +798,16 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  showCardEdit(Issue issue, List<int> intList) {
+  showCardEdit(Issue issue, List<int> intList, int tableindex) {
     List<Facility> facilityList2 = [];
     facilityList.forEach((element) {
       if (intList.contains(element.facilityId)) {
         facilityList2.add(element);
       }
+    });
+    rows[tableindex].forEach((elementx) {
+      facilityList2
+          .removeWhere((element) => element.facilityName == elementx.issueName);
     });
     facilityList2.add(
       Facility(facilityId: 84, facilityName: "Not Selected"),
@@ -979,7 +1024,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             photoList[tableindex].add([]);
             rows[tableindex].add(
               Issue(
-                  issueName: "",
+                  issueName: "Not Selected",
                   status: "Excelent",
                   remarks: "",
                   photo: photoList[tableindex][index]),
@@ -1116,8 +1161,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
   }
 
-  Widget issueRowCard(int index, int tableindex, IssueTableData issueTableData,
-      List<int> lint) {
+  Widget issueRowCard(
+    int index,
+    int tableindex,
+    IssueTableData issueTableData,
+    List<int> lint,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -1148,7 +1197,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 children: [
                   InkWell(
                     onTap: () async {
-                      showCardEdit(rows[tableindex][index], lint);
+                      showCardEdit(rows[tableindex][index], lint, tableindex);
                     },
                     child: Row(
                       children: [

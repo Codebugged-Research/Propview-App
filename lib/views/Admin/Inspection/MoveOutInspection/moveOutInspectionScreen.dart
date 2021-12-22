@@ -73,6 +73,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
   List<CustomRoomSubRoom> roomsAvailable = [];
+  List<CustomRoomSubRoom> roomsAvailable2 = [];
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
@@ -81,6 +82,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   List<TenantFamily> tenantFamily = [];
   List<Facility> facilityList = [];
   List<BillToProperty> bills = [];
+  List<BillToProperty> bills2 = [];
   List<String> billTypeList = [];
   List billTypes = [];
   List<TextEditingController> _billControllers = [];
@@ -102,6 +104,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
       isLoading = true;
     });
     billTypes = await BillTypeService.getAllBillTypes();
+    bills2 = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     if (widget.bills != null) {
       bills = widget.bills;
     } else {
@@ -111,11 +115,11 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     for (int i = 0; i < bills.length; i++) {
       var type = billTypes
           .firstWhere(
-            (element) => element.billTypeId == bills[i].billTypeId.toString(),
+            (element) => element.billTypeId == bills[i].billTypeId,
           )
           .billName;
       billTypeList.add(type);
-      _billControllers.add(TextEditingController());
+      // _billControllers.add(TextEditingController());
     }
     photoList = widget.imageList ?? [];
     facilityList = await FacilityService.getFacilities();
@@ -159,27 +163,22 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
             isSubroom: true,
             propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
             roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
-                "-" +
+                " of " +
                 getRoomName(rooms[i].roomId),
           ));
         });
       }
     }
-
-    //Getting Tenant IDs by Property ID
     List<String> tenantList =
         propertyElement.tableproperty.tenantId.split(",").toList();
-
-    //Getting Tenant by Fetching from the Tenant Table
     for (var tenantId in tenantList) {
       Tenant tenant = await TenantService.getTenant(tenantId);
       setState(() {
-        //Adding all the Tenants to the List
         tenants.add(tenant);
       });
     }
-    roomsAvailable.length > 0 ? selectedRoomSubRoom = roomsAvailable[0] : null;
     setState(() {
+      roomsAvailable2.addAll(roomsAvailable);
       isLoading = false;
     });
   }
@@ -348,16 +347,14 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 260,
+                              height: 300,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
                                 itemCount: bills.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   _billControllers.add(TextEditingController());
-                                  return billCard(
-                                    index
-                                  );
+                                  return billCard(index);
                                 },
                               ),
                             ),
@@ -465,7 +462,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               ],
                             ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
+                          height: MediaQuery.of(context).size.height * 0.05),
                       buttonWidget(context),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
@@ -477,7 +474,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
       ),
     );
   }
-Widget billCard(int index) {
+
+  Widget billCard(int index) {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Container(
@@ -542,6 +540,26 @@ Widget billCard(int index) {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bill No:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Flexible(
+                  child: Text(
+                    bills[index].billId,
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
               children: [
                 Text(
                   'Added On:  ',
@@ -550,6 +568,23 @@ Widget billCard(int index) {
                 ),
                 Text(
                   dateChange(bills[index].dateAdded.toLocal()),
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .subtitle1
+                      .copyWith(color: Colors.black),
+                )
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
+              children: [
+                Text(
+                  'Last Amount:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  bills[index].amount.toString(),
                   style: Theme.of(context)
                       .primaryTextTheme
                       .subtitle1
@@ -584,36 +619,35 @@ Widget billCard(int index) {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: TextField(
-                      controller: _billControllers[index],
-                      onChanged: (value) {
-                        bills[index].amount = double.parse(value);
-                      },
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: InputDecoration(
-                        filled: true,
-                        prefix: Text("₹"),
-                        hintText: 'Enter Amount',
-                        fillColor: Colors.grey[300],
-                        labelStyle:
-                            TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                      ),
-                    ),
-                  ),
+              padding: const EdgeInsets.only(top: 8.0),
+              child: TextField(
+                controller: _billControllers[index],
+                onChanged: (value) {
+                  bills[index].amount = double.parse(value);
+                },
+                obscureText: false,
+                keyboardType: TextInputType.number,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefix: Text("₹"),
+                  hintText: 'Enter Amount',
+                  fillColor: Colors.grey[300],
+                  labelStyle:
+                      TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                ),
+              ),
+            ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
           ],
         ),
@@ -621,7 +655,6 @@ Widget billCard(int index) {
     );
   }
 
-  
   dateChange(DateTime date) {
     return date.day.toString().padLeft(2, "0") +
         "-" +
@@ -650,11 +683,32 @@ Widget billCard(int index) {
         ),
         IconButton(
           onPressed: () {
-            setState(() {
-              issueTableList.removeAt(index);
-              rows.removeAt(index);
-              photoList.removeAt(index);
-            });
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Are you sure?'),
+                content: Text('Do you want to delete this issue?'),
+                actions: <Widget>[
+                  MaterialButton(
+                    child: Text('Yes'),
+                    onPressed: () {
+                      setState(() {
+                        issueTableList.removeAt(index);
+                        rows.removeAt(index);
+                        photoList.removeAt(index);
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  MaterialButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
           },
           icon: Icon(
             Icons.delete,
@@ -709,6 +763,20 @@ Widget billCard(int index) {
   }
 
   showRoomSelect() {
+    roomsAvailable.clear();
+    roomsAvailable.addAll(roomsAvailable2);
+    issueTableList.forEach((elementx) {
+      roomsAvailable.removeWhere(
+          (element) => element.propertyRoomSubRoomId == elementx.roomsubroomId);
+    });
+    roomsAvailable.add(
+      CustomRoomSubRoom(
+        isSubroom: false,
+        propertyRoomSubRoomId: 9999999999999,
+        roomSubRoomName: "Choose Room/Subroom",
+      ),
+    );
+    selectedRoomSubRoom = roomsAvailable.last;
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -773,11 +841,27 @@ Widget billCard(int index) {
   }
 
   Widget issueCard(int tableindex) {
+    List<int> lint = [];
+    if (issueTableList[tableindex].issub == 1) {
+      SubRoomElement subRoom = subRooms.firstWhere((element) =>
+          element.propertySubRoomId ==
+          issueTableList[tableindex].roomsubroomId);
+      List<String> lstring = subRoom.facility.split(",");
+      lint = lstring.map(int.parse).toList();
+    } else {
+      RoomsToPropertyModel room = rooms.firstWhere((element) =>
+          element.propertyRoomId == issueTableList[tableindex].roomsubroomId);
+      List<String> lstring = room.facility.split(",");
+      lint = lstring.map(int.parse).toList();
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         titleWidget(
-            context, issueTableList[tableindex].roomsubroomName, tableindex),
+            context,
+            issueTableList[tableindex].roomsubroomName +
+                '(${rows[tableindex].length}/${lint.length})',
+            tableindex),
         SizedBox(
           height: 8,
         ),
@@ -790,8 +874,11 @@ Widget billCard(int index) {
             itemCount: rows[tableindex].length + 1,
             itemBuilder: (context, index) {
               return index == rows[tableindex].length
-                  ? addRowButton(tableindex, index)
-                  : issueRowCard(index, tableindex, issueTableList[tableindex]);
+                  ? lint.length == index
+                      ? SizedBox()
+                      : addRowButton(tableindex, index)
+                  : issueRowCard(
+                      index, tableindex, issueTableList[tableindex], lint);
             },
           ),
         ),
@@ -817,7 +904,7 @@ Widget billCard(int index) {
             photoList[tableindex].add([]);
             rows[tableindex].add(
               Issue(
-                  issueName: "",
+                  issueName: "Not Selected",
                   status: "Excelent",
                   remarks: "",
                   photo: photoList[tableindex][index]),
@@ -829,7 +916,11 @@ Widget billCard(int index) {
   }
 
   Widget issueRowCard(
-      int index, int tableindex, IssueTableData issueTableData) {
+    int index,
+    int tableindex,
+    IssueTableData issueTableData,
+    List<int> lint,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -860,27 +951,22 @@ Widget billCard(int index) {
                 children: [
                   InkWell(
                     onTap: () async {
-                      List<int> lint = [];
-                      if (issueTableData.issub == 1) {
-                        SubRoomElement subRoom =
-                            await SubRoomService.getSubRoomById(
-                                issueTableData.roomsubroomId);
-                        print(subRoom.facility);
-                        List<String> lstring = subRoom.facility.split(",");
-                        lint = lstring.map(int.parse).toList();
-                        showCardEdit(rows[tableindex][index], lint);
-                      } else {
-                        RoomsToPropertyModel room =
-                            await RoomService.getRoomById(
-                                issueTableData.roomsubroomId);
-                        List<String> lstring = room.facility.split(",");
-                        lint = lstring.map(int.parse).toList();
-                        showCardEdit(rows[tableindex][index], lint);
-                      }
+                      showCardEdit(rows[tableindex][index], lint, tableindex);
                     },
-                    child: Icon(
-                      Icons.edit,
-                      color: Colors.blueAccent,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Edit",
+                          style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16),
+                        ),
+                        Icon(
+                          Icons.edit,
+                          color: Colors.blueAccent,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
@@ -888,26 +974,60 @@ Widget billCard(int index) {
                   ),
                   InkWell(
                     onTap: () {
-                      setState(() {
-                        rows[tableindex].removeAt(index);
-                        photoList.remove(tableindex);
-                      });
-                      print(rows[tableindex][index].toJson());
-                      print(photoList[tableindex].toString());
-                      print(index);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Are you sure?"),
+                          content: Text(
+                              "This will delete the particular issue and all the photos attached to it"),
+                          actions: [
+                            MaterialButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            MaterialButton(
+                              child: Text("Delete"),
+                              onPressed: () {
+                                setState(() {
+                                  rows[tableindex].removeAt(index);
+                                  photoList.remove(tableindex);
+                                });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.redAccent,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Delete",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16),
+                        ),
+                        Icon(
+                          Icons.delete,
+                          color: Colors.redAccent,
+                        ),
+                      ],
                     ),
                   ),
                 ],
+              ),
+              Divider(
+                thickness: 1,
+                color: Colors.grey.withOpacity(0.5),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Issue: ',
+                    'Particular: ',
                     style:
                         Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                               color: Colors.black,
@@ -1003,13 +1123,20 @@ Widget billCard(int index) {
     );
   }
 
-  showCardEdit(Issue issue, List<int> intList) {
+  showCardEdit(Issue issue, List<int> intList,int tableindex) {
     List<Facility> facilityList2 = [];
     facilityList.forEach((element) {
       if (intList.contains(element.facilityId)) {
         facilityList2.add(element);
       }
     });
+    rows[tableindex].forEach((elementx) {
+      facilityList2
+          .removeWhere((element) => element.facilityName == elementx.issueName);
+    });
+    facilityList2.add(
+      Facility(facilityId: 84, facilityName: "Not Selected"),
+    );
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -1045,7 +1172,7 @@ Widget billCard(int index) {
                           )),
                       SizedBox(height: 4),
                       Text(
-                        'Issue: ',
+                        'Particular: ',
                         style: Theme.of(context)
                             .primaryTextTheme
                             .subtitle1
@@ -1059,7 +1186,7 @@ Widget billCard(int index) {
                           icon: Icon(Icons.hvac),
                         ), //, color: Colors.white10
                         value: issue.issueName == ""
-                            ? facilityList2[0].facilityName
+                            ? "Not Selected"
                             : issue.issueName,
                         items: facilityList2
                             .map<DropdownMenuItem>((Facility value) {
@@ -1118,6 +1245,8 @@ Widget billCard(int index) {
                         padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: TextFormField(
+                          minLines: 5,
+                          maxLines: 8,
                           initialValue: issue.remarks,
                           onChanged: (value) {
                             this.setState(() {
@@ -1158,7 +1287,7 @@ Widget billCard(int index) {
   Widget photoPick(List<String> list, int index1) {
     return Container(
       width: 120,
-      height: 50,
+      height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: list.length + 1,
@@ -1177,7 +1306,14 @@ Widget billCard(int index) {
                       list = tempList;
                     });
                   },
-                  child: Icon(Icons.add),
+                  child: Container(
+                    width: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.add),
+                  ),
                 )
               : InkWell(
                   child: Image.file(
@@ -1186,9 +1322,31 @@ Widget billCard(int index) {
                     width: 45,
                   ),
                   onTap: () {
-                    setState(() {
-                      list.removeAt(index);
-                    });
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Delete'),
+                        content:
+                            Text('Are you sure you want to delete this image?'),
+                        actions: <Widget>[
+                          MaterialButton(
+                            child: Text('Yes'),
+                            onPressed: () {
+                              setState(() {
+                                list.removeAt(index);
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          MaterialButton(
+                            child: Text('No'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    );
                   },
                 );
         },
@@ -1291,13 +1449,21 @@ Widget billCard(int index) {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              bills[i].lastUpdate = DateTime.now();
-                              await BillPropertyService.updateBillProperty(
-                                bills[i].id.toString(),
-                                jsonEncode(
-                                  bills[i].toJson(),
-                                ),
-                              );
+                              if (bills2[i].amount !=
+                                  double.parse(
+                                    bills[i]
+                                        .amount
+                                        .toString()
+                                        .replaceAll(",", ""),
+                                  )) {
+                                bills[i].lastUpdate = DateTime.now();
+                                await BillPropertyService.updateBillProperty(
+                                  bills[i].id.toString(),
+                                  jsonEncode(
+                                    bills[i].toJson(),
+                                  ),
+                                );
+                              }
                             }
                             setState(() {
                               loading = false;
@@ -1314,8 +1480,10 @@ Widget billCard(int index) {
                                 Navigator.of(_scaffoldKey.currentContext).pop();
                               });
                             } else {
-                              showInSnackBar(_scaffoldKey.currentContext,
-                                  "Move Out Inspection Addition unsuccessfull! ", 500);
+                              showInSnackBar(
+                                  _scaffoldKey.currentContext,
+                                  "Move Out Inspection Addition unsuccessfull! ",
+                                  500);
                             }
                           },
                         ),
@@ -1325,7 +1493,8 @@ Widget billCard(int index) {
                             setState(() {
                               loading = false;
                             });
-                            Navigator.of(context).pop();FocusScope.of(context).unfocus();
+                            Navigator.of(context).pop();
+                            FocusScope.of(context).unfocus();
                           },
                         ),
                       ],
