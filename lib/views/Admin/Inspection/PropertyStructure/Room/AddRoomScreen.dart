@@ -39,6 +39,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   List<bool> _roomSelection = List.generate(3, (_) => false);
 
   List<Facility> facilities = [];
+  List<Facility> facilities2 = [];
   List<Facility> facilityTag = [];
   List<String> flooringType = [];
   List<String> imageList;
@@ -47,7 +48,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
   final formkey = new GlobalKey<FormState>();
 
- 
   TextEditingController roomLengthFeetController =
       new TextEditingController(text: "0");
   TextEditingController roomLengthInchesController =
@@ -71,13 +71,15 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     });
     propertyElement = widget.propertyElement;
     flooringType = PropertyFunctions.getFlooringType();
-    facilities = await FacilityService.getFacilities();
     _floorSelections = List.generate(3, (_) => false);
     _roomSelection = List.generate(3, (_) => false);
     marbelTypeDropDownValue = flooringType[0];
-    facilityDropDownValue = facilities[0];
-    roomTypes =  widget.roomTypes.where((element) => element.issub != 1).toList();
-    roomTypeDropDownValue = widget.roomTypes[0];
+    roomTypes =
+        widget.roomTypes.where((element) => element.issub != 1).toList();
+    roomTypeDropDownValue = roomTypes[0];
+    facilities = await FacilityService.getFacilities();
+    facilities2 = await FacilityService.getFacilities();
+    facilityDropDownValue = facilities.firstWhere((element) => element.facilityId == 84);
     setState(() {
       isLoading = false;
     });
@@ -163,11 +165,20 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                       color: Color(0xff314B8C),
                                     ),
                                     onChanged: (value) {
+                                      facilities.clear();
+                                      facilityTag.clear();
+                                      facilities2.forEach((element) {
+                                        if (element.roomId.split(",").contains(
+                                            value.roomId.toString())) {
+                                          facilities.add(element);
+                                        }
+                                      });
+                                      facilityDropDownValue = facilities[0];
                                       setState(() {
                                         roomTypeDropDownValue = value;
                                       });
                                     },
-                                    items: widget.roomTypes
+                                    items: roomTypes
                                         .map<DropdownMenuItem>((value) {
                                       return DropdownMenuItem(
                                         value: value,
@@ -420,7 +431,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
             color: Color(0xff314B8C),
             onPressed: () async {
               List<String> modelFacilty = [];
-              facilityTag.forEach((element) { 
+              facilityTag.forEach((element) {
                 modelFacilty.add(element.facilityId.toString());
               });
               double roomLength = double.parse(roomLengthFeetController.text) +

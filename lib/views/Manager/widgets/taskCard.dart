@@ -13,7 +13,7 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Manager/Property/PropertyDetailScreen.dart';
 import 'package:propview/views/Manager/Property/PropertyOwnerDetailScreen.dart';
-import 'package:propview/views/Manager/TaskManager/SoloCalendar.dart';
+import 'package:propview/views/Admin/TaskManager/SoloCalendar.dart';
 
 // ignore: must_be_immutable
 class TaskCard extends StatefulWidget {
@@ -73,7 +73,7 @@ class _TaskCardState extends State<TaskCard> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => SoloCalendar(
-                          id: widget.taskElement.assignedTo,
+                          user: widget.currentUser,
                         ),
                       ),
                     );

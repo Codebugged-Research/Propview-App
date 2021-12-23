@@ -36,6 +36,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
   PropertyRoom subRoomTypeDropDownValue;
 
   List<Facility> facilities = [];
+  List<Facility> facilities2 = [];
   List<Facility> facilityTag = [];
   List<String> imageList;
   List<RoomsToPropertyModel> rooms = [];
@@ -72,7 +73,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     setState(() {
       isLoading = true;
     });
-    facilities = await FacilityService.getFacilities();
+    facilities2 = await FacilityService.getFacilities();
     subRoom = widget.subRoom;
     propertyElement = widget.propertyElement;
     roomLengthFeetController.text = (subRoom.roomSize1.toInt()).toString();
@@ -82,14 +83,22 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     roomWidthInchesController.text =
         (((subRoom.roomSize2 * 10) % 10)*1.2).toInt().toString();
     subRoom.facility.split(",").forEach((element) {
-       facilityTag.add(facilities
+       facilityTag.add(facilities2
           .firstWhere((element2) => element2.facilityId == int.tryParse(element))?? 84);
     });
-    facilityDropDownValue = facilities.first;
     roomTypeDropDownValue =
         allRoomTypes.firstWhere((element) => element.roomId == subRoom.roomId);
     subRoomTypeDropDownValue = subRoomTypes
         .firstWhere((element) => element.roomId == subRoom.subRoomId);
+    facilities2.forEach((element) {
+      if (element.roomId
+          .split(",")
+          .contains(subRoomTypeDropDownValue.roomId.toString())) {
+        facilities.add(element);
+      }
+    });
+    facilityDropDownValue =
+        facilities.firstWhere((element) => element.facilityId == 84);
     setState(() {
       isLoading = false;
     });
@@ -201,6 +210,16 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                     color: Color(0xff314B8C),
                                   ),
                                   onChanged: (value) {
+                                    facilities.clear();
+                                    facilityTag.clear();
+                                    facilities2.forEach((element) {
+                                      if (element.roomId
+                                          .split(",")
+                                          .contains(value.roomId.toString())) {
+                                        facilities.add(element);
+                                      }
+                                    });
+                                    facilityDropDownValue = facilities[0];
                                     setState(() {
                                       subRoomTypeDropDownValue = value;
                                     });

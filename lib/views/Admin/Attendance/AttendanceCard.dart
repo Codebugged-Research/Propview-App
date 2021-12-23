@@ -139,7 +139,7 @@ class _AttendanceCardState extends State<AttendanceCard> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => SoloCalendar(
-                            id: widget.attd.user.userId.toString(),
+                            user: widget.attd.user,
                           ),
                         ),
                       );

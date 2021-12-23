@@ -7,8 +7,8 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Admin/TaskManager/SoloCalendar.dart';
 import 'package:propview/views/Employee/Profile/ProfileScreen.dart';
-import 'package:propview/views/Employee/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Employee/TaskManager/CreateTaskScreen.dart';
 import 'package:propview/views/Employee/widgets/taskCard.dart';
 
@@ -135,10 +135,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         children: [
                           InkWell(
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CalenderScreen(
-                                        taskList: pendingTaskList,
-                                      )));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SoloCalendar(
+                                    user: user,
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               height: 35,

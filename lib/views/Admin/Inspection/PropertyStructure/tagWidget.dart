@@ -53,7 +53,8 @@ class _TagWidgetState extends State<TagWidget> {
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Container(
-                padding: const EdgeInsets.all(4),
+                height: 32,
+                padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   color: Color(0xff314B8C),
                   borderRadius: BorderRadius.circular(8),
@@ -61,7 +62,7 @@ class _TagWidgetState extends State<TagWidget> {
                 child: Text(
                   widget.tagList[index].facilityName,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).primaryTextTheme.caption.copyWith(
+                  style: Theme.of(context).primaryTextTheme.headline6.copyWith(
                       color: Colors.white, fontWeight: FontWeight.w700),
                 ),
               ),

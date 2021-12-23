@@ -14,6 +14,7 @@ class TaskDetailScreen extends StatefulWidget {
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    print(widget.taskElement.taskName);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

@@ -75,7 +75,7 @@ class _TaskCardState extends State<TaskCard> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => SoloCalendar(
-                          id: widget.taskElement.assignedTo,
+                          user: widget.currentUser,
                         ),
                       ),
                     );
@@ -204,9 +204,16 @@ class _TaskCardState extends State<TaskCard> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          'Details',
-                          style: Theme.of(context).primaryTextTheme.headline6,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Details',
+                              style:
+                                  Theme.of(context).primaryTextTheme.headline6,
+                            ),
+                            Icon(Icons.edit),
+                          ],
                         )),
                     Align(
                         alignment: Alignment.center,

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:propview/models/BillToProperty.dart';
-import 'package:propview/models/Issue.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/models/RegularInspectionRow.dart';
@@ -52,14 +51,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
   List<CustomRoomSubRoom> roomsAvailable = [];
+  List<CustomRoomSubRoom> roomsAvailable2 = [];
   CustomRoomSubRoom selectedRoomSubRoom;
-
   TextEditingController billDuesController;
   TextEditingController termiteCheckController;
   TextEditingController seePageController;
   TextEditingController generalCleanlinessController;
   TextEditingController otherIssueController;
   List<BillToProperty> bills = [];
+  List<BillToProperty> bills2 = [];
 
   @override
   void initState() {
@@ -79,6 +79,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     super.dispose();
     print("exit");
   }
+
   List<String> billTypeList = [];
   List billTypes = [];
   List<TextEditingController> _billControllers = [];
@@ -92,6 +93,8 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     });
     propertyElement = widget.propertyElement;
     billTypes = await BillTypeService.getAllBillTypes();
+    bills2 = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     if (widget.bills != null) {
       bills = widget.bills;
     } else {
@@ -101,11 +104,11 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     for (int i = 0; i < bills.length; i++) {
       var type = billTypes
           .firstWhere(
-            (element) => element.billTypeId == bills[i].billTypeId.toString(),
+            (element) => element.billTypeId == bills[i].billTypeId,
           )
           .billName;
       billTypeList.add(type);
-      _billControllers.add(TextEditingController());
+      // _billControllers.add(TextEditingController());
     }
     regularInspectionRowList = widget.regularInspectionRowList ?? [];
     roomTypes = await RoomTypeService.getRoomTypes();
@@ -141,14 +144,14 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             isSubroom: true,
             propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
             roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
-                "-" +
+                " of " +
                 getRoomName(rooms[i].roomId),
           ));
         });
       }
     }
-    selectedRoomSubRoom = roomsAvailable[0];
     setState(() {
+      roomsAvailable2.addAll(roomsAvailable);
       loader = false;
     });
   }
@@ -261,16 +264,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                           ? Container()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 260,
+                              height: 300,
                               child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: bills.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                  _billControllers.add(TextEditingController());
-                                  return billCard(
-                                    index
-                                  );
+                                    _billControllers
+                                        .add(TextEditingController());
+                                    return billCard(index);
                                   }),
                             ),
                       ListView.builder(
@@ -315,7 +317,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                               ],
                             ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
+                        height: MediaQuery.of(context).size.height * 0.05,
                       ),
                       regularInspectionRowList.length > 0
                           ? buttonWidget(context)
@@ -328,7 +330,9 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               ),
       ),
     );
-  }Widget billCard(int index) {
+  }
+
+  Widget billCard(int index) {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Container(
@@ -393,6 +397,26 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bill No:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Flexible(
+                  child: Text(
+                    bills[index].billId,
+                    style: Theme.of(context)
+                        .primaryTextTheme
+                        .subtitle1
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
               children: [
                 Text(
                   'Added On:  ',
@@ -401,6 +425,23 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 ),
                 Text(
                   dateChange(bills[index].dateAdded.toLocal()),
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .subtitle1
+                      .copyWith(color: Colors.black),
+                )
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Row(
+              children: [
+                Text(
+                  'Last Amount:  ',
+                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  bills[index].amount.toString(),
                   style: Theme.of(context)
                       .primaryTextTheme
                       .subtitle1
@@ -435,36 +476,35 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: TextField(
-                      controller: _billControllers[index],
-                      onChanged: (value) {
-                        bills[index].amount = double.parse(value);
-                      },
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: InputDecoration(
-                        filled: true,
-                        prefix: Text("₹"),
-                        hintText: 'Enter Amount',
-                        fillColor: Colors.grey[300],
-                        labelStyle:
-                            TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
-                        contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(12.0)),
-                      ),
-                    ),
-                  ),
+              padding: const EdgeInsets.only(top: 8.0),
+              child: TextField(
+                controller: _billControllers[index],
+                onChanged: (value) {
+                  bills[index].amount = double.parse(value);
+                },
+                obscureText: false,
+                keyboardType: TextInputType.number,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  filled: true,
+                  prefix: Text("₹"),
+                  hintText: 'Enter Amount',
+                  fillColor: Colors.grey[300],
+                  labelStyle:
+                      TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(12.0)),
+                ),
+              ),
+            ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
           ],
         ),
@@ -472,7 +512,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     );
   }
 
-  
   dateChange(DateTime date) {
     return date.day.toString().padLeft(2, "0") +
         "-" +
@@ -480,7 +519,6 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
         "-" +
         date.year.toString();
   }
-
 
   Widget inspectionCard(int tableindex) {
     return Padding(
@@ -638,6 +676,20 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   );
 
   showRoomSelect() {
+    roomsAvailable.clear();
+    roomsAvailable.addAll(roomsAvailable2);
+    regularInspectionRowList.forEach((elementx) {
+      roomsAvailable.removeWhere(
+          (element) => element.propertyRoomSubRoomId == elementx.roomsubroomId);
+    });
+    roomsAvailable.add(
+      CustomRoomSubRoom(
+        isSubroom: false,
+        propertyRoomSubRoomId: 9999999999999,
+        roomSubRoomName: "Choose Room/Subroom",
+      ),
+    );
+    selectedRoomSubRoom = roomsAvailable.last;
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -722,9 +774,30 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
         ),
         IconButton(
           onPressed: () {
-            setState(() {
-              regularInspectionRowList.removeAt(index);
-            });
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Are you sure?'),
+                content: Text('Do you want to delete this issue?'),
+                actions: <Widget>[
+                  MaterialButton(
+                    child: Text('Yes'),
+                    onPressed: () {
+                      setState(() {
+                        regularInspectionRowList.removeAt(index);
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  MaterialButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
           },
           icon: Icon(
             Icons.delete,
@@ -795,13 +868,21 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              bills[i].lastUpdate = DateTime.now();
-                              await BillPropertyService.updateBillProperty(
-                                bills[i].id.toString(),
-                                jsonEncode(
-                                  bills[i].toJson(),
-                                ),
-                              );
+                              if (bills2[i].amount !=
+                                  double.parse(
+                                    bills[i]
+                                        .amount
+                                        .toString()
+                                        .replaceAll(",", ""),
+                                  )) {
+                                bills[i].lastUpdate = DateTime.now();
+                                await BillPropertyService.updateBillProperty(
+                                  bills[i].id.toString(),
+                                  jsonEncode(
+                                    bills[i].toJson(),
+                                  ),
+                                );
+                              }
                             }
                             setState(() {
                               loading = false;

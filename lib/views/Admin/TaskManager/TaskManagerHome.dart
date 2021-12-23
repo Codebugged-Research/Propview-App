@@ -8,10 +8,11 @@ import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Profile/ProfileScreen.dart';
-import 'package:propview/views/Admin/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Admin/TaskManager/SearchTask.dart';
 import 'package:propview/views/Admin/TaskManager/CreateTaskScreen.dart';
 import 'package:propview/views/Admin/widgets/taskCard.dart';
+
+import 'SoloCalendar.dart';
 
 class TaskMangerHome extends StatefulWidget {
   @override
@@ -208,8 +209,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => CalenderScreen(
-                                    taskList: pendingTaskList,
+                                  builder: (context) => SoloCalendar(
+                                    user: user,
                                   ),
                                 ),
                               );

@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:propview/config.dart';
 
 import 'package:propview/models/Task.dart';
@@ -8,9 +7,8 @@ import 'package:propview/models/User.dart';
 import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/TaskManager/SoloCalendar.dart';
 import 'package:propview/views/Manager/Profile/ProfileScreen.dart';
-import 'package:propview/views/Manager/TaskManager/CalenderScreen.dart';
 import 'package:propview/views/Manager/TaskManager/CreateTaskScreen.dart';
 import 'package:propview/views/Manager/TaskManager/SearchTask.dart';
 import 'package:propview/views/Manager/widgets/taskCard.dart';
@@ -199,10 +197,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                           ),
                           InkWell(
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CalenderScreen(
-                                        taskList: pendingTaskList,
-                                      )));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SoloCalendar(
+                                    user: user,
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               height: 35,

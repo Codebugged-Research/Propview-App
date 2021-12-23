@@ -34,6 +34,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   PropertyRoom subRoomTypeDropDownValue;
 
   List<Facility> facilities = [];
+  List<Facility> facilities2 = [];
   List<Facility> facilityTag = [];
   List<RoomsToPropertyModel> rooms = [];
 
@@ -44,7 +45,6 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   PropertyElement propertyElement;
 
   final formkey = new GlobalKey<FormState>();
-
 
   TextEditingController roomLengthFeetController =
       new TextEditingController(text: "0");
@@ -80,7 +80,9 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
       }
     });
     facilities = await FacilityService.getFacilities();
-    facilityDropDownValue = facilities[0];
+    facilities2 = await FacilityService.getFacilities();
+    facilityDropDownValue =
+        facilities.firstWhere((element) => element.facilityId == 84);
     rooms = await RoomService.getRoomByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
     allRoomTypes = widget.roomTypes;
@@ -210,6 +212,17 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                         color: Color(0xff314B8C),
                                       ),
                                       onChanged: (value) {
+                                        facilities.clear();
+                                        facilityTag.clear();
+                                        facilities2.forEach((element) {
+                                          if (element.roomId
+                                              .split(",")
+                                              .contains(
+                                                  value.roomId.toString())) {
+                                            facilities.add(element);
+                                          }
+                                        });
+                                        facilityDropDownValue = facilities[0];
                                         setState(() {
                                           subRoomTypeDropDownValue = value;
                                         });
@@ -389,9 +402,9 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
             minWidth: 360,
             height: 55,
             color: Color(0xff314B8C),
-            onPressed: () async {              
+            onPressed: () async {
               List<String> modelFacilty = [];
-              facilityTag.forEach((element) { 
+              facilityTag.forEach((element) {
                 modelFacilty.add(element.facilityId.toString());
               });
               double roomLength = double.parse(roomLengthFeetController.text) +

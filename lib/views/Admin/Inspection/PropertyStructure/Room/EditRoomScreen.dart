@@ -41,6 +41,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
   List<bool> _roomSelection = List.generate(3, (_) => false);
 
   List<Facility> facilities = [];
+  List<Facility> facilities2 = [];
   List<Facility> facilityTag = [];
   List<String> flooringType = [];
 
@@ -59,28 +60,38 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
       isLoading = true;
     });
     flooringType = PropertyFunctions.getFlooringType();
-    facilities = await FacilityService.getFacilities();
+    // facilities = await FacilityService.getFacilities();
     room = widget.room;
     roomTypes = widget.roomTypes;
     roomTypeDropDownValue =
         roomTypes.firstWhere((element) => element.roomId == room.roomId);
+    facilities2 = await FacilityService.getFacilities();
+    facilities2.forEach((element) {
+      if (element.roomId
+          .split(",")
+          .contains(roomTypeDropDownValue.roomId.toString())) {
+        facilities.add(element);
+      }
+    });
     propertyElement = widget.propertyElement;
     roomLengthFeetController.text = (room.roomSize1.toInt()).toString();
     roomLengthInchesController.text =
-        (((room.roomSize1 * 10) % 10)*1.2).toInt().toString();
+        (((room.roomSize1 * 10) % 10) * 1.2).toInt().toString();
     roomWidthFeetController.text = (room.roomSize2.toInt()).toString();
     roomWidthInchesController.text =
-        (((room.roomSize2 * 10) % 10)*1.2).toInt().toString();
+        (((room.roomSize2 * 10) % 10) * 1.2).toInt().toString();
     room.bath == 1 ? _roomSelection[0] = true : _roomSelection[0] = false;
     room.balcony == 1 ? _roomSelection[1] = true : _roomSelection[1] = false;
     room.wardrobe == 1 ? _roomSelection[2] = true : _roomSelection[2] = false;
     _floorSelections[
         flooringType.indexWhere((element) => element == room.flooring)] = true;
     room.facility.split(",").forEach((element) {
-      facilityTag.add(facilities
-          .firstWhere((element2) => element2.facilityId == int.tryParse(element))?? 84);
+      facilityTag.add(facilities.firstWhere(
+              (element2) => element2.facilityId == int.tryParse(element)) ??
+          84);
     });
-    facilityDropDownValue = facilities.first;
+    facilityDropDownValue =
+        facilities.firstWhere((element) => element.facilityId == 84);
     setState(() {
       isLoading = false;
     });
@@ -140,7 +151,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(16, context)),
+                                    height:
+                                        UIConstants.fitToHeight(16, context)),
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text('Room Type',
@@ -161,11 +173,22 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                     color: Color(0xff314B8C),
                                   ),
                                   onChanged: (value) {
+                                    facilities.clear();
+                                    facilityTag.clear();
+                                    facilities2.forEach((element) {
+                                      if (element.roomId
+                                          .split(",")
+                                          .contains(value.roomId.toString())) {
+                                        facilities.add(element);
+                                      }
+                                    });
+                                    facilityDropDownValue = facilities[0];
                                     setState(() {
                                       roomTypeDropDownValue = value;
                                     });
                                   },
-                                  items: roomTypes.map<DropdownMenuItem>((value) {
+                                  items:
+                                      roomTypes.map<DropdownMenuItem>((value) {
                                     return DropdownMenuItem(
                                       value: value,
                                       child: Text(value.roomName),
@@ -173,7 +196,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                   }).toList(),
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(16, context)),
+                                    height:
+                                        UIConstants.fitToHeight(16, context)),
                                 Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text('Room Length',
@@ -184,7 +208,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w700))),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(4, context)),
+                                    height:
+                                        UIConstants.fitToHeight(4, context)),
                                 Row(
                                   children: [
                                     Flexible(
@@ -215,7 +240,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                   ],
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(8, context)),
+                                    height:
+                                        UIConstants.fitToHeight(8, context)),
                                 Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text('Room Breadth',
@@ -226,7 +252,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w700))),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(4, context)),
+                                    height:
+                                        UIConstants.fitToHeight(4, context)),
                                 Row(
                                   children: [
                                     Flexible(
@@ -257,7 +284,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                   ],
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(16, context)),
+                                    height:
+                                        UIConstants.fitToHeight(16, context)),
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text('Attached Room',
@@ -269,7 +297,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                               fontWeight: FontWeight.w700)),
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(16, context)),
+                                    height:
+                                        UIConstants.fitToHeight(16, context)),
                                 ToggleButtons(
                                   children: [
                                     Padding(
@@ -294,7 +323,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                   },
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(8, context)),
+                                    height:
+                                        UIConstants.fitToHeight(8, context)),
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text('Flooring Type',
@@ -306,7 +336,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                               fontWeight: FontWeight.w700)),
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(16, context)),
+                                    height:
+                                        UIConstants.fitToHeight(16, context)),
                                 ToggleButtons(
                                   children: [
                                     Padding(
@@ -333,7 +364,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                   },
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(8, context)),
+                                    height:
+                                        UIConstants.fitToHeight(8, context)),
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text('Articles',
@@ -368,16 +400,19 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                   }).toList(),
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(8, context)),
+                                    height:
+                                        UIConstants.fitToHeight(8, context)),
                                 Visibility(
                                   visible: facilityTag.length > 0,
                                   child: TagWidget(tagList: facilityTag),
                                 ),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(24, context)),
+                                    height:
+                                        UIConstants.fitToHeight(24, context)),
                                 buttonWidget(context),
                                 SizedBox(
-                                    height: UIConstants.fitToHeight(24, context)),
+                                    height:
+                                        UIConstants.fitToHeight(24, context)),
                               ],
                             ),
                           ),
@@ -439,7 +474,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
             color: Color(0xff314B8C),
             onPressed: () async {
               List<String> modelFacilty = [];
-              facilityTag.forEach((element) { 
+              facilityTag.forEach((element) {
                 modelFacilty.add(element.facilityId.toString());
               });
               double roomLength = double.parse(roomLengthFeetController.text) +
