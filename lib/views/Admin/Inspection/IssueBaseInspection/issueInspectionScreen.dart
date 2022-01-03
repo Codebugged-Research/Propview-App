@@ -463,64 +463,72 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      enableDrag: false,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       backgroundColor: Color(0xFFFFFFFF),
-      builder: (BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Choose Room',
-                    style: Theme.of(context).primaryTextTheme.headline6,
-                  )),
-              Align(
-                  alignment: Alignment.center,
-                  child: Divider(
-                    color: Color(0xff314B8C),
-                    thickness: 2.5,
-                    indent: 100,
-                    endIndent: 100,
-                  )),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              DropdownButtonFormField(
-                decoration: new InputDecoration(
-                    icon: Icon(Icons.language)), //, color: Colors.white10
-                value: selectedRoomSubRoom,
-                items: roomsAvailable
-                    .map<DropdownMenuItem>((CustomRoomSubRoom value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(value.roomSubRoomName),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedRoomSubRoom = newValue;
-                    issueTableList.add(IssueTableData(
-                      roomsubroomId: newValue.propertyRoomSubRoomId,
-                      roomsubroomName: newValue.roomSubRoomName,
-                      issub: newValue.isSubroom == true ? 1 : 0,
-                      issueRowId: "",
-                      propertyId:
-                          widget.propertyElement.tableproperty.propertyId,
-                    ));
-                    rows.add([]);
-                    photoList.add([]);
-                  });
-                  Routing.makeRouting(context, routeMethod: 'pop');
-                },
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            ],
+      builder: (BuildContext context) {
+        return  Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Choose Room',
+                      style: Theme.of(context).primaryTextTheme.headline6,
+                    )),
+                Align(
+                    alignment: Alignment.center,
+                    child: Divider(
+                      color: Color(0xff314B8C),
+                      thickness: 2.5,
+                      indent: 100,
+                      endIndent: 100,
+                    )),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                DropdownButtonFormField(
+                  decoration: new InputDecoration(
+                      icon: Icon(Icons.language)), //, color: Colors.white10
+                  value: selectedRoomSubRoom,
+                  items: roomsAvailable
+                      .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value.roomSubRoomName),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    if (newValue.roomSubRoomName == "Choose Room/Subroom") {
+                      Routing.makeRouting(context, routeMethod: 'pop');
+                      showInSnackBar(
+                          context, "Please choose a valid Room/SubRoom!", 1400);
+                    } else {
+                      setState(() {
+                        selectedRoomSubRoom = newValue;
+                        issueTableList.add(IssueTableData(
+                          roomsubroomId: newValue.propertyRoomSubRoomId,
+                          roomsubroomName: newValue.roomSubRoomName,
+                          issub: newValue.isSubroom == true ? 1 : 0,
+                          issueRowId: "",
+                          propertyId:
+                              widget.propertyElement.tableproperty.propertyId,
+                        ));
+                        rows.add([]);
+                        photoList.add([]);
+                      });
+                      Routing.makeRouting(context, routeMethod: 'pop');
+                    }
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
+      });
   }
 
   Widget issueCard(int tableindex) {
@@ -541,8 +549,10 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         titleWidget(
-            context, issueTableList[tableindex].roomsubroomName +
-                '(${rows[tableindex].length}/${lint.length})', tableindex),
+            context,
+            issueTableList[tableindex].roomsubroomName +
+                '(${rows[tableindex].length}/${lint.length})',
+            tableindex),
         SizedBox(
           height: 8,
         ),
@@ -557,8 +567,9 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
               return index == rows[tableindex].length
                   ? lint.length == index
                       ? SizedBox()
-                      :addRowButton(tableindex, index)
-                  : issueRowCard(index, tableindex, issueTableList[tableindex], lint);
+                      : addRowButton(tableindex, index)
+                  : issueRowCard(
+                      index, tableindex, issueTableList[tableindex], lint);
             },
           ),
         ),
@@ -570,8 +581,11 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   }
 
   Widget issueRowCard(
-      int index, int tableindex, IssueTableData issueTableData,
-    List<int> lint,) {
+    int index,
+    int tableindex,
+    IssueTableData issueTableData,
+    List<int> lint,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(

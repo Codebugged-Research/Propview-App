@@ -619,23 +619,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
             Row(
               children: [
                 Text(
-                  'Last Amount:  ',
-                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  bills[index].amount.toString(),
-                  style: Theme.of(context)
-                      .primaryTextTheme
-                      .subtitle1
-                      .copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-            Row(
-              children: [
-                Text(
                   'Last Update On:  ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
@@ -820,6 +803,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+        enableDrag: false,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       backgroundColor: Color(0xFFFFFFFF),
@@ -845,33 +829,40 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                   )),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               DropdownButtonFormField(
-                decoration: new InputDecoration(
-                    icon: Icon(Icons.language)), //, color: Colors.white10
-                value: selectedRoomSubRoom,
-                items: roomsAvailable
-                    .map<DropdownMenuItem>((CustomRoomSubRoom value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(value.roomSubRoomName),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedRoomSubRoom = newValue;
-                    issueTableList.add(IssueTableData(
-                      roomsubroomId: newValue.propertyRoomSubRoomId,
-                      roomsubroomName: newValue.roomSubRoomName,
-                      issub: newValue.isSubroom == true ? 1 : 0,
-                      issueRowId: "",
-                      propertyId:
-                          widget.propertyElement.tableproperty.propertyId,
-                    ));
-                    rows.add([]);
-                    photoList.add([]);
-                  });
-                  Routing.makeRouting(context, routeMethod: 'pop');
-                },
-              ),
+                  decoration: new InputDecoration(
+                      icon: Icon(Icons.language)), //, color: Colors.white10
+                  value: selectedRoomSubRoom,
+                  items: roomsAvailable
+                      .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value.roomSubRoomName),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    if (newValue.roomSubRoomName == "Choose Room/Subroom") {
+                      Routing.makeRouting(context, routeMethod: 'pop');
+                      showInSnackBar(
+                          context, "Please choose a valid Room/SubRoom!", 1400);
+                    } else {
+                      setState(
+                        () {
+                          selectedRoomSubRoom = newValue;
+                          issueTableList.add(IssueTableData(
+                            roomsubroomId: newValue.propertyRoomSubRoomId,
+                            roomsubroomName: newValue.roomSubRoomName,
+                            issub: newValue.isSubroom == true ? 1 : 0,
+                            issueRowId: "",
+                            propertyId:
+                                widget.propertyElement.tableproperty.propertyId,
+                          ));
+                          rows.add([]);
+                          photoList.add([]);
+                        },
+                      );
+                      Routing.makeRouting(context, routeMethod: 'pop');
+                    }
+                  }),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             ],
           ),
@@ -1158,144 +1149,164 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         backgroundColor: Color(0xFFFFFFFF),
         builder: (BuildContext context) {
-          return BottomSheet(
-            onClosing: () {},
-            builder: (BuildContext context) => StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Edit Issue Entry',
-                            style: Theme.of(context).primaryTextTheme.headline6,
-                          )),
-                      Align(
-                          alignment: Alignment.center,
-                          child: Divider(
-                            color: Color(0xff314B8C),
-                            thickness: 2.5,
-                            indent: 100,
-                            endIndent: 100,
-                          )),
-                      SizedBox(height: 4),
-                      Text(
-                        'Particular: ',
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle1
-                            .copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w800,
-                            ),
-                      ),
-                      DropdownButtonFormField(
-                        decoration: new InputDecoration(
-                          icon: Icon(Icons.hvac),
-                        ), //, color: Colors.white10
-                        value: issue.issueName == ""
-                            ? "Not Selected"
-                            : issue.issueName,
-                        items: facilityList2
-                            .map<DropdownMenuItem>((Facility value) {
-                          return DropdownMenuItem(
-                            value: value.facilityName,
-                            child: Text(value.facilityName),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          this.setState(() {
-                            issue.issueName = newValue;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Status: ',
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle1
-                            .copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w800,
-                            ),
-                      ),
-                      DropdownButtonFormField(
-                        decoration: new InputDecoration(
-                          icon: Icon(Icons.hvac),
-                        ), //, color: Colors.white10
-                        value: issue.status,
-                        items: ["Excelent", "Good", "Bad", "Broken"]
-                            .map<DropdownMenuItem>((String value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          this.setState(() {
-                            issue.status = newValue;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Remarks: ',
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle1
-                            .copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w800,
-                            ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: TextFormField(
-                          minLines: 5,
-                          maxLines: 8,
-                          initialValue: issue.remarks,
-                          onChanged: (value) {
-                            this.setState(() {
-                              issue.remarks = value;
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Align(
+          bool errorloading = false;
+          return  Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
                         alignment: Alignment.center,
-                        child: MaterialButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          color: Color(0xFF314B8C),
-                          child: Text(
-                            'Submit',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
+                        child: Text(
+                          'Edit Issue Entry',
+                          style: Theme.of(context).primaryTextTheme.headline6,
+                        )),
+                      errorloading
+                          ? Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Choose atlest one Particular and one valid Status',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
                                 ),
-                          ),
+                              ))
+                          : SizedBox(),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Divider(
+                          color: Color(0xff314B8C),
+                          thickness: 2.5,
+                          indent: 100,
+                          endIndent: 100,
+                        )),
+                    SizedBox(height: 4),
+                    Text(
+                      'Particular: ',
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
+                    ),
+                    DropdownButtonFormField(
+                      decoration: new InputDecoration(
+                        icon: Icon(Icons.hvac),
+                      ), //, color: Colors.white10
+                      value: issue.issueName == ""
+                          ? "Not Selected"
+                          : issue.issueName,
+                      items:
+                          facilityList2.map<DropdownMenuItem>((Facility value) {
+                        return DropdownMenuItem(
+                          value: value.facilityName,
+                          child: Text(value.facilityName),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        this.setState(() {
+                          issue.issueName = newValue;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Status: ',
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
+                    ),
+                    DropdownButtonFormField(
+                      decoration: new InputDecoration(
+                        icon: Icon(Icons.hvac),
+                      ), //, color: Colors.white10
+                      value: issue.status,
+                      items: [
+                          "Average",
+                          "Clean",
+                          "Dirty",
+                          "Not Selected",
+                          "Not Working",
+                          "Working"
+                        ]
+                          .map<DropdownMenuItem>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        this.setState(() {
+                          issue.status = newValue;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Remarks: ',
+                      style:
+                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: TextFormField(
+                        minLines: 5,
+                        maxLines: 8,
+                        initialValue: issue.remarks,
+                        onChanged: (value) {
+                          this.setState(() {
+                            issue.remarks = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.center,
+                      child: MaterialButton(
+                        onPressed: () {
+                          if (issue.issueName == "Not Selected" ||
+                                issue.status == "Not Selected") {
+                              setState(() {
+                                errorloading = true;
+                              });
+                              Future.delayed(Duration(milliseconds: 3200), () {
+                                setState(() {
+                                  errorloading = false;
+                                });
+                              });
+                            } else {
+                              Navigator.pop(context);
+                              FocusScope.of(context).unfocus();
+                            }
+                        },
+                        color: Color(0xFF314B8C),
+                        child: Text(
+                          'Submit',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .subtitle1
+                              .copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            }),
-          );
-        });
+              ),
+            );
+          });
   }
 
   Widget addRowButton(int tableindex, int index) {
@@ -1314,7 +1325,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
             rows[tableindex].add(
               Issue(
                   issueName: "Not Selected",
-                  status: "Excelent",
+                  status: "Not Selected",
                   remarks: "",
                   photo: photoList[tableindex][index]),
             );
@@ -1484,7 +1495,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                               if (bills2[i].amount !=
+                              if (bills2[i].amount !=
                                   double.parse(
                                     bills[i]
                                         .amount

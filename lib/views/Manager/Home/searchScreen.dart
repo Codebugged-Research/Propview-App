@@ -102,7 +102,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () => _controller.clear(),
+                            onPressed: () {
+                              setState(() {
+                                _controller.clear();
+                                resultProperty.clear();
+                              });
+                            },
                             icon: Icon(Icons.clear),
                           ),
                           IconButton(
@@ -128,15 +133,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemCount: resultProperty.length,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            if (index == resultProperty.length - 1 &&
-                                index == 0)
-                              return Text("No Owners Found");
-                            else
-                              return PropertyCard(
-                                propertyElement: resultProperty[index],
-                              );
-                          },
-                        ),
+                            return PropertyCard(
+                              propertyElement: resultProperty[index],
+                            );
+                          }),
                 ),
                 flex: 9,
               ),

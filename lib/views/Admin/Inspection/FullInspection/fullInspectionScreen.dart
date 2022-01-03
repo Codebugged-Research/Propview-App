@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
@@ -736,66 +737,75 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
     selectedRoomSubRoom = roomsAvailable.last;
     return showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
-      backgroundColor: Color(0xFFFFFFFF),
-      builder: (BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Choose Room',
-                    style: Theme.of(context).primaryTextTheme.headline6,
-                  )),
-              Align(
-                  alignment: Alignment.center,
-                  child: Divider(
-                    color: Color(0xff314B8C),
-                    thickness: 2.5,
-                    indent: 100,
-                    endIndent: 100,
-                  )),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              DropdownButtonFormField(
-                decoration: new InputDecoration(
-                    icon: Icon(Icons.language)), //, color: Colors.white10
-                value: selectedRoomSubRoom,
-                items: roomsAvailable
-                    .map<DropdownMenuItem>((CustomRoomSubRoom value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(value.roomSubRoomName),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedRoomSubRoom = newValue;
-                    issueTableList.add(IssueTableData(
-                      roomsubroomId: newValue.propertyRoomSubRoomId,
-                      roomsubroomName: newValue.roomSubRoomName,
-                      issub: newValue.isSubroom == true ? 1 : 0,
-                      issueRowId: "",
-                      propertyId:
-                          widget.propertyElement.tableproperty.propertyId,
-                    ));
-                    rows.add([]);
-                    photoList.add([]);
-                  });
-                  Routing.makeRouting(context, routeMethod: 'pop');
-                },
+        context: context,
+        isScrollControlled: true,
+        enableDrag: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        backgroundColor: Color(0xFFFFFFFF),
+        builder: (BuildContext context) {
+          return  Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Choose Room',
+                          style: Theme.of(context).primaryTextTheme.headline6,
+                        )),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Divider(
+                          color: Color(0xff314B8C),
+                          thickness: 2.5,
+                          indent: 100,
+                          endIndent: 100,
+                        )),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    DropdownButtonFormField(
+                      decoration: new InputDecoration(
+                          icon: Icon(Icons.language)), //, color: Colors.white10
+                      value: selectedRoomSubRoom,
+                      items: roomsAvailable
+                          .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value.roomSubRoomName),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue.roomSubRoomName == "Choose Room/Subroom") {
+                          Routing.makeRouting(context, routeMethod: 'pop');
+                          showInSnackBar(context,
+                              "Please choose a valid Room/SubRoom!", 1400);
+                        } else {
+                          setState(() {
+                            selectedRoomSubRoom = newValue;
+                            issueTableList.add(IssueTableData(
+                              roomsubroomId: newValue.propertyRoomSubRoomId,
+                              roomsubroomName: newValue.roomSubRoomName,
+                              issub: newValue.isSubroom == true ? 1 : 0,
+                              issueRowId: "",
+                              propertyId: widget
+                                  .propertyElement.tableproperty.propertyId,
+                            ));
+                            rows.add([]);
+                            photoList.add([]);
+                          });
+                          Routing.makeRouting(context, routeMethod: 'pop');
+                        }
+                      },
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  ],
+                ),
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            ],
-          ),
-        ),
-      ),
-    );
+            );
+        });
   }
 
   showCardEdit(Issue issue, List<int> intList, int tableindex) {
@@ -814,15 +824,16 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
     );
     return showModalBottomSheet(
         context: context,
+        // isDismissible: false,
         isScrollControlled: true,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         backgroundColor: Color(0xFFFFFFFF),
         builder: (BuildContext context) {
-          return BottomSheet(
-            onClosing: () {},
-            builder: (BuildContext context) => StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+          bool errorloading = false;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
               return Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 16.0, horizontal: 16.0),
@@ -837,6 +848,17 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                             'Edit Issue Entry',
                             style: Theme.of(context).primaryTextTheme.headline6,
                           )),
+                      errorloading
+                          ? Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Choose atlest one Particular and one valid Status',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                ),
+                              ))
+                          : SizedBox(),
                       Align(
                           alignment: Alignment.center,
                           child: Divider(
@@ -892,8 +914,14 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           icon: Icon(Icons.hvac),
                         ), //, color: Colors.white10
                         value: issue.status,
-                        items: ["Excelent", "Good", "Bad", "Broken"]
-                            .map<DropdownMenuItem>((String value) {
+                        items: [
+                          "Average",
+                          "Clean",
+                          "Dirty",
+                          "Not Selected",
+                          "Not Working",
+                          "Working"
+                        ].map<DropdownMenuItem>((String value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value),
@@ -935,8 +963,20 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         alignment: Alignment.center,
                         child: MaterialButton(
                           onPressed: () {
-                            Navigator.pop(context);
-                            FocusScope.of(context).unfocus();
+                            if (issue.issueName == "Not Selected" ||
+                                issue.status == "Not Selected") {
+                              setState(() {
+                                errorloading = true;
+                              });
+                              Future.delayed(Duration(milliseconds: 3200), () {
+                                setState(() {
+                                  errorloading = false;
+                                });
+                              });
+                            } else {
+                              Navigator.pop(context);
+                              FocusScope.of(context).unfocus();
+                            }
                           },
                           color: Color(0xFF314B8C),
                           child: Text(
@@ -955,7 +995,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                   ),
                 ),
               );
-            }),
+            },
           );
         });
   }
@@ -1025,7 +1065,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             rows[tableindex].add(
               Issue(
                   issueName: "Not Selected",
-                  status: "Excelent",
+                  status: "Not Selected",
                   remarks: "",
                   photo: photoList[tableindex][index]),
             );
@@ -1335,7 +1375,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                     child: Text(
                       rows[tableindex][index].remarks,
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                      maxLines: 1,
                       style:
                           Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                                 color: Colors.black,
