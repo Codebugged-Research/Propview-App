@@ -17,6 +17,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/Profile/ExportAttendance.dart';
 import 'package:propview/views/NotifcationScreen.dart';
 import 'package:propview/views/loginScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -290,10 +291,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   profileInfo(
                       'Email', '${user.officialEmail}', Icons.mail, () {}),
                   profileInfo(
-                      'Access Level',
-                      '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
-                      Icons.security,
-                      () {}),
+                    'Access Level',
+                    '${user.userType.replaceFirst(user.userType.substring(0, 1), user.userType.substring(0, 1).toUpperCase())}',
+                    Icons.security,
+                    () {},
+                  ),
+                  profileInfo(
+                    'Export Attendance',
+                    'Choose a date range',
+                    Icons.import_export,
+                    () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ExportAttendance(),
+                        ),
+                      );
+                    },
+                  ),
                   profileInfo(
                       'Reset Cache', 'Clear the cache data', Icons.clear,
                       () async {

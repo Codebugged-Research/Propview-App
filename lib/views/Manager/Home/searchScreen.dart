@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
-import 'package:propview/services/propertyOwnerService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Home/OwnerPropertyListScreen.dart';
 import 'package:propview/views/Admin/widgets/propertyCard.dart';
@@ -33,9 +32,13 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     property = widget.property;
     property.data.property.forEach((element) {
-      element.propertyOwner.ownerName.toLowerCase().contains(_controller.text)
-          ? resultProperty.add(element)
-          : print("skip");
+      if (element.propertyOwner.ownerName
+          .toLowerCase()
+          .contains(_controller.text)) {
+        setState(() {
+          resultProperty.add(element);
+        });
+      }
     });
     setState(() {
       loading = false;
@@ -133,9 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemCount: resultProperty.length,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            return PropertyCard(
-                              propertyElement: resultProperty[index],
-                            );
+                            return propertyOwnerCard(resultProperty[index].propertyOwner);
                           }),
                 ),
                 flex: 9,

@@ -8,6 +8,7 @@ import 'package:propview/services/regulationInspectionRowService.dart';
 import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegularInspectionDetailsScreen extends StatefulWidget {
@@ -47,8 +48,9 @@ class _RegularInspectionDetailsScreenState
     List rowList = regularInspection.rowList.split(",").toList();
     if (regularInspection.rowList != "") {
       for (int i = 0; i < rowList.length; i++) {
-        regularInspectionRowList
-            .add(await RegularInspectionRowService.getRegularInspectionRowById(rowList[i]));        
+        regularInspectionRowList.add(
+            await RegularInspectionRowService.getRegularInspectionRowById(
+                rowList[i]));
       }
     } else {
       regularInspectionRowList = [];
@@ -63,30 +65,43 @@ class _RegularInspectionDetailsScreenState
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
         appBar: AppBar(
-              title: Text(
-                "Regular Inspection Details",
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .headline6
-                    .copyWith(fontWeight: FontWeight.bold),
+          title: Text(
+            "Regular Inspection Details",
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline6
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          actions: [
+            PopupMenuButton(
+              icon: Icon(
+                Icons.menu,
+                color: Colors.black,
               ),
-              centerTitle: true,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    child: Icon(
-                      Icons.share,
-                      color: Colors.black,
-                    ),
-                    onTap: () {
-                      launch(
-                          "https://api.propdial.co.in/pdf/regular/${regularInspection.id}");
-                    },
-                  ),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: Text("Print PDF"),
+                  value: 1,
+                ),
+                PopupMenuItem(
+                  child: Text("Share PDF"),
+                  value: 2,
                 )
               ],
+              onSelected: (value) async {
+                if (value == 1) {
+                  await launch(
+                      "https://api.propdial.co.in/pdf/regular/${regularInspection.id}");
+                } else if (value == 2) {
+                  await Share.share(
+                    "Here is an inspection report https://api.propdial.co.in/pdf/regular/${regularInspection.id}",
+                  );
+                }
+              },
             ),
+          ],
+        ),
         body: isLoading
             ? circularProgressWidget()
             : Container(
@@ -133,16 +148,16 @@ class _RegularInspectionDetailsScreenState
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
-                              itemBuilder: (context, index) {
-                                return inspectionCard(constraints, index);
-                              },
-                              itemCount: regularInspectionRowList.length,
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
+                        itemBuilder: (context, index) {
+                          return inspectionCard(constraints, index);
+                        },
+                        itemCount: regularInspectionRowList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
                     ],
                   ),
                 ),
@@ -150,6 +165,7 @@ class _RegularInspectionDetailsScreenState
       );
     });
   }
+
   inspectionCard(constraints, index) {
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
@@ -170,53 +186,53 @@ class _RegularInspectionDetailsScreenState
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: constraints.minWidth),
-              child: DataTable(
-                dataRowHeight: 80,
-                dividerThickness: 2,
-                columns: [
-                  DataColumn(
-                      label: Text("Termite Issue",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Seepage Check",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("General Cleanliness",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                  DataColumn(
-                      label: Text("Other Issues",
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle2
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black))),
-                ],
-                rows: 
-                    [DataRow(
-                        cells: [
-                          DataCell(Text(regularInspectionRowList[index].termiteCheck)),
-                          DataCell(Text(regularInspectionRowList[index].seepageCheck)),
-                          DataCell(Text(regularInspectionRowList[index].generalCleanliness)),
-                          DataCell(Text(regularInspectionRowList[index].otherIssue)),
-                        ],
-                      )]
-              ),
+              child:
+                  DataTable(dataRowHeight: 80, dividerThickness: 2, columns: [
+                DataColumn(
+                    label: Text("Termite Issue",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Seepage Check",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("General Cleanliness",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+                DataColumn(
+                    label: Text("Other Issues",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle2
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))),
+              ], rows: [
+                DataRow(
+                  cells: [
+                    DataCell(
+                        Text(regularInspectionRowList[index].termiteCheck)),
+                    DataCell(
+                        Text(regularInspectionRowList[index].seepageCheck)),
+                    DataCell(Text(
+                        regularInspectionRowList[index].generalCleanliness)),
+                    DataCell(Text(regularInspectionRowList[index].otherIssue)),
+                  ],
+                )
+              ]),
             ),
           ),
         ],

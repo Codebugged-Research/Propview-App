@@ -12,7 +12,6 @@ import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 
-import '../tagWidget.dart';
 
 class EditSubRoomScreen extends StatefulWidget {
   final SubRoomElement subRoom;
@@ -78,13 +77,14 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     propertyElement = widget.propertyElement;
     roomLengthFeetController.text = (subRoom.roomSize1.toInt()).toString();
     roomLengthInchesController.text =
-        (((subRoom.roomSize1 * 10) % 10)*1.2).toInt().toString();
+        (((subRoom.roomSize1 * 10) % 10) * 1.2).toInt().toString();
     roomWidthFeetController.text = (subRoom.roomSize2.toInt()).toString();
     roomWidthInchesController.text =
-        (((subRoom.roomSize2 * 10) % 10)*1.2).toInt().toString();
+        (((subRoom.roomSize2 * 10) % 10) * 1.2).toInt().toString();
     subRoom.facility.split(",").forEach((element) {
-       facilityTag.add(facilities2
-          .firstWhere((element2) => element2.facilityId == int.tryParse(element))?? 84);
+      facilityTag.add(facilities2.firstWhere(
+              (element2) => element2.facilityId == int.tryParse(element)) ??
+          84);
     });
     roomTypeDropDownValue =
         allRoomTypes.firstWhere((element) => element.roomId == subRoom.roomId);
@@ -108,6 +108,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     setState(() {
       facilityTag.add(tag);
     });
+    facilityTag.sort((a, b) => a.facilityName.compareTo(b.facilityName));
   }
 
   @override
@@ -119,7 +120,14 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Edit Sub-Room'),
+          centerTitle: true,
+          title: Text(
+            'Edit the Sub-Room Details',
+            style: Theme.of(context)
+                .primaryTextTheme
+                .headline6
+                .copyWith(color: Colors.black, fontWeight: FontWeight.w700),
+          ),
         ),
         body: isLoading
             ? Center(
@@ -130,20 +138,6 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: SingleChildScrollView(
                     child: Column(children: [
-                  SizedBox(height: UIConstants.fitToHeight(16, context)),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                      child: Text('Edit the Sub-RoomDetails',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .headline6
-                              .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700)),
-                    ),
-                  ),
                   SizedBox(height: UIConstants.fitToHeight(16, context)),
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -344,10 +338,21 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                     color: Color(0xff314B8C),
                                   ),
                                   onChanged: (value) {
-                                    setState(() {
-                                      addTag(value);
-                                      facilityDropDownValue = value;
-                                    });
+                                    if (value.facilityId == 84) {
+                                      setState(() {
+                                        facilityDropDownValue = value;
+                                      });
+                                      showInSnackBar(context,
+                                          "Please Choose a valid article", 800);
+                                    } else {
+                                      setState(() {
+                                        addTag(value);
+                                        facilityDropDownValue = value;
+                                        facilityTag.sort((a, b) => a
+                                            .facilityName
+                                            .compareTo(b.facilityName));
+                                      });
+                                    }
                                   },
                                   items:
                                       facilities.map<DropdownMenuItem>((value) {
@@ -361,13 +366,43 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                     height:
                                         UIConstants.fitToHeight(16, context)),
                                 Visibility(
-                                    visible: facilityTag.length > 0,
-                                    child: Container(
-                                      alignment: Alignment.centerLeft,
-                                      height: 100,
-                                      width: 100,
-                                      child: TagWidget(tagList: facilityTag),
-                                    )),
+                                  visible: facilityTag.length > 0,
+                                  child: ListView.builder(
+                                      itemCount: facilityTag.length,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            showConfirm(index);
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Container(
+                                              height: 32,
+                                              padding: const EdgeInsets.all(3),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xff314B8C),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                facilityTag[index].facilityName,
+                                                textAlign: TextAlign.center,
+                                                style: Theme.of(context)
+                                                    .primaryTextTheme
+                                                    .headline6
+                                                    .copyWith(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                ),
                                 SizedBox(
                                     height:
                                         UIConstants.fitToHeight(8, context)),
@@ -385,6 +420,38 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     );
   }
 
+  showConfirm(index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Remove Tag"),
+          content: Text(
+              "Are you sure you want to remove tag ${facilityTag[index].facilityName} ?"),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text("Yes"),
+              onPressed: () {
+                setState(() {
+                  facilityTag.removeAt(index);
+                  facilityTag
+                      .sort((a, b) => a.facilityName.compareTo(b.facilityName));
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   bool loader = false;
 
   Widget buttonWidget(BuildContext context) {
@@ -396,7 +463,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
             color: Color(0xff314B8C),
             onPressed: () async {
               List<String> modelFacilty = [];
-              facilityTag.forEach((element) { 
+              facilityTag.forEach((element) {
                 modelFacilty.add(element.facilityId.toString());
               });
               double roomLength = double.parse(roomLengthFeetController.text) +
@@ -430,7 +497,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
               if (result) {
                 showInSnackBar(
                     context, 'Sub-Room data edited successfully!', 2500);
-              Navigator.of(context).pop(true);
+                Navigator.of(context).pop(true);
               } else {
                 showInSnackBar(
                     context, 'Sub-Room data edit failed! Try again.', 2500);

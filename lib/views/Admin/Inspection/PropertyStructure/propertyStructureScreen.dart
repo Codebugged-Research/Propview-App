@@ -49,6 +49,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
       rooms.clear();
       subRooms.clear();
     });
+    print("Property Id:" + widget.propertyElement.tableproperty.propertyId.toString());
     tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     roomType = await RoomTypeService.getRoomTypes();
     propertyElement = widget.propertyElement;

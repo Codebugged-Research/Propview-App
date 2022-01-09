@@ -84,7 +84,7 @@ class RoomsToPropertyModel {
         flooring: json["flooring"],
         balcony: json["balcony"],
         wardrobe: json["wardrobe"],
-        facility:  json["facility"] == "" ? "67" : json["facility"],
+        facility:  json["facility"] == "" ? "84" : json["facility"],
       );
 
   Map<String, dynamic> toJson() => {

@@ -15,6 +15,7 @@ import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InspectionHistoryDetailsScreen extends StatefulWidget {
@@ -92,19 +93,29 @@ class _InspectionHistoryDetailsScreenState
               ),
               centerTitle: true,
               actions: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    child: Icon(
-                      Icons.share,
-                      color: Colors.black,
+                PopupMenuButton(
+                  icon: Icon(Icons.menu, color: Colors.black,),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text("Print PDF"),
+                      value: 1,
                     ),
-                    onTap: () {
-                      launch(
+                    PopupMenuItem(
+                      child: Text("Share PDF"),
+                      value: 2,
+                    )
+                  ],
+                  onSelected: (value) async {
+                    if (value == 1) {
+                      await launch(
                           "https://api.propdial.co.in/pdf/${inspection.inspectionId}");
-                    },
-                  ),
-                )
+                    } else if (value == 2) {
+                      await Share.share(
+                        "Here is an inspection report https://api.propdial.co.in/pdf/${inspection.inspectionId}",
+                      );
+                    }
+                  },
+                ),
               ],
             ),
             body: isLoading

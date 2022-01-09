@@ -11,7 +11,6 @@ import 'package:propview/services/roomService.dart';
 import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/Admin/Inspection/PropertyStructure/tagWidget.dart';
 
 class AddSubRoomScreen extends StatefulWidget {
   final PropertyElement propertyElement;
@@ -348,10 +347,23 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                         color: Color(0xff314B8C),
                                       ),
                                       onChanged: (value) {
-                                        setState(() {
-                                          addTag(value);
-                                          facilityDropDownValue = value;
-                                        });
+                                        if (value.facilityId == 84) {
+                                          setState(() {
+                                            facilityDropDownValue = value;
+                                          });
+                                          showInSnackBar(
+                                              context,
+                                              "Please Choose a valid article",
+                                              800);
+                                        } else {
+                                          setState(() {
+                                            addTag(value);
+                                            facilityDropDownValue = value;
+                                            facilityTag.sort((a, b) => a
+                                                .facilityName
+                                                .compareTo(b.facilityName));
+                                          });
+                                        }
                                       },
                                       items: facilities
                                           .map<DropdownMenuItem>((value) {
@@ -365,14 +377,49 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                         height: UIConstants.fitToHeight(
                                             16, context)),
                                     Visibility(
-                                        visible: facilityTag.length > 0,
-                                        child: Container(
-                                          alignment: Alignment.centerLeft,
-                                          height: 100,
-                                          width: 100,
-                                          child:
-                                              TagWidget(tagList: facilityTag),
-                                        )),
+                                      visible: facilityTag.length > 0,
+                                      child: ListView.builder(
+                                          itemCount: facilityTag.length,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                showConfirm(index);
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4.0),
+                                                child: Container(
+                                                  height: 32,
+                                                  padding:
+                                                      const EdgeInsets.all(3),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xff314B8C),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: Text(
+                                                    facilityTag[index]
+                                                        .facilityName,
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .primaryTextTheme
+                                                        .headline6
+                                                        .copyWith(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
                                     SizedBox(
                                         height: UIConstants.fitToHeight(
                                             8, context)),
@@ -390,6 +437,38 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                 ),
               ),
       ),
+    );
+  }
+
+  showConfirm(index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Remove Tag"),
+          content: Text(
+              "Are you sure you want to remove tag ${facilityTag[index].facilityName} ?"),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text("Yes"),
+              onPressed: () {
+                setState(() {
+                  facilityTag.removeAt(index);
+                  facilityTag
+                      .sort((a, b) => a.facilityName.compareTo(b.facilityName));
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -70,10 +70,9 @@ class _PropertyCardState extends State<PropertyCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.propertyElement.propertyOwner == null
+                            propertyElement.propertyOwner == null
                                 ? "No Name"
-                                : widget
-                                    .propertyElement.propertyOwner.ownerName,
+                                : propertyElement.propertyOwner.ownerName,
                             style: GoogleFonts.nunito(
                               color: Colors.black,
                               fontSize: 16,
@@ -84,8 +83,8 @@ class _PropertyCardState extends State<PropertyCard> {
                       ),
                       textWidget(
                           context,
-                          "${widget.propertyElement.tblSociety.socname} ,  ${widget.propertyElement.tableproperty.unitNo}",
-                          '${widget.propertyElement.tblState.sname} ,  ${widget.propertyElement.tblCity.ccname}'),
+                          "${propertyElement.tblSociety.socname} ,  ${propertyElement.tableproperty.unitNo}",
+                          '${propertyElement.tblState.sname} ,  ${propertyElement.tblCity.ccname}'),
                     ],
                   ),
                 ),
@@ -205,6 +204,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   optionCard("Inspection", "inspection-asset", () {
+                    print(propertyElement.tableproperty.propertyId.toString());
                     Routing.makeRouting(context,
                         routeMethod: 'push',
                         newWidget: InspectionHomeScreen(
