@@ -901,8 +901,11 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                         value: issue.status,
                         items: [
                           "Average",
+                          "Broken",
+                          "Bad",
                           "Clean",
                           "Dirty",
+                          "Excellent",
                           "Not Selected",
                           "Not Working",
                           "Working"

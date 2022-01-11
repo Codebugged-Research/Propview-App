@@ -869,8 +869,11 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                         value: issue.status,
                         items: [
                           "Average",
+                          "Broken",
+                          "Bad",
                           "Clean",
                           "Dirty",
+                          "Excellent",
                           "Not Selected",
                           "Not Working",
                           "Working"

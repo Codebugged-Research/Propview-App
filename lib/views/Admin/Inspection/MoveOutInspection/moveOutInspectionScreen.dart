@@ -1217,12 +1217,15 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                       ), //, color: Colors.white10
                       value: issue.status,
                       items: [
-                        "Average",
-                        "Clean",
-                        "Dirty",
-                        "Not Selected",
-                        "Not Working",
-                        "Working"
+                          "Average",
+                          "Broken",
+                          "Bad",
+                          "Clean",
+                          "Dirty",
+                          "Excellent",
+                          "Not Selected",
+                          "Not Working",
+                          "Working"
                       ].map<DropdownMenuItem>((String value) {
                         return DropdownMenuItem(
                           value: value,
