@@ -41,18 +41,107 @@ class _LandingScreenState extends State<LandingScreen> {
     setState(() {
       isLoading = true;
     });
-    await checkForUpdate();    
+    await checkForUpdate();
     await checkVersion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> nList = prefs.getStringList("notifications") ?? [];
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                content: Text(message.notification.body),
-                title: Text(message.notification.title),
-              ));
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: Colors.white,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Update!",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              InkWell(
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.black,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          ),
+          content: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                    radius: 45,
+                    backgroundColor: Color(0xff314b8c).withOpacity(0.8),
+                    child: CircleAvatar(
+                      radius: 36,
+                      backgroundColor: Color(0xff314b8c).withOpacity(0.9),
+                      child: Icon(
+                        Icons.notifications,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    )),
+                const SizedBox(
+                  height: 24,
+                ),
+                Text(
+                  message.notification.title.toString(),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  message.notification.body.toString(),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: MaterialButton(
+                    color: Color(0xff314b8c),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "Dismiss",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
       if (message.data['startTime'] != null) {
         scheduleIncoming(_flutterLocalNotificationsPlugin, message);
         scheduleOutgoing(_flutterLocalNotificationsPlugin, message);
@@ -93,7 +182,7 @@ class _LandingScreenState extends State<LandingScreen> {
     if (responseMap != Config.APP_VERISON) {
       versionErrorWiget(responseMap, context,
           "https://play.google.com/store/apps/details?id=com.propdial.propview");
-           InAppUpdate.performImmediateUpdate()
+      InAppUpdate.performImmediateUpdate()
           .catchError((e) => showInSnackBar(context, e.toString(), 800));
     }
   }

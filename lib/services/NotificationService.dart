@@ -8,6 +8,7 @@ class NotificationService {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     SharedPreferences pref = await SharedPreferences.getInstance();
     String id = await messaging.getToken();
+    print(id);
     pref.setString("deviceToken", id);
     return id;
   }
@@ -26,6 +27,7 @@ class NotificationService {
         Uri.parse("https://api.propdial.co.in/api/notification/one"),
         headers: headers,
         body: body);
+    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {

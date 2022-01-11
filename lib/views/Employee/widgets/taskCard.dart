@@ -420,6 +420,7 @@ class _TaskCardState extends State<TaskCard> {
                                                               .tblUsers
                                                               .parentId !=
                                                           "") {
+                                                            print(widget.taskElement.tblUsers.parentId.split(","));
                                                     for (int i = 0;
                                                         i <
                                                             widget
@@ -437,7 +438,8 @@ class _TaskCardState extends State<TaskCard> {
                                                                   .parentId
                                                                   .split(
                                                                       ",")[i]);
-                                                      NotificationService
+                                                                      print(managerToken);
+                                                      await NotificationService
                                                           .sendPushToOne(
                                                         "Task Submitted",
                                                         "Task " +
@@ -450,7 +452,6 @@ class _TaskCardState extends State<TaskCard> {
                                                       );
                                                     }
                                                   }
-
                                                   widget.change(
                                                       widget.taskElement);
                                                   Navigator.of(context).pop();
