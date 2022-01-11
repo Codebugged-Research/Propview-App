@@ -28,10 +28,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RegularInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<RegularInspectionRow> regularInspectionRowList;
-  final List<BillToProperty> bills;
+  final List<double> newBillAmounts;
 
   const RegularInspectionScreen({
-    this.bills,
+    this.newBillAmounts,
     this.propertyElement,
     this.regularInspectionRowList,
   });
@@ -59,7 +59,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   TextEditingController generalCleanlinessController;
   TextEditingController otherIssueController;
   List<BillToProperty> bills = [];
-  List<BillToProperty> bills2 = [];
+  List<double> newBillAmounts = [];
 
   @override
   void initState() {
@@ -90,16 +90,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   loadDataForScreen() async {
     setState(() {
       loader = true;
+      propertyElement = widget.propertyElement;
     });
-    propertyElement = widget.propertyElement;
     billTypes = await BillTypeService.getAllBillTypes();
-    bills2 = await BillPropertyService.getBillsByPropertyId(
+    bills = await BillPropertyService.getBillsByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
-    if (widget.bills != null) {
-      bills = widget.bills;
+    if (widget.newBillAmounts != null) {
+      newBillAmounts = widget.newBillAmounts;
     } else {
-      bills = await BillPropertyService.getBillsByPropertyId(
-          propertyElement.tableproperty.propertyId.toString());
+      newBillAmounts = [];
     }
     for (int i = 0; i < bills.length; i++) {
       var type = billTypes
@@ -108,7 +107,9 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
           )
           .billName;
       billTypeList.add(type);
-      // _billControllers.add(TextEditingController());
+      if (newBillAmounts.length <= bills.length) {
+        newBillAmounts.add(0.0);
+      }
     }
     regularInspectionRowList = widget.regularInspectionRowList ?? [];
     roomTypes = await RoomTypeService.getRoomTypes();
@@ -195,17 +196,16 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                   saveLoader = true;
                 });
                 var fullInspectionCacheData = json.encode({
-                  "bills": bills,
+                  "newBillAmounts": newBillAmounts,
                   "regularInspectionRowList": regularInspectionRowList
                 }).toString();
-                print(fullInspectionCacheData);
                 bool success = await prefs.setString(
                     "regular-${propertyElement.tableproperty.propertyId}",
                     fullInspectionCacheData);
                 if (success) {
-                  showInSnackBar(context, "Full Inspection Saved", 800);
+                  showInSnackBar(context, "Regular Inspection Saved", 1600);
                 } else {
-                  showInSnackBar(context, "Error Saving Full Inspection", 800);
+                  showInSnackBar(context, "Error Saving Regular Inspection", 1600);
                 }
                 setState(() {
                   saveLoader = false;
@@ -261,20 +261,24 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                             )
                           : SizedBox(),
                       bills.length == 0
-                          ? Container()
+                          ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 300,
+                              height: 310,
                               child: ListView.builder(
                                   shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
                                   itemCount: bills.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                    _billControllers
-                                        .add(TextEditingController());
+                                    _billControllers.add(TextEditingController(
+                                      text: newBillAmounts[index].toString(),
+                                    ));
                                     return billCard(index);
                                   }),
                             ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
                         itemCount: regularInspectionRowList.length,
                         shrinkWrap: true,
@@ -285,7 +289,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      regularInspectionRowList.length >= roomsAvailable.length
+                      regularInspectionRowList.length >= roomsAvailable2.length
                           ? SizedBox()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -480,7 +484,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               child: TextField(
                 controller: _billControllers[index],
                 onChanged: (value) {
-                  bills[index].amount = double.parse(value);
+                 newBillAmounts[index] = double.parse(value);
                 },
                 obscureText: false,
                 keyboardType: TextInputType.number,
@@ -877,7 +881,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              if (bills2[i].amount !=
+                              if (newBillAmounts[i] !=
                                   double.parse(
                                     bills[i]
                                         .amount

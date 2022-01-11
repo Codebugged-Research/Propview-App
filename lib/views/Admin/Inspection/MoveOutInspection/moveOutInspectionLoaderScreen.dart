@@ -54,20 +54,26 @@ class _MoveOutInspectionLoaderScreenState
         for (int i = 0; i < tempData["rows"].length; i++) {
           rows.add([]);
           for (int j = 0; j < tempData["rows"][i].length; j++) {
-            rows[j].add(Issue(
+            List<String> photos = [];
+            tempData["rows"][i][j]['photo'].forEach((e) {
+              photos.add(e);
+            });
+            rows[i].add(
+              Issue(
                 issueName: tempData["rows"][i][j]['issue_name'],
                 status: tempData["rows"][i][j]['status'],
                 remarks: tempData["rows"][i][j]['remarks'],
-                photo: tempData["rows"][i][j]['photo'].cast<String>()));
+                photo: photos,
+              ),
+            );
           }
         }
-        print(rows);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => MoveOutInspectionScreen(
               propertyElement: propertyElement,
-              bills: tempData["bills"]
-                  .map<BillToProperty>((bill) => BillToProperty.fromJson(bill))
+              newBillAmounts: tempData["newBillAmounts"]
+                  .map<double>((bill) => double.parse(bill.toString()))
                   .toList(),
               rows: rows,
               issueTableList: tempData["issueTableList"]

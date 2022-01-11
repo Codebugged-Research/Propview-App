@@ -95,7 +95,7 @@ class _RegularInspectionDetailsScreenState
                       "https://api.propdial.co.in/pdf/regular/${regularInspection.id}");
                 } else if (value == 2) {
                   await Share.share(
-                    "Here is an inspection report https://api.propdial.co.in/pdf/regular/${regularInspection.id}",
+                    "Here is a regular inspection report of ${propertyElement.propertyOwner.salutation.trim()} ${propertyElement.propertyOwner.ownerName}'s property ${propertyElement.tblSociety.socname} , ${propertyElement.tableproperty.unitNo} https://api.propdial.co.in/pdf/regular/${regularInspection.id} . (Inspection done by ${user.name} on ${regularInspection.createdAt.toString().split(" ")[0]} )",
                   );
                 }
               },

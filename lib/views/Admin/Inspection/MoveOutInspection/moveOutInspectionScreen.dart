@@ -48,15 +48,13 @@ class MoveOutInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
-  final List<List<List<String>>> imageList;
-  final List<BillToProperty> bills;
+  final List<double> newBillAmounts;
 
   MoveOutInspectionScreen({
-    this.bills,
     this.propertyElement,
     this.rows,
     this.issueTableList,
-    this.imageList,
+    this.newBillAmounts,
   });
 
   @override
@@ -71,7 +69,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   SharedPreferences prefs;
   Inspection inspection;
   RoomType roomTypes;
-
   List<RoomsToPropertyModel> rooms = [];
   List<SubRoomElement> subRooms = [];
   List<CustomRoomSubRoom> roomsAvailable = [];
@@ -79,12 +76,11 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
-  List<List<List<String>>> photoList = [];
   List<Tenant> tenants = [];
   List<TenantFamily> tenantFamily = [];
   List<Facility> facilityList = [];
   List<BillToProperty> bills = [];
-  List<BillToProperty> bills2 = [];
+  List<double> newBillAmounts = [];
   List<String> billTypeList = [];
   List billTypes = [];
   List<TextEditingController> _billControllers = [];
@@ -92,7 +88,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   @override
   void initState() {
     super.initState();
-    propertyElement = widget.propertyElement;
     loadDataForScreen();
     initialiseSharedPreference();
   }
@@ -104,16 +99,16 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   loadDataForScreen() async {
     setState(() {
       isLoading = true;
+      propertyElement = widget.propertyElement;
     });
     billTypes = await BillTypeService.getAllBillTypes();
-    bills2 = await BillPropertyService.getBillsByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
-    if (widget.bills != null) {
-      bills = widget.bills;
+    if (widget.newBillAmounts != null) {
+      newBillAmounts = widget.newBillAmounts;
     } else {
-      bills = await BillPropertyService.getBillsByPropertyId(
-          propertyElement.tableproperty.propertyId.toString());
+      newBillAmounts = [];
     }
+    bills = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     for (int i = 0; i < bills.length; i++) {
       var type = billTypes
           .firstWhere(
@@ -121,18 +116,13 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
           )
           .billName;
       billTypeList.add(type);
-      // _billControllers.add(TextEditingController());
-    }
-    photoList = widget.imageList ?? [];
-    facilityList = await FacilityService.getFacilities();
-    rows = widget.rows != null ? widget.rows : [];
-    for (var i = 0; i < rows.length; i++) {
-      photoList.add([]);
-      for (var j = 0; j < rows[i].length; j++) {
-        photoList[i].add([]);
-        photoList[i][j] = rows[i][j].photo;
+      if (newBillAmounts.length < bills.length) {
+        newBillAmounts.add(0.0);
       }
     }
+    facilityList = await FacilityService.getFacilities();
+    rows = widget.rows != null ? widget.rows : [];
+    issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
       propertyElement.tableproperty.propertyId.toString(),
@@ -273,13 +263,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                 setState(() {
                   saveLoader = true;
                 });
-                for (var i = 0; i < rows.length; i++) {
-                  for (var j = 0; j < rows[i].length; j++) {
-                    rows[i][j].photo = photoList[i][j];
-                  }
-                }
                 var fullInspectionCacheData = json.encode({
-                  "bills": bills,
+                  "newBillAmounts": newBillAmounts,
                   "rows": rows,
                   "issueTableList": issueTableList
                 }).toString();
@@ -287,10 +272,10 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                     "moveout-${propertyElement.tableproperty.propertyId}",
                     fullInspectionCacheData);
                 if (success) {
-                  showInSnackBar(context, "Move-out Inspection Saved", 800);
+                  showInSnackBar(context, "Move-out Inspection Saved", 1600);
                 } else {
                   showInSnackBar(
-                      context, "Error Saving Move-Out Inspection", 800);
+                      context, "Error Saving Move-Out Inspection", 1600);
                 }
                 setState(() {
                   saveLoader = false;
@@ -349,13 +334,15 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 300,
+                              height: 310,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
                                 itemCount: bills.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  _billControllers.add(TextEditingController());
+                                  _billControllers.add(TextEditingController(
+                                    text: newBillAmounts[index].toString(),
+                                  ));
                                   return billCard(index);
                                 },
                               ),
@@ -432,7 +419,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      issueTableList.length >= roomsAvailable.length
+                      issueTableList.length >= roomsAvailable2.length
                           ? SizedBox()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -627,7 +614,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
               child: TextField(
                 controller: _billControllers[index],
                 onChanged: (value) {
-                  bills[index].amount = double.parse(value);
+                  newBillAmounts[index] = double.parse(value);
                 },
                 obscureText: false,
                 keyboardType: TextInputType.number,
@@ -699,7 +686,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                       setState(() {
                         issueTableList.removeAt(index);
                         rows.removeAt(index);
-                        photoList.removeAt(index);
                       });
                       Navigator.pop(context);
                     },
@@ -784,7 +770,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-        enableDrag: false,
+      enableDrag: false,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       backgroundColor: Color(0xFFFFFFFF),
@@ -837,7 +823,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               widget.propertyElement.tableproperty.propertyId,
                         ));
                         rows.add([]);
-                        photoList.add([]);
                       });
                       Routing.makeRouting(context, routeMethod: 'pop');
                     }
@@ -911,13 +896,12 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
         icon: Icon(Icons.add, color: Colors.white, size: 30),
         onPressed: () {
           setState(() {
-            photoList[tableindex].add([]);
             rows[tableindex].add(
               Issue(
                   issueName: "Not Selected",
                   status: "Not Selected",
                   remarks: "",
-                  photo: photoList[tableindex][index]),
+                  photo: []),
             );
           });
         },
@@ -1002,7 +986,6 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               onPressed: () {
                                 setState(() {
                                   rows[tableindex].removeAt(index);
-                                  photoList.remove(tableindex);
                                 });
                                 Navigator.of(context).pop();
                               },
@@ -1123,7 +1106,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               fontWeight: FontWeight.w800,
                             ),
                   ),
-                  photoPick(photoList[tableindex][index], index),
+                  photoPick(rows[tableindex][index].photo, index),
                 ],
               ),
             ],
@@ -1483,7 +1466,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              if (bills2[i].amount !=
+                              if (newBillAmounts[i] !=
                                   double.parse(
                                     bills[i]
                                         .amount

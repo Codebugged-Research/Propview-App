@@ -52,13 +52,17 @@ class _IssueInspectionLoaderScreenState
         List<List<Issue>> rows = [];
         for (int i = 0; i < tempData["rows"].length; i++) {
           rows.add([]);
-          for (int j = 0; j < tempData["rows"][i].length; j++) {
-            rows[j].add(
+          for (int j = 0; j < tempData["rows"][i].length; j++) {           
+            List<String> photos = [];
+            tempData["rows"][i][j]['photo'].forEach((e) {
+              photos.add(e);
+            });
+            rows[i].add(
               Issue(
                 issueName: tempData["rows"][i][j]['issue_name'],
                 status: tempData["rows"][i][j]['status'],
                 remarks: tempData["rows"][i][j]['remarks'],
-                photo: tempData["rows"][i][j]['photo'].cast<String>(),
+                photo: photos,
               ),
             );
           }

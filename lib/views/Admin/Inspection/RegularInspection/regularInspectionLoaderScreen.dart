@@ -64,8 +64,8 @@ class _RegularInspectionLoaderScreenState
           MaterialPageRoute(
             builder: (context) => RegularInspectionScreen(
               propertyElement: propertyElement,
-              bills: tempData["bills"]
-                  .map<BillToProperty>((bill) => BillToProperty.fromJson(bill))
+              newBillAmounts: tempData["newBillAmounts"]
+                  .map<double>((bill) => double.parse(bill.toString()))
                   .toList(),
               regularInspectionRowList: rows,
             ),

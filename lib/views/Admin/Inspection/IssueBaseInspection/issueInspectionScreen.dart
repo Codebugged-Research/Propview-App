@@ -38,13 +38,11 @@ class IssueInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
-  final List<String> imageList;
 
   IssueInspectionScreen({
     this.propertyElement,
     this.rows,
     this.issueTableList,
-    this.imageList,
   });
 
   @override
@@ -62,7 +60,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
-  List<List<List<String>>> photoList = [];
   List<Facility> facilityList = [];
   RoomType roomTypes;
   bool loader = false;
@@ -83,16 +80,8 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
       loader = true;
       propertyElement = widget.propertyElement;
     });
-    photoList = widget.imageList ?? [];
     facilityList = await FacilityService.getFacilities();
     rows = widget.rows != null ? widget.rows : [];
-    for (var i = 0; i < rows.length; i++) {
-      photoList.add([]);
-      for (var j = 0; j < rows[i].length; j++) {
-        photoList[i].add([]);
-        photoList[i][j] = rows[i][j].photo;
-      }
-    }
     issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
@@ -177,11 +166,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                 setState(() {
                   saveLoader = true;
                 });
-                for (var i = 0; i < rows.length; i++) {
-                  for (var j = 0; j < rows[i].length; j++) {
-                    rows[i][j].photo = photoList[i][j];
-                  }
-                }
                 var fullInspectionCacheData = json.encode({
                   "rows": rows,
                   "issueTableList": issueTableList
@@ -190,9 +174,10 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                     "issue-${propertyElement.tableproperty.propertyId}",
                     fullInspectionCacheData);
                 if (success) {
-                  showInSnackBar(context, "Issue Inspection Saved", 800);
+                  showInSnackBar(context, "Issue Inspection Saved", 1600);
                 } else {
-                  showInSnackBar(context, "Error Saving Issue Inspection", 800);
+                  showInSnackBar(
+                      context, "Error Saving Issue Inspection", 1600);
                 }
                 setState(() {
                   saveLoader = false;
@@ -236,7 +221,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
-                      issueTableList.length >= roomsAvailable.length
+                      issueTableList.length >= roomsAvailable2.length
                           ? SizedBox()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -402,7 +387,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                             }
                             inspection.issueIdList =
                                 tempIssueTableList.join(",");
-                            print(inspection.toJson());
                             bool result =
                                 await InspectionService.createInspection(
                               jsonEncode(
@@ -463,74 +447,74 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
     );
     selectedRoomSubRoom = roomsAvailable.last;
     return showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      enableDrag: false,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
-      backgroundColor: Color(0xFFFFFFFF),
-      builder: (BuildContext context) {
-        return  Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Choose Room',
-                      style: Theme.of(context).primaryTextTheme.headline6,
-                    )),
-                Align(
-                    alignment: Alignment.center,
-                    child: Divider(
-                      color: Color(0xff314B8C),
-                      thickness: 2.5,
-                      indent: 100,
-                      endIndent: 100,
-                    )),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                DropdownButtonFormField(
-                  decoration: new InputDecoration(
-                      icon: Icon(Icons.language)), //, color: Colors.white10
-                  value: selectedRoomSubRoom,
-                  items: roomsAvailable
-                      .map<DropdownMenuItem>((CustomRoomSubRoom value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value.roomSubRoomName),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    if (newValue.roomSubRoomName == "Choose Room/Subroom") {
-                      Routing.makeRouting(context, routeMethod: 'pop');
-                      showInSnackBar(
-                          context, "Please choose a valid Room/SubRoom!", 1400);
-                    } else {
-                      setState(() {
-                        selectedRoomSubRoom = newValue;
-                        issueTableList.add(IssueTableData(
-                          roomsubroomId: newValue.propertyRoomSubRoomId,
-                          roomsubroomName: newValue.roomSubRoomName,
-                          issub: newValue.isSubroom == true ? 1 : 0,
-                          issueRowId: "",
-                          propertyId:
-                              widget.propertyElement.tableproperty.propertyId,
-                        ));
-                        rows.add([]);
-                        photoList.add([]);
-                      });
-                      Routing.makeRouting(context, routeMethod: 'pop');
-                    }
-                  },
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              ],
+        context: context,
+        isScrollControlled: true,
+        enableDrag: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        backgroundColor: Color(0xFFFFFFFF),
+        builder: (BuildContext context) {
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Choose Room',
+                        style: Theme.of(context).primaryTextTheme.headline6,
+                      )),
+                  Align(
+                      alignment: Alignment.center,
+                      child: Divider(
+                        color: Color(0xff314B8C),
+                        thickness: 2.5,
+                        indent: 100,
+                        endIndent: 100,
+                      )),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  DropdownButtonFormField(
+                    decoration: new InputDecoration(
+                        icon: Icon(Icons.language)), //, color: Colors.white10
+                    value: selectedRoomSubRoom,
+                    items: roomsAvailable
+                        .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value.roomSubRoomName),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      if (newValue.roomSubRoomName == "Choose Room/Subroom") {
+                        Routing.makeRouting(context, routeMethod: 'pop');
+                        showInSnackBar(context,
+                            "Please choose a valid Room/SubRoom!", 1400);
+                      } else {
+                        setState(() {
+                          selectedRoomSubRoom = newValue;
+                          issueTableList.add(IssueTableData(
+                            roomsubroomId: newValue.propertyRoomSubRoomId,
+                            roomsubroomName: newValue.roomSubRoomName,
+                            issub: newValue.isSubroom == true ? 1 : 0,
+                            issueRowId: "",
+                            propertyId:
+                                widget.propertyElement.tableproperty.propertyId,
+                          ));
+                          rows.add([]);
+                        });
+                        Routing.makeRouting(context, routeMethod: 'pop');
+                      }
+                    },
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                ],
+              ),
             ),
-          ),
-        );
-      });
+          );
+        });
   }
 
   Widget issueCard(int tableindex) {
@@ -659,7 +643,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                               onPressed: () {
                                 setState(() {
                                   rows[tableindex].removeAt(index);
-                                  photoList.remove(tableindex);
                                 });
                                 Navigator.of(context).pop();
                               },
@@ -780,7 +763,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                               fontWeight: FontWeight.w800,
                             ),
                   ),
-                  photoPick(photoList[tableindex][index], index),
+                  photoPick(rows[tableindex][index].photo, index),
                 ],
               ),
             ],
@@ -884,8 +867,14 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                           icon: Icon(Icons.hvac),
                         ), //, color: Colors.white10
                         value: issue.status,
-                        items: ["Excelent", "Good", "Bad", "Broken"]
-                            .map<DropdownMenuItem>((String value) {
+                        items: [
+                          "Average",
+                          "Clean",
+                          "Dirty",
+                          "Not Selected",
+                          "Not Working",
+                          "Working"
+                        ].map<DropdownMenuItem>((String value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value),
@@ -964,13 +953,13 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
         icon: Icon(Icons.add, color: Colors.white, size: 30),
         onPressed: () {
           setState(() {
-            photoList[tableindex].add([]);
             rows[tableindex].add(
               Issue(
-                  issueName: "Not Selected",
-                  status: "Excelent",
-                  remarks: "",
-                  photo: photoList[tableindex][index]),
+                issueName: "Not Selected",
+                status: "Not Selected",
+                remarks: "",
+                photo: [],
+              ),
             );
           });
         },
@@ -1080,7 +1069,6 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                       setState(() {
                         issueTableList.removeAt(index);
                         rows.removeAt(index);
-                        photoList.removeAt(index);
                       });
                       Navigator.pop(context);
                     },

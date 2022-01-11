@@ -44,15 +44,13 @@ class FullInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
-  final List<List<List<String>>> imageList;
-  final List<BillToProperty> bills;
+  final List<double> newBillAmounts;
 
   FullInspectionScreen({
-    this.bills,
+    this.newBillAmounts,
     this.propertyElement,
     this.rows,
     this.issueTableList,
-    this.imageList,
   });
 
   @override
@@ -70,10 +68,9 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
-  List<List<List<String>>> photoList = [];
   List<Facility> facilityList = [];
   List<BillToProperty> bills = [];
-  List<BillToProperty> bills2 = [];
+  List<double> newBillAmounts = [];
   RoomType roomTypes;
   bool loader = false;
 
@@ -98,14 +95,13 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       propertyElement = widget.propertyElement;
     });
     billTypes = await BillTypeService.getAllBillTypes();
-    bills2 = await BillPropertyService.getBillsByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
-    if (widget.bills != null) {
-      bills = widget.bills;
+    if (widget.newBillAmounts != null) {
+      newBillAmounts = widget.newBillAmounts;
     } else {
-      bills = await BillPropertyService.getBillsByPropertyId(
-          propertyElement.tableproperty.propertyId.toString());
+      newBillAmounts = [];
     }
+    bills = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     for (int i = 0; i < bills.length; i++) {
       var type = billTypes
           .firstWhere(
@@ -113,18 +109,12 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
           )
           .billName;
       billTypeList.add(type);
-      // _billControllers.add(TextEditingController(text: "0.0"));
-    }
-    photoList = widget.imageList ?? [];
-    facilityList = await FacilityService.getFacilities();
-    rows = widget.rows != null ? widget.rows : [];
-    for (var i = 0; i < rows.length; i++) {
-      photoList.add([]);
-      for (var j = 0; j < rows[i].length; j++) {
-        photoList[i].add([]);
-        photoList[i][j] = rows[i][j].photo;
+      if (newBillAmounts.length <= bills.length) {
+        newBillAmounts.add(0.0);
       }
     }
+    facilityList = await FacilityService.getFacilities();
+    rows = widget.rows != null ? widget.rows : [];
     issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
     roomTypes = await RoomTypeService.getRoomTypes();
     rooms = await RoomService.getRoomByPropertyId(
@@ -208,23 +198,18 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 setState(() {
                   saveLoader = true;
                 });
-                for (var i = 0; i < rows.length; i++) {
-                  for (var j = 0; j < rows[i].length; j++) {
-                    rows[i][j].photo = photoList[i][j];
-                  }
-                }
                 var fullInspectionCacheData = json.encode({
-                  "bills": bills,
                   "rows": rows,
-                  "issueTableList": issueTableList
+                  "newBillAmounts": newBillAmounts,
+                  "issueTableList": issueTableList,
                 }).toString();
                 bool success = await prefs.setString(
                     "full-${propertyElement.tableproperty.propertyId}",
                     fullInspectionCacheData);
                 if (success) {
-                  showInSnackBar(context, "Full Inspection Saved", 800);
+                  showInSnackBar(context, "Full Inspection Saved", 1600);
                 } else {
-                  showInSnackBar(context, "Error Saving Full Inspection", 800);
+                  showInSnackBar(context, "Error Saving Full Inspection", 1600);
                 }
                 setState(() {
                   saveLoader = false;
@@ -284,19 +269,19 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 300,
+                              height: 310,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
                                 itemCount: bills.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  _billControllers.add(TextEditingController());
+                                  _billControllers.add(TextEditingController(
+                                    text: newBillAmounts[index].toString(),
+                                  ));
                                   return billCard(index);
                                 },
                               ),
                             ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
                         itemCount: issueTableList.length,
                         shrinkWrap: true,
@@ -307,7 +292,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.05),
-                      issueTableList.length >= roomsAvailable.length
+                      issueTableList.length >= roomsAvailable2.length
                           ? SizedBox()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -503,7 +488,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
               child: TextField(
                 controller: _billControllers[index],
                 onChanged: (value) {
-                  bills[index].amount = double.parse(value);
+                  newBillAmounts[index] = double.parse(value);
                 },
                 obscureText: false,
                 keyboardType: TextInputType.number,
@@ -668,7 +653,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              if (bills2[i].amount !=
+                              if (newBillAmounts[i] !=
                                   double.parse(
                                     bills[i]
                                         .amount
@@ -745,67 +730,66 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         backgroundColor: Color(0xFFFFFFFF),
         builder: (BuildContext context) {
-          return  Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Choose Room',
-                          style: Theme.of(context).primaryTextTheme.headline6,
-                        )),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Divider(
-                          color: Color(0xff314B8C),
-                          thickness: 2.5,
-                          indent: 100,
-                          endIndent: 100,
-                        )),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    DropdownButtonFormField(
-                      decoration: new InputDecoration(
-                          icon: Icon(Icons.language)), //, color: Colors.white10
-                      value: selectedRoomSubRoom,
-                      items: roomsAvailable
-                          .map<DropdownMenuItem>((CustomRoomSubRoom value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value.roomSubRoomName),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        if (newValue.roomSubRoomName == "Choose Room/Subroom") {
-                          Routing.makeRouting(context, routeMethod: 'pop');
-                          showInSnackBar(context,
-                              "Please choose a valid Room/SubRoom!", 1400);
-                        } else {
-                          setState(() {
-                            selectedRoomSubRoom = newValue;
-                            issueTableList.add(IssueTableData(
-                              roomsubroomId: newValue.propertyRoomSubRoomId,
-                              roomsubroomName: newValue.roomSubRoomName,
-                              issub: newValue.isSubroom == true ? 1 : 0,
-                              issueRowId: "",
-                              propertyId: widget
-                                  .propertyElement.tableproperty.propertyId,
-                            ));
-                            rows.add([]);
-                            photoList.add([]);
-                          });
-                          Routing.makeRouting(context, routeMethod: 'pop');
-                        }
-                      },
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  ],
-                ),
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Choose Room',
+                        style: Theme.of(context).primaryTextTheme.headline6,
+                      )),
+                  Align(
+                      alignment: Alignment.center,
+                      child: Divider(
+                        color: Color(0xff314B8C),
+                        thickness: 2.5,
+                        indent: 100,
+                        endIndent: 100,
+                      )),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  DropdownButtonFormField(
+                    decoration: new InputDecoration(
+                        icon: Icon(Icons.language)), //, color: Colors.white10
+                    value: selectedRoomSubRoom,
+                    items: roomsAvailable
+                        .map<DropdownMenuItem>((CustomRoomSubRoom value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value.roomSubRoomName),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      if (newValue.roomSubRoomName == "Choose Room/Subroom") {
+                        Routing.makeRouting(context, routeMethod: 'pop');
+                        showInSnackBar(context,
+                            "Please choose a valid Room/SubRoom!", 1400);
+                      } else {
+                        setState(() {
+                          selectedRoomSubRoom = newValue;
+                          issueTableList.add(IssueTableData(
+                            roomsubroomId: newValue.propertyRoomSubRoomId,
+                            roomsubroomName: newValue.roomSubRoomName,
+                            issub: newValue.isSubroom == true ? 1 : 0,
+                            issueRowId: "",
+                            propertyId:
+                                widget.propertyElement.tableproperty.propertyId,
+                          ));
+                          rows.add([]);
+                        });
+                        Routing.makeRouting(context, routeMethod: 'pop');
+                      }
+                    },
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                ],
               ),
-            );
+            ),
+          );
         });
   }
 
@@ -1062,13 +1046,13 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
         icon: Icon(Icons.add, color: Colors.white, size: 30),
         onPressed: () {
           setState(() {
-            photoList[tableindex].add([]);
             rows[tableindex].add(
               Issue(
-                  issueName: "Not Selected",
-                  status: "Not Selected",
-                  remarks: "",
-                  photo: photoList[tableindex][index]),
+                issueName: "Not Selected",
+                status: "Not Selected",
+                remarks: "",
+                photo: [],
+              ),
             );
           });
         },
@@ -1178,7 +1162,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                       setState(() {
                         issueTableList.removeAt(index);
                         rows.removeAt(index);
-                        photoList.removeAt(index);
                       });
                       Navigator.pop(context);
                     },
@@ -1279,7 +1262,6 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               onPressed: () {
                                 setState(() {
                                   rows[tableindex].removeAt(index);
-                                  photoList.remove(tableindex);
                                 });
                                 Navigator.of(context).pop();
                               },
@@ -1400,7 +1382,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                               fontWeight: FontWeight.w800,
                             ),
                   ),
-                  photoPick(photoList[tableindex][index], index),
+                  photoPick(rows[tableindex][index].photo, index),
                 ],
               ),
             ],

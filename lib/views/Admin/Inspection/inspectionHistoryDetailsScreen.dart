@@ -111,7 +111,7 @@ class _InspectionHistoryDetailsScreenState
                           "https://api.propdial.co.in/pdf/${inspection.inspectionId}");
                     } else if (value == 2) {
                       await Share.share(
-                        "Here is an inspection report https://api.propdial.co.in/pdf/${inspection.inspectionId}",
+                        "Here is an inspection report of ${propertyElement.propertyOwner.salutation.trim()} ${propertyElement.propertyOwner.ownerName}'s property ${propertyElement.tblSociety.socname} , ${propertyElement.tableproperty.unitNo} https://api.propdial.co.in/pdf/${inspection.inspectionId} . (Inspection done by ${user.name} on ${inspection.createdAt.toString().split(" ")[0]} )",
                       );
                     }
                   },

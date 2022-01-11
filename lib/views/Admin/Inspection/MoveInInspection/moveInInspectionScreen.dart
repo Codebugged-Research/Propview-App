@@ -54,15 +54,13 @@ class MoveInInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
-  final List<List<List<String>>> imageList;
-  final List<BillToProperty> bills;
+  final List<double> newBillAmounts;
 
   MoveInInspectionScreen({
-    this.bills,
     this.propertyElement,
     this.rows,
     this.issueTableList,
-    this.imageList,
+    this.newBillAmounts,
   });
 
   @override
@@ -87,16 +85,16 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
   CustomRoomSubRoom selectedRoomSubRoom;
   List<List<Issue>> rows = [];
   List<IssueTableData> issueTableList = [];
-  List<List<List<String>>> photoList = [];
   List<Facility> facilityList = [];
-
   List<BillToProperty> bills = [];
-  List<BillToProperty> bills2 = [];
+  List<double> newBillAmounts = [];
+  List<String> billTypeList = [];
+  List billTypes = [];
+  List<TextEditingController> _billControllers = [];
 
   @override
   void initState() {
     super.initState();
-    propertyElement = widget.propertyElement;
     loadDataForScreen();
     initialiseSharedPreference();
   }
@@ -105,23 +103,19 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  List<String> billTypeList = [];
-  List billTypes = [];
-  List<TextEditingController> _billControllers = [];
-
   loadDataForScreen() async {
     setState(() {
       isLoading = true;
+      propertyElement = widget.propertyElement;
     });
     billTypes = await BillTypeService.getAllBillTypes();
-    bills2 = await BillPropertyService.getBillsByPropertyId(
-        propertyElement.tableproperty.propertyId.toString());
-    if (widget.bills != null) {
-      bills = widget.bills;
+    if (widget.newBillAmounts != null) {
+      newBillAmounts = widget.newBillAmounts;
     } else {
-      bills = await BillPropertyService.getBillsByPropertyId(
-          propertyElement.tableproperty.propertyId.toString());
+      newBillAmounts = [];
     }
+    bills = await BillPropertyService.getBillsByPropertyId(
+        propertyElement.tableproperty.propertyId.toString());
     for (int i = 0; i < bills.length; i++) {
       var type = billTypes
           .firstWhere(
@@ -129,18 +123,12 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
           )
           .billName;
       billTypeList.add(type);
-      // _billControllers.add(TextEditingController());
-    }
-    photoList = widget.imageList ?? [];
-    facilityList = await FacilityService.getFacilities();
-    rows = widget.rows != null ? widget.rows : [];
-    for (var i = 0; i < rows.length; i++) {
-      photoList.add([]);
-      for (var j = 0; j < rows[i].length; j++) {
-        photoList[i].add([]);
-        photoList[i][j] = rows[i][j].photo;
+      if (newBillAmounts.length < bills.length) {
+        newBillAmounts.add(0.0);
       }
     }
+    facilityList = await FacilityService.getFacilities();
+    rows = widget.rows != null ? widget.rows : [];
     cstates = await StateService.getStates();
     cities = await CityService.getCities();
     issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
@@ -236,6 +224,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool saveLoader = false;
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -265,13 +254,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                 setState(() {
                   saveLoader = true;
                 });
-                for (var i = 0; i < rows.length; i++) {
-                  for (var j = 0; j < rows[i].length; j++) {
-                    rows[i][j].photo = photoList[i][j];
-                  }
-                }
                 var fullInspectionCacheData = json.encode({
-                  "bills": bills,
+                  "newBillAmounts": newBillAmounts,
                   "rows": rows,
                   "issueTableList": issueTableList
                 }).toString();
@@ -279,10 +263,10 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                     "movein-${propertyElement.tableproperty.propertyId}",
                     fullInspectionCacheData);
                 if (success) {
-                  showInSnackBar(context, "Move-In Inspection Saved", 800);
+                  showInSnackBar(context, "Move-In Inspection Saved", 1600);
                 } else {
                   showInSnackBar(
-                      context, "Error Saving Move-In Inspection", 800);
+                      context, "Error Saving Move-In Inspection", 1600);
                 }
                 setState(() {
                   saveLoader = false;
@@ -341,13 +325,15 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                           ? SizedBox()
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: 300,
+                              height: 310,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
                                 itemCount: bills.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  _billControllers.add(TextEditingController());
+                                  _billControllers.add(TextEditingController(
+                                    text: newBillAmounts[index].toString(),
+                                  ));
                                   return billCard(index);
                                 },
                               ),
@@ -389,8 +375,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                         physics: NeverScrollableScrollPhysics(),
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
-                      issueTableList.length >= roomsAvailable.length
+                          height: MediaQuery.of(context).size.height * 0.05),
+                      issueTableList.length >= roomsAvailable2.length
                           ? SizedBox()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -442,13 +428,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                 child: Icon(Icons.group, color: Colors.white),
                 backgroundColor: Color(0xff314B8C),
                 onTap: () async {
-                  for (var i = 0; i < rows.length; i++) {
-                    for (var j = 0; j < rows[i].length; j++) {
-                      rows[i][j].photo = photoList[i][j];
-                    }
-                  }
                   var fullInspectionCacheData = json.encode({
-                    "bills": bills,
+                    "newBillAmounts": newBillAmounts,
                     "rows": rows,
                     "issueTableList": issueTableList
                   }).toString();
@@ -470,13 +451,8 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                 child: Icon(Icons.person, color: Colors.white),
                 backgroundColor: Color(0xff314B8C),
                 onTap: () async {
-                  for (var i = 0; i < rows.length; i++) {
-                    for (var j = 0; j < rows[i].length; j++) {
-                      rows[i][j].photo = photoList[i][j];
-                    }
-                  }
                   var fullInspectionCacheData = json.encode({
-                    "bills": bills,
+                    "newBillAmounts": newBillAmounts,
                     "rows": rows,
                     "issueTableList": issueTableList
                   }).toString();
@@ -648,7 +624,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
               child: TextField(
                 controller: _billControllers[index],
                 onChanged: (value) {
-                  bills[index].amount = double.parse(value);
+                  newBillAmounts[index] = double.parse(value);
                 },
                 obscureText: false,
                 keyboardType: TextInputType.number,
@@ -720,7 +696,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                       setState(() {
                         issueTableList.removeAt(index);
                         rows.removeAt(index);
-                        photoList.removeAt(index);
                       });
                       Navigator.pop(context);
                     },
@@ -805,7 +780,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-        enableDrag: false,
+      enableDrag: false,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       backgroundColor: Color(0xFFFFFFFF),
@@ -859,7 +834,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                                 widget.propertyElement.tableproperty.propertyId,
                           ));
                           rows.add([]);
-                          photoList.add([]);
                         },
                       );
                       Routing.makeRouting(context, routeMethod: 'pop');
@@ -999,7 +973,6 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                               onPressed: () {
                                 setState(() {
                                   rows[tableindex].removeAt(index);
-                                  photoList.remove(tableindex);
                                 });
                                 Navigator.of(context).pop();
                               },
@@ -1120,7 +1093,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                               fontWeight: FontWeight.w800,
                             ),
                   ),
-                  photoPick(photoList[tableindex][index], index),
+                  photoPick(rows[tableindex][index].photo, index),
                 ],
               ),
             ],
@@ -1152,163 +1125,162 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
         backgroundColor: Color(0xFFFFFFFF),
         builder: (BuildContext context) {
           bool errorloading = false;
-          return  Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Edit Issue Entry',
-                          style: Theme.of(context).primaryTextTheme.headline6,
-                        )),
-                      errorloading
-                          ? Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Choose atlest one Particular and one valid Status',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12,
-                                ),
-                              ))
-                          : SizedBox(),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Divider(
-                          color: Color(0xff314B8C),
-                          thickness: 2.5,
-                          indent: 100,
-                          endIndent: 100,
-                        )),
-                    SizedBox(height: 4),
-                    Text(
-                      'Particular: ',
-                      style:
-                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    DropdownButtonFormField(
-                      decoration: new InputDecoration(
-                        icon: Icon(Icons.hvac),
-                      ), //, color: Colors.white10
-                      value: issue.issueName == ""
-                          ? "Not Selected"
-                          : issue.issueName,
-                      items:
-                          facilityList2.map<DropdownMenuItem>((Facility value) {
-                        return DropdownMenuItem(
-                          value: value.facilityName,
-                          child: Text(value.facilityName),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        this.setState(() {
-                          issue.issueName = newValue;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Status: ',
-                      style:
-                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    DropdownButtonFormField(
-                      decoration: new InputDecoration(
-                        icon: Icon(Icons.hvac),
-                      ), //, color: Colors.white10
-                      value: issue.status,
-                      items: [
-                          "Average",
-                          "Clean",
-                          "Dirty",
-                          "Not Selected",
-                          "Not Working",
-                          "Working"
-                        ]
-                          .map<DropdownMenuItem>((String value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        this.setState(() {
-                          issue.status = newValue;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Remarks: ',
-                      style:
-                          Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: TextFormField(
-                        minLines: 5,
-                        maxLines: 8,
-                        initialValue: issue.remarks,
-                        onChanged: (value) {
-                          this.setState(() {
-                            issue.remarks = value;
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Align(
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
                       alignment: Alignment.center,
-                      child: MaterialButton(
-                        onPressed: () {
-                          if (issue.issueName == "Not Selected" ||
-                                issue.status == "Not Selected") {
-                              setState(() {
-                                errorloading = true;
-                              });
-                              Future.delayed(Duration(milliseconds: 3200), () {
-                                setState(() {
-                                  errorloading = false;
-                                });
-                              });
-                            } else {
-                              Navigator.pop(context);
-                              FocusScope.of(context).unfocus();
-                            }
-                        },
-                        color: Color(0xFF314B8C),
-                        child: Text(
-                          'Submit',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .subtitle1
-                              .copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                              ),
-                        ),
+                      child: Text(
+                        'Edit Issue Entry',
+                        style: Theme.of(context).primaryTextTheme.headline6,
+                      )),
+                  errorloading
+                      ? Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Choose atlest one Particular and one valid Status',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ))
+                      : SizedBox(),
+                  Align(
+                      alignment: Alignment.center,
+                      child: Divider(
+                        color: Color(0xff314B8C),
+                        thickness: 2.5,
+                        indent: 100,
+                        endIndent: 100,
+                      )),
+                  SizedBox(height: 4),
+                  Text(
+                    'Particular: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  DropdownButtonFormField(
+                    decoration: new InputDecoration(
+                      icon: Icon(Icons.hvac),
+                    ), //, color: Colors.white10
+                    value: issue.issueName == ""
+                        ? "Not Selected"
+                        : issue.issueName,
+                    items:
+                        facilityList2.map<DropdownMenuItem>((Facility value) {
+                      return DropdownMenuItem(
+                        value: value.facilityName,
+                        child: Text(value.facilityName),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      this.setState(() {
+                        issue.issueName = newValue;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Status: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  DropdownButtonFormField(
+                    decoration: new InputDecoration(
+                      icon: Icon(Icons.hvac),
+                    ), //, color: Colors.white10
+                    value: issue.status,
+                    items: [
+                      "Average",
+                      "Clean",
+                      "Dirty",
+                      "Not Selected",
+                      "Not Working",
+                      "Working"
+                    ].map<DropdownMenuItem>((String value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      this.setState(() {
+                        issue.status = newValue;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Remarks: ',
+                    style:
+                        Theme.of(context).primaryTextTheme.subtitle1.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                            ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: TextFormField(
+                      minLines: 5,
+                      maxLines: 8,
+                      initialValue: issue.remarks,
+                      onChanged: (value) {
+                        this.setState(() {
+                          issue.remarks = value;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Align(
+                    alignment: Alignment.center,
+                    child: MaterialButton(
+                      onPressed: () {
+                        if (issue.issueName == "Not Selected" ||
+                            issue.status == "Not Selected") {
+                          setState(() {
+                            errorloading = true;
+                          });
+                          Future.delayed(Duration(milliseconds: 3200), () {
+                            setState(() {
+                              errorloading = false;
+                            });
+                          });
+                        } else {
+                          Navigator.pop(context);
+                          FocusScope.of(context).unfocus();
+                        }
+                      },
+                      color: Color(0xFF314B8C),
+                      child: Text(
+                        'Submit',
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .subtitle1
+                            .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                            ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          });
+            ),
+          );
+        });
   }
 
   Widget addRowButton(int tableindex, int index) {
@@ -1323,13 +1295,13 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
         icon: Icon(Icons.add, color: Colors.white, size: 30),
         onPressed: () {
           setState(() {
-            photoList[tableindex].add([]);
-            rows[tableindex].add(
+             rows[tableindex].add(
               Issue(
-                  issueName: "Not Selected",
-                  status: "Not Selected",
-                  remarks: "",
-                  photo: photoList[tableindex][index]),
+                issueName: "Not Selected",
+                status: "Not Selected",
+                remarks: "",
+                photo: [],
+              ),
             );
           });
         },
@@ -1497,7 +1469,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                               ),
                             );
                             for (int i = 0; i < bills.length; i++) {
-                              if (bills2[i].amount !=
+                              if (newBillAmounts[i] !=
                                   double.parse(
                                     bills[i]
                                         .amount
