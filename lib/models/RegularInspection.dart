@@ -17,12 +17,14 @@ class RegularInspection {
     this.rowList,
     this.propertyId,
     this.employeeId,
+    this.summary,
     this.createdAt,
     this.updatedAt,
   });
 
   int id;
   String rowList;
+  String summary;
   int propertyId;
   int employeeId;
   DateTime createdAt;
@@ -34,6 +36,7 @@ class RegularInspection {
         rowList: json["row_list"] == null ? null : json["row_list"],
         propertyId: json["property_id"] == null ? null : json["property_id"],
         employeeId: json["employee_id"] == null ? null : json["employee_id"],
+        summary: json["summary"] == null ? null : json["summary"],
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
@@ -47,6 +50,7 @@ class RegularInspection {
         "row_list": rowList == null ? null : rowList,
         "property_id": propertyId == null ? null : propertyId,
         "employee_id": employeeId == null ? null : employeeId,
+        "summary": summary == null ? null : summary,
         "created_at": createdAt == null ? null : createdAt.toIso8601String(),
         "updated_at": updatedAt == null ? null : updatedAt.toIso8601String(),
       };

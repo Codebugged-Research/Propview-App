@@ -38,10 +38,12 @@ class IssueInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<List<Issue>> rows;
   final List<IssueTableData> issueTableList;
+  final String summary;
 
   IssueInspectionScreen({
     this.propertyElement,
     this.rows,
+    this.summary,
     this.issueTableList,
   });
 
@@ -63,6 +65,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   List<Facility> facilityList = [];
   RoomType roomTypes;
   bool loader = false;
+  TextEditingController _summaryController = TextEditingController();
 
   @override
   void initState() {
@@ -80,6 +83,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
       loader = true;
       propertyElement = widget.propertyElement;
     });
+    _summaryController.text = widget.summary ?? "";
     facilityList = await FacilityService.getFacilities();
     rows = widget.rows != null ? widget.rows : [];
     issueTableList = widget.issueTableList != null ? widget.issueTableList : [];
@@ -168,7 +172,8 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                 });
                 var fullInspectionCacheData = json.encode({
                   "rows": rows,
-                  "issueTableList": issueTableList
+                  "issueTableList": issueTableList,
+                  "summary": _summaryController.text,
                 }).toString();
                 bool success = await prefs.setString(
                     "issue-${propertyElement.tableproperty.propertyId}",
@@ -182,6 +187,8 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                 setState(() {
                   saveLoader = false;
                 });
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
               },
             ),
             IconButton(
@@ -253,13 +260,61 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                               ],
                             ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      issueTableList.length > 0
-                          ? buttonWidget(context)
-                          : Container(),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Summary',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .headline6
+                              .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black),
+                        ),
+                      ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xff314B8C).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              minLines: 5,
+                              maxLines: 8,
+                              controller: _summaryController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Summary',
+                                hintStyle: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle2
+                                    .copyWith(
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      issueTableList.length >= roomsAvailable2.length
+                          ? SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            )
+                          : SizedBox(),
+                      issueTableList.length >= roomsAvailable2.length
+                          ? buttonWidget(context)
+                          : SizedBox(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
                       ),
                     ],
                   ),
@@ -309,8 +364,41 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
             minWidth: 360,
             height: 55,
             color: Color(0xff314B8C),
-            onPressed: () async {
+            onPressed: () async {int checkerA = 0;
               FocusScope.of(context).unfocus();
+              for (int i = 0; i < issueTableList.length; i++) {
+                int count = 0;
+                if (issueTableList[i].issub == 1) {
+                  SubRoomElement subRoom = subRooms.firstWhere((element) =>
+                      element.propertySubRoomId ==
+                      issueTableList[i].roomsubroomId);
+                  count = subRoom.facility.split(",").length;
+                } else {
+                  RoomsToPropertyModel room = rooms.firstWhere((element) =>
+                      element.propertyRoomId ==
+                      issueTableList[i].roomsubroomId);
+                  count = room.facility.split(",").length;
+                }
+
+                if (count == rows[i].length) {
+                  int checkerB = 0;
+                  for (int j = 0; j < count; j++) {
+                    if (rows[i][j].issueName != "Not Selected" &&
+                        rows[i][j].status != "Not Selected") {
+                      checkerB++;
+                    }
+                  }
+                  if (count == checkerB) {
+                    checkerA++;
+                  }
+                }
+              }
+              if (checkerA < roomsAvailable2.length &&
+                  checkerA < rows.length &&
+                  checkerA < issueTableList.length) {
+                showInSnackBar(
+                    context, "Not all issues are filled properly", 1800);
+              } else {
               await showDialog(
                 context: context,
                 builder: (context) {
@@ -336,6 +424,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                               propertyId: widget
                                   .propertyElement.tableproperty.propertyId,
                               employeeId: user.userId,
+                                summary: _summaryController.text,
                               createdAt: DateTime.now(),
                               updatedAt: DateTime.now(),
                             );
@@ -423,6 +512,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                   );
                 },
               );
+              }
             },
             child: Text(
               "Submit Inspection",

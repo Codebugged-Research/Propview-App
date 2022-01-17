@@ -76,6 +76,7 @@ class _MoveOutInspectionLoaderScreenState
                   .map<double>((bill) => double.parse(bill.toString()))
                   .toList(),
               rows: rows,
+              summary: tempData["summary"] ?? "",
               issueTableList: tempData["issueTableList"]
                   .map<IssueTableData>(
                       (issueTableMap) => IssueTableData.fromJson(issueTableMap))

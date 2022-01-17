@@ -64,6 +64,7 @@ class _RegularInspectionLoaderScreenState
           MaterialPageRoute(
             builder: (context) => RegularInspectionScreen(
               propertyElement: propertyElement,
+              summary: tempData["summary"] ?? "",
               newBillAmounts: tempData["newBillAmounts"]
                   .map<double>((bill) => double.parse(bill.toString()))
                   .toList(),

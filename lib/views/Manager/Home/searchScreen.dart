@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/PropertyOwner.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Home/OwnerPropertyListScreen.dart';
-import 'package:propview/views/Admin/widgets/propertyCard.dart';
 
 class SearchScreen extends StatefulWidget {
   final Property property;
@@ -31,13 +32,20 @@ class _SearchScreenState extends State<SearchScreen> {
       resultProperty.clear();
     });
     property = widget.property;
+    print(property.data.property.length);
+    // print(result.length);
     property.data.property.forEach((element) {
       if (element.propertyOwner.ownerName
           .toLowerCase()
           .contains(_controller.text)) {
-        setState(() {
-          resultProperty.add(element);
-        });
+        if (!resultProperty
+            .map((e) => e.propertyOwner.ownerName)
+            .toList()
+            .contains(element.propertyOwner.ownerName)) {
+          setState(() {
+            resultProperty.add(element);
+          });
+        }
       }
     });
     setState(() {
@@ -136,7 +144,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemCount: resultProperty.length,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            return propertyOwnerCard(resultProperty[index].propertyOwner);
+                            return propertyOwnerCard(
+                                resultProperty[index].propertyOwner);
                           }),
                 ),
                 flex: 9,

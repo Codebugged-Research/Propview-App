@@ -198,6 +198,45 @@ class _PropertyCardState extends State<PropertyCard> {
                     indent: 100,
                     endIndent: 100,
                   )),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Property: ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(widget.propertyElement.tblSociety.socname +
+                        ", " +
+                        widget.propertyElement.tableproperty.unitNo +
+                        ", " +
+                        widget.propertyElement.tblState.sname +
+                        ", " +
+                        widget.propertyElement.tblCity.ccname),
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Owner: ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                      "${widget.propertyElement.propertyOwner.salutation.trim() + " " + widget.propertyElement.propertyOwner.ownerName}"),
+                ],
+              ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -213,7 +252,9 @@ class _PropertyCardState extends State<PropertyCard> {
                   optionCard("Assign\nproperty", "owner", () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => AssignProperty(propertyElement: propertyElement,),
+                        builder: (context) => AssignProperty(
+                          propertyElement: propertyElement,
+                        ),
                       ),
                     );
                   }),

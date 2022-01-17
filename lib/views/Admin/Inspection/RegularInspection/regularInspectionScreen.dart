@@ -29,10 +29,12 @@ class RegularInspectionScreen extends StatefulWidget {
   final PropertyElement propertyElement;
   final List<RegularInspectionRow> regularInspectionRowList;
   final List<double> newBillAmounts;
+  final String summary;
 
   const RegularInspectionScreen({
     this.newBillAmounts,
     this.propertyElement,
+    this.summary,
     this.regularInspectionRowList,
   });
 
@@ -60,6 +62,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   TextEditingController otherIssueController;
   List<BillToProperty> bills = [];
   List<double> newBillAmounts = [];
+  TextEditingController _summaryController = TextEditingController();
 
   @override
   void initState() {
@@ -92,6 +95,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
       loader = true;
       propertyElement = widget.propertyElement;
     });
+    _summaryController.text = widget.summary ?? "";
     billTypes = await BillTypeService.getAllBillTypes();
     bills = await BillPropertyService.getBillsByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
@@ -108,7 +112,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
           .billName;
       billTypeList.add(type);
       if (newBillAmounts.length <= bills.length) {
-        newBillAmounts.add(0.0);
+        newBillAmounts.add(0.00);
       }
     }
     regularInspectionRowList = widget.regularInspectionRowList ?? [];
@@ -197,6 +201,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 });
                 var fullInspectionCacheData = json.encode({
                   "newBillAmounts": newBillAmounts,
+                  "summary": _summaryController.text,
                   "regularInspectionRowList": regularInspectionRowList
                 }).toString();
                 bool success = await prefs.setString(
@@ -205,11 +210,14 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 if (success) {
                   showInSnackBar(context, "Regular Inspection Saved", 1600);
                 } else {
-                  showInSnackBar(context, "Error Saving Regular Inspection", 1600);
+                  showInSnackBar(
+                      context, "Error Saving Regular Inspection", 1600);
                 }
                 setState(() {
                   saveLoader = false;
                 });
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
               },
             ),
             IconButton(
@@ -267,12 +275,15 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                               height: 310,
                               child: ListView.builder(
                                   shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
+                                  scrollDirection: Axis.horizontal,
                                   itemCount: bills.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     _billControllers.add(TextEditingController(
-                                      text: newBillAmounts[index].toString(),
+                                      text: newBillAmounts[index] == 0
+                                          ? ""
+                                          : newBillAmounts[index]
+                                              .toStringAsFixed(2),
                                     ));
                                     return billCard(index);
                                   }),
@@ -321,13 +332,62 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                               ],
                             ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      regularInspectionRowList.length > 0
-                          ? buttonWidget(context)
-                          : Container(),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Summary',
+                          style: Theme.of(context)
+                              .primaryTextTheme
+                              .headline6
+                              .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black),
+                        ),
+                      ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xff314B8C).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              minLines: 5,
+                              maxLines: 8,
+                              controller: _summaryController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Summary',
+                                hintStyle: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle2
+                                    .copyWith(
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      regularInspectionRowList.length >= roomsAvailable2.length
+                          ? SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            )
+                          : SizedBox(),
+                      regularInspectionRowList.length >= roomsAvailable2.length
+                          ? buttonWidget(context)
+                          : SizedBox(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      ),
                     ],
                   ),
                 ),
@@ -445,7 +505,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  bills[index].amount.toString(),
+                  bills[index].amount.toStringAsFixed(2),
                   style: Theme.of(context)
                       .primaryTextTheme
                       .subtitle1
@@ -484,7 +544,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               child: TextField(
                 controller: _billControllers[index],
                 onChanged: (value) {
-                 newBillAmounts[index] = double.parse(value);
+                  newBillAmounts[index] = double.parse(value);
                 },
                 obscureText: false,
                 keyboardType: TextInputType.number,
@@ -831,104 +891,119 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
+              int checker = 0;
               FocusScope.of(context).unfocus();
-              await showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      content: Text(
-                        "Are you sure you want to submit the inspection?",
-                      ),
-                      actions: <Widget>[
-                        MaterialButton(
-                          child: Text("Yes"),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              loading = true;
-                            });
-                            User user = await UserService.getUser();
-                            RegularInspection regularInspection =
-                                RegularInspection(
-                              id: 0,
-                              rowList: "",
-                              propertyId: widget
-                                  .propertyElement.tableproperty.propertyId,
-                              employeeId: user.userId,
-                              createdAt: DateTime.now(),
-                              updatedAt: DateTime.now(),
-                            );
-                            List rowIdist = [];
-                            for (int i = 0;
-                                i < regularInspectionRowList.length;
-                                i++) {
-                              String id = await RegularInspectionRowService
-                                  .createRegularInspection(
-                                jsonEncode(
-                                  regularInspectionRowList[i].toJson(),
-                                ),
+              for (int i = 0; i < regularInspectionRowList.length; i++) {
+                if (regularInspectionRowList[i].termiteCheck != "" &&
+                    regularInspectionRowList[i].seepageCheck != "" &&
+                    regularInspectionRowList[i].generalCleanliness != "" &&
+                    regularInspectionRowList[i].otherIssue != "") {
+                  checker++;
+                }
+              }
+              if (checker < roomsAvailable2.length &&
+                  checker < regularInspectionRowList.length) {
+                showInSnackBar(context, "Please fill all the fields", 1500);
+              } else {
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        content: Text(
+                          "Are you sure you want to submit the inspection?",
+                        ),
+                        actions: <Widget>[
+                          MaterialButton(
+                            child: Text("Yes"),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                loading = true;
+                              });
+                              User user = await UserService.getUser();
+                              RegularInspection regularInspection =
+                                  RegularInspection(
+                                id: 0,
+                                rowList: "",
+                                propertyId: widget
+                                    .propertyElement.tableproperty.propertyId,
+                                employeeId: user.userId,
+                                summary: _summaryController.text,
+                                createdAt: DateTime.now(),
+                                updatedAt: DateTime.now(),
                               );
-                              rowIdist.add(id);
-                            }
-                            regularInspection.rowList = rowIdist.join(",");
-                            bool result = await RegularInspectionService
-                                .createRegularInspection(
-                              jsonEncode(
-                                regularInspection.toJson(),
-                              ),
-                            );
-                            for (int i = 0; i < bills.length; i++) {
-                              if (newBillAmounts[i] !=
-                                  double.parse(
-                                    bills[i]
-                                        .amount
-                                        .toString()
-                                        .replaceAll(",", ""),
-                                  )) {
-                                bills[i].lastUpdate = DateTime.now();
-                                await BillPropertyService.updateBillProperty(
-                                  bills[i].id.toString(),
+                              List rowIdist = [];
+                              for (int i = 0;
+                                  i < regularInspectionRowList.length;
+                                  i++) {
+                                String id = await RegularInspectionRowService
+                                    .createRegularInspection(
                                   jsonEncode(
-                                    bills[i].toJson(),
+                                    regularInspectionRowList[i].toJson(),
                                   ),
                                 );
+                                rowIdist.add(id);
                               }
-                            }
-                            setState(() {
-                              loading = false;
-                            });
-                            if (result) {
-                              await prefs.remove(
-                                  "regular-${propertyElement.tableproperty.propertyId}");
-                              showInSnackBar(
-                                  _scaffoldKey.currentContext,
-                                  "Regular Inspection added successfully!",
-                                  500);
-                              Future.delayed(Duration(milliseconds: 800), () {
-                                Navigator.of(_scaffoldKey.currentContext).pop();
-                                Navigator.of(_scaffoldKey.currentContext).pop();
+                              regularInspection.rowList = rowIdist.join(",");
+                              bool result = await RegularInspectionService
+                                  .createRegularInspection(
+                                jsonEncode(
+                                  regularInspection.toJson(),
+                                ),
+                              );
+                              for (int i = 0; i < bills.length; i++) {
+                                if (newBillAmounts[i] !=
+                                    double.parse(
+                                      bills[i]
+                                          .amount
+                                          .toString()
+                                          .replaceAll(",", ""),
+                                    )) {
+                                  bills[i].lastUpdate = DateTime.now();
+                                  await BillPropertyService.updateBillProperty(
+                                    bills[i].id.toString(),
+                                    jsonEncode(
+                                      bills[i].toJson(),
+                                    ),
+                                  );
+                                }
+                              }
+                              setState(() {
+                                loading = false;
                               });
-                            } else {
-                              showInSnackBar(_scaffoldKey.currentContext,
-                                  "Regular Inspection addition failed!", 500);
-                            }
-                          },
-                        ),
-                        MaterialButton(
-                          child: Text("No"),
-                          onPressed: () async {
-                            setState(() {
-                              loading = false;
-                            });
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  });
+                              if (result) {
+                                await prefs.remove(
+                                    "regular-${propertyElement.tableproperty.propertyId}");
+                                showInSnackBar(
+                                    _scaffoldKey.currentContext,
+                                    "Regular Inspection added successfully!",
+                                    500);
+                                Future.delayed(Duration(milliseconds: 800), () {
+                                  Navigator.of(_scaffoldKey.currentContext).pop();
+                                  Navigator.of(_scaffoldKey.currentContext).pop();
+                                });
+                              } else {
+                                showInSnackBar(_scaffoldKey.currentContext,
+                                    "Regular Inspection addition failed!", 500);
+                              }
+                            },
+                          ),
+                          MaterialButton(
+                            child: Text("No"),
+                            onPressed: () async {
+                              setState(() {
+                                loading = false;
+                              });
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              }
             },
             child: Text(
               "Submit Inspection",

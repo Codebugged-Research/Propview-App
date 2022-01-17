@@ -210,13 +210,15 @@ class _SearchPropertyCardState extends State<SearchPropertyCard> {
                       color: Colors.black,
                     ),
                   ),
-                  Text(widget.propertyElement.tblSociety.socname +
-                      ", " +
-                      widget.propertyElement.tableproperty.unitNo +
-                      ", " +
-                      widget.propertyElement.tblState.sname +
-                      ", " +
-                      widget.propertyElement.tblCity.ccname),
+                  Flexible(
+                    child: Text(widget.propertyElement.tblSociety.socname +
+                        ", " +
+                        widget.propertyElement.tableproperty.unitNo +
+                        ", " +
+                        widget.propertyElement.tblState.sname +
+                        ", " +
+                        widget.propertyElement.tblCity.ccname),
+                  ),
                 ],
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.01),

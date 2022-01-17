@@ -116,6 +116,8 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
   TextEditingController roomWidthInchesController =
       new TextEditingController(text: "0");
 
+  int changeCounter = 0;
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -188,6 +190,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                     });
                                     facilityDropDownValue = facilities[0];
                                     setState(() {
+                                      changeCounter++;
                                       roomTypeDropDownValue = value;
                                     });
                                   },
@@ -226,6 +229,9 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                           'Room Length',
                                           'ft', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                     SizedBox(width: 8.0),
@@ -239,6 +245,9 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                           'Room Length',
                                           'inches', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                   ],
@@ -270,6 +279,9 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                           'Room Breadth',
                                           'ft', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                     SizedBox(width: 8),
@@ -283,6 +295,9 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                           'Room Breadth',
                                           'inches', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                   ],
@@ -323,6 +338,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                     setState(() {
                                       _roomSelection[index] =
                                           !_roomSelection[index];
+                                      changeCounter++;
                                     });
                                   },
                                 ),
@@ -364,6 +380,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                     setState(() {
                                       _floorSelections[index] =
                                           !_floorSelections[index];
+                                      changeCounter++;
                                     });
                                   },
                                 ),
@@ -399,6 +416,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                     } else {
                                       setState(() {
                                         addTag(value);
+                                        changeCounter++;
                                         facilityDropDownValue = value;
                                         facilityTag.sort((a, b) => a
                                             .facilityName
@@ -455,10 +473,14 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                         );
                                       }),
                                 ),
-                                SizedBox(
-                                    height:
-                                        UIConstants.fitToHeight(24, context)),
-                                buttonWidget(context),
+                                changeCounter > 0
+                                    ? SizedBox(
+                                        height: UIConstants.fitToHeight(
+                                            24, context))
+                                    : SizedBox(),
+                                changeCounter > 0
+                                    ? buttonWidget(context)
+                                    : SizedBox(),
                                 SizedBox(
                                     height:
                                         UIConstants.fitToHeight(24, context)),
@@ -488,8 +510,10 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
               child: Text("Yes"),
               onPressed: () {
                 setState(() {
+                  changeCounter++;
                   facilityTag.removeAt(index);
-    facilityTag.sort((a, b) => a.facilityName.compareTo(b.facilityName));
+                  facilityTag
+                      .sort((a, b) => a.facilityName.compareTo(b.facilityName));
                 });
                 Navigator.of(context).pop();
               },
@@ -539,6 +563,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
       ),
       obscureText: isVisible,
       validator: (value) => value.isEmpty ? validation : null,
+      onChanged: save,
       onSaved: save,
     );
   }
@@ -551,7 +576,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
         : MaterialButton(
             minWidth: 360,
             height: 55,
-            color: Color(0xff314B8C),
+            color: Colors.green,
             onPressed: () async {
               List<String> modelFacilty = [];
               facilityTag.forEach((element) {

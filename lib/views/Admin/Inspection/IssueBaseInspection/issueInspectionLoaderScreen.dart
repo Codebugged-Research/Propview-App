@@ -72,6 +72,7 @@ class _IssueInspectionLoaderScreenState
             builder: (context) => IssueInspectionScreen(
               propertyElement: propertyElement,
               rows: rows,
+              summary: tempData["summary"],
               issueTableList: tempData["issueTableList"]
                   .map<IssueTableData>(
                       (issueTableMap) => IssueTableData.fromJson(issueTableMap))

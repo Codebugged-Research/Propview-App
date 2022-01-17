@@ -60,6 +60,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     super.initState();
     getData();
   }
+  int changeCounter = 0;
 
   getData() async {
     widget.roomTypes.forEach((element) {
@@ -171,6 +172,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                   onChanged: (value) {
                                     setState(() {
                                       roomTypeDropDownValue = value;
+                                      changeCounter++;
                                     });
                                   },
                                   items: allRoomTypes
@@ -215,6 +217,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                     });
                                     facilityDropDownValue = facilities[0];
                                     setState(() {
+                                      changeCounter++;
                                       subRoomTypeDropDownValue = value;
                                     });
                                   },
@@ -254,6 +257,9 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                           'Room Size Length',
                                           'ft', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                     SizedBox(width: 8),
@@ -267,6 +273,9 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                           'Room Length',
                                           'inches', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                   ],
@@ -298,6 +307,9 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                           'Room Width',
                                           'ft', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                     SizedBox(width: 8),
@@ -311,6 +323,9 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                           'Room Width',
                                           'inches', (value) {
                                         print(value);
+                                        setState(() {
+                                          changeCounter++;
+                                        });
                                       }),
                                     ),
                                   ],
@@ -351,6 +366,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                         facilityTag.sort((a, b) => a
                                             .facilityName
                                             .compareTo(b.facilityName));
+                                      changeCounter++;
                                       });
                                     }
                                   },
@@ -406,7 +422,14 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                 SizedBox(
                                     height:
                                         UIConstants.fitToHeight(8, context)),
-                                buttonWidget(context),
+                               changeCounter > 0
+                                    ? SizedBox(
+                                        height: UIConstants.fitToHeight(
+                                            24, context))
+                                    : SizedBox(),
+                                changeCounter > 0
+                                    ? buttonWidget(context)
+                                    : SizedBox(),
                                 SizedBox(
                                     height:
                                         UIConstants.fitToHeight(32, context)),
@@ -433,6 +456,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
               child: Text("Yes"),
               onPressed: () {
                 setState(() {
+                                      changeCounter++;
                   facilityTag.removeAt(index);
                   facilityTag
                       .sort((a, b) => a.facilityName.compareTo(b.facilityName));
@@ -460,7 +484,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
         : MaterialButton(
             minWidth: 360,
             height: 55,
-            color: Color(0xff314B8C),
+            color: Colors.green,
             onPressed: () async {
               List<String> modelFacilty = [];
               facilityTag.forEach((element) {
@@ -541,6 +565,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
       ),
       obscureText: isVisible,
       validator: (value) => value.isEmpty ? validation : null,
+      onChanged: save,
       onSaved: save,
     );
   }

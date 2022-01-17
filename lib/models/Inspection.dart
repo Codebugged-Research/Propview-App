@@ -56,6 +56,7 @@ class Inspection {
     this.propertyId,
     this.employeeId,
     this.issueIdList,
+    this.summary,
     this.createdAt,
     this.updatedAt,
   });
@@ -64,6 +65,7 @@ class Inspection {
   String inspectType;
   int propertyId;
   int employeeId;
+  String summary;
   String issueIdList;
   DateTime createdAt;
   DateTime updatedAt;
@@ -76,6 +78,7 @@ class Inspection {
         employeeId: json["employee_id"] == null ? null : json["employee_id"],
         issueIdList:
             json["issue_id_list"] == null ? null : json["issue_id_list"],
+        summary: json["summary"] == null ? null : json["summary"],
         createdAt: json["createdAt"] == null
             ? null
             : DateTime.parse(json["createdAt"]),
@@ -90,6 +93,7 @@ class Inspection {
         "property_id": propertyId == null ? null : propertyId,
         "issue_id_list": issueIdList == null ? null : issueIdList,
         "employee_id": employeeId == null ? null : employeeId,
+        "summary": summary == null ? null : summary,
         "createdAt": createdAt == null ? null : createdAt.toIso8601String(),
         "updatedAt": updatedAt == null ? null : updatedAt.toIso8601String(),
       };
