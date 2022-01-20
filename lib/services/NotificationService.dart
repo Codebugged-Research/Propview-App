@@ -27,7 +27,7 @@ class NotificationService {
         Uri.parse("https://api.propdial.co.in/api/notification/one"),
         headers: headers,
         body: body);
-    print(response.body);
+    // print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
