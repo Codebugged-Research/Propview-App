@@ -49,6 +49,17 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
     _tabController.index = widget.index;
     user = await UserService.getUser();
     userList = await UserService.getAllUserUnderManger(user.userId);
+     List<User> tempUsers3 = [];
+    for (int i = 0; i < userList.length; i++) {
+      if (userList[i].userType == "manager") {
+        List<User> tempUsers =
+            await UserService.getAllUserUnderManger(userList[i].userId);
+        tempUsers3.addAll(tempUsers);    
+      }
+    }
+    setState(() {
+      userList.addAll(tempUsers3);
+    });
     userList.add(user);
     print(userList.length);
     setState(() {

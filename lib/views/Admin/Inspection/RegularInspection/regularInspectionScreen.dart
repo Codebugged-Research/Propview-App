@@ -162,6 +162,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   }
 
   bool saveLoader = false;
+  bool showSummary = false;
 
   getRoomName(id) {
     PropertyRoom room = roomTypes.data.propertyRoom
@@ -216,8 +217,8 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 setState(() {
                   saveLoader = false;
                 });
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
             ),
             IconButton(
@@ -334,49 +335,56 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Summary',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .headline6
-                              .copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black),
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xff314B8C).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              minLines: 5,
-                              maxLines: 8,
-                              controller: _summaryController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Enter Summary',
-                                hintStyle: Theme.of(context)
+                      showSummary
+                          ? Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                'Summary',
+                                style: Theme.of(context)
                                     .primaryTextTheme
-                                    .subtitle2
+                                    .headline6
                                     .copyWith(
-                                        fontWeight: FontWeight.normal,
+                                        fontWeight: FontWeight.w700,
                                         color: Colors.black),
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
+                            )
+                          : SizedBox.shrink(),
+                      showSummary
+                          ? SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            )
+                          : SizedBox.shrink(),
+                      showSummary
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xff314B8C).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    minLines: 5,
+                                    maxLines: 8,
+                                    controller: _summaryController,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Enter Summary',
+                                      hintStyle: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle2
+                                          .copyWith(
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : SizedBox.shrink(),
                       regularInspectionRowList.length >= roomsAvailable2.length
                           ? SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
@@ -444,7 +452,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bill Authority:  ',
+                  'Bill Authority: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -464,7 +472,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bill No:  ',
+                  'Bill ID: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -483,24 +491,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             Row(
               children: [
                 Text(
-                  'Added On:  ',
-                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  dateChange(bills[index].dateAdded.toLocal()),
-                  style: Theme.of(context)
-                      .primaryTextTheme
-                      .subtitle1
-                      .copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-            Row(
-              children: [
-                Text(
-                  'Last Amount:  ',
+                  'Amount Due: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -517,7 +508,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             Row(
               children: [
                 Text(
-                  'Last Update On:  ',
+                  'Last Updated: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -532,7 +523,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Text(
-              'Amount',
+              'Amount: ',
               style: Theme.of(context)
                   .primaryTextTheme
                   .subtitle1
@@ -903,7 +894,141 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
               }
               if (checker < roomsAvailable2.length &&
                   checker < regularInspectionRowList.length) {
-                showInSnackBar(context, "Please fill all the fields", 1500);
+                ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                  content: new Text("Not all fields are filled properly"),
+                  duration: Duration(milliseconds: 4000),
+                  backgroundColor: Colors.red,
+                ));
+              } else if (!showSummary) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      content: Text(
+                        "Do you want to add summary?",
+                      ),
+                      actions: [
+                        MaterialButton(
+                            child: Text("Yes"),
+                            onPressed: () async {
+                              setState(() {
+                                showSummary = true;
+                              });
+                              Navigator.of(context).pop();
+                            }),
+                        MaterialButton(
+                          child: Text("No"),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        content: Text(
+                          "Are you sure you want to submit the inspection?",
+                        ),
+                        actions: <Widget>[
+                          MaterialButton(
+                            child: Text("Yes"),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                loading = true;
+                              });
+                              User user = await UserService.getUser();
+                              RegularInspection regularInspection =
+                                  RegularInspection(
+                                id: 0,
+                                rowList: "",
+                                propertyId: widget
+                                    .propertyElement.tableproperty.propertyId,
+                                employeeId: user.userId,
+                                summary: _summaryController.text,
+                                createdAt: DateTime.now(),
+                                updatedAt: DateTime.now(),
+                              );
+                              List rowIdist = [];
+                              for (int i = 0;
+                                  i < regularInspectionRowList.length;
+                                  i++) {
+                                String id = await RegularInspectionRowService
+                                    .createRegularInspection(
+                                  jsonEncode(
+                                    regularInspectionRowList[i].toJson(),
+                                  ),
+                                );
+                                rowIdist.add(id);
+                              }
+                              regularInspection.rowList = rowIdist.join(",");
+                              bool result = await RegularInspectionService
+                                  .createRegularInspection(
+                                jsonEncode(
+                                  regularInspection.toJson(),
+                                ),
+                              );
+                              for (int i = 0; i < bills.length; i++) {
+                                if (newBillAmounts[i] !=
+                                    double.parse(
+                                      bills[i]
+                                          .amount
+                                          .toString()
+                                          .replaceAll(",", ""),
+                                    )) {
+                                  bills[i].lastUpdate = DateTime.now();
+                                  await BillPropertyService.updateBillProperty(
+                                    bills[i].id.toString(),
+                                    jsonEncode(
+                                      bills[i].toJson(),
+                                    ),
+                                  );
+                                }
+                              }
+                              setState(() {
+                                loading = false;
+                              });
+                              if (result) {
+                                await prefs.remove(
+                                    "regular-${propertyElement.tableproperty.propertyId}");
+                                showInSnackBar(
+                                    _scaffoldKey.currentContext,
+                                    "Regular Inspection added successfully!",
+                                    500);
+                                Future.delayed(Duration(milliseconds: 800), () {
+                                  Navigator.of(_scaffoldKey.currentContext)
+                                      .pop();
+                                  Navigator.of(_scaffoldKey.currentContext)
+                                      .pop();
+                                });
+                              } else {
+                                showInSnackBar(_scaffoldKey.currentContext,
+                                    "Regular Inspection addition failed!", 500);
+                              }
+                            },
+                          ),
+                          MaterialButton(
+                            child: Text("No"),
+                            onPressed: () async {
+                              setState(() {
+                                loading = false;
+                              });
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               } else {
                 await showDialog(
                     context: context,
@@ -982,8 +1107,10 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                                     "Regular Inspection added successfully!",
                                     500);
                                 Future.delayed(Duration(milliseconds: 800), () {
-                                  Navigator.of(_scaffoldKey.currentContext).pop();
-                                  Navigator.of(_scaffoldKey.currentContext).pop();
+                                  Navigator.of(_scaffoldKey.currentContext)
+                                      .pop();
+                                  Navigator.of(_scaffoldKey.currentContext)
+                                      .pop();
                                 });
                               } else {
                                 showInSnackBar(_scaffoldKey.currentContext,

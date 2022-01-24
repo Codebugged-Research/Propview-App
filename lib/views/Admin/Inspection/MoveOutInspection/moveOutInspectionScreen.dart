@@ -238,6 +238,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool saveLoader = false;
+  bool showSummary = false;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -285,8 +286,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                 setState(() {
                   saveLoader = false;
                 });
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
             ),
             IconButton(
@@ -463,49 +464,56 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Summary',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .headline6
-                              .copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black),
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xff314B8C).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              minLines: 5,
-                              maxLines: 8,
-                              controller: _summaryController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Enter Summary',
-                                hintStyle: Theme.of(context)
+                      showSummary
+                          ? Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                'Summary',
+                                style: Theme.of(context)
                                     .primaryTextTheme
-                                    .subtitle2
+                                    .headline6
                                     .copyWith(
-                                        fontWeight: FontWeight.normal,
+                                        fontWeight: FontWeight.w700,
                                         color: Colors.black),
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
+                            )
+                          : SizedBox.shrink(),
+                      showSummary
+                          ? SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            )
+                          : SizedBox.shrink(),
+                      showSummary
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xff314B8C).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    minLines: 5,
+                                    maxLines: 8,
+                                    controller: _summaryController,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Enter Summary',
+                                      hintStyle: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle2
+                                          .copyWith(
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : SizedBox.shrink(),
                       issueTableList.length >= roomsAvailable2.length
                           ? SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
@@ -573,7 +581,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bill Authority:  ',
+                  'Bill Authority: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -593,7 +601,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bill No:  ',
+                  'Bill ID: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -612,24 +620,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
             Row(
               children: [
                 Text(
-                  'Added On:  ',
-                  style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  dateChange(bills[index].dateAdded.toLocal()),
-                  style: Theme.of(context)
-                      .primaryTextTheme
-                      .subtitle1
-                      .copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-            Row(
-              children: [
-                Text(
-                  'Last Amount:  ',
+                  'Amount Due: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -646,7 +637,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
             Row(
               children: [
                 Text(
-                  'Last Update On:  ',
+                  'Last Updated: ',
                   style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
@@ -661,7 +652,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
             Text(
-              'Amount',
+              'Amount: ',
               style: Theme.of(context)
                   .primaryTextTheme
                   .subtitle1
@@ -1475,8 +1466,180 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
               if (checkerA < roomsAvailable2.length &&
                   checkerA < rows.length &&
                   checkerA < issueTableList.length) {
-                showInSnackBar(
-                    context, "Not all issues are filled properly", 1800);
+                ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                  content: new Text("Not all issues are filled properly"),
+                  duration: Duration(milliseconds: 4000),
+                  backgroundColor: Colors.red,
+                ));
+              } else if (!showSummary) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      content: Text(
+                        "Do you want to add summary?",
+                      ),
+                      actions: [
+                        MaterialButton(
+                            child: Text("Yes"),
+                            onPressed: () async {
+                              setState(() {
+                                showSummary = true;
+                              });
+                              Navigator.of(context).pop();
+                            }),
+                        MaterialButton(
+                          child: Text("No"),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        content: Text(
+                          "Are you sure you want to submit the inspection?",
+                        ),
+                        actions: [
+                          MaterialButton(
+                            child: Text("Yes"),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                loading = true;
+                              });
+                              User user = await UserService.getUser();
+                              inspection = Inspection(
+                                inspectionId: 0,
+                                inspectType: "Move out Inspection",
+                                propertyId: widget
+                                    .propertyElement.tableproperty.propertyId,
+                                employeeId: user.userId,
+                                summary: _summaryController.text,
+                                createdAt: DateTime.now(),
+                                updatedAt: DateTime.now(),
+                              );
+                              // print(inspection.toJson());
+                              List tempIssueTableList = [];
+                              for (int i = 0; i < rows.length; i++) {
+                                List issueRowList = [];
+                                for (int j = 0; j < rows[i].length; j++) {
+                                  List<String> finalPhotoList = [];
+                                  for (int k = 0;
+                                      k < rows[i][j].photo.length;
+                                      k++) {
+                                    String tempUrl = await upload(
+                                        rows[i][j].photo[k],
+                                        widget.propertyElement.tableproperty
+                                            .propertyId
+                                            .toString());
+                                    finalPhotoList.add(tempUrl);
+                                  }
+                                  var payload = {
+                                    "issue_id": 0,
+                                    "issue_name": rows[i][j].issueName,
+                                    "status": rows[i][j].status,
+                                    "remarks": rows[i][j].remarks,
+                                    "photo": finalPhotoList.join(","),
+                                    "createdAt": DateTime.now().toString(),
+                                    "updatedAt": DateTime.now().toString(),
+                                  };
+                                  // print(payload);
+                                  var result = await IssueService.createIssue(
+                                      jsonEncode(payload));
+                                  issueRowList.add(result);
+                                }
+                                var payload1 = {
+                                  "id": 0,
+                                  "roomsubroom_id":
+                                      issueTableList[i].roomsubroomId,
+                                  "roomsubroom_name":
+                                      issueTableList[i].roomsubroomName,
+                                  "issub": issueTableList[i].issub,
+                                  "issue_row_id": issueRowList.join(","),
+                                  "property_id": widget
+                                      .propertyElement.tableproperty.propertyId,
+                                  "created_at": DateTime.now().toString(),
+                                  "updated_at": DateTime.now().toString(),
+                                };
+                                var result =
+                                    await IssueTableService.createIssueTable(
+                                        jsonEncode(payload1));
+                                tempIssueTableList.add(result);
+                              }
+                              inspection.issueIdList =
+                                  tempIssueTableList.join(",");
+                              bool result =
+                                  await InspectionService.createInspection(
+                                jsonEncode(
+                                  inspection.toJson(),
+                                ),
+                              );
+                              for (int i = 0; i < bills.length; i++) {
+                                if (newBillAmounts[i] !=
+                                    double.parse(
+                                      bills[i]
+                                          .amount
+                                          .toString()
+                                          .replaceAll(",", ""),
+                                    )) {
+                                  bills[i].lastUpdate = DateTime.now();
+                                  await BillPropertyService.updateBillProperty(
+                                    bills[i].id.toString(),
+                                    jsonEncode(
+                                      bills[i].toJson(),
+                                    ),
+                                  );
+                                }
+                              }
+                              setState(() {
+                                loading = false;
+                              });
+                              if (result) {
+                                await prefs.remove(
+                                    "moveout-${propertyElement.tableproperty.propertyId}");
+                                showInSnackBar(
+                                    _scaffoldKey.currentContext,
+                                    "Move Out Inspection added successfully!",
+                                    500);
+                                Future.delayed(Duration(milliseconds: 800), () {
+                                  Navigator.of(_scaffoldKey.currentContext)
+                                      .pop();
+                                  Navigator.of(_scaffoldKey.currentContext)
+                                      .pop();
+                                });
+                              } else {
+                                showInSnackBar(
+                                    _scaffoldKey.currentContext,
+                                    "Move Out Inspection Addition unsuccessfull! ",
+                                    500);
+                              }
+                            },
+                          ),
+                          MaterialButton(
+                            child: Text("No"),
+                            onPressed: () {
+                              setState(() {
+                                loading = false;
+                              });
+                              Navigator.of(context).pop();
+                              FocusScope.of(context).unfocus();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               } else {
                 await showDialog(
                     context: context,

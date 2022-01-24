@@ -42,6 +42,17 @@ class _AssignPropertyState extends State<AssignProperty> {
     );
     User user = await UserService.getUser();
     userList = await UserService.getAllUserUnderManger(user.userId);
+    List<User> tempUsers3 = [];
+    for (int i = 0; i < userList.length; i++) {
+      if (userList[i].userType == "manager") {
+        List<User> tempUsers =
+            await UserService.getAllUserUnderManger(userList[i].userId);
+        tempUsers3.addAll(tempUsers);    
+      }
+    }
+    setState(() {
+      userList.addAll(tempUsers3);
+    });
     user0 = await UserService.getUserById(id0);
     userList.removeWhere((element) => element.cid != user0.cid);
     if (id1 != 0) {

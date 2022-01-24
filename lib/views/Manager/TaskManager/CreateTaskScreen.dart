@@ -89,6 +89,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       loading = true;
     });
     users = await UserService.getAllUserUnderManger(widget.user.userId);
+     List<User> tempUsers3 = [];
+    for (int i = 0; i < users.length; i++) {
+      if (users[i].userType == "manager") {
+        List<User> tempUsers =
+            await UserService.getAllUserUnderManger(users[i].userId);
+        tempUsers3.addAll(tempUsers);    
+      }
+    }
+    setState(() {
+      users.addAll(tempUsers3);
+    });
     users.add(widget.user);
     _selectedUser = widget.user;
     propertyList =

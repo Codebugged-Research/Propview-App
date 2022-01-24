@@ -54,7 +54,18 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       loading = true;
     });
     user = await UserService.getUser();
-    userList = await UserService.getAllUserUnderManger(user.userId);
+    userList = await UserService.getAllUserUnderManger(user.userId); 
+    List<User> tempUsers3 = [];
+    for (int i = 0; i < userList.length; i++) {
+      if (userList[i].userType == "manager") {
+        List<User> tempUsers =
+            await UserService.getAllUserUnderManger(userList[i].userId);
+        tempUsers3.addAll(tempUsers);    
+      }
+    }
+    setState(() {
+      userList.addAll(tempUsers3);
+    });
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _tabController21 = TabController(length: 3, vsync: this, initialIndex: 0);
     _tabController22 = TabController(length: 3, vsync: this, initialIndex: 0);

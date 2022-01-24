@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-version: 1.0.36+37
+version: 1.0.37+38
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
