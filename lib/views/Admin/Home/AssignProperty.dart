@@ -116,10 +116,33 @@ class _AssignPropertyState extends State<AssignProperty> {
                     user1 != null
                         ? InkWell(
                             onTap: () {
-                              setState(() {
-                                showForm = true;
-                                user1 = null;
-                              });
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("Remove User"),
+                                      content: Text(
+                                          "Do you want to remove the user?"),
+                                      actions: [
+                                        MaterialButton(
+                                          child: Text("Yes"),
+                                          onPressed: () {
+                                            setState(() {
+                                              showForm = true;
+                                              user1 = null;
+                                            });
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        MaterialButton(
+                                          child: Text("No"),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
                             },
                             child: UserCard(user1),
                           )
@@ -142,34 +165,67 @@ class _AssignPropertyState extends State<AssignProperty> {
                                       .subtitle1),
                             ),
                             onPressed: () async {
-                              if (temp == user1) {
-                                PropertyAssignmentModel res =
-                                    await PropertyAssignment
-                                        .getTempAssignRowByUserId(user1.userId);
-                                List<String> res2 = res.propertyId.split(",");
-                                res2.removeWhere(
-                                  (element) =>
-                                      element ==
-                                      widget.propertyElement.tableproperty
-                                          .propertyId
-                                          .toString(),
-                                );
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("Remove User"),
+                                      content: Text(
+                                          "Do you want to remove the user?"),
+                                      actions: [
+                                        MaterialButton(
+                                          child: Text("Yes"),
+                                          onPressed: () async {
+                                            if (temp == user1) {
+                                              PropertyAssignmentModel res =
+                                                  await PropertyAssignment
+                                                      .getTempAssignRowByUserId(
+                                                          user1.userId);
+                                              List<String> res2 =
+                                                  res.propertyId.split(",");
+                                              res2.removeWhere(
+                                                (element) =>
+                                                    element ==
+                                                    widget
+                                                        .propertyElement
+                                                        .tableproperty
+                                                        .propertyId
+                                                        .toString(),
+                                              );
 
-                                bool res3 = await PropertyAssignment
-                                    .updateTempAssignment(
-                                        res2, res.userToPropertyId);
-                                if (res3) {
-                                  showInSnackBar(context,
-                                      "Assigne succesfully removed", 800);
-                                  setState(() {
-                                    showForm = true;
-                                    user1 = null;
+                                              bool res3 =
+                                                  await PropertyAssignment
+                                                      .updateTempAssignment(
+                                                          res2,
+                                                          res.userToPropertyId);
+                                              if (res3) {
+                                                showInSnackBar(
+                                                    context,
+                                                    "Assigne succesfully removed",
+                                                    800);
+                                                setState(() {
+                                                  showForm = true;
+                                                  user1 = null;
+                                                });
+                                              } else {
+                                                showInSnackBar(
+                                                    context,
+                                                    "Assigne removal failed2",
+                                                    800);
+                                              }
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        MaterialButton(
+                                          child: Text("No"),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
                                   });
-                                } else {
-                                  showInSnackBar(
-                                      context, "Assigne removal failed2", 800);
-                                }
-                              }
                             },
                           )
                         : SizedBox(),
