@@ -48,10 +48,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     List<TaskElement> tempList =
         await TaskService.getAllSelfTaskByIdAndType(user.userId, "Rejected");
     pendingTaskList.addAll(tempList);
+    pendingTaskList.sort((a, b) => b.taskId.compareTo(a.taskId));
     unApprovedTaskList =
         await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
+    unApprovedTaskList.sort((a, b) => b.taskId.compareTo(a.taskId));
     completedTaskList =
         await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
+    completedTaskList.sort((a, b) => b.taskId.compareTo(a.taskId));
     setState(() {
       loading = false;
     });
@@ -270,6 +273,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                   padding: EdgeInsets.only(top: 0),
                                   itemCount: unApprovedTaskList.length,
                                   itemBuilder: (context, index) {
+                                    unApprovedTaskList.sort(
+                                        (a, b) => b.taskId.compareTo(a.taskId));
                                     return TaskCard(
                                       taskElement: unApprovedTaskList[index],
                                       currentUser: user,

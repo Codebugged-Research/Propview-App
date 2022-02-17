@@ -418,6 +418,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: pendingTaskList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                              pendingTaskList.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   pendingTaskList[index],
@@ -458,6 +461,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: pendingTaskList2.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                              pendingTaskList2.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   pendingTaskList2[index],
@@ -510,6 +516,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: unApprovedTaskList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                              unApprovedTaskList.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   unApprovedTaskList[index],
@@ -561,6 +570,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: unApprovedTaskList2.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                              unApprovedTaskList2.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   unApprovedTaskList2[index],
@@ -624,6 +636,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: completedTaskList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                              completedTaskList.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   completedTaskList[index],
@@ -653,6 +668,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: completedTaskList2.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                              completedTaskList2.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   completedTaskList2[index],

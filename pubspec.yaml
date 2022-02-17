@@ -10,19 +10,19 @@ environment:
 
 dependencies:
   api_cache_manager: ^1.0.2
-  camera: null
+  camera: ^0.9.4+10
   collection: null
   cupertino_icons: ^1.0.2
   double_back_to_close_app: ^2.0.1
   firebase_analytics: null
   firebase_core: ^1.1.1
-  firebase_messaging: ^9.1.4
+  firebase_messaging: ^11.2.6
   fl_chart: null
   flutter:
     sdk: flutter
   flutter_datetime_picker: ^1.5.1
   flutter_image_compress: ^1.0.0
-  flutter_local_notifications: ^5.0.0+4
+  flutter_local_notifications: ^9.2.0 
   flutter_picker: ^2.0.2
   flutter_speed_dial: ^4.1.0
   flutter_typeahead: ^3.1.1
@@ -38,7 +38,7 @@ dependencies:
   provider: ^5.0.0
   share: ^2.0.4
   shared_preferences: ^2.0.5
-  syncfusion_flutter_calendar: ^19.1.64
+  syncfusion_flutter_calendar: ^19.4.48
   url_launcher: ^6.0.3
 
 dev_dependencies:

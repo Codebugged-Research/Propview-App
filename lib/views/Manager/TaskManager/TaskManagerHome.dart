@@ -54,13 +54,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
       loading = true;
     });
     user = await UserService.getUser();
-    userList = await UserService.getAllUserUnderManger(user.userId); 
+    userList = await UserService.getAllUserUnderManger(user.userId);
     List<User> tempUsers3 = [];
     for (int i = 0; i < userList.length; i++) {
       if (userList[i].userType == "manager") {
         List<User> tempUsers =
             await UserService.getAllUserUnderManger(userList[i].userId);
-        tempUsers3.addAll(tempUsers);    
+        tempUsers3.addAll(tempUsers);
       }
     }
     setState(() {
@@ -69,16 +69,32 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _tabController21 = TabController(length: 3, vsync: this, initialIndex: 0);
     _tabController22 = TabController(length: 3, vsync: this, initialIndex: 0);
-    pendingTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Pending");
-    List<TaskElement> rejectedSelf = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Rejected");
+    // self
+    pendingTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Pending");
+    List<TaskElement> rejectedSelf =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Rejected");
     pendingTaskList.addAll(rejectedSelf);
-    unApprovedTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
-    completedTaskList = await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
-    List<TaskElement> rejectedTeam = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Rejected");
-    pendingTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Pending");    
+    pendingTaskList.sort((a, b) => b.taskId.compareTo(a.taskId));
+    unApprovedTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Unapproved");
+    unApprovedTaskList.sort((a, b) => b.taskId.compareTo(a.taskId));
+    completedTaskList =
+        await TaskService.getAllSelfTaskByIdAndType(user.userId, "Completed");
+    completedTaskList.sort((a, b) => b.taskId.compareTo(a.taskId));
+    // team
+    List<TaskElement> rejectedTeam =
+        await TaskService.getAllTeamTaskByIdAndType(user.userId, "Rejected");
+    pendingTaskList2 =
+        await TaskService.getAllTeamTaskByIdAndType(user.userId, "Pending");
     pendingTaskList2.addAll(rejectedTeam);
-    unApprovedTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Unapproved");
-    completedTaskList2 = await TaskService.getAllTeamTaskByIdAndType(user.userId, "Completed");
+    pendingTaskList2.sort((a, b) => b.taskId.compareTo(a.taskId));
+    unApprovedTaskList2 =
+        await TaskService.getAllTeamTaskByIdAndType(user.userId, "Unapproved");
+    unApprovedTaskList2.sort((a, b) => b.taskId.compareTo(a.taskId));
+    completedTaskList2 =
+        await TaskService.getAllTeamTaskByIdAndType(user.userId, "Completed");
+    completedTaskList2.sort((a, b) => b.taskId.compareTo(a.taskId));
     setState(() {
       tempUser = user;
       loading = false;
@@ -112,13 +128,13 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                     padding: const EdgeInsets.fromLTRB(12, 64, 12, 12),
                     child: ListTile(
                       leading: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        },
                         child: ClipOval(
                           child: FadeInImage.assetNetwork(
                             height: 60,
@@ -165,7 +181,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => SearchTask(                                    
+                                  builder: (context) => SearchTask(
                                     index: _tabController.index == 0
                                         ? _tabController21.index
                                         : _tabController22.index,
@@ -390,6 +406,8 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                             itemCount:
                                                 unApprovedTaskList.length,
                                             itemBuilder: (context, index) {
+                                              unApprovedTaskList.sort((a, b) =>
+                                                  b.taskId.compareTo(a.taskId));
                                               return TaskCard(
                                                 taskElement:
                                                     unApprovedTaskList[index],
@@ -460,7 +478,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                             ],
                           ),
                           Column(
-                            children: [                              
+                            children: [
                               serachLoading
                                   ? circularProgressWidget()
                                   : TabBar(
@@ -539,6 +557,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
+                                                        pendingTaskList2.sort(
+                                                            (a, b) => b.taskId
+                                                                .compareTo(
+                                                                    a.taskId));
                                                         return TaskCard(
                                                           taskElement:
                                                               pendingTaskList2[
@@ -577,6 +599,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
+                                                        pendingTaskList3.sort(
+                                                            (a, b) => b.taskId
+                                                                .compareTo(
+                                                                    a.taskId));
                                                         return TaskCard(
                                                           taskElement:
                                                               pendingTaskList3[
@@ -628,6 +654,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
+                                                        unApprovedTaskList2
+                                                            .sort((a, b) => b
+                                                                .taskId
+                                                                .compareTo(
+                                                                    a.taskId));
                                                         return TaskCard(
                                                           taskElement:
                                                               unApprovedTaskList2[
@@ -693,6 +724,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
+                                                        unApprovedTaskList3
+                                                            .sort((a, b) => b
+                                                                .updatedAt
+                                                                .compareTo(a
+                                                                    .updatedAt));
                                                         return TaskCard(
                                                           taskElement:
                                                               unApprovedTaskList3[
@@ -771,6 +807,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
+                                                        completedTaskList2.sort(
+                                                            (a, b) => b
+                                                                .updatedAt
+                                                                .compareTo(a
+                                                                    .updatedAt));
                                                         return TaskCard(
                                                           taskElement:
                                                               completedTaskList2[
@@ -809,6 +850,11 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
+                                                        completedTaskList3.sort(
+                                                            (a, b) => b
+                                                                .updatedAt
+                                                                .compareTo(a
+                                                                    .updatedAt));
                                                         return TaskCard(
                                                           taskElement:
                                                               completedTaskList3[

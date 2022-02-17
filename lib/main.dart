@@ -55,7 +55,7 @@ scheduleIncoming(
     RemoteMessage message) async {
   var scheduledNotificationStartTime =
       determineScheduledTime(message.data['startTime']);
-  var android = AndroidNotificationDetails("id", "channel", "description");
+  var android = AndroidNotificationDetails("id", "channel", channelDescription: "description");
   var ios = IOSNotificationDetails();
   var platform = new NotificationDetails(android: android, iOS: ios);
   // ignore: deprecated_member_use
@@ -73,7 +73,7 @@ scheduleOutgoing(
   var scheduledNotificationEndTime =
       determineScheduledTime(message.data['endTime']);
 
-  var android = AndroidNotificationDetails("id", "channel", "description");
+  var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
 
   var ios = IOSNotificationDetails();
 
@@ -97,7 +97,7 @@ DateTime determineScheduledTime(String time) {
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
   'High Importance Notifications', // title
-  'This channel is used for important notifications.', // description
+  description: 'This channel is used for important notifications.', // description
   importance: Importance.high,
 );
 

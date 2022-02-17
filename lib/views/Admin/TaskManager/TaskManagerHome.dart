@@ -351,6 +351,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                             padding: EdgeInsets.only(top: 0),
                                             itemCount: pendingTaskList.length,
                                             itemBuilder: (context, index) {
+                                              pendingTaskList.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                               return TaskCard(
                                                 taskElement:
                                                     pendingTaskList[index],
@@ -389,6 +392,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                             itemCount:
                                                 unApprovedTaskList.length,
                                             itemBuilder: (context, index) {
+                                              unApprovedTaskList.sort((a, b) =>
+                                                  b.updatedAt
+                                                      .compareTo(a.updatedAt));
                                               return TaskCard(
                                                 taskElement:
                                                     unApprovedTaskList[index],
@@ -443,6 +449,9 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                             padding: EdgeInsets.only(top: 0),
                                             itemCount: completedTaskList.length,
                                             itemBuilder: (context, index) {
+                                              completedTaskList.sort((a, b) => b
+                                                  .updatedAt
+                                                  .compareTo(a.updatedAt));
                                               return TaskCard(
                                                 taskElement:
                                                     completedTaskList[index],
@@ -532,6 +541,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     itemBuilder:
                                                         (BuildContext context,
                                                             int index) {
+                                                      pendingTaskList2.sort(
+                                                          (a, b) => b.updatedAt
+                                                              .compareTo(
+                                                                  a.updatedAt));
                                                       return TaskCard(
                                                         taskElement:
                                                             pendingTaskList2[
@@ -582,6 +595,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     itemBuilder:
                                                         (BuildContext context,
                                                             int index) {
+                                                      unApprovedTaskList2.sort(
+                                                          (a, b) => b.updatedAt
+                                                              .compareTo(
+                                                                  a.updatedAt));
                                                       return TaskCard(
                                                         taskElement:
                                                             unApprovedTaskList2[
@@ -659,6 +676,10 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                                                     itemBuilder:
                                                         (BuildContext context,
                                                             int index) {
+                                                      completedTaskList2.sort(
+                                                          (a, b) => b.updatedAt
+                                                              .compareTo(
+                                                                  a.updatedAt));
                                                       return TaskCard(
                                                         taskElement:
                                                             completedTaskList2[

@@ -6,8 +6,9 @@ import 'package:propview/services/taskService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
-import 'package:propview/views/Admin/widgets/taskCard.dart';
+import 'package:propview/views/Manager/widgets/taskCard.dart';
 
+// ignore: must_be_immutable
 class SearchTask extends StatefulWidget {
   int index;
   SearchTask({this.index});
@@ -49,12 +50,12 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
     _tabController.index = widget.index;
     user = await UserService.getUser();
     userList = await UserService.getAllUserUnderManger(user.userId);
-     List<User> tempUsers3 = [];
+    List<User> tempUsers3 = [];
     for (int i = 0; i < userList.length; i++) {
       if (userList[i].userType == "manager") {
         List<User> tempUsers =
             await UserService.getAllUserUnderManger(userList[i].userId);
-        tempUsers3.addAll(tempUsers);    
+        tempUsers3.addAll(tempUsers);
       }
     }
     setState(() {
@@ -444,6 +445,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: pendingTaskList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                            pendingTaskList.sort((a, b) => b
+                                                .updatedAt
+                                                .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   pendingTaskList[index],
@@ -484,22 +488,25 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: pendingTaskList2.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                            pendingTaskList.sort((a, b) => b
+                                                .updatedAt
+                                                .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   pendingTaskList2[index],
                                               currentUser: user,
                                               isSelf: false,
                                               change1:
-                                                    (TaskElement taskElement) {
-                                                  setState(() {
-                                                    pendingTaskList2.removeWhere(
-                                                        (element) =>
-                                                            element.taskId ==
-                                                            taskElement.taskId);
-                                                    unApprovedTaskList2
-                                                        .add(taskElement);
-                                                  });
-                                                },
+                                                  (TaskElement taskElement) {
+                                                setState(() {
+                                                  pendingTaskList2.removeWhere(
+                                                      (element) =>
+                                                          element.taskId ==
+                                                          taskElement.taskId);
+                                                  unApprovedTaskList2
+                                                      .add(taskElement);
+                                                });
+                                              },
                                             );
                                           },
                                         ),
@@ -536,6 +543,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: unApprovedTaskList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                            unApprovedTaskList.sort((a, b) => b
+                                                .updatedAt
+                                                .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   unApprovedTaskList[index],
@@ -587,6 +597,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: unApprovedTaskList2.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                            unApprovedTaskList2.sort((a, b) => b
+                                                .updatedAt
+                                                .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   unApprovedTaskList2[index],
@@ -650,6 +663,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: completedTaskList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                            completedTaskList.sort((a, b) => b
+                                                .updatedAt
+                                                .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   completedTaskList[index],
@@ -679,6 +695,9 @@ class _SearchTaskState extends State<SearchTask> with TickerProviderStateMixin {
                                           itemCount: completedTaskList2.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
+                                            completedTaskList2.sort((a, b) => b
+                                                .updatedAt
+                                                .compareTo(a.updatedAt));
                                             return TaskCard(
                                               taskElement:
                                                   completedTaskList2[index],

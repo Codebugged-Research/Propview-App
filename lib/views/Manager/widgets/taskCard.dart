@@ -514,13 +514,11 @@ class _TaskCardState extends State<TaskCard> {
                               )
                             : Container()
                         : Container(),
-                    widget.taskElement.tblUsers.parentId
-                            .split(",")
-                            .contains(widget.currentUser.userId.toString())
-                        // ||
-                        //     widget.currentUser.userType == "admin" ||
-                        //     widget.currentUser.userType == "super_admin"
-                        ? widget.taskElement.taskStatus == "Unapproved"
+                    // widget.taskElement.tblUsers.parentId
+                    //         .split(",")
+                    //         .contains(widget.currentUser.userId.toString())
+                    //     ? 
+                        widget.taskElement.taskStatus == "Unapproved"
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -776,7 +774,7 @@ class _TaskCardState extends State<TaskCard> {
                                 ],
                               )
                             : Container()
-                        : Container(),
+                        // : Container(),
                   ],
                 ),
               ),
