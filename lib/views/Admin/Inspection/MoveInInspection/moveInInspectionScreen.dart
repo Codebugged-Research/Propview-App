@@ -229,11 +229,34 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool saveLoader = false;
   bool showSummary = false;
+  saveData() async {
+    setState(() {
+      saveLoader = true;
+    });
+    var fullInspectionCacheData = json.encode({
+      "newBillAmounts": newBillAmounts,
+      "rows": rows,
+      "issueTableList": issueTableList,
+      "summary": _summaryController.text,
+    }).toString();
+    bool success = await prefs.setString(
+        "movein-${propertyElement.tableproperty.propertyId}",
+        fullInspectionCacheData);
+    if (success) {
+      showInSnackBar(context, "Move-In Inspection Saved", 1600);
+    } else {
+      showInSnackBar(context, "Error Saving Move-In Inspection", 1600);
+    }
+    setState(() {
+      saveLoader = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        await saveData();
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -256,27 +279,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                 color: Color(0xff314b8c),
               ),
               onPressed: () async {
-                setState(() {
-                  saveLoader = true;
-                });
-                var fullInspectionCacheData = json.encode({
-                  "newBillAmounts": newBillAmounts,
-                  "rows": rows,
-                  "issueTableList": issueTableList,
-                  "summary": _summaryController.text,
-                }).toString();
-                bool success = await prefs.setString(
-                    "movein-${propertyElement.tableproperty.propertyId}",
-                    fullInspectionCacheData);
-                if (success) {
-                  showInSnackBar(context, "Move-In Inspection Saved", 1600);
-                } else {
-                  showInSnackBar(
-                      context, "Error Saving Move-In Inspection", 1600);
-                }
-                setState(() {
-                  saveLoader = false;
-                });
+                await saveData();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -318,7 +321,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 child: Text(
-                                  "Pending Bills",
+                                  "Pending Bills (${bills.length})",
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline6
@@ -816,6 +819,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
   }
 
   showRoomSelect() {
+    FocusScope.of(context).unfocus();
     roomsAvailable.clear();
     roomsAvailable.addAll(roomsAvailable2);
     issueTableList.forEach((elementx) {
@@ -1445,6 +1449,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
+              await saveData();
               int checkerA = 0;
               FocusScope.of(context).unfocus();
               for (int i = 0; i < issueTableList.length; i++) {

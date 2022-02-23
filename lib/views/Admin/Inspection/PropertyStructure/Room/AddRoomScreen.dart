@@ -79,8 +79,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     roomTypeDropDownValue = roomTypes[0];
     facilities = await FacilityService.getFacilities();
     facilities2 = await FacilityService.getFacilities();
-    facilityDropDownValue =
-        facilities.firstWhere((element) => element.facilityId == 84);
     setState(() {
       isLoading = false;
     });
@@ -362,17 +360,24 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                           UIConstants.fitToHeight(8, context)),
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text('Articles',
-                                        style: Theme.of(context)
-                                            .primaryTextTheme
-                                            .subtitle1
-                                            .copyWith(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w700)),
+                                    child: Text(
+                                      'Articles',
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .subtitle1
+                                          .copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                    ),
                                   ),
                                   DropdownButton(
                                     isExpanded: true,
-                                    value: facilityDropDownValue,
+                                    hint: Text(
+                                      "Select Articles",
+                                      style: TextStyle(color: Colors.black),
+                                      textAlign: TextAlign.end,
+                                    ),
                                     elevation: 8,
                                     underline: Container(
                                       height: 2,
@@ -398,7 +403,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                         });
                                       }
                                     },
-                                    items: facilities
+                                    items: facilities.where((element) => facilityTag.contains(element) == false)
                                         .map<DropdownMenuItem>((value) {
                                       return DropdownMenuItem(
                                         value: value,

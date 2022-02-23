@@ -175,10 +175,34 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   bool saveLoader = false;
   bool showSummary = false;
 
+  saveData() async {
+    setState(() {
+      saveLoader = true;
+    });
+    var fullInspectionCacheData = json.encode({
+      "rows": rows,
+      "newBillAmounts": newBillAmounts,
+      "issueTableList": issueTableList,
+      "summary": _summaryController.text,
+    }).toString();
+    bool success = await prefs.setString(
+        "full-${propertyElement.tableproperty.propertyId}",
+        fullInspectionCacheData);
+    if (success) {
+      showInSnackBar(context, "Full Inspection Saved", 1600);
+    } else {
+      showInSnackBar(context, "Error Saving Full Inspection", 1600);
+    }
+    setState(() {
+      saveLoader = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        await saveData();
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -200,26 +224,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                 color: Color(0xff314b8c),
               ),
               onPressed: () async {
-                setState(() {
-                  saveLoader = true;
-                });
-                var fullInspectionCacheData = json.encode({
-                  "rows": rows,
-                  "newBillAmounts": newBillAmounts,
-                  "issueTableList": issueTableList,
-                  "summary": _summaryController.text,
-                }).toString();
-                bool success = await prefs.setString(
-                    "full-${propertyElement.tableproperty.propertyId}",
-                    fullInspectionCacheData);
-                if (success) {
-                  showInSnackBar(context, "Full Inspection Saved", 1600);
-                } else {
-                  showInSnackBar(context, "Error Saving Full Inspection", 1600);
-                }
-                setState(() {
-                  saveLoader = false;
-                });
+                await saveData();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -262,7 +267,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 child: Text(
-                                  "Pending Bills",
+                                  "Pending Bills (${bills.length})",
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline6
@@ -618,6 +623,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
+              await saveData();
               int checkerA = 0;
               FocusScope.of(context).unfocus();
               for (int i = 0; i < issueTableList.length; i++) {
@@ -1016,6 +1022,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
   }
 
   showRoomSelect() {
+    FocusScope.of(context).unfocus();
     roomsAvailable.clear();
     roomsAvailable.addAll(roomsAvailable2);
     issueTableList.forEach((elementx) {

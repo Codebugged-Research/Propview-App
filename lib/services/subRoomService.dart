@@ -10,6 +10,7 @@ class SubRoomService extends AuthService {
         AuthService.BASE_URI + 'api/subroom/create',
         method: 'POST',
         body: payload);
+        print(response.body);
     if (response.statusCode == 200)
       return true;
     else

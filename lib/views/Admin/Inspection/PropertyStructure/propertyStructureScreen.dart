@@ -40,6 +40,7 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     loadData();
   }
 
@@ -49,8 +50,6 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
       rooms.clear();
       subRooms.clear();
     });
-    print("Property Id:" + widget.propertyElement.tableproperty.propertyId.toString());
-    tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     roomType = await RoomTypeService.getRoomTypes();
     propertyElement = widget.propertyElement;
     rooms = await RoomService.getRoomByPropertyId(
@@ -76,144 +75,183 @@ class _PropertyStructureScreenState extends State<PropertyStructureScreen>
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? circularProgressWidget()
-        : Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Property Structure',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              centerTitle: true,
-              elevation: 4.0,
-              bottom: TabBar(
-                  onTap: (ind) {
-                    setState(() {
-                      index = ind;
-                    });
-                  },
-                  controller: tabController,
-                  indicatorColor: Color(0xff314B8C),
-                  labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  unselectedLabelStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                  tabs: [
-                    Tab(text: 'Rooms'),
-                    Tab(text: 'Sub Rooms'),
-                  ]),
-            ),
-            body: TabBarView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Property Structure',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 4.0,
+        bottom: TabBar(
+            onTap: (ind) {
+              setState(() {
+                index = ind;
+              });
+            },
+            controller: tabController,
+            indicatorColor: Color(0xff314B8C),
+            labelStyle: TextStyle(
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+            unselectedLabelStyle: TextStyle(
+                color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+            tabs: [
+              Tab(text: 'Rooms'),
+              Tab(text: 'Sub Rooms'),
+            ]),
+      ),
+      body: isLoading
+          ? circularProgressWidget()
+          : TabBarView(
               physics: NeverScrollableScrollPhysics(),
               controller: tabController,
               children: [
                 rooms.length == 0
-                    ? Center(
-                        child: Text('No Rooms are available!',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(color: Colors.black)))
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: rooms.length,
-                        itemBuilder: (context, int index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              print(rooms[index].propertyRoomId);
-                              bool response = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => EditRoomScreen(
-                                    room: rooms[index],
-                                    propertyElement: propertyElement,
-                                    roomTypes: roomType.data.propertyRoom,
-                                  ),
+                    ? RefreshIndicator(
+                        onRefresh: () {
+                          loadData();
+                          return;
+                        },
+                        child: Center(
+                            child: Text('No Rooms are available!',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle1
+                                    .copyWith(color: Colors.black))),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () {
+                          loadData();
+                          return;
+                        },
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: rooms.length,
+                            itemBuilder: (context, int index) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  bool response =
+                                      await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => EditRoomScreen(
+                                        room: rooms[index],
+                                        propertyElement: propertyElement,
+                                        roomTypes: roomType.data.propertyRoom,
+                                      ),
+                                    ),
+                                  );
+                                  if (response) {
+                                    loadData();
+                                  }
+                                },
+                                child: RoomCard(
+                                  room: rooms[index],
+                                  propertyElement: propertyElement,
+                                  roomTypes: roomType.data.propertyRoom,
                                 ),
                               );
-                              if (response) {
-                                loadData();
-                              }
-                            },
-                            child: RoomCard(
-                              room: rooms[index],
-                              propertyElement: propertyElement,
-                              roomTypes: roomType.data.propertyRoom,
-                            ),
-                          );
-                        }),
+                            }),
+                      ),
                 subRooms.length == 0
-                    ? Center(
-                        child: Text('No Sub-Rooms are available!',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .subtitle1
-                                .copyWith(color: Colors.black)))
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: subRooms.length,
-                        itemBuilder: (context, int index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              bool response = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => EditSubRoomScreen(
-                                    subRoom: subRooms[index],
-                                    propertyElement: propertyElement,
-                                    roomTypes: roomType.data.propertyRoom,
-                                  ),
+                    ? RefreshIndicator(
+                        onRefresh: () {
+                          loadData();
+                          return;
+                        },
+                        child: Center(
+                            child: Text('No Sub-Rooms are available!',
+                                style: Theme.of(context)
+                                    .primaryTextTheme
+                                    .subtitle1
+                                    .copyWith(color: Colors.black))),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () {
+                          loadData();
+                          return;
+                        },
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: subRooms.length,
+                            itemBuilder: (context, int index) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  bool response =
+                                      await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => EditSubRoomScreen(
+                                        subRoom: subRooms[index],
+                                        propertyElement: propertyElement,
+                                        roomTypes: roomType.data.propertyRoom,
+                                      ),
+                                    ),
+                                  );
+                                  if (response) {
+                                    loadData();
+                                  }
+                                },
+                                child: SubRoomCard(
+                                  subRoom: subRooms[index],
+                                  propertyElement: propertyElement,
+                                  roomTypes: roomType.data.propertyRoom,
                                 ),
                               );
-                              if (response) {
-                                loadData();
-                              }
-                            },
-                            child: SubRoomCard(
-                              subRoom: subRooms[index],
-                              propertyElement: propertyElement,
-                              roomTypes: roomType.data.propertyRoom,
-                            ),
-                          );
-                        }),
+                            }),
+                      ),
               ],
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: index == 0
-                  ? () async {
-                      bool response = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AddRoomScreen(
-                            propertyElement: propertyElement,
-                            roomTypes: roomType.data.propertyRoom,
-                          ),
-                        ),
-                      );
-                      if (response) {
-                        loadData();
-                      }
-                    }
-                  : () async {
-                      bool response = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AddSubRoomScreen(
-                            propertyElement: propertyElement,
-                            roomTypes: roomType.data.propertyRoom,
-                          ),
-                        ),
-                      );
-                      if (response) {
-                        loadData();
-                      }
-                    },
-              child: Icon(Icons.add),
-            ),
-          );
+      floatingActionButton: FloatingActionButton(
+        onPressed: index == 0
+            ? () async {
+                bool response = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddRoomScreen(
+                      propertyElement: propertyElement,
+                      roomTypes: roomType.data.propertyRoom
+                          .where((element) =>
+                              rooms
+                                  .where((element2) =>
+                                      element2.roomId == element.roomId)
+                                  .length ==
+                              0)
+                          .toList(),
+                    ),
+                  ),
+                );
+                if (response) {
+                  loadData();
+                }
+              }
+            : () async {
+                bool response = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddSubRoomScreen(
+                      rooms: rooms,
+                      propertyElement: propertyElement,
+                      roomTypes: roomType.data.propertyRoom
+                          .where((element) =>
+                              rooms
+                                  .where((element2) =>
+                                      element2.roomId == element.roomId ||
+                                      element.issub == 1)
+                                  .length >
+                              0)
+                          .toList(),
+                    ),
+                  ),
+                );
+                if (response) {
+                  // tabController.animateTo(1);
+                  // loadData();
+                  Navigator.of(context).pop();
+                }
+              },
+        child: Icon(Icons.add),
+      ),
+    );
   }
 }

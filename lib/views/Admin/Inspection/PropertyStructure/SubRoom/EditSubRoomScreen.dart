@@ -12,7 +12,6 @@ import 'package:propview/services/subRoomService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 
-
 class EditSubRoomScreen extends StatefulWidget {
   final SubRoomElement subRoom;
   final PropertyElement propertyElement;
@@ -60,6 +59,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     super.initState();
     getData();
   }
+
   int changeCounter = 0;
 
   getData() async {
@@ -98,8 +98,6 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
         facilities.add(element);
       }
     });
-    facilityDropDownValue =
-        facilities.firstWhere((element) => element.facilityId == 84);
     setState(() {
       isLoading = false;
     });
@@ -345,7 +343,11 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                 ),
                                 DropdownButton(
                                   isExpanded: true,
-                                  value: facilityDropDownValue,
+                                  hint: Text(
+                                    "Select Articles",
+                                    style: TextStyle(color: Colors.black),
+                                    textAlign: TextAlign.end,
+                                  ),
                                   elevation: 8,
                                   underline: Container(
                                     height: 2,
@@ -366,12 +368,15 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                         facilityTag.sort((a, b) => a
                                             .facilityName
                                             .compareTo(b.facilityName));
-                                      changeCounter++;
+                                        changeCounter++;
                                       });
                                     }
                                   },
-                                  items:
-                                      facilities.map<DropdownMenuItem>((value) {
+                                  items: facilities
+                                      .where((element) =>
+                                          facilityTag.contains(element) ==
+                                          false)
+                                      .map<DropdownMenuItem>((value) {
                                     return DropdownMenuItem(
                                       value: value,
                                       child: Text(value.facilityName),
@@ -422,7 +427,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
                                 SizedBox(
                                     height:
                                         UIConstants.fitToHeight(8, context)),
-                               changeCounter > 0
+                                changeCounter > 0
                                     ? SizedBox(
                                         height: UIConstants.fitToHeight(
                                             24, context))
@@ -456,7 +461,7 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
               child: Text("Yes"),
               onPressed: () {
                 setState(() {
-                                      changeCounter++;
+                  changeCounter++;
                   facilityTag.removeAt(index);
                   facilityTag
                       .sort((a, b) => a.facilityName.compareTo(b.facilityName));

@@ -236,6 +236,29 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
     }
   }
 
+  saveData() async {
+    setState(() {
+      saveLoader = true;
+    });
+    var fullInspectionCacheData = json.encode({
+      "newBillAmounts": newBillAmounts,
+      "rows": rows,
+      "issueTableList": issueTableList,
+      "summary": _summaryController.text,
+    }).toString();
+    bool success = await prefs.setString(
+        "moveout-${propertyElement.tableproperty.propertyId}",
+        fullInspectionCacheData);
+    if (success) {
+      showInSnackBar(context, "Move-out Inspection Saved", 1600);
+    } else {
+      showInSnackBar(context, "Error Saving Move-Out Inspection", 1600);
+    }
+    setState(() {
+      saveLoader = false;
+    });
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool saveLoader = false;
   bool showSummary = false;
@@ -243,6 +266,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        await saveData();
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -265,27 +289,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                 color: Color(0xff314b8c),
               ),
               onPressed: () async {
-                setState(() {
-                  saveLoader = true;
-                });
-                var fullInspectionCacheData = json.encode({
-                  "newBillAmounts": newBillAmounts,
-                  "rows": rows,
-                  "issueTableList": issueTableList,
-                  "summary": _summaryController.text,
-                }).toString();
-                bool success = await prefs.setString(
-                    "moveout-${propertyElement.tableproperty.propertyId}",
-                    fullInspectionCacheData);
-                if (success) {
-                  showInSnackBar(context, "Move-out Inspection Saved", 1600);
-                } else {
-                  showInSnackBar(
-                      context, "Error Saving Move-Out Inspection", 1600);
-                }
-                setState(() {
-                  saveLoader = false;
-                });
+                await saveData();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -327,7 +331,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 child: Text(
-                                  "Pending Bills",
+                                  "Pending Bills (${bills.length})",
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline6
@@ -377,46 +381,8 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                               shrinkWrap: true,
                               itemCount: tenants.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return Row(
-                                  children: [
-                                    InkWell(
-                                      child: Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.redAccent,
-                                      ),
-                                      onTap: () async {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                  title: Text('Delete Tenant'),
-                                                  content: Text(
-                                                      'Are you sure you want to delete this tenant?'),
-                                                  actions: [
-                                                    MaterialButton(
-                                                      child: Text('Yes'),
-                                                      onPressed: () async {
-                                                        await removeTenantFromProperty(
-                                                            tenants[index]
-                                                                .tenantId
-                                                                .toString());
-                                                      },
-                                                    ),
-                                                    MaterialButton(
-                                                      child: Text('No'),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ]);
-                                            });
-                                      },
-                                    ),
-                                    TenantWidget(
-                                        tenant: tenants[index], index: index),
-                                  ],
-                                );
+                                return TenantWidget(
+                                    tenant: tenants[index], index: index);
                               }),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
@@ -803,6 +769,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
   }
 
   showRoomSelect() {
+    FocusScope.of(context).unfocus();
     roomsAvailable.clear();
     roomsAvailable.addAll(roomsAvailable2);
     issueTableList.forEach((elementx) {
@@ -1434,6 +1401,7 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
+              await saveData();
               int checkerA = 0;
               FocusScope.of(context).unfocus();
               for (int i = 0; i < issueTableList.length; i++) {
@@ -1496,144 +1464,171 @@ class _MoveOutInspectionScreenState extends State<MoveOutInspectionScreen> {
                           onPressed: () async {
                             Navigator.of(context).pop();
                             await showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        content: Text(
-                          "Are you sure you want to submit the inspection?",
-                        ),
-                        actions: [
-                          MaterialButton(
-                            child: Text("Yes"),
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                loading = true;
-                              });
-                              User user = await UserService.getUser();
-                              inspection = Inspection(
-                                inspectionId: 0,
-                                inspectType: "Move out Inspection",
-                                propertyId: widget
-                                    .propertyElement.tableproperty.propertyId,
-                                employeeId: user.userId,
-                                summary: _summaryController.text,
-                                createdAt: DateTime.now(),
-                                updatedAt: DateTime.now(),
-                              );
-                              // print(inspection.toJson());
-                              List tempIssueTableList = [];
-                              for (int i = 0; i < rows.length; i++) {
-                                List issueRowList = [];
-                                for (int j = 0; j < rows[i].length; j++) {
-                                  List<String> finalPhotoList = [];
-                                  for (int k = 0;
-                                      k < rows[i][j].photo.length;
-                                      k++) {
-                                    String tempUrl = await upload(
-                                        rows[i][j].photo[k],
-                                        widget.propertyElement.tableproperty
-                                            .propertyId
-                                            .toString());
-                                    finalPhotoList.add(tempUrl);
-                                  }
-                                  var payload = {
-                                    "issue_id": 0,
-                                    "issue_name": rows[i][j].issueName,
-                                    "status": rows[i][j].status,
-                                    "remarks": rows[i][j].remarks,
-                                    "photo": finalPhotoList.join(","),
-                                    "createdAt": DateTime.now().toString(),
-                                    "updatedAt": DateTime.now().toString(),
-                                  };
-                                  // print(payload);
-                                  var result = await IssueService.createIssue(
-                                      jsonEncode(payload));
-                                  issueRowList.add(result);
-                                }
-                                var payload1 = {
-                                  "id": 0,
-                                  "roomsubroom_id":
-                                      issueTableList[i].roomsubroomId,
-                                  "roomsubroom_name":
-                                      issueTableList[i].roomsubroomName,
-                                  "issub": issueTableList[i].issub,
-                                  "issue_row_id": issueRowList.join(","),
-                                  "property_id": widget
-                                      .propertyElement.tableproperty.propertyId,
-                                  "created_at": DateTime.now().toString(),
-                                  "updated_at": DateTime.now().toString(),
-                                };
-                                var result =
-                                    await IssueTableService.createIssueTable(
-                                        jsonEncode(payload1));
-                                tempIssueTableList.add(result);
-                              }
-                              inspection.issueIdList =
-                                  tempIssueTableList.join(",");
-                              bool result =
-                                  await InspectionService.createInspection(
-                                jsonEncode(
-                                  inspection.toJson(),
-                                ),
-                              );
-                              for (int i = 0; i < bills.length; i++) {
-                                if (newBillAmounts[i] !=
-                                    double.parse(
-                                      bills[i]
-                                          .amount
-                                          .toString()
-                                          .replaceAll(",", ""),
-                                    )) {
-                                  bills[i].lastUpdate = DateTime.now();
-                                  await BillPropertyService.updateBillProperty(
-                                    bills[i].id.toString(),
-                                    jsonEncode(
-                                      bills[i].toJson(),
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
+                                    content: Text(
+                                      "Are you sure you want to submit the inspection?",
+                                    ),
+                                    actions: [
+                                      MaterialButton(
+                                        child: Text("Yes"),
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          setState(() {
+                                            loading = true;
+                                          });
+                                          User user =
+                                              await UserService.getUser();
+                                          inspection = Inspection(
+                                            inspectionId: 0,
+                                            inspectType: "Move out Inspection",
+                                            propertyId: widget.propertyElement
+                                                .tableproperty.propertyId,
+                                            employeeId: user.userId,
+                                            summary: _summaryController.text,
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
+                                          // print(inspection.toJson());
+                                          List tempIssueTableList = [];
+                                          for (int i = 0;
+                                              i < rows.length;
+                                              i++) {
+                                            List issueRowList = [];
+                                            for (int j = 0;
+                                                j < rows[i].length;
+                                                j++) {
+                                              List<String> finalPhotoList = [];
+                                              for (int k = 0;
+                                                  k < rows[i][j].photo.length;
+                                                  k++) {
+                                                String tempUrl = await upload(
+                                                    rows[i][j].photo[k],
+                                                    widget
+                                                        .propertyElement
+                                                        .tableproperty
+                                                        .propertyId
+                                                        .toString());
+                                                finalPhotoList.add(tempUrl);
+                                              }
+                                              var payload = {
+                                                "issue_id": 0,
+                                                "issue_name":
+                                                    rows[i][j].issueName,
+                                                "status": rows[i][j].status,
+                                                "remarks": rows[i][j].remarks,
+                                                "photo":
+                                                    finalPhotoList.join(","),
+                                                "createdAt":
+                                                    DateTime.now().toString(),
+                                                "updatedAt":
+                                                    DateTime.now().toString(),
+                                              };
+                                              // print(payload);
+                                              var result = await IssueService
+                                                  .createIssue(
+                                                      jsonEncode(payload));
+                                              issueRowList.add(result);
+                                            }
+                                            var payload1 = {
+                                              "id": 0,
+                                              "roomsubroom_id":
+                                                  issueTableList[i]
+                                                      .roomsubroomId,
+                                              "roomsubroom_name":
+                                                  issueTableList[i]
+                                                      .roomsubroomName,
+                                              "issub": issueTableList[i].issub,
+                                              "issue_row_id":
+                                                  issueRowList.join(","),
+                                              "property_id": widget
+                                                  .propertyElement
+                                                  .tableproperty
+                                                  .propertyId,
+                                              "created_at":
+                                                  DateTime.now().toString(),
+                                              "updated_at":
+                                                  DateTime.now().toString(),
+                                            };
+                                            var result = await IssueTableService
+                                                .createIssueTable(
+                                                    jsonEncode(payload1));
+                                            tempIssueTableList.add(result);
+                                          }
+                                          inspection.issueIdList =
+                                              tempIssueTableList.join(",");
+                                          bool result = await InspectionService
+                                              .createInspection(
+                                            jsonEncode(
+                                              inspection.toJson(),
+                                            ),
+                                          );
+                                          for (int i = 0;
+                                              i < bills.length;
+                                              i++) {
+                                            if (newBillAmounts[i] !=
+                                                double.parse(
+                                                  bills[i]
+                                                      .amount
+                                                      .toString()
+                                                      .replaceAll(",", ""),
+                                                )) {
+                                              bills[i].lastUpdate =
+                                                  DateTime.now();
+                                              await BillPropertyService
+                                                  .updateBillProperty(
+                                                bills[i].id.toString(),
+                                                jsonEncode(
+                                                  bills[i].toJson(),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                          setState(() {
+                                            loading = false;
+                                          });
+                                          if (result) {
+                                            await prefs.remove(
+                                                "moveout-${propertyElement.tableproperty.propertyId}");
+                                            showInSnackBar(
+                                                _scaffoldKey.currentContext,
+                                                "Move Out Inspection added successfully!",
+                                                500);
+                                            Future.delayed(
+                                                Duration(milliseconds: 800),
+                                                () {
+                                              Navigator.of(_scaffoldKey
+                                                      .currentContext)
+                                                  .pop();
+                                              Navigator.of(_scaffoldKey
+                                                      .currentContext)
+                                                  .pop();
+                                            });
+                                          } else {
+                                            showInSnackBar(
+                                                _scaffoldKey.currentContext,
+                                                "Move Out Inspection Addition unsuccessfull! ",
+                                                500);
+                                          }
+                                        },
+                                      ),
+                                      MaterialButton(
+                                        child: Text("No"),
+                                        onPressed: () {
+                                          setState(() {
+                                            loading = false;
+                                          });
+                                          Navigator.of(context).pop();
+                                          FocusScope.of(context).unfocus();
+                                        },
+                                      ),
+                                    ],
                                   );
-                                }
-                              }
-                              setState(() {
-                                loading = false;
-                              });
-                              if (result) {
-                                await prefs.remove(
-                                    "moveout-${propertyElement.tableproperty.propertyId}");
-                                showInSnackBar(
-                                    _scaffoldKey.currentContext,
-                                    "Move Out Inspection added successfully!",
-                                    500);
-                                Future.delayed(Duration(milliseconds: 800), () {
-                                  Navigator.of(_scaffoldKey.currentContext)
-                                      .pop();
-                                  Navigator.of(_scaffoldKey.currentContext)
-                                      .pop();
                                 });
-                              } else {
-                                showInSnackBar(
-                                    _scaffoldKey.currentContext,
-                                    "Move Out Inspection Addition unsuccessfull! ",
-                                    500);
-                              }
-                            },
-                          ),
-                          MaterialButton(
-                            child: Text("No"),
-                            onPressed: () {
-                              setState(() {
-                                loading = false;
-                              });
-                              Navigator.of(context).pop();
-                              FocusScope.of(context).unfocus();
-                            },
-                          ),
-                        ],
-                      );
-                    });
                           },
                         ),
                       ],

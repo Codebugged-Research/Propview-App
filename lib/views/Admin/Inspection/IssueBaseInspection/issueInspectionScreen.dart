@@ -141,11 +141,33 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool saveLoader = false;
   bool showSummary = false;
+  saveData() async {
+    setState(() {
+      saveLoader = true;
+    });
+    var fullInspectionCacheData = json.encode({
+      "rows": rows,
+      "issueTableList": issueTableList,
+      "summary": _summaryController.text,
+    }).toString();
+    bool success = await prefs.setString(
+        "issue-${propertyElement.tableproperty.propertyId}",
+        fullInspectionCacheData);
+    if (success) {
+      showInSnackBar(context, "Issue Inspection Saved", 1600);
+    } else {
+      showInSnackBar(context, "Error Saving Issue Inspection", 1600);
+    }
+    setState(() {
+      saveLoader = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        await saveData();
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -168,26 +190,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
                 color: Color(0xff314b8c),
               ),
               onPressed: () async {
-                setState(() {
-                  saveLoader = true;
-                });
-                var fullInspectionCacheData = json.encode({
-                  "rows": rows,
-                  "issueTableList": issueTableList,
-                  "summary": _summaryController.text,
-                }).toString();
-                bool success = await prefs.setString(
-                    "issue-${propertyElement.tableproperty.propertyId}",
-                    fullInspectionCacheData);
-                if (success) {
-                  showInSnackBar(context, "Issue Inspection Saved", 1600);
-                } else {
-                  showInSnackBar(
-                      context, "Error Saving Issue Inspection", 1600);
-                }
-                setState(() {
-                  saveLoader = false;
-                });
+                await saveData();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -373,6 +376,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
+              await saveData();
               int checkerA = 0;
               FocusScope.of(context).unfocus();
               for (int i = 0; i < issueTableList.length; i++) {
@@ -712,6 +716,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
   }
 
   showRoomSelect() {
+    FocusScope.of(context).unfocus();
     roomsAvailable.clear();
     roomsAvailable.addAll(roomsAvailable2);
     issueTableList.forEach((elementx) {

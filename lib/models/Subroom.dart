@@ -72,7 +72,7 @@ class SubRoomElement {
         subRoomId: json["sub_room_id"],
         roomSize1: double.parse(json["room_size1"].toString()),
         roomSize2: double.parse(json["room_size2"].toString()),
-        facility: json["facility"] == "" ? "84" : json["facility"],
+        facility: json["facility"],
       );
 
   Map<String, dynamic> toJson() => {

@@ -13,10 +13,12 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
 
 class AddSubRoomScreen extends StatefulWidget {
+  final List<RoomsToPropertyModel> rooms;
   final PropertyElement propertyElement;
   final List<PropertyRoom> roomTypes;
 
   AddSubRoomScreen({
+    this.rooms,
     this.propertyElement,
     this.roomTypes,
   });
@@ -40,6 +42,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
   List<PropertyRoom> roomTypes = [];
   List<PropertyRoom> allRoomTypes = [];
   List<PropertyRoom> subRoomTypes = [];
+  List<PropertyRoom> subRoomTypes2 = [];
 
   PropertyElement propertyElement;
 
@@ -74,14 +77,13 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
     widget.roomTypes.forEach((element) {
       if (element.issub == 1) {
         subRoomTypes.add(element);
+        subRoomTypes2.add(element);
       } else {
         roomTypes.add(element);
       }
     });
     facilities = await FacilityService.getFacilities();
     facilities2 = await FacilityService.getFacilities();
-    facilityDropDownValue =
-        facilities.firstWhere((element) => element.facilityId == 84);
     rooms = await RoomService.getRoomByPropertyId(
         propertyElement.tableproperty.propertyId.toString());
     allRoomTypes = widget.roomTypes;
@@ -123,7 +125,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
         ),
         body: isLoading
             ? circularProgressWidget()
-            : Container(
+            : rooms.length > 0 ? Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: SingleChildScrollView(
@@ -166,7 +168,11 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                     ),
                                     DropdownButton(
                                       isExpanded: true,
-                                      value: roomTypeDropDownValue,
+                                      hint: Text(
+                                        "Select Room",
+                                        style: TextStyle(color: Colors.black),
+                                        textAlign: TextAlign.end,
+                                      ),
                                       elevation: 8,
                                       underline: Container(
                                         height: 2,
@@ -175,6 +181,40 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                         color: Color(0xff314B8C),
                                       ),
                                       onChanged: (value) {
+                                        List<PropertyRoom> lis = [];
+                                        widget.rooms
+                                            .where((element) =>
+                                                element.roomId == value.roomId)
+                                            .toList()
+                                            .forEach((element) {
+                                          print(element.balcony);
+                                          print(element.bath);
+                                          print(element.wardrobe);
+                                          if (element.balcony == 1) {
+                                            lis.add(subRoomTypes2.firstWhere(
+                                                (element) =>
+                                                    element.roomName ==
+                                                    'Balcony'));
+                                          }
+                                          if (element.bath == 1) {
+                                            lis.add(subRoomTypes2.firstWhere(
+                                                (element) =>
+                                                    element.roomName ==
+                                                    'Bathroom'));
+                                          }
+                                          if (element.wardrobe == 1) {
+                                            lis.add(subRoomTypes2.firstWhere(
+                                                (element) =>
+                                                    element.roomName ==
+                                                    'Utility Room'));
+                                          }
+                                          lis.add(subRoomTypes2.firstWhere(
+                                              (element) =>
+                                                  element.roomName ==
+                                                  'Balcony'));
+                                        });
+                                        subRoomTypes.clear();
+                                        subRoomTypes.addAll(lis);
                                         setState(() {
                                           roomTypeDropDownValue = value;
                                         });
@@ -202,8 +242,13 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                     ),
                                     DropdownButton(
                                       isExpanded: true,
-                                      value: subRoomTypeDropDownValue,
+                                      // value: subRoomTypeDropDownValue,
                                       elevation: 8,
+                                      hint: Text(
+                                        "Select Sub Room",
+                                        style: TextStyle(color: Colors.black),
+                                        textAlign: TextAlign.end,
+                                      ),
                                       underline: Container(
                                         height: 2,
                                         width:
@@ -338,7 +383,11 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                     ),
                                     DropdownButton(
                                       isExpanded: true,
-                                      value: facilityDropDownValue,
+                                      hint: Text(
+                                        "Select Articles",
+                                        style: TextStyle(color: Colors.black),
+                                        textAlign: TextAlign.end,
+                                      ),
                                       elevation: 8,
                                       underline: Container(
                                         height: 2,
@@ -366,6 +415,9 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                                         }
                                       },
                                       items: facilities
+                                          .where((element) =>
+                                              facilityTag.contains(element) ==
+                                              false)
                                           .map<DropdownMenuItem>((value) {
                                         return DropdownMenuItem(
                                           value: value,
@@ -435,7 +487,7 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                     ],
                   ),
                 ),
-              ),
+              ): Center(child: Text('No Rooms Found!'),),
       ),
     );
   }
@@ -513,12 +565,19 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
                 loader = false;
               });
               if (result) {
-                showInSnackBar(context, 'Sub-Room Added', 2500);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("SubRoom added!"),
+                  ),
+                );
+                Navigator.of(context).pop(true);
               } else {
-                showInSnackBar(
-                    context, 'Sub-Room Addition request failed!', 2500);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Sub-Room Addition request failed!"),
+                  ),
+                );
               }
-              Navigator.of(context).pop(true);
             },
             child: Text("Create Sub-Room",
                 style: Theme.of(context).primaryTextTheme.subtitle1),

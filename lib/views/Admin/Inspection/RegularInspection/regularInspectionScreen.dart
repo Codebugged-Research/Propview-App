@@ -7,6 +7,7 @@ import 'package:propview/models/RegularInspection.dart';
 import 'package:propview/models/RegularInspectionRow.dart';
 import 'package:propview/models/Room.dart';
 import 'package:propview/models/Subroom.dart';
+import 'package:propview/models/Tenant.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/models/customRoomSubRoom.dart';
 import 'package:propview/models/roomType.dart';
@@ -17,12 +18,14 @@ import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/roomService.dart';
 import 'package:propview/services/roomTypeService.dart';
 import 'package:propview/services/subRoomService.dart';
+import 'package:propview/services/tenantService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Inspection/RegularInspection/regularInspectionHistoryScreen.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
+import 'package:propview/views/Admin/widgets/tenantWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegularInspectionScreen extends StatefulWidget {
@@ -85,6 +88,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
 
   List<String> billTypeList = [];
   List billTypes = [];
+  List<Tenant> tenants = [];
   List<TextEditingController> _billControllers = [];
 
   List<RegularInspectionRow> regularInspectionRowList = [];
@@ -155,6 +159,14 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
         });
       }
     }
+    List<String> tenantList =
+        propertyElement.tableproperty.tenantId.split(",").toList();
+    for (var tenantId in tenantList) {
+      Tenant tenant = await TenantService.getTenant(tenantId);
+      setState(() {
+        tenants.add(tenant);
+      });
+    }
     setState(() {
       roomsAvailable2.addAll(roomsAvailable);
       loader = false;
@@ -171,10 +183,33 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
     return room.roomName;
   }
 
+  saveData() async {
+    setState(() {
+      saveLoader = true;
+    });
+    var fullInspectionCacheData = json.encode({
+      "newBillAmounts": newBillAmounts,
+      "summary": _summaryController.text,
+      "regularInspectionRowList": regularInspectionRowList
+    }).toString();
+    bool success = await prefs.setString(
+        "regular-${propertyElement.tableproperty.propertyId}",
+        fullInspectionCacheData);
+    if (success) {
+      showInSnackBar(context, "Regular Inspection Saved", 1600);
+    } else {
+      showInSnackBar(context, "Error Saving Regular Inspection", 1600);
+    }
+    setState(() {
+      saveLoader = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        await saveData();
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         return true;
@@ -197,26 +232,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                 color: Color(0xff314b8c),
               ),
               onPressed: () async {
-                setState(() {
-                  saveLoader = true;
-                });
-                var fullInspectionCacheData = json.encode({
-                  "newBillAmounts": newBillAmounts,
-                  "summary": _summaryController.text,
-                  "regularInspectionRowList": regularInspectionRowList
-                }).toString();
-                bool success = await prefs.setString(
-                    "regular-${propertyElement.tableproperty.propertyId}",
-                    fullInspectionCacheData);
-                if (success) {
-                  showInSnackBar(context, "Regular Inspection Saved", 1600);
-                } else {
-                  showInSnackBar(
-                      context, "Error Saving Regular Inspection", 1600);
-                }
-                setState(() {
-                  saveLoader = false;
-                });
+                await saveData();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -243,7 +259,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             : SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -258,7 +274,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 child: Text(
-                                  "Pending Bills",
+                                  "Pending Bills (${bills.length})",
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline6
@@ -289,6 +305,28 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                                     return billCard(index);
                                   }),
                             ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      subHeadingWidget(context, 'Tenant Details'),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      tenants.length == 0
+                          ? Center(
+                              child: Text('No Tenant is found!',
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .subtitle2
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600)),
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: tenants.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return TenantWidget(
+                                    tenant: tenants[index], index: index);
+                              }),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
@@ -400,6 +438,23 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                   ),
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget subHeadingWidget(BuildContext context, String title) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xff314B8C).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Text(
+        title,
+        style: Theme.of(context)
+            .primaryTextTheme
+            .headline6
+            .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
       ),
     );
   }
@@ -597,119 +652,198 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   }
 
   inspectionRowCard(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.0),
-        boxShadow: [
-          BoxShadow(
-              offset: Offset(2, 2),
-              blurRadius: 2,
-              color: Colors.black.withOpacity(0.15)),
-          BoxShadow(
-              offset: Offset(-2, 2),
-              blurRadius: 2,
-              color: Colors.black.withOpacity(0.15))
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Termite Issue:',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
+    return ListView(
+      padding: EdgeInsets.all(0),
+      scrollDirection: Axis.horizontal,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
             ),
-            SizedBox(
-              height: 4,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Termite Issue:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue: regularInspectionRowList[index].termiteCheck,
+                  onChanged: (value) {
+                    setState(() {
+                      regularInspectionRowList[index].termiteCheck = value;
+                    });
+                  },
+                  decoration: decoration,
+                ),
+              ],
             ),
-            TextFormField(
-              initialValue: regularInspectionRowList[index].termiteCheck,
-              onChanged: (value) {
-                setState(() {
-                  regularInspectionRowList[index].termiteCheck = value;
-                });
-              },
-              decoration: decoration,
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Text(
-              'Seepage Check:',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            TextFormField(
-              initialValue: regularInspectionRowList[index].seepageCheck,
-              onChanged: (value) {
-                setState(() {
-                  regularInspectionRowList[index].seepageCheck = value;
-                });
-              },
-              decoration: decoration,
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Text(
-              'General Cleanliness:',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            TextFormField(
-              initialValue: regularInspectionRowList[index].generalCleanliness,
-              onChanged: (value) {
-                setState(() {
-                  regularInspectionRowList[index].generalCleanliness = value;
-                });
-              },
-              decoration: decoration,
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Text(
-              'Other Issues:',
-              style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            TextFormField(
-              initialValue: regularInspectionRowList[index].otherIssue,
-              onChanged: (value) {
-                setState(() {
-                  regularInspectionRowList[index].otherIssue = value;
-                });
-              },
-              decoration: decoration,
-            ),
-            SizedBox(
-              height: 4,
-            ),
-          ],
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Seepage Check:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue: regularInspectionRowList[index].seepageCheck,
+                  onChanged: (value) {
+                    setState(() {
+                      regularInspectionRowList[index].seepageCheck = value;
+                    });
+                  },
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'General Cleanliness:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue:
+                      regularInspectionRowList[index].generalCleanliness,
+                  onChanged: (value) {
+                    setState(() {
+                      regularInspectionRowList[index].generalCleanliness =
+                          value;
+                    });
+                  },
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Other Issues:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue: regularInspectionRowList[index].otherIssue,
+                  onChanged: (value) {
+                    setState(() {
+                      regularInspectionRowList[index].otherIssue = value;
+                    });
+                  },
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -731,6 +865,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   );
 
   showRoomSelect() {
+    FocusScope.of(context).unfocus();
     roomsAvailable.clear();
     roomsAvailable.addAll(roomsAvailable2);
     regularInspectionRowList.forEach((elementx) {
@@ -882,6 +1017,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             height: 55,
             color: Color(0xff314B8C),
             onPressed: () async {
+              await saveData();
               int checker = 0;
               FocusScope.of(context).unfocus();
               for (int i = 0; i < regularInspectionRowList.length; i++) {
@@ -924,105 +1060,122 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                           onPressed: () async {
                             Navigator.of(context).pop();
                             await showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        content: Text(
-                          "Are you sure you want to submit the inspection?",
-                        ),
-                        actions: <Widget>[
-                          MaterialButton(
-                            child: Text("Yes"),
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                loading = true;
-                              });
-                              User user = await UserService.getUser();
-                              RegularInspection regularInspection =
-                                  RegularInspection(
-                                id: 0,
-                                rowList: "",
-                                propertyId: widget
-                                    .propertyElement.tableproperty.propertyId,
-                                employeeId: user.userId,
-                                summary: _summaryController.text,
-                                createdAt: DateTime.now(),
-                                updatedAt: DateTime.now(),
-                              );
-                              List rowIdist = [];
-                              for (int i = 0;
-                                  i < regularInspectionRowList.length;
-                                  i++) {
-                                String id = await RegularInspectionRowService
-                                    .createRegularInspection(
-                                  jsonEncode(
-                                    regularInspectionRowList[i].toJson(),
-                                  ),
-                                );
-                                rowIdist.add(id);
-                              }
-                              regularInspection.rowList = rowIdist.join(",");
-                              bool result = await RegularInspectionService
-                                  .createRegularInspection(
-                                jsonEncode(
-                                  regularInspection.toJson(),
-                                ),
-                              );
-                              for (int i = 0; i < bills.length; i++) {
-                                if (newBillAmounts[i] !=
-                                    double.parse(
-                                      bills[i]
-                                          .amount
-                                          .toString()
-                                          .replaceAll(",", ""),
-                                    )) {
-                                  bills[i].lastUpdate = DateTime.now();
-                                  await BillPropertyService.updateBillProperty(
-                                    bills[i].id.toString(),
-                                    jsonEncode(
-                                      bills[i].toJson(),
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
+                                    content: Text(
+                                      "Are you sure you want to submit the inspection?",
+                                    ),
+                                    actions: <Widget>[
+                                      MaterialButton(
+                                        child: Text("Yes"),
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          setState(() {
+                                            loading = true;
+                                          });
+                                          User user =
+                                              await UserService.getUser();
+                                          RegularInspection regularInspection =
+                                              RegularInspection(
+                                            id: 0,
+                                            rowList: "",
+                                            propertyId: widget.propertyElement
+                                                .tableproperty.propertyId,
+                                            employeeId: user.userId,
+                                            summary: _summaryController.text,
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now(),
+                                          );
+                                          List rowIdist = [];
+                                          for (int i = 0;
+                                              i <
+                                                  regularInspectionRowList
+                                                      .length;
+                                              i++) {
+                                            String id =
+                                                await RegularInspectionRowService
+                                                    .createRegularInspection(
+                                              jsonEncode(
+                                                regularInspectionRowList[i]
+                                                    .toJson(),
+                                              ),
+                                            );
+                                            rowIdist.add(id);
+                                          }
+                                          regularInspection.rowList =
+                                              rowIdist.join(",");
+                                          bool result =
+                                              await RegularInspectionService
+                                                  .createRegularInspection(
+                                            jsonEncode(
+                                              regularInspection.toJson(),
+                                            ),
+                                          );
+                                          for (int i = 0;
+                                              i < bills.length;
+                                              i++) {
+                                            if (newBillAmounts[i] !=
+                                                double.parse(
+                                                  bills[i]
+                                                      .amount
+                                                      .toString()
+                                                      .replaceAll(",", ""),
+                                                )) {
+                                              bills[i].lastUpdate =
+                                                  DateTime.now();
+                                              await BillPropertyService
+                                                  .updateBillProperty(
+                                                bills[i].id.toString(),
+                                                jsonEncode(
+                                                  bills[i].toJson(),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                          setState(() {
+                                            loading = false;
+                                          });
+                                          if (result) {
+                                            await prefs.remove(
+                                                "regular-${propertyElement.tableproperty.propertyId}");
+                                            showInSnackBar(
+                                                _scaffoldKey.currentContext,
+                                                "Regular Inspection added successfully!",
+                                                500);
+                                            Future.delayed(
+                                                Duration(milliseconds: 800),
+                                                () {
+                                              Navigator.of(_scaffoldKey
+                                                      .currentContext)
+                                                  .pop();
+                                              Navigator.of(_scaffoldKey
+                                                      .currentContext)
+                                                  .pop();
+                                            });
+                                          } else {
+                                            showInSnackBar(
+                                                _scaffoldKey.currentContext,
+                                                "Regular Inspection addition failed!",
+                                                500);
+                                          }
+                                        },
+                                      ),
+                                      MaterialButton(
+                                        child: Text("No"),
+                                        onPressed: () async {
+                                          setState(() {
+                                            loading = false;
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
                                   );
-                                }
-                              }
-                              setState(() {
-                                loading = false;
-                              });
-                              if (result) {
-                                await prefs.remove(
-                                    "regular-${propertyElement.tableproperty.propertyId}");
-                                showInSnackBar(
-                                    _scaffoldKey.currentContext,
-                                    "Regular Inspection added successfully!",
-                                    500);
-                                Future.delayed(Duration(milliseconds: 800), () {
-                                  Navigator.of(_scaffoldKey.currentContext)
-                                      .pop();
-                                  Navigator.of(_scaffoldKey.currentContext)
-                                      .pop();
                                 });
-                              } else {
-                                showInSnackBar(_scaffoldKey.currentContext,
-                                    "Regular Inspection addition failed!", 500);
-                              }
-                            },
-                          ),
-                          MaterialButton(
-                            child: Text("No"),
-                            onPressed: () async {
-                              setState(() {
-                                loading = false;
-                              });
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    });
                           },
                         ),
                       ],

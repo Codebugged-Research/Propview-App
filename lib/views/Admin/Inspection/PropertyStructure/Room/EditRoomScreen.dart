@@ -94,8 +94,6 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
             facilities.firstWhere((e) => e.facilityId.toString() == element));
       }
     });
-    facilityDropDownValue =
-        facilities.firstWhere((element) => element.facilityId == 84);
     setState(() {
       isLoading = false;
     });
@@ -399,7 +397,11 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                 ),
                                 DropdownButton(
                                   isExpanded: true,
-                                  value: facilityDropDownValue,
+                                  hint: Text(
+                                    "Select Articles",
+                                    style: TextStyle(color: Colors.black),
+                                    textAlign: TextAlign.end,
+                                  ),
                                   elevation: 8,
                                   underline: Container(
                                     height: 2,
@@ -425,7 +427,7 @@ class _EditRoomScreenState extends State<EditRoomScreen> {
                                     }
                                   },
                                   items:
-                                      facilities.map<DropdownMenuItem>((value) {
+                                      facilities.where((element) => facilityTag.contains(element) == false).map<DropdownMenuItem>((value) {
                                     return DropdownMenuItem(
                                       value: value,
                                       child: Text(value.facilityName),

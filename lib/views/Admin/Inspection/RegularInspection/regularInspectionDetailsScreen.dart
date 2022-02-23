@@ -8,7 +8,7 @@ import 'package:propview/services/regulationInspectionRowService.dart';
 import 'package:propview/services/regulationInspectionService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:share/share.dart';
+import 'package:propview/views/Admin/Inspection/inspectionWebView2.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegularInspectionDetailsScreen extends StatefulWidget {
@@ -81,23 +81,21 @@ class _RegularInspectionDetailsScreenState
               ),
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  child: Text("Print PDF"),
+                  child: Text("View PDF"),
                   value: 1,
                 ),
-                PopupMenuItem(
-                  child: Text("Share PDF"),
-                  value: 2,
-                )
               ],
               onSelected: (value) async {
                 if (value == 1) {
-                  await launch(
-                      "https://api.propdial.co.in/pdf/regular/${regularInspection.id}");
-                } else if (value == 2) {
-                  await Share.share(
-                    "Here is a regular inspection report of ${propertyElement.propertyOwner.salutation.trim()} ${propertyElement.propertyOwner.ownerName}'s property ${propertyElement.tblSociety.socname} , ${propertyElement.tableproperty.unitNo} https://api.propdial.co.in/pdf/regular/${regularInspection.id} . (Inspection done by ${user.name} on ${regularInspection.createdAt.toString().split(" ")[0]} )",
-                  );
-                }
+                  Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => InspectionWebView2(
+                            url:
+                                "https://api.propdial.co.in/pdf/regular/${regularInspection.id}",
+                          ),
+                        ),
+                      );
+                } 
               },
             ),
           ],

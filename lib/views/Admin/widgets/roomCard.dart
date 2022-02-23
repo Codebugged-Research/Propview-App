@@ -41,7 +41,10 @@ class RoomCard extends StatelessWidget {
                 '${roomTypes.where((element) {
                       return element.roomId.toString() ==
                           room.roomId.toString();
-                    }).first.roomName}',
+                    }).length > 0 ? roomTypes.where((element) {
+                      return element.roomId.toString() ==
+                          room.roomId.toString();
+                    }).first.roomName : 'Room'}',
                 style: Theme.of(context).primaryTextTheme.subtitle1.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.w800,

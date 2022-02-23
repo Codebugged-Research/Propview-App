@@ -14,8 +14,8 @@ import 'package:propview/services/issueTableService.dart';
 import 'package:propview/services/propertyService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
+import 'package:propview/views/Admin/Inspection/inspectionWebView.dart';
 import 'package:propview/views/Admin/widgets/fullInspectionCard.dart';
-import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InspectionHistoryDetailsScreen extends StatefulWidget {
@@ -94,26 +94,27 @@ class _InspectionHistoryDetailsScreenState
               centerTitle: true,
               actions: [
                 PopupMenuButton(
-                  icon: Icon(Icons.menu, color: Colors.black,),
+                  icon: Icon(
+                    Icons.menu,
+                    color: Colors.black,
+                  ),
                   itemBuilder: (context) => [
                     PopupMenuItem(
-                      child: Text("Print PDF"),
+                      child: Text("View PDF"),
                       value: 1,
                     ),
-                    PopupMenuItem(
-                      child: Text("Share PDF"),
-                      value: 2,
-                    )
                   ],
                   onSelected: (value) async {
                     if (value == 1) {
-                      await launch(
-                          "https://api.propdial.co.in/pdf/${inspection.inspectionId}");
-                    } else if (value == 2) {
-                      await Share.share(
-                        "Here is an inspection report of ${propertyElement.propertyOwner.salutation.trim()} ${propertyElement.propertyOwner.ownerName}'s property ${propertyElement.tblSociety.socname} , ${propertyElement.tableproperty.unitNo} https://api.propdial.co.in/pdf/${inspection.inspectionId} . (Inspection done by ${user.name} on ${inspection.createdAt.toString().split(" ")[0]} )",
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => InspectionWebView(
+                            url:
+                                "https://api.propdial.co.in/pdf/${inspection.inspectionId}",
+                          ),
+                        ),
                       );
-                    }
+                    } 
                   },
                 ),
               ],
