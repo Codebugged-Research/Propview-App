@@ -11,6 +11,8 @@ import 'package:propview/utils/progressBar.dart';
 import 'package:propview/views/Admin/Inspection/inspectionWebView2.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../config.dart';
+
 class RegularInspectionDetailsScreen extends StatefulWidget {
   final RegularInspection regularInspection;
 
@@ -88,14 +90,14 @@ class _RegularInspectionDetailsScreenState
               onSelected: (value) async {
                 if (value == 1) {
                   Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => InspectionWebView2(
-                            url:
-                                "https://api.propdial.co.in/pdf/regular/${regularInspection.id}",
-                          ),
-                        ),
-                      );
-                } 
+                    MaterialPageRoute(
+                      builder: (context) => InspectionWebView2(
+                        url:
+                            "https://api.propdial.co.in/pdf/regular/${regularInspection.id}",
+                      ),
+                    ),
+                  );
+                }
               },
             ),
           ],
@@ -147,7 +149,7 @@ class _RegularInspectionDetailsScreenState
                           height: MediaQuery.of(context).size.height * 0.02),
                       ListView.builder(
                         itemBuilder: (context, index) {
-                          return inspectionCard(constraints, index);
+                          return inspectionCard(index);
                         },
                         itemCount: regularInspectionRowList.length,
                         shrinkWrap: true,
@@ -164,79 +166,305 @@ class _RegularInspectionDetailsScreenState
     });
   }
 
-  inspectionCard(constraints, index) {
-    return SingleChildScrollView(
-      physics: NeverScrollableScrollPhysics(),
+  Widget inspectionCard(int tableindex) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          Text(
-            regularInspectionRowList[index].roomsubroomName,
-            style: Theme.of(context)
-                .primaryTextTheme
-                .headline5
-                .copyWith(fontWeight: FontWeight.w700, color: Colors.black),
+          titleWidget(
+              context, regularInspectionRowList[tableindex].roomsubroomName),
+          SizedBox(
+            height: 8,
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: constraints.minWidth),
-              child:
-                  DataTable(dataRowHeight: 80, dividerThickness: 2, columns: [
-                DataColumn(
-                    label: Text("Termite Issue",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Seepage Check",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("General Cleanliness",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-                DataColumn(
-                    label: Text("Other Issues",
-                        style: Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))),
-              ], rows: [
-                DataRow(
-                  cells: [
-                    DataCell(
-                        Text(regularInspectionRowList[index].termiteCheck)),
-                    DataCell(
-                        Text(regularInspectionRowList[index].seepageCheck)),
-                    DataCell(Text(
-                        regularInspectionRowList[index].generalCleanliness)),
-                    DataCell(Text(regularInspectionRowList[index].otherIssue)),
-                  ],
-                )
-              ]),
-            ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.95,
+            height: 350,
+            child: inspectionRowCard(tableindex),
           ),
         ],
       ),
     );
   }
+
+  inspectionRowCard(int index) {
+    return ListView(
+      padding: EdgeInsets.all(0),
+      scrollDirection: Axis.horizontal,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Termite Issue:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  enabled: false,
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue: regularInspectionRowList[index].termiteCheck,
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Seepage Check:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  enabled: false,
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue: regularInspectionRowList[index].seepageCheck,
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'General Cleanliness:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  enabled: false,
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue:
+                      regularInspectionRowList[index].generalCleanliness,
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Other Issues:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                TextFormField(
+                  enabled: false,
+                  minLines: 14,
+                  maxLines: 15,
+                  initialValue: regularInspectionRowList[index].otherIssue,
+                  decoration: decoration,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Photo:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                photoPick(regularInspectionRowList[index].photo),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget photoPick(
+    List<String> list,
+  ) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        height: 60,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      insetPadding: EdgeInsets.zero,
+                      title: Text('Photo : ${list[index].trim()}'),
+                      content: Image.network(
+                        Config.INSPECTION_STORAGE_ENDPOINT + list[index].trim(),
+                      ),
+                      actions: [
+                        MaterialButton(
+                          child: Text('Close'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Image.network(
+                Config.INSPECTION_STORAGE_ENDPOINT + list[index].trim(),
+                height: 60,
+                width: 45,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  InputDecoration decoration = InputDecoration(
+    filled: true,
+    hintText: 'Enter review',
+    fillColor: Colors.grey[300],
+    labelStyle: TextStyle(fontSize: 15.0, color: Color(0xFF000000)),
+    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+        borderRadius: BorderRadius.circular(12.0)),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+        borderRadius: BorderRadius.circular(12.0)),
+    border: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+        borderRadius: BorderRadius.circular(12.0)),
+  );
 
   Widget titleWidget(BuildContext context, String title) {
     return Text(

@@ -13,8 +13,10 @@ class RegularInspectionRowService extends AuthService {
     if (response.statusCode == 200) {
       var responseMap = json.decode(response.body);
       return responseMap['insertId'].toString();
-    } else
+    } else {
+      print(response.body);
       print("Not working!");
+    }
   }
 
   // ignore: missing_return

@@ -40,7 +40,6 @@ class _RegularInspectionLoaderScreenState
     try {
       data = prefs
           .getString("regular-${propertyElement.tableproperty.propertyId}");
-          print(data);
       if (data == null) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -54,9 +53,25 @@ class _RegularInspectionLoaderScreenState
         var tempData = jsonDecode(data);
         List<RegularInspectionRow> rows = [];
         for (int i = 0; i < tempData["regularInspectionRowList"].length; i++) {
+          List<String> photos = [];
+          tempData["regularInspectionRowList"][i]['photo'].forEach((e) {
+            photos.add(e);
+          });
           rows.add(
-            RegularInspectionRow.fromJson(
-              tempData["regularInspectionRowList"][i],
+            RegularInspectionRow(
+              termiteCheck: tempData["regularInspectionRowList"][i]
+                  ['termite_check'],
+              seepageCheck: tempData["regularInspectionRowList"][i]
+                  ['seepage_check'],
+              generalCleanliness: tempData["regularInspectionRowList"][i]
+                  ['general_cleanliness'],
+              otherIssue: tempData["regularInspectionRowList"][i]['other_issue'],
+              photo: photos,
+              issub: tempData["regularInspectionRowList"][i]['issub'],
+              roomsubroomId: tempData["regularInspectionRowList"][i]
+                  ['roomsubroom_id'],
+              roomsubroomName: tempData["regularInspectionRowList"][i]
+                  ['roomsubroom_name'],
             ),
           );
         }

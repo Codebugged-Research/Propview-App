@@ -419,19 +419,45 @@ class _InspectionHistoryDetailsScreenState
   Widget photoPick(
     List<String> list,
   ) {
-    return Container(
-      width: 150,
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          return Image.network(
-            Config.INSPECTION_STORAGE_ENDPOINT + list[index].trim(),
-            height: 60,
-            width: 45,
-          );
-        },
+    return Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        height: 60,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      insetPadding: EdgeInsets.zero,
+                      title: Text('Photo : ${list[index].trim()}'),
+                      content: Image.network(
+                        Config.INSPECTION_STORAGE_ENDPOINT + list[index].trim(),
+                      ),
+                      actions: [
+                        MaterialButton(
+                          child: Text('Close'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Image.network(
+                Config.INSPECTION_STORAGE_ENDPOINT + list[index].trim(),
+                height: 60,
+                width: 45,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

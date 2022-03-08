@@ -1,6 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:propview/config.dart';
 import 'package:propview/models/BillToProperty.dart';
 import 'package:propview/models/Property.dart';
 import 'package:propview/models/RegularInspection.dart';
@@ -23,6 +29,7 @@ import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/routing.dart';
 import 'package:propview/utils/snackBar.dart';
+import 'package:propview/views/Admin/Inspection/FullInspection/CaptureFullInspectionScreen.dart';
 import 'package:propview/views/Admin/Inspection/RegularInspection/regularInspectionHistoryScreen.dart';
 import 'package:propview/views/Admin/widgets/alertWidget.dart';
 import 'package:propview/views/Admin/widgets/tenantWidget.dart';
@@ -843,6 +850,43 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15)),
+                BoxShadow(
+                    offset: Offset(-2, 2),
+                    blurRadius: 2,
+                    color: Colors.black.withOpacity(0.15))
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Photo:',
+                  style: Theme.of(context).primaryTextTheme.headline5.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                photoPick(regularInspectionRowList[index].photo, index),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -933,6 +977,7 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                           seepageCheck: "",
                           generalCleanliness: "",
                           otherIssue: "",
+                          photo: [],
                           issub: selectedRoomSubRoom.isSubroom == true ? 1 : 0,
                           roomsubroomId:
                               selectedRoomSubRoom.propertyRoomSubRoomId,
@@ -950,6 +995,79 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget photoPick(List<String> list, int index1) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        height: 60,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length + 1,
+          itemBuilder: (context, index) {
+            return index == list.length
+                ? InkWell(
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+                      var tempList = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CaptureFullInspectionScreen(
+                            imageList: list,
+                          ),
+                        ),
+                      );
+                      setState(() {
+                        list = tempList;
+                      });
+                    },
+                    child: Container(
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(Icons.add),
+                    ),
+                  )
+                : InkWell(
+                    child: Image.file(
+                      File(list[index]),
+                      height: 60,
+                      width: 45,
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Delete'),
+                          content: Text(
+                              'Are you sure you want to delete this image?'),
+                          actions: <Widget>[
+                            MaterialButton(
+                              child: Text('Yes'),
+                              onPressed: () {
+                                setState(() {
+                                  list.removeAt(index);
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                            MaterialButton(
+                              child: Text('No'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  );
+          },
+        ),
+      ),
     );
   }
 
@@ -1008,6 +1126,36 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
   }
 
   bool loading = false;
+  Future compress(img, id) async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    final result = await FlutterImageCompress.compressAndGetFile(
+      img.path,
+      path.join(dir, id),
+      format: CompressFormat.jpeg,
+      quality: 40,
+    );
+    return result;
+  }
+
+  Future upload(pic, propertyId) async {
+    final pickedFile = File(pic);
+    String target = propertyId +
+        "-" +
+        DateTime.now().millisecondsSinceEpoch.toString() +
+        ".jpeg";
+    if (pickedFile != null) {
+      File img = await compress(pickedFile, target);
+      var request = http.MultipartRequest(
+          'POST', Uri.parse(Config.UPLOAD_INSPECTION_ENDPOINT));
+      request.files.add(
+        await http.MultipartFile.fromPath('upload', img.path),
+      );
+      http.StreamedResponse res = await request.send();
+      if (res.statusCode == 200) {
+        return target;
+      }
+    }
+  }
 
   Widget buttonWidget(BuildContext context) {
     return loading
@@ -1096,12 +1244,52 @@ class _RegularInspectionScreenState extends State<RegularInspectionScreen> {
                                                   regularInspectionRowList
                                                       .length;
                                               i++) {
+                                            List<String> finalPhotoList = [];
+                                            for (int k = 0;
+                                                k <
+                                                    regularInspectionRowList[i]
+                                                        .photo
+                                                        .length;
+                                                k++) {
+                                              String tempUrl = await upload(
+                                                  regularInspectionRowList[i]
+                                                      .photo[k],
+                                                  widget.propertyElement
+                                                      .tableproperty.propertyId
+                                                      .toString());
+                                              finalPhotoList.add(tempUrl);
+                                            }
+                                            var payload = {
+                                              "termite_check":
+                                                  regularInspectionRowList[i]
+                                                      .termiteCheck,
+                                              "seepage_check":
+                                                  regularInspectionRowList[i]
+                                                      .seepageCheck,
+                                              "general_cleanliness":
+                                                  regularInspectionRowList[i]
+                                                      .generalCleanliness,
+                                              "other_issue":
+                                                  regularInspectionRowList[i]
+                                                      .otherIssue,
+                                              "photo": finalPhotoList.join(","),
+                                              "issub":
+                                                  regularInspectionRowList[i]
+                                                      .issub,
+                                              "roomsubroom_id":
+                                                  regularInspectionRowList[i]
+                                                      .roomsubroomId,
+                                              "roomsubroom_name":
+                                                  regularInspectionRowList[i]
+                                                      .roomsubroomName,
+                                              "created_at": DateTime.now()
+                                                  .toIso8601String(),
+                                            };
                                             String id =
                                                 await RegularInspectionRowService
                                                     .createRegularInspection(
                                               jsonEncode(
-                                                regularInspectionRowList[i]
-                                                    .toJson(),
+                                                payload,
                                               ),
                                             );
                                             rowIdist.add(id);

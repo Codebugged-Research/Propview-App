@@ -18,6 +18,7 @@ class RegularInspectionRow {
     this.seepageCheck,
     this.generalCleanliness,
     this.otherIssue,
+    this.photo,
     this.issub,
     this.roomsubroomId,
     this.roomsubroomName,
@@ -29,6 +30,7 @@ class RegularInspectionRow {
   String seepageCheck;
   String generalCleanliness;
   String otherIssue;
+  List<String> photo;
   int issub;
   int roomsubroomId;
   String roomsubroomName;
@@ -45,6 +47,7 @@ class RegularInspectionRow {
             ? null
             : json["general_cleanliness"],
         otherIssue: json["other_issue"] == null ? null : json["other_issue"],
+        photo: json["photo"] == "" ? [] : json["photo"].split(","),
         issub: json["issub"] == null ? null : json["issub"],
         roomsubroomId:
             json["roomsubroom_id"] == null ? null : json["roomsubroom_id"],
@@ -62,6 +65,7 @@ class RegularInspectionRow {
         "general_cleanliness":
             generalCleanliness == null ? null : generalCleanliness,
         "other_issue": otherIssue == null ? null : otherIssue,
+        "photo": photo == null ? null : photo,
         "issub": issub == null ? null : issub,
         "roomsubroom_id": roomsubroomId == null ? null : roomsubroomId,
         "roomsubroom_name": roomsubroomName == null ? null : roomsubroomName,
