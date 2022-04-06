@@ -7,6 +7,7 @@ import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
+import 'package:propview/services/mailService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
@@ -52,6 +53,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     });
     await getLocation();
     user = await UserService.getUser();
+    print(user.parentId);
     if (widget.attendanceElement != null) {
       attendanceElement = await AttendanceService.getLogById(
           widget.attendanceElement.attendanceId);
@@ -85,36 +87,42 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     });
   }
 
-  updateLog() async {    
-      DateTime startTime = DateTime.parse(start);
-      DateTime endTime = DateTime.parse(end);
-      AttendanceElement tempAttendance;
-      if (id != "-") {
-        tempAttendance = await AttendanceService.getLogById(id);
-        print(tempAttendance.toJson());
-        tempAttendance.geo_out =
-            position.latitude.toString() + "," + position.longitude.toString();
-        tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
-        tempAttendance.punchOut = endTime;
-        tempAttendance.workHour = endTime.difference(startTime).inHours;
-        tempAttendance.diff_km =
-            user.bikeReading == 1 ? endMeter - startMeter : 0;
-      }
-      var result =
-          await AttendanceService.updateLog(tempAttendance.toJson(), id);
-      if (result && id != "-") {
-        showInSnackBar(
-          context,
-          "Attendance updated successfully",
-          1500,
-        );
-      } else {
-        showInSnackBar(
-          context,
-          "Attendance updation failed",
-          1500,
-        );
-      }
+  updateLog() async {
+    DateTime startTime = DateTime.parse(start);
+    DateTime endTime = DateTime.parse(end);
+    AttendanceElement tempAttendance;
+     await MailService.sendMail(jsonEncode({
+      "name": user.name,
+      "type": "Punch Out",
+      "lat": position.latitude,
+      "long": position.longitude,
+      "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
+    }));
+    if (id != "-") {
+      tempAttendance = await AttendanceService.getLogById(id);
+      print(tempAttendance.toJson());
+      tempAttendance.geo_out =
+          position.latitude.toString() + "," + position.longitude.toString();
+      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
+      tempAttendance.punchOut = endTime;
+      tempAttendance.workHour = endTime.difference(startTime).inHours;
+      tempAttendance.diff_km =
+          user.bikeReading == 1 ? endMeter - startMeter : 0;
+    }
+    var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
+    if (result && id != "-") {
+      showInSnackBar(
+        context,
+        "Attendance updated successfully",
+        1500,
+      );
+    } else {
+      showInSnackBar(
+        context,
+        "Attendance updation failed",
+        1500,
+      );
+    }
   }
 
   createLog() async {
@@ -141,6 +149,13 @@ class _SoloAttendanceState extends State<SoloAttendance> {
           position.latitude.toString() + "," + position.longitude.toString(),
       "geo_out": 0,
     };
+   await MailService.sendMail(jsonEncode({
+      "name": user.name,
+      "type": "Punch In",
+      "lat": position.latitude,
+      "long": position.longitude,
+      "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
+    }));
     var result = await AttendanceService.createLog(payload);
     if (result != false) {
       setState(() {
@@ -184,7 +199,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async{
+      onWillPop: () async {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => LandingScreen(
@@ -299,10 +314,12 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 32.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
@@ -353,7 +370,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                     ],
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
@@ -416,7 +434,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             if (start == "--/--/-- -- : --") {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   content: Text(
                                                       "Do you want to punch in now?"),
                                                   actions: [
@@ -430,7 +449,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             } else {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   content: Text(
                                                       "Do you want to punch out now?"),
                                                   actions: [
@@ -447,7 +467,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             if (start == "--/--/-- -- : --") {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   content: Text(
                                                       "Do you want to punch in now?"),
                                                   actions: [
@@ -461,7 +482,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             } else {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   content: Text(
                                                       "Do you want to punch out now?"),
                                                   actions: [
@@ -529,7 +551,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             if (start == "--/--/-- -- : --") {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   content: Text(
                                                       "Do you want to punch in now?"),
                                                   actions: [
@@ -570,7 +593,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
                                             if (start == "--/--/-- -- : --") {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
+                                                builder: (context) =>
+                                                    AlertDialog(
                                                   content: Text(
                                                       "Do you want to punch in now?"),
                                                   actions: [

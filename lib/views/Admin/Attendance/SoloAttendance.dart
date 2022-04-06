@@ -6,6 +6,7 @@ import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
+import 'package:propview/services/mailService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
 import 'package:propview/utils/snackBar.dart';
@@ -100,6 +101,13 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       tempAttendance.diff_km =
           user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
+     MailService.sendMail(jsonEncode({
+      "name": user.name,
+      "type": "Punch Out",
+      "lat": position.latitude,
+      "long": position.longitude,
+      "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
+    }));
     var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
       showInSnackBar(
@@ -114,6 +122,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         1500,
       );
     }
+    Navigator.of(context).pop();
   }
 
   createLog() async {
@@ -140,6 +149,13 @@ class _SoloAttendanceState extends State<SoloAttendance> {
             position.latitude.toString() + "," + position.longitude.toString(),
         "geo_out": 0,
       };
+      MailService.sendMail(jsonEncode({
+        "name": user.name,
+        "type": "Punch In",
+        "lat": position.latitude,
+        "long": position.longitude,
+        "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
+      }));
       var result = await AttendanceService.createLog(payload);
       if (result != false) {
         setState(() {
@@ -184,7 +200,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async{
+      onWillPop: () async {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => LandingScreen(
@@ -791,6 +807,5 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       reset = true;
     });
     updateLog();
-    Navigator.of(context).pop();
   }
 }
