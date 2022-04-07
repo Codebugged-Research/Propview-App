@@ -52,8 +52,17 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       loading = true;
     });
     await getLocation();
-    user = await UserService.getUser();
-    print(user.parentId);
+    user = await UserService.getUser();    
+    if (user.parentId != "") {
+      var parentIdList = user.parentId.split(",");
+      print(parentIdList.length);
+      for (var i = 0; i < parentIdList.length; i++) {
+        User parent = await UserService.getUserById(parentIdList[i]);
+        setState(() {
+          parentEmail.add(parent.officialEmail);
+        });
+      }
+    }
     if (widget.attendanceElement != null) {
       attendanceElement = await AttendanceService.getLogById(
           widget.attendanceElement.attendanceId);
@@ -86,6 +95,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       loading = false;
     });
   }
+  List<String> parentEmail = [];
 
   updateLog() async {
     DateTime startTime = DateTime.parse(start);
@@ -101,13 +111,22 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     if (id != "-") {
       tempAttendance = await AttendanceService.getLogById(id);
       print(tempAttendance.toJson());
+      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
       tempAttendance.geo_out =
           position.latitude.toString() + "," + position.longitude.toString();
-      tempAttendance.meterOut = user.bikeReading == 1 ? endMeter : 0;
       tempAttendance.punchOut = endTime;
       tempAttendance.workHour = endTime.difference(startTime).inHours;
       tempAttendance.diff_km =
           user.bikeReading == 1 ? endMeter - startMeter : 0;
+    }
+    if (parentEmail.isNotEmpty) {
+      MailService.sendMail(jsonEncode({
+        "name": user.name,
+        "type": "Punch Out",
+        "lat": position.latitude,
+        "long": position.longitude,
+        "to": parentEmail
+      }));
     }
     var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
@@ -149,13 +168,15 @@ class _SoloAttendanceState extends State<SoloAttendance> {
           position.latitude.toString() + "," + position.longitude.toString(),
       "geo_out": 0,
     };
-   await MailService.sendMail(jsonEncode({
-      "name": user.name,
-      "type": "Punch In",
-      "lat": position.latitude,
-      "long": position.longitude,
-      "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
-    }));
+      if (parentEmail.isNotEmpty) {
+        MailService.sendMail(jsonEncode({
+          "name": user.name,
+          "type": "Punch In",
+          "lat": position.latitude,
+          "long": position.longitude,
+          "to": parentEmail
+        }));
+      }
     var result = await AttendanceService.createLog(payload);
     if (result != false) {
       setState(() {

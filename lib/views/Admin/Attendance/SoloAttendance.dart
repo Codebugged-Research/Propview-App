@@ -47,12 +47,24 @@ class _SoloAttendanceState extends State<SoloAttendance> {
         desiredAccuracy: LocationAccuracy.high);
   }
 
+  List<String> parentEmail = [];
+
   getData() async {
     setState(() {
       loading = true;
     });
     await getLocation();
     user = await UserService.getUser();
+    if (user.parentId != "") {
+      var parentIdList = user.parentId.split(",");
+      print(parentIdList.length);
+      for (var i = 0; i < parentIdList.length; i++) {
+        User parent = await UserService.getUserById(parentIdList[i]);
+        setState(() {
+          parentEmail.add(parent.officialEmail);
+        });
+      }
+    }
     if (widget.attendanceElement != null) {
       attendanceElement = await AttendanceService.getLogById(
           widget.attendanceElement.attendanceId);
@@ -101,13 +113,15 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       tempAttendance.diff_km =
           user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
-     MailService.sendMail(jsonEncode({
-      "name": user.name,
-      "type": "Punch Out",
-      "lat": position.latitude,
-      "long": position.longitude,
-      "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
-    }));
+    if (parentEmail.isNotEmpty) {
+      MailService.sendMail(jsonEncode({
+        "name": user.name,
+        "type": "Punch Out",
+        "lat": position.latitude,
+        "long": position.longitude,
+        "to": parentEmail
+      }));
+    }
     var result = await AttendanceService.updateLog(tempAttendance.toJson(), id);
     if (result && id != "-") {
       showInSnackBar(
@@ -149,13 +163,15 @@ class _SoloAttendanceState extends State<SoloAttendance> {
             position.latitude.toString() + "," + position.longitude.toString(),
         "geo_out": 0,
       };
-      MailService.sendMail(jsonEncode({
-        "name": user.name,
-        "type": "Punch In",
-        "lat": position.latitude,
-        "long": position.longitude,
-        "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
-      }));
+      if (parentEmail.isNotEmpty) {
+        MailService.sendMail(jsonEncode({
+          "name": user.name,
+          "type": "Punch In",
+          "lat": position.latitude,
+          "long": position.longitude,
+          "to": parentEmail
+        }));
+      }
       var result = await AttendanceService.createLog(payload);
       if (result != false) {
         setState(() {

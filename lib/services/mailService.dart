@@ -8,7 +8,6 @@ class MailService extends AuthService {
         AuthService.BASE_URI + 'api/mail/send/',
         method: 'POST',
         body: payload);
-        print(response.body);
     if (response.statusCode == 200) {
       print("success");
       return true;
