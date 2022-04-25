@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-version: 1.0.43+44
+version: 1.0.45+46
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -40,6 +40,8 @@ dependencies:
   share_plus: ^3.1.0
   shared_preferences: ^2.0.5
   syncfusion_flutter_calendar: ^19.4.48
+  timeago: ^3.2.2
+  update_app: ^0.1.7
   url_launcher: ^6.0.3
   webview_flutter: ^3.0.0
 

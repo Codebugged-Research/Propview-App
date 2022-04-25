@@ -20,6 +20,7 @@ import 'package:propview/utils/snackBar.dart';
 import 'package:propview/views/Admin/Profile/ExportAttendance.dart';
 import 'package:propview/views/NotifcationScreen.dart';
 import 'package:propview/views/loginScreen.dart';
+import 'package:propview/views/updateScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -326,6 +327,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     await cacheData.emptyCache();
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LoginScreen()));
+                  }),
+                  profileInfo('Update', '', Icons.mail, () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => UpdateScreen(),
+                    ));
                   }),
                   Padding(
                     padding: EdgeInsets.all(12),

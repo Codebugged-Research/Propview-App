@@ -5,11 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:propview/config.dart';
 import 'package:propview/services/baseService.dart';
 import 'package:propview/utils/progressBar.dart';
-import 'package:propview/utils/snackBar.dart';
 import 'package:propview/utils/udpatepop.dart';
 import 'package:propview/views/Admin/Home/HomeScreen.dart';
 import 'package:propview/views/Admin/TaskManager/TaskManagerHome.dart';
@@ -41,7 +39,6 @@ class _LandingScreenState extends State<LandingScreen> {
     setState(() {
       isLoading = true;
     });
-    await checkForUpdate();
     await checkVersion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -161,29 +158,11 @@ class _LandingScreenState extends State<LandingScreen> {
     });
   }
 
-  AppUpdateInfo _updateInfo;
-  Future<void> checkForUpdate() async {
-    InAppUpdate.checkForUpdate().then((info) {
-      setState(() {
-        _updateInfo = info;
-      });
-    }).catchError((e) {
-      showInSnackBar(context, e.toString(), 800);
-    });
-    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
-      await InAppUpdate.performImmediateUpdate()
-          .catchError((e) => showInSnackBar(context, e.toString(), 800));
-    }
-  }
-
   checkVersion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
     var responseMap = jsonDecode(getVersion);
     if (responseMap != Config.APP_VERISON) {
-      versionErrorWiget(responseMap, context,
-          "https://play.google.com/store/apps/details?id=com.propdial.propview");
-      InAppUpdate.performImmediateUpdate()
-          .catchError((e) => showInSnackBar(context, e.toString(), 800));
+      versionErrorWiget(responseMap, context);
     }
   }
 

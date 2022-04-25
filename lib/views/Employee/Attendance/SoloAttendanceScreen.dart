@@ -101,13 +101,6 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     DateTime startTime = DateTime.parse(start);
     DateTime endTime = DateTime.parse(end);
     AttendanceElement tempAttendance;
-     await MailService.sendMail(jsonEncode({
-      "name": user.name,
-      "type": "Punch Out",
-      "lat": position.latitude,
-      "long": position.longitude,
-      "to": ["majhisambit2@gmail.com", "1906422@kiit.ac.in"]
-    }));
     if (id != "-") {
       tempAttendance = await AttendanceService.getLogById(id);
       print(tempAttendance.toJson());

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:propview/views/updateScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-versionErrorWiget(String version, BuildContext context, String uri) {
+versionErrorWiget(String version, BuildContext context) {
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -16,11 +17,7 @@ versionErrorWiget(String version, BuildContext context, String uri) {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           onPressed: () async {
-            if (await canLaunch(uri)) {
-              await launch(uri);
-            } else {
-              throw 'Could not launch $uri';
-            }
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=> UpdateScreen()));
           },
         ),
       ],

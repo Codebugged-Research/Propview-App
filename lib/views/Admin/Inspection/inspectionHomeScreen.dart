@@ -25,6 +25,8 @@ class _InspectionHomeScreenState extends State<InspectionHomeScreen> {
   void initState() {
     super.initState();
     propertyElement = widget.propertyElement;
+    print(propertyElement.propertyOwner.ownerName);
+    print(propertyElement.tblSociety.socname);
   }
 
   @override

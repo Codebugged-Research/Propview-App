@@ -42,7 +42,6 @@ class _LandingScreenState extends State<LandingScreen> {
     setState(() {
       isLoading = true;
     });
-    await checkForUpdate();
     checkversion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -162,21 +161,6 @@ class _LandingScreenState extends State<LandingScreen> {
     });
   }
 
-  AppUpdateInfo _updateInfo;
-  Future<void> checkForUpdate() async {
-    InAppUpdate.checkForUpdate().then((info) {
-      setState(() {
-        _updateInfo = info;
-      });
-    }).catchError((e) {
-      showInSnackBar(context, e.toString(), 800);
-    });
-    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
-      await InAppUpdate.performImmediateUpdate()
-          .catchError((e) => showInSnackBar(context, e.toString(), 800));
-    }
-  }
-
   initialiseLocalNotification() async {
     AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("logo");
@@ -201,7 +185,8 @@ class _LandingScreenState extends State<LandingScreen> {
       RemoteMessage message) async {
     var scheduledNotificationStartTime =
         determineScheduledTime(message.data['startTime']);
-    var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
+    var android = AndroidNotificationDetails("id", "channel",
+        channelDescription: "description");
     var ios = IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: ios);
     // ignore: deprecated_member_use
@@ -219,7 +204,8 @@ class _LandingScreenState extends State<LandingScreen> {
     var scheduledNotificationEndTime =
         determineScheduledTime(message.data['endTime']);
 
-    var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
+    var android = AndroidNotificationDetails("id", "channel",
+        channelDescription: "description");
 
     var ios = IOSNotificationDetails();
 
@@ -252,8 +238,10 @@ class _LandingScreenState extends State<LandingScreen> {
     var getVersion = await BaseService.getAppCurrentVersion();
     var responseMap = jsonDecode(getVersion);
     if (responseMap != Config.APP_VERISON) {
-      versionErrorWiget(responseMap, context,
-          "https://play.google.com/store/apps/details?id=com.propdial.propview");
+      versionErrorWiget(
+        responseMap,
+        context,
+      );
     }
   }
 
@@ -282,42 +270,43 @@ class _LandingScreenState extends State<LandingScreen> {
             ? Center(
                 child: circularProgressWidget(),
               )
-            :  SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: GNav(
-              rippleColor: Color(0xff314B8C),
-              hoverColor: Color(0xff314B8C),
-              gap: 8,
-              activeColor: Colors.white,
-              iconSize: 24,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              duration: Duration(milliseconds: 200),
-              tabBackgroundColor: Color(0xff314B8C),
-              color: Colors.black,
-              tabs: [
-                GButton(
-                  icon: Icons.fact_check,
-                  text: 'Attendance',
+            : SafeArea(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+                  child: GNav(
+                    rippleColor: Color(0xff314B8C),
+                    hoverColor: Color(0xff314B8C),
+                    gap: 8,
+                    activeColor: Colors.white,
+                    iconSize: 24,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    duration: Duration(milliseconds: 200),
+                    tabBackgroundColor: Color(0xff314B8C),
+                    color: Colors.black,
+                    tabs: [
+                      GButton(
+                        icon: Icons.fact_check,
+                        text: 'Attendance',
+                      ),
+                      GButton(
+                        icon: Icons.work,
+                        text: 'Task',
+                      ),
+                      GButton(
+                        icon: Icons.house_outlined,
+                        text: 'Home',
+                      ),
+                    ],
+                    selectedIndex: _selectedIndex,
+                    onTabChange: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                  ),
                 ),
-                GButton(
-                  icon: Icons.work,
-                  text: 'Task',
-                ),
-                GButton(
-                  icon: Icons.house_outlined,
-                  text: 'Home',
-                ),
-              ],
-              selectedIndex: _selectedIndex,
-              onTabChange: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }

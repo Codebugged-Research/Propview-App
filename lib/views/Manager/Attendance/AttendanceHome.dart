@@ -181,7 +181,8 @@ class _AttendanceHomeState extends State<AttendanceHome>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  user.name,
+                                  user.name.split(" ").first,
+                                  overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
                                       .primaryTextTheme
                                       .headline5
