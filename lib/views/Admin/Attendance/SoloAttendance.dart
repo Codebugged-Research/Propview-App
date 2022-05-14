@@ -6,6 +6,7 @@ import 'package:propview/config.dart';
 import 'package:propview/models/Attendance.dart';
 import 'package:propview/models/User.dart';
 import 'package:propview/services/attendanceService.dart';
+import 'package:propview/services/authService.dart';
 import 'package:propview/services/mailService.dart';
 import 'package:propview/services/userService.dart';
 import 'package:propview/utils/progressBar.dart';
@@ -53,8 +54,9 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     setState(() {
       loading = true;
     });
-    await getLocation();
-    user = await UserService.getUser();
+    await getLocation();    
+    var auth = await AuthService.getSavedAuth();
+    user = await UserService.getUserById(auth['id']);
     if (user.parentId != "") {
       var parentIdList = user.parentId.split(",");
       print(parentIdList.length);

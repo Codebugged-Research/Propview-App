@@ -9,41 +9,40 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  api_cache_manager: ^1.0.2
-  camera: ^0.9.4+10
-  collection: null
-  cupertino_icons: ^1.0.2
-  double_back_to_close_app: ^2.0.1
-  firebase_analytics: null
-  firebase_core: ^1.1.1
-  firebase_messaging: ^11.2.6
-  fl_chart: null
+  api_cache_manager: 
+  camera: 
+  collection: 
+  cupertino_icons: 
+  double_back_to_close_app: 
+  firebase_analytics: 
+  firebase_core:
+  firebase_messaging: 
+  fl_chart: 
   flutter:
     sdk: flutter
-  flutter_datetime_picker: ^1.5.1
-  flutter_html_to_pdf: ^0.7.0
-  flutter_image_compress: ^1.0.0
-  flutter_local_notifications: ^9.2.0
-  flutter_picker: ^2.0.2
-  flutter_speed_dial: ^4.1.0
-  flutter_typeahead: ^3.1.1
-  geolocator: ^7.0.3
-  google_fonts: ^2.0.0
-  google_nav_bar: ^5.0.5
-  http: ^0.13.1
-  image_cropper: ^1.4.0
-  image_picker: ^0.8.0+3
-  in_app_update: ^2.0.0
-  intl: ^0.17.0
-  path_provider: ^2.0.2
-  provider: ^5.0.0
-  share_plus: ^3.1.0
-  shared_preferences: ^2.0.5
-  syncfusion_flutter_calendar: ^19.4.48
-  timeago: ^3.2.2
-  update_app: ^0.1.7
-  url_launcher: ^6.0.3
-  webview_flutter: ^3.0.0
+  flutter_datetime_picker: 
+  flutter_html_to_pdf: 
+  flutter_image_compress: 
+  flutter_local_notifications: 
+  flutter_picker: 
+  flutter_speed_dial: 
+  flutter_typeahead: 
+  geolocator: 
+  google_fonts: 
+  google_nav_bar: 
+  http: 
+  image_cropper: 
+  image_picker: 
+  intl: 
+  path_provider: 
+  provider: 
+  share_plus: 
+  shared_preferences: 
+  syncfusion_flutter_calendar: 
+  timeago: 
+  update_app:
+  url_launcher: 
+  webview_flutter: 
 
 dev_dependencies:
   flutter_test:
