@@ -4,6 +4,7 @@ import 'package:propview/config.dart';
 import 'package:propview/models/City.dart';
 import 'package:propview/models/attd.dart';
 import 'package:propview/views/Admin/TaskManager/SoloCalendar.dart';
+import 'package:propview/views/MapScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AttendanceCard extends StatefulWidget {
@@ -130,6 +131,21 @@ class _AttendanceCardState extends State<AttendanceCard> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  InkWell(
+                    child: Icon(
+                      Icons.location_history,
+                      color: Colors.red,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MapScreen(
+                            user: widget.attd.user,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   InkWell(
                     child: Icon(
                       Icons.calendar_today,

@@ -9,40 +9,42 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  api_cache_manager: 
-  camera: 
-  collection: 
-  cupertino_icons: 
-  double_back_to_close_app: 
-  firebase_analytics: 
-  firebase_core:
-  firebase_messaging: 
-  fl_chart: 
+  api_cache_manager: null
+  cached_network_image: ^3.2.1
+  camera: null
+  collection: null
+  cupertino_icons: null
+  double_back_to_close_app: null
+  firebase_analytics: null
+  firebase_core: null
+  firebase_messaging: null
+  fl_chart: null
   flutter:
     sdk: flutter
-  flutter_datetime_picker: 
-  flutter_html_to_pdf: 
-  flutter_image_compress: 
-  flutter_local_notifications: 
-  flutter_picker: 
-  flutter_speed_dial: 
-  flutter_typeahead: 
-  geolocator: 
-  google_fonts: 
-  google_nav_bar: 
-  http: 
-  image_cropper: 
-  image_picker: 
-  intl: 
-  path_provider: 
-  provider: 
-  share_plus: 
-  shared_preferences: 
-  syncfusion_flutter_calendar: 
-  timeago: 
-  update_app:
-  url_launcher: 
-  webview_flutter: 
+  flutter_datetime_picker: null
+  flutter_html_to_pdf: null
+  flutter_image_compress: null
+  flutter_local_notifications: null
+  flutter_map: ^0.14.0
+  flutter_picker: null
+  flutter_speed_dial: null
+  flutter_typeahead: null
+  geolocator: null
+  google_fonts: null
+  google_nav_bar: null
+  http: null
+  image_cropper: null
+  image_picker: null
+  intl: null
+  path_provider: null
+  provider: null
+  share_plus: null
+  shared_preferences: null
+  syncfusion_flutter_calendar: null
+  timeago: null
+  update_app: null
+  url_launcher: null
+  webview_flutter: null
 
 dev_dependencies:
   flutter_test:

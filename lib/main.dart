@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
+// import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:propview/services/reminderService.dart';
 import 'package:propview/utils/theme.dart';
 import 'package:propview/views/splashScreen.dart';
@@ -128,11 +130,16 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    Timer.periodic(Duration(seconds: 3), (Timer t) => print("${t.tick} hello"));
 
     return MultiProvider(
         child: MaterialApp(
