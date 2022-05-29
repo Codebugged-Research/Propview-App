@@ -169,7 +169,7 @@ class _MoveInInspectionScreenState extends State<MoveInInspectionScreen> {
             propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
             roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
                 " of " +
-                getRoomName(rooms[i].roomId),
+                getRoomName(subRooms[i].roomId),
           ));
         });
       }

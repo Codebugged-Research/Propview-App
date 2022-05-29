@@ -153,7 +153,7 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
             propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
             roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
                 " of " +
-                getRoomName(rooms[i].roomId),
+                getRoomName(subRooms[i].roomId)
           ));
         });
       }

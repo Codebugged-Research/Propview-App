@@ -120,7 +120,7 @@ class _IssueInspectionScreenState extends State<IssueInspectionScreen> {
             propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
             roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
                 " of " +
-                getRoomName(rooms[i].roomId),
+                getRoomName(subRooms[i].roomId),
           ));
         });
       }
