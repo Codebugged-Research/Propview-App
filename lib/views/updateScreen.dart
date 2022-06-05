@@ -1,7 +1,6 @@
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:propview/config.dart';
+import 'package:flutter/material.dart';
 import 'package:propview/services/baseService.dart';
 import 'package:propview/utils/snackBar.dart';
 import 'package:update_app/bean/download_process.dart';
@@ -22,7 +21,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
   }
 
   bool isLoading = true;
-  var getVersion;
+  String getVersion;
 
   getInitData() async {
     setState(() {
@@ -58,7 +57,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Current Version: $getVersion',
+                    'Latest Version: ${getVersion.split("+")[1]}',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Current Version: ${Config.APP_VERISON.split("+")[1]}',
                     style: TextStyle(fontSize: 20),
                   ),
                   SizedBox(

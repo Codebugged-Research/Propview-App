@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -160,9 +159,8 @@ class _LandingScreenState extends State<LandingScreen> {
 
   checkVersion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
-    var responseMap = jsonDecode(getVersion);
-    if (responseMap != Config.APP_VERISON) {
-      versionErrorWiget(responseMap, context);
+    if (getVersion != Config.APP_VERISON) {
+      versionErrorWiget(getVersion, context);
     }
   }
 
@@ -191,7 +189,8 @@ class _LandingScreenState extends State<LandingScreen> {
     var scheduledNotificationStartTime =
         determineScheduledTime(message.data['startTime']);
 
-    var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
+    var android = AndroidNotificationDetails("id", "channel",
+        channelDescription: "description");
     var ios = IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: ios);
     // ignore: deprecated_member_use
@@ -209,7 +208,8 @@ class _LandingScreenState extends State<LandingScreen> {
     var scheduledNotificationEndTime =
         determineScheduledTime(message.data['endTime']);
 
-    var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
+    var android = AndroidNotificationDetails("id", "channel",
+        channelDescription: "description");
 
     var ios = IOSNotificationDetails();
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class BaseService {
@@ -10,7 +12,8 @@ class BaseService {
   static Future getAppCurrentVersion() async {
     http.Response response =
         await http.get(Uri.parse("https://api.propdial.co.in/version"));
-    return response.body;
+        var responseMap = json.decode(response.body);
+    return responseMap["version"].toString();
   }
 
   // ignore: missing_return

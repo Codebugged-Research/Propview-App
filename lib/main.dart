@@ -6,6 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:propview/services/gpsService.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
@@ -40,8 +42,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   nList.add(jsonEncode({
     "message": message.notification.body,
     "title": message.notification.title,
-    "start": message.data['startTime']??"",
-    "end": message.data['endTime']??"",
+    "start": message.data['startTime'] ?? "",
+    "end": message.data['endTime'] ?? "",
     "time": DateTime.now().toString(),
   }));
   print(nList.length);
@@ -57,7 +59,8 @@ scheduleIncoming(
     RemoteMessage message) async {
   var scheduledNotificationStartTime =
       determineScheduledTime(message.data['startTime']);
-  var android = AndroidNotificationDetails("id", "channel", channelDescription: "description");
+  var android = AndroidNotificationDetails("id", "channel",
+      channelDescription: "description");
   var ios = IOSNotificationDetails();
   var platform = new NotificationDetails(android: android, iOS: ios);
   // ignore: deprecated_member_use
@@ -75,7 +78,8 @@ scheduleOutgoing(
   var scheduledNotificationEndTime =
       determineScheduledTime(message.data['endTime']);
 
-  var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
+  var android = AndroidNotificationDetails("id", "channel",
+      channelDescription: "description");
 
   var ios = IOSNotificationDetails();
 
@@ -99,7 +103,8 @@ DateTime determineScheduledTime(String time) {
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
   'High Importance Notifications', // title
-  description: 'This channel is used for important notifications.', // description
+  description:
+      'This channel is used for important notifications.', // description
   importance: Importance.high,
 );
 
@@ -133,14 +138,38 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
   }
+
+  bool gps = false;
+
+  getLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Geolocator.openAppSettings();
+    }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print(
+        "Latitude: ${position.latitude} Longitude: ${position.longitude} Speed ${position.speed}");
+    await GPSService.createGPS(position.latitude, position.longitude);
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    Timer.periodic(Duration(seconds: 3), (Timer t) => print("${t.tick} hello"));
-
+    Timer.periodic(Duration(minutes: 1), (Timer t) async {
+      print("${t.tick} hello2 triggred");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      gps = prefs.getBool("gps") ?? false;
+      if (gps) {
+        await getLocation();
+      }
+    });
     return MultiProvider(
         child: MaterialApp(
           title: 'Propview',

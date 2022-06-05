@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import "package:flutter/material.dart";
@@ -54,7 +55,7 @@ class _SoloAttendanceState extends State<SoloAttendance> {
     setState(() {
       loading = true;
     });
-    await getLocation();    
+    await getLocation();
     var auth = await AuthService.getSavedAuth();
     user = await UserService.getUserById(auth['id']);
     if (user.parentId != "") {
@@ -115,6 +116,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       tempAttendance.diff_km =
           user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("gps", false);
     if (parentEmail.isNotEmpty) {
       MailService.sendMail(jsonEncode({
         "name": user.name,
@@ -174,6 +177,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
           "to": parentEmail
         }));
       }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("gps", true);
       var result = await AttendanceService.createLog(payload);
       if (result != false) {
         setState(() {

@@ -116,6 +116,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
       tempAttendance.diff_km =
           user.bikeReading == 1 ? endMeter - startMeter : 0;
     }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("gps", false);
     if (parentEmail.isNotEmpty) {
       MailService.sendMail(jsonEncode({
         "name": user.name,
@@ -165,6 +167,8 @@ class _SoloAttendanceState extends State<SoloAttendance> {
             position.latitude.toString() + "," + position.longitude.toString(),
         "geo_out": 0,
       };
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("gps", true);
       if (parentEmail.isNotEmpty) {
         MailService.sendMail(jsonEncode({
           "name": user.name,
