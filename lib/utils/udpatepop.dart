@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:propview/views/updateScreen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 versionErrorWiget(String version, BuildContext context) {
   return showDialog(

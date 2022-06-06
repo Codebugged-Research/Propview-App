@@ -162,9 +162,8 @@ class _LandingScreenState extends State<LandingScreen> {
 
   checkVersion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
-    var responseMap = jsonDecode(getVersion);
-    if (responseMap != Config.APP_VERISON) {
-      versionErrorWiget(responseMap, context);
+    if (getVersion != Config.APP_VERISON) {
+      versionErrorWiget(getVersion, context);
     }
   }
 

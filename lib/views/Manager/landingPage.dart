@@ -40,7 +40,7 @@ class _LandingScreenState extends State<LandingScreen> {
     setState(() {
       isLoading = true;
     });
-    checkversion();
+    await checkversion();
     initialiseLocalNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -234,10 +234,9 @@ class _LandingScreenState extends State<LandingScreen> {
 
   checkversion() async {
     var getVersion = await BaseService.getAppCurrentVersion();
-    var responseMap = jsonDecode(getVersion);
-    if (responseMap != Config.APP_VERISON) {
+    if (getVersion != Config.APP_VERISON) {
       versionErrorWiget(
-        responseMap,
+        getVersion,
         context,
       );
     }

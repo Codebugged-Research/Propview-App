@@ -162,7 +162,7 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    Timer.periodic(Duration(minutes: 1), (Timer t) async {
+    Timer.periodic(Duration(minutes: 5), (Timer t) async {
       print("${t.tick} hello2 triggred");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       gps = prefs.getBool("gps") ?? false;
