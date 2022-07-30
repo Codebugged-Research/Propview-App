@@ -125,369 +125,403 @@ class _AddSubRoomScreenState extends State<AddSubRoomScreen> {
         ),
         body: isLoading
             ? circularProgressWidget()
-            : rooms.length > 0 ? Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: UIConstants.fitToHeight(16, context)),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                          child: Text('Fill the Details',
-                              style: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline6
-                                  .copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700)),
-                        ),
-                      ),
-                      SizedBox(height: UIConstants.fitToHeight(16, context)),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                          child: Container(
-                            child: Form(
-                              key: formkey,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text('Room Type',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700)),
-                                    ),
-                                    DropdownButton(
-                                      isExpanded: true,
-                                      hint: Text(
-                                        "Select Room",
-                                        style: TextStyle(color: Colors.black),
-                                        textAlign: TextAlign.end,
-                                      ),
-                                      elevation: 8,
-                                      underline: Container(
-                                        height: 2,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        color: Color(0xff314B8C),
-                                      ),
-                                      onChanged: (value) {
-                                        List<PropertyRoom> lis = [];
-                                        widget.rooms
-                                            .where((element) =>
-                                                element.roomId == value.roomId)
-                                            .toList()
-                                            .forEach((element) {
-                                          print(element.balcony);
-                                          print(element.bath);
-                                          print(element.wardrobe);
-                                          if (element.balcony == 1) {
-                                            lis.add(subRoomTypes2.firstWhere(
-                                                (element) =>
-                                                    element.roomName ==
-                                                    'Balcony'));
-                                          }
-                                          if (element.bath == 1) {
-                                            lis.add(subRoomTypes2.firstWhere(
-                                                (element) =>
-                                                    element.roomName ==
-                                                    'Bathroom'));
-                                          }
-                                          if (element.wardrobe == 1) {
-                                            lis.add(subRoomTypes2.firstWhere(
-                                                (element) =>
-                                                    element.roomName ==
-                                                    'Utility Room'));
-                                          }
-                                          lis.add(subRoomTypes2.firstWhere(
-                                              (element) =>
-                                                  element.roomName ==
-                                                  'Balcony'));
-                                        });
-                                        subRoomTypes.clear();
-                                        subRoomTypes.addAll(lis);
-                                        setState(() {
-                                          roomTypeDropDownValue = value;
-                                        });
-                                      },
-                                      items: roomTypes
-                                          .map<DropdownMenuItem>((value) {
-                                        return DropdownMenuItem(
-                                          value: value,
-                                          child: Text(value.roomName),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            16, context)),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text('SubRoom Type',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700)),
-                                    ),
-                                    DropdownButton(
-                                      isExpanded: true,
-                                      // value: subRoomTypeDropDownValue,
-                                      elevation: 8,
-                                      hint: Text(
-                                        "Select Sub Room",
-                                        style: TextStyle(color: Colors.black),
-                                        textAlign: TextAlign.end,
-                                      ),
-                                      underline: Container(
-                                        height: 2,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        color: Color(0xff314B8C),
-                                      ),
-                                      onChanged: (value) {
-                                        facilities.clear();
-                                        facilityTag.clear();
-                                        facilities2.forEach((element) {
-                                          if (element.roomId
-                                              .split(",")
-                                              .contains(
-                                                  value.roomId.toString())) {
-                                            facilities.add(element);
-                                          }
-                                        });
-                                        facilityDropDownValue = facilities[0];
-                                        setState(() {
-                                          subRoomTypeDropDownValue = value;
-                                        });
-                                      },
-                                      items: subRoomTypes
-                                          .map<DropdownMenuItem>((value) {
-                                        return DropdownMenuItem(
-                                          value: value,
-                                          child: Text(value.roomName),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            16, context)),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text('Room Length',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700)),
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            4, context)),
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          flex: 1,
-                                          child: inputWidget(
-                                              roomLengthFeetController,
-                                              'Please enter Room Length.',
-                                              false,
-                                              'Room Length',
-                                              'Room Size Length',
-                                              'ft', (value) {
-                                            print(value);
-                                          }),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Flexible(
-                                          flex: 1,
-                                          child: inputWidget(
-                                              roomLengthInchesController,
-                                              'Please enter Room Length.',
-                                              false,
-                                              'Room Length',
-                                              'Room Length',
-                                              'inches', (value) {
-                                            print(value);
-                                          }),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            8, context)),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text('Room Width',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700)),
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            4, context)),
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: inputWidget(
-                                              roomWidthFeetController,
-                                              'Please enter Room Width.',
-                                              false,
-                                              'Room Width',
-                                              'Room Width',
-                                              'ft', (value) {
-                                            print(value);
-                                          }),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Flexible(
-                                          flex: 1,
-                                          child: inputWidget(
-                                              roomWidthInchesController,
-                                              'Please enter Room Length.',
-                                              false,
-                                              'Room Width',
-                                              'Room Width',
-                                              'inches', (value) {
-                                            print(value);
-                                          }),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            16, context)),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text('Articles',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .subtitle1
-                                              .copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700)),
-                                    ),
-                                    DropdownButton(
-                                      isExpanded: true,
-                                      hint: Text(
-                                        "Select Articles",
-                                        style: TextStyle(color: Colors.black),
-                                        textAlign: TextAlign.end,
-                                      ),
-                                      elevation: 8,
-                                      underline: Container(
-                                        height: 2,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        color: Color(0xff314B8C),
-                                      ),
-                                      onChanged: (value) {
-                                        if (value.facilityId == 84) {
-                                          setState(() {
-                                            facilityDropDownValue = value;
-                                          });
-                                          showInSnackBar(
-                                              context,
-                                              "Please Choose a valid article",
-                                              800);
-                                        } else {
-                                          setState(() {
-                                            addTag(value);
-                                            facilityDropDownValue = value;
-                                            facilityTag.sort((a, b) => a
-                                                .facilityName
-                                                .compareTo(b.facilityName));
-                                          });
-                                        }
-                                      },
-                                      items: facilities
-                                          .where((element) =>
-                                              facilityTag.contains(element) ==
-                                              false)
-                                          .map<DropdownMenuItem>((value) {
-                                        return DropdownMenuItem(
-                                          value: value,
-                                          child: Text(value.facilityName),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            16, context)),
-                                    Visibility(
-                                      visible: facilityTag.length > 0,
-                                      child: ListView.builder(
-                                          itemCount: facilityTag.length,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                showConfirm(index);
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(4.0),
-                                                child: Container(
-                                                  height: 32,
-                                                  padding:
-                                                      const EdgeInsets.all(3),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xff314B8C),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
-                                                  child: Text(
-                                                    facilityTag[index]
-                                                        .facilityName,
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .primaryTextTheme
-                                                        .headline6
-                                                        .copyWith(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            8, context)),
-                                    buttonWidget(context),
-                                    SizedBox(
-                                        height: UIConstants.fitToHeight(
-                                            32, context)),
-                                  ],
-                                ),
-                              ),
+            : rooms.length > 0
+                ? Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                              height: UIConstants.fitToHeight(16, context)),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 32.0),
+                              child: Text('Fill the Details',
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline6
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700)),
                             ),
-                          ))
-                    ],
+                          ),
+                          SizedBox(
+                              height: UIConstants.fitToHeight(16, context)),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 32.0),
+                              child: Container(
+                                child: Form(
+                                  key: formkey,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('Room Type',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w700)),
+                                        ),
+                                        DropdownButton(
+                                          isExpanded: true,
+                                          hint: Text(
+                                            "Select Room",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                          elevation: 8,
+                                          underline: Container(
+                                            height: 2,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            color: Color(0xff314B8C),
+                                          ),
+                                          onChanged: (value) {
+                                            List<PropertyRoom> lis = [];
+                                            widget.rooms
+                                                .where((element) =>
+                                                    element.roomId ==
+                                                    value.roomId)
+                                                .toList()
+                                                .forEach((element) {
+                                              print(element.balcony);
+                                              print(element.bath);
+                                              print(element.wardrobe);
+                                              if (element.balcony == 1) {
+                                                lis.add(subRoomTypes2
+                                                    .firstWhere((element) =>
+                                                        element.roomName ==
+                                                        'Balcony'));
+                                              }
+                                              if (element.bath == 1) {
+                                                lis.add(subRoomTypes2
+                                                    .firstWhere((element) =>
+                                                        element.roomName ==
+                                                        'Bathroom'));
+                                              }
+                                              if (element.wardrobe == 1) {
+                                                lis.add(subRoomTypes2
+                                                    .firstWhere((element) =>
+                                                        element.roomName ==
+                                                        'Utility Room'));
+                                              }
+                                              lis.add(subRoomTypes2.firstWhere(
+                                                  (element) =>
+                                                      element.roomName ==
+                                                      'Balcony'));
+                                            });
+                                            subRoomTypes.clear();
+                                            subRoomTypes.addAll(lis);
+                                            setState(() {
+                                              roomTypeDropDownValue = value;
+                                            });
+                                          },
+                                          value: roomTypeDropDownValue,
+                                          items: roomTypes
+                                              .map<DropdownMenuItem>((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value.roomName),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                16, context)),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('SubRoom Type',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w700)),
+                                        ),
+                                        DropdownButton(
+                                          isExpanded: true,
+                                          // value: subRoomTypeDropDownValue,
+                                          elevation: 8,
+                                          hint: Text(
+                                            "Select Sub Room",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                          underline: Container(
+                                            height: 2,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            color: Color(0xff314B8C),
+                                          ),
+                                          onChanged: (value) {
+                                            facilities.clear();
+                                            facilityTag.clear();
+                                            facilities2.forEach((element) {
+                                              if (element.roomId
+                                                  .split(",")
+                                                  .contains(value.roomId
+                                                      .toString())) {
+                                                facilities.add(element);
+                                              }
+                                            });
+                                            facilityDropDownValue =
+                                                facilities[0];
+                                            setState(() {
+                                              subRoomTypeDropDownValue = value;
+                                            });
+                                          },
+                                          value: subRoomTypeDropDownValue,
+                                          items: subRoomTypes
+                                              .map<DropdownMenuItem>((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value.roomName),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                16, context)),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('Room Length',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w700)),
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                4, context)),
+                                        Row(
+                                          children: [
+                                            Flexible(
+                                              flex: 1,
+                                              child: inputWidget(
+                                                  roomLengthFeetController,
+                                                  'Please enter Room Length.',
+                                                  false,
+                                                  'Room Length',
+                                                  'Room Size Length',
+                                                  'ft', (value) {
+                                                print(value);
+                                              }),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Flexible(
+                                              flex: 1,
+                                              child: inputWidget(
+                                                  roomLengthInchesController,
+                                                  'Please enter Room Length.',
+                                                  false,
+                                                  'Room Length',
+                                                  'Room Length',
+                                                  'inches', (value) {
+                                                print(value);
+                                              }),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                8, context)),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('Room Width',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w700)),
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                4, context)),
+                                        Row(
+                                          children: [
+                                            Flexible(
+                                              child: inputWidget(
+                                                  roomWidthFeetController,
+                                                  'Please enter Room Width.',
+                                                  false,
+                                                  'Room Width',
+                                                  'Room Width',
+                                                  'ft', (value) {
+                                                print(value);
+                                              }),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Flexible(
+                                              flex: 1,
+                                              child: inputWidget(
+                                                  roomWidthInchesController,
+                                                  'Please enter Room Length.',
+                                                  false,
+                                                  'Room Width',
+                                                  'Room Width',
+                                                  'inches', (value) {
+                                                print(value);
+                                              }),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                16, context)),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('Articles',
+                                              style: Theme.of(context)
+                                                  .primaryTextTheme
+                                                  .subtitle1
+                                                  .copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w700)),
+                                        ),
+                                        DropdownButton(
+                                          isExpanded: true,
+                                          hint: Text(
+                                            "Select Articles",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                          elevation: 8,
+                                          underline: Container(
+                                            height: 2,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            color: Color(0xff314B8C),
+                                          ),
+                                          onChanged: (value) {
+                                            if (value.facilityId == 84) {
+                                              setState(() {
+                                                facilityDropDownValue = value;
+                                              });
+
+                                              showInSnackBar(
+                                                  context,
+                                                  "Please Choose a valid article",
+                                                  800);
+                                            } else {
+                                              setState(() {
+                                                addTag(value);
+                                                facilityDropDownValue = value;
+                                                facilityTag.sort((a, b) => a
+                                                    .facilityName
+                                                    .compareTo(b.facilityName));
+                                              });
+                                            }
+                                          },
+                                          value: facilityDropDownValue,
+                                          items: facilities
+                                              .where((element) =>
+                                                  facilityTag
+                                                      .contains(element) ==
+                                                  false)
+                                              .map<DropdownMenuItem>((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value.facilityName),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                16, context)),
+                                        Visibility(
+                                          visible: facilityTag.length > 0,
+                                          child: ListView.builder(
+                                              itemCount: facilityTag.length,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    showConfirm(index);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            4.0),
+                                                    child: Container(
+                                                      height: 32,
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              3),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xff314B8C),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: Text(
+                                                        facilityTag[index]
+                                                            .facilityName,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: Theme.of(context)
+                                                            .primaryTextTheme
+                                                            .headline6
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                        ),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                8, context)),
+                                        buttonWidget(context),
+                                        SizedBox(
+                                            height: UIConstants.fitToHeight(
+                                                32, context)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ))
+                        ],
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text('No Rooms Found!'),
                   ),
-                ),
-              ): Center(child: Text('No Rooms Found!'),),
       ),
     );
   }

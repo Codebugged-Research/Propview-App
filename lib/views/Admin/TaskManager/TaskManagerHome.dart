@@ -699,7 +699,7 @@ class _TaskMangerHomeState extends State<TaskMangerHome>
                         ],
                       ),
                     ),
-                    flex: 10,
+                    flex: 9,
                   ),
                 ],
               ),

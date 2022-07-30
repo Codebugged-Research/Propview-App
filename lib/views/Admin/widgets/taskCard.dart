@@ -203,7 +203,7 @@ class _TaskCardState extends State<TaskCard> {
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     Align(
-                        alignment: Alignment.center,
+                      alignment: Alignment.center,
                       child: Text(
                         'Details',
                         style: Theme.of(context).primaryTextTheme.headline6,

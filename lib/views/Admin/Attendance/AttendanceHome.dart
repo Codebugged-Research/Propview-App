@@ -176,7 +176,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                 children: [
                                   Text(
                                     user.name.split(" ").first,
-                                  overflow: TextOverflow.ellipsis,
+                                    overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .headline5
@@ -468,7 +468,7 @@ class _AttendanceHomeState extends State<AttendanceHome>
                                   return element.punchIn.isAfter(
                                         DateTime.parse(start),
                                       ) &&
-                                      element.punchIn.isBefore(
+                                      element.punchIn.isAtSameMomentAs(
                                         DateTime.parse(end),
                                       ) &&
                                       element.name.toLowerCase().contains(

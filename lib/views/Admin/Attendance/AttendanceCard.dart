@@ -24,6 +24,8 @@ class _AttendanceCardState extends State<AttendanceCard> {
     getCityName();
   }
 
+  bool arrow = false;
+
   List<String> cityList = [];
 
   getCityName() {
@@ -115,6 +117,8 @@ class _AttendanceCardState extends State<AttendanceCard> {
                                 child: Text(
                                   cityList.join(","),
                                   softWrap: true,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.nunito(
                                     color: Colors.black,
                                     fontSize: 14,
@@ -131,57 +135,100 @@ class _AttendanceCardState extends State<AttendanceCard> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  InkWell(
-                    child: Icon(
-                      Icons.location_history,
-                      color: Colors.red,
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MapScreen(
-                            user: widget.attd.user,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  InkWell(
-                    child: Icon(
-                      Icons.calendar_today,
-                      color: Colors.blue,
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => SoloCalendar(
-                            user: widget.attd.user,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                   Icon(
                     Icons.emoji_people,
                     color: widget.attd.isPresent
                         ? Colors.black
                         : Colors.grey.shade300,
                   ),
-                  InkWell(
-                    child: Icon(
-                      Icons.call,
-                      color: Colors.green,
-                    ),
-                    onTap: () async {
-                      if (await canLaunch(
-                          "tel:+91 ${widget.attd.user.officialNumber}")) {
-                        await launch(
-                            "tel:+91 ${widget.attd.user.officialNumber}");
-                      } else {
-                        throw "tel:+91 ${widget.attd.user.officialNumber}";
-                      }
-                    },
-                  ),
+
+                  DropdownButton(
+                      onTap: () {
+                        setState(() {
+                          arrow = !arrow;
+                        });
+                      },
+                      underline: Container(),
+                      value: null,
+                      // iconSize: 0,
+                      icon: Icon(Icons.menu),
+                      items: [
+                        DropdownMenuItem(
+                          child: Icon(
+                            Icons.location_history,
+                            color: Colors.red,
+                          ),
+                          value: 1,
+                        ),
+                        DropdownMenuItem(
+                          child: Icon(
+                            Icons.calendar_today,
+                            color: Colors.blue,
+                          ),
+                          value: 2,
+                        ),
+                        DropdownMenuItem(
+                          child: Icon(
+                            Icons.call,
+                            color: Colors.green,
+                          ),
+                          value: 3,
+                          onTap: () async {
+                            if (await canLaunch(
+                                "tel:+91 ${widget.attd.user.officialNumber}")) {
+                              await launch(
+                                  "tel:+91 ${widget.attd.user.officialNumber}");
+                            } else {
+                              throw "tel:+91 ${widget.attd.user.officialNumber}";
+                            }
+                          },
+                        )
+                      ],
+                      onChanged: (val) {
+                        switch (val) {
+                          case 1:
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => MapScreen(
+                                  user: widget.attd.user,
+                                ),
+                              ),
+                            );
+                            break;
+                          case 2:
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => SoloCalendar(
+                                  user: widget.attd.user,
+                                ),
+                              ),
+                            );
+                            break;
+
+                          default:
+                        }
+                      }),
+                  // InkWell(
+                  //   child: Icon(
+                  //     Icons.location_history,
+                  //     color: Colors.red,
+                  //   ),
+
+                  // ),
+                  // InkWell(
+                  //   child: Icon(
+                  //     Icons.calendar_today,
+                  //     color: Colors.blue,
+                  //   ),
+
+                  // ),
+                  // InkWell(
+                  //   child: Icon(
+                  //     Icons.call,
+                  //     color: Colors.green,
+                  //   ),
+
+                  // ),
                 ],
               ),
             ],
