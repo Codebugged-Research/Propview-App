@@ -163,16 +163,9 @@ class _LandingScreenState extends State<LandingScreen> {
     AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("logo");
 
-    IOSInitializationSettings iosInitializationSettings =
-        IOSInitializationSettings(
-            requestAlertPermission: true,
-            requestBadgePermission: true,
-            requestSoundPermission: true);
-
     final InitializationSettings initializationSettings =
         InitializationSettings(
-            android: androidInitializationSettings,
-            iOS: iosInitializationSettings);
+            android: androidInitializationSettings);
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -185,8 +178,7 @@ class _LandingScreenState extends State<LandingScreen> {
         determineScheduledTime(message.data['startTime']);
     var android = AndroidNotificationDetails("id", "channel",
         channelDescription: "description");
-    var ios = IOSNotificationDetails();
-    var platform = new NotificationDetails(android: android, iOS: ios);
+    var platform = new NotificationDetails(android: android,);
     // ignore: deprecated_member_use
     await _flutterLocalNotificationsPlugin.schedule(
         0,
@@ -205,9 +197,7 @@ class _LandingScreenState extends State<LandingScreen> {
     var android = AndroidNotificationDetails("id", "channel",
         channelDescription: "description");
 
-    var ios = IOSNotificationDetails();
-
-    var platform = new NotificationDetails(android: android, iOS: ios);
+    var platform = new NotificationDetails(android: android);
     // ignore: deprecated_member_use
     await _flutterLocalNotificationsPlugin.schedule(
         0,

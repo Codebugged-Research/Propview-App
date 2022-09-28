@@ -13,16 +13,9 @@ class ReminderService extends ChangeNotifier {
     AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("logo");
 
-    IOSInitializationSettings iosInitializationSettings =
-        IOSInitializationSettings(
-            requestAlertPermission: true,
-            requestBadgePermission: true,
-            requestSoundPermission: true);
-
     final InitializationSettings initializationSettings =
         InitializationSettings(
-            android: androidInitializationSettings,
-            iOS: iosInitializationSettings);
+            android: androidInitializationSettings);
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -31,9 +24,7 @@ class ReminderService extends ChangeNotifier {
   Future instantNofitication() async {
     var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description");
 
-    var ios = IOSNotificationDetails();
-
-    var platform = new NotificationDetails(android: android, iOS: ios);
+    var platform = new NotificationDetails(android: android);
 
     await _flutterLocalNotificationsPlugin.show(
         0, "Demo instant notification", "Tap to do something", platform,
@@ -53,9 +44,7 @@ class ReminderService extends ChangeNotifier {
     var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description",
         styleInformation: bigPicture);
 
-    var ios = IOSNotificationDetails();
-
-    var platform = new NotificationDetails(android: android, iOS: ios);
+    var platform = new NotificationDetails(android: android);
 
     await _flutterLocalNotificationsPlugin.show(
         0, "Demo Image notification", "Tap to do something", platform,
@@ -72,9 +61,7 @@ class ReminderService extends ChangeNotifier {
         styleInformation: MediaStyleInformation(
             htmlFormatContent: true, htmlFormatTitle: true));
 
-    var ios = IOSNotificationDetails();
-
-    var platform = new NotificationDetails(android: android, iOS: ios);
+    var platform = new NotificationDetails(android: android);
 
     await _flutterLocalNotificationsPlugin.show(
         0, "Demo Stylish notification", "Tap to do something", platform);
@@ -97,9 +84,7 @@ class ReminderService extends ChangeNotifier {
     var android = AndroidNotificationDetails("id", "channel",channelDescription:  "description",
         styleInformation: bigPicture);
 
-    var ios = IOSNotificationDetails();
-
-    var platform = new NotificationDetails(android: android, iOS: ios);
+    var platform = new NotificationDetails(android: android);
 
     // ignore: deprecated_member_use
     await _flutterLocalNotificationsPlugin.schedule(
