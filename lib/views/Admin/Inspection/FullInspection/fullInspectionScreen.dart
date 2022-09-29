@@ -149,12 +149,11 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       for (var i = 0; i < subRooms.length; i++) {
         setState(() {
           roomsAvailable.add(CustomRoomSubRoom(
-            isSubroom: true,
-            propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
-            roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
-                " of " +
-                getRoomName(subRooms[i].roomId)
-          ));
+              isSubroom: true,
+              propertyRoomSubRoomId: subRooms[i].propertySubRoomId,
+              roomSubRoomName: getRoomName(subRooms[i].subRoomId) +
+                  " of " +
+                  getRoomName(subRooms[i].roomId)));
         });
       }
     }
@@ -1309,13 +1308,20 @@ class _FullInspectionScreenState extends State<FullInspectionScreen> {
       SubRoomElement subRoom = subRooms.firstWhere((element) =>
           element.propertySubRoomId ==
           issueTableList[tableindex].roomsubroomId);
+      print(subRoom.facility);
       List<String> lstring = subRoom.facility.split(",");
-      lint = lstring.map(int.parse).toList();
+      print(lstring);
+      lstring.forEach((element) {
+        lint.add(int.parse(element));
+      });
     } else {
       RoomsToPropertyModel room = rooms.firstWhere((element) =>
           element.propertyRoomId == issueTableList[tableindex].roomsubroomId);
       List<String> lstring = room.facility.split(",");
-      lint = lstring.map(int.parse).toList();
+
+      lstring.forEach((element) {
+        lint.add(int.parse(element));
+      });
     }
     return Column(
       mainAxisSize: MainAxisSize.min,
