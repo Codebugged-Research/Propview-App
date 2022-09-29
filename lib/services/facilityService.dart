@@ -21,6 +21,7 @@ class FacilityService extends AuthService {
           response.statusCode.toString() +
           ' Body: ' +
           response.body);
+      return [];
     }
   }
 }

@@ -82,11 +82,13 @@ class _EditSubRoomScreenState extends State<EditSubRoomScreen> {
     roomWidthFeetController.text = (subRoom.roomSize2.toInt()).toString();
     roomWidthInchesController.text =
         (((subRoom.roomSize2 * 10) % 10) * 1.2).toInt().toString();
-    subRoom.facility.split(",").forEach((element) {
-      facilityTag.add(facilities2.firstWhere(
-              (element2) => element2.facilityId == int.tryParse(element)) ??
-          84);
-    });
+    if (subRoom.facility != null && subRoom.facility != "") {
+      subRoom.facility.split(",").forEach((element) {
+        facilityTag.add(facilities2.firstWhere(
+                (element2) => element2.facilityId == int.tryParse(element)) ??
+            84);
+      });
+    }
     roomTypeDropDownValue =
         allRoomTypes.firstWhere((element) => element.roomId == subRoom.roomId);
     subRoomTypeDropDownValue = subRoomTypes
