@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:propview/constants/uiConstants.dart';
 import 'package:propview/models/Facility.dart';

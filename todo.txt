@@ -1,0 +1,2 @@
+add no faciltiies room / sub room popup in inspection
+add camera pic support in regular inspection
