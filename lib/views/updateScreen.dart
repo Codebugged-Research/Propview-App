@@ -101,6 +101,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
   }
 
   void download() async {
+    // ignore: missing_required_param
     var downloadId = await UpdateApp.updateApp(
       url: "https://propview.ap-south-1.linodeobjects.com/update.apk",
       title: "Propview Update",
