@@ -120,9 +120,9 @@ class _ExportAttendanceState extends State<ExportAttendance> {
                       "-" +
                       end.day.toString().padLeft(2, "0");
                   print(
-                      "https://api.propdial.co.in/api/attendanceexport/${start_date}/${end_date}/attendance_${start_date}_${end_date}");
-                  launch(
-                      "https://api.propdial.co.in/api/attendanceexport/${start_date}/${end_date}/attendance_${start_date}_${end_date}");
+                      "https://api.propdial.co.in/api/attendanceexport/${start_date}/${end_date}/attendance-${start_date}-${end_date}");
+                  launchUrl(
+                      Uri.parse("https://api.propdial.co.in/api/attendanceexport/${start_date}/${end_date}/attendance-${start_date}-${end_date}"));
                 }
               },
               child: Text(
